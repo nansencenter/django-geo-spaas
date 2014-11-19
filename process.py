@@ -1,5 +1,20 @@
 #!/usr/bin/env python
-from setdjango import *
+import os
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nansencloud.settings")
+
+import django
+django.setup()
+
+from nansatcat.models import *
+from nansatcat.forms import *
+from nansatcat.views import *
+
+from nansatproc.models import *
+from nansatproc.forms import *
+from nansatproc.views import *
+
+from django.contrib.gis.geos import GEOSGeometry
 
 import glob
 import time

@@ -1,5 +1,5 @@
 """
-Django settings for djangosat project.
+Django settings for nansencloud project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -97,15 +97,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'djangosat.urls'
+ROOT_URLCONF = 'nansencloud.urls'
 
-WSGI_APPLICATION = 'djangosat.wsgi.application'
+WSGI_APPLICATION = 'nansencloud.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 # from databases_postgis import *
-from djangosat.databases_postgis import *
+from nansencloud.databases_postgis import *
 #from databases import *
 
 # Internationalization

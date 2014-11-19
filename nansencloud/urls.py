@@ -5,7 +5,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'djangosat.views.home', name='home'),
+    # url(r'^$', 'nansencloud.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^$',      include('nansatcat.urls')),
