@@ -1,0 +1,129 @@
+{% extends "site_base.html" %}
+{% load leaflet_tags %}
+{% load bootstrap_tags %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="col-md-4">
+                {% if greeting %}
+                <h1>{{ greeting }}</h1>
+                {% else %}
+                <h1>Nansen-cloud data archive</h1>
+                {% endif %}
+                <form action="{% url viewname %}" method="post">
+                    {% csrf_token %}
+                    {{ form|as_bootstrap }}
+                    <input type=hidden id="page" name="page" value=1 />
+                    <input type="submit" value="Search" />
+                </form>
+                <a href="{% url 'index' %}">RELOAD</a>
+            </div>
+            <div class="col-md-8">
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if images.has_previous %}
+                            <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ images.previous_page_number }} ; window.document.forms[1].submit()">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ images.number }} of {{ images.paginator.num_pages }}.
+                        </span>
+
+                        {% if images.has_next %}
+                            <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ images.next_page_number }} ; window.document.forms[1].submit()">next</a>
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                <table border=1>
+                    <!-- HEADER -->
+                    <tr>
+                    <th>ID</th>
+                    {% block headers %}
+                    <th>Filename</th>
+                    {% endblock headers %}
+                    <th>Show</th>
+                    </tr>
+
+                {% if images %}
+
+                    {% for img in images %}
+                    <tr id={{ forloop.counter }}>
+                        <td>
+                        {{ forloop.counter }}
+                        </td>
+
+                        {% block columns %}
+                            <td>
+                                <a href="{% url viewname  %}{{ img.filename.name }}"> {{ col.1 }} </a>
+                            </td>
+                        {% endblock columns %}
+
+                        <td><input type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
+                    </tr>
+                    {% endfor %}
+
+                {% else %}
+                    <tr><td colspan=10>No images are available.</td></tr>
+                {% endif %}
+
+                </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_script %}
+
+    <script type="text/javascript">
+        var map;
+        var mapPolygons = [];
+        var mapConstPolygons = [];
+
+        function add_polygon(id){
+            window.mapPolygons[ id ].addTo(window.map);
+        }
+
+        function remove_polygon(id){
+            window.map.removeLayer(window.mapPolygons[ id ]);
+        }
+
+        function toggle_polygon(showPoly, id) {
+            if (showPoly.checked == true) add_polygon(id);
+            else remove_polygon(id);
+        };
+
+        {% for img in images %}
+            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 1, fillOpacity: 0.3, fillColor: '#f00'});
+            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 0, fillOpacity: 0.1, fillColor: '#00f'});
+        {% endfor %}
+
+        window.addEventListener("map:init", function (e) {
+            window.map = e.detail.map;
+            {% for img in images %}
+                window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
+            {% endfor %}
+
+        }, false);
+
+        $( "tr" ).mouseover(function() {
+            cbstr = ':checkbox[name=' + this.id + ']';
+            if ($(cbstr).prop("checked") == false) add_polygon(this.id);
+        });
+
+        $( "tr" ).mouseout(function() {
+            cbstr = ':checkbox[name=' + this.id + ']';
+            if ($(cbstr).prop("checked") == false) remove_polygon(this.id);
+        });
+
+        $(':checkbox').click(function() {
+            toggle_polygon(this, this.id);
+        });
+    </script>
+
+{% endblock %}
+
