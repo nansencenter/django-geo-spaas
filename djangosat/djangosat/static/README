@@ -1,0 +1,16 @@
+OBS: I removed the bootstrap submodule. If the files are still there; 
+run `rm -rf bootstrap`
+
+The bootstrap-folder contains twitter-bootstrap css, javascript, etc., and is a
+git submodule. See more here:
+http://git-scm.com/book/en/v2/Git-Tools-Submodules
+
+To get the actual files in bootstrap/, do:
+
+```
+git submodule init
+git submodule update
+```
+
+If you run `git submodule update --remote`, Git will go into your submodules and
+fetch and update for you.
