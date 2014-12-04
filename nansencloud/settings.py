@@ -84,8 +84,8 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     "django_forms_bootstrap",
     'leaflet',
-    'nansatcat',
-    'nansatproc',
+    'cat',
+    'proc',
 )
 
 MIDDLEWARE_CLASSES = (
