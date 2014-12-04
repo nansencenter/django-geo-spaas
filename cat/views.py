@@ -6,13 +6,13 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
 
-from nansatcat.models import Image
-from nansatcat.forms import SearchForm
+from cat.models import Image
+from cat.forms import SearchForm
 
 class IndexView(View):
     form_class = SearchForm
     image_class = Image
-    main_template = 'nansatcat/image_index.html'
+    main_template = 'cat/image_index.html'
     viewname = 'index'
     form = None
     context = {}
@@ -107,7 +107,7 @@ def image(request, image_id):
     image = Image.objects.get(id=image_id)
     context = {'image': image}#, 'info': image.info()}
 
-    return render(request, 'nansatcat/image.html', context)
+    return render(request, 'cat/image.html', context)
 
 def band(request, image_id, bandName):
     image = Image.objects.get(id=image_id)

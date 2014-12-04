@@ -8,8 +8,8 @@ from django.core.exceptions import ValidationError
 
 from nansat import *
 
-from nansatcat.models import *
-from nansatcat.forms import SearchForm
+from cat.models import *
+from cat.forms import SearchForm
 
 ifiles = glob.glob(os.path.join('/Data/sat/downloads/MERIS', 'MER_FRS_*N1'))
 if not ifiles:

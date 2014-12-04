@@ -6,13 +6,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nansencloud.settings")
 import django
 django.setup()
 
-from nansatcat.models import *
-from nansatcat.forms import *
-from nansatcat.views import *
+from cat.models import *
+from cat.forms import *
+from cat.views import *
 
-from nansatproc.models import *
-from nansatproc.forms import *
-from nansatproc.views import *
+from proc.models import *
+from proc.forms import *
+from proc.views import *
 
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -209,10 +209,10 @@ ogr2ogr --config PG_LIST_ALL_TABLES YES --config PG_SKIP_VIEWS YES -preserve_fid
 """
 
 """
-rm ../../django-nansat-process/nansatproc/migrations -rf
-rm ../../django-nansat-catalog/nansatcat/migrations -rf
-./manage.py makemigrations nansatcat
-./manage.py makemigrations nansatproc
+rm proc/migrations -rf
+rm cat/migrations -rf
+./manage.py makemigrations cat
+./manage.py makemigrations proc
 ./manage.py migrate
 ./manage.py createsuperuser --username=antonk --email=
 """

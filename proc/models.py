@@ -6,12 +6,12 @@ from django.contrib.gis.db import models
 
 from nansat.domain import Domain
 from nansat.figure import Figure
-from nansatcat.models import Image, ImageManager, BadSourceFileError, Status,\
+from cat.models import Image, ImageManager, BadSourceFileError, Status,\
         Search, SourceFile
 
 
 class ProcImage(Image):
-    ''' Parent of all Image-like classes in nansatproc '''
+    ''' Parent of all Image-like classes in proc '''
     image = models.ForeignKey(Image,
                             parent_link=True,
                             related_name='%(app_label)s_%(class)s_related')
@@ -28,19 +28,19 @@ class ProcImage(Image):
 
         Parameters
         ----------
-            cls : model from nansatproc
+            cls : model from proc
                 MerisWeb or RadarsatWeb or other similar
             image_or_filename : Image or str or unicode
-                if :model:`nansatcat.Image` :
+                if :model:`cat.Image` :
                     the object is created and obj.image is assigned
                 if str or unicode:
-                    first instance of :model:`nansatcat.Image` is
+                    first instance of :model:`cat.Image` is
                     created and saved; then the object is created
         Returns
         -------
             obj : type(cls)
                 Instance of the class that was used with create
-                e.g. :model:`nansatproc.MerisWeb`
+                e.g. :model:`proc.MerisWeb`
             create : bool
                 True, if the object created. False, if fetched from database
 
@@ -77,7 +77,7 @@ class Chain(models.Model):
 
 
 class ProcSearch(Search):
-    ''' Subcalss of nansatcat.Search with reference to Chain '''
+    ''' Subcalss of cat.Search with reference to Chain '''
     chain = models.ForeignKey(Chain, blank=True, null=True, related_name='procsearches')
 
 

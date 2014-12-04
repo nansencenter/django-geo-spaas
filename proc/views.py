@@ -4,17 +4,17 @@ from django.shortcuts import render, render_to_response
 from django.template.context import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from nansatcat.models import Image
-from nansatcat.views import IndexView
+from cat.models import Image
+from cat.views import IndexView
 
-from nansatproc.forms import ProcSearchForm
-from nansatproc.models import *
+from proc.forms import ProcSearchForm
+from proc.models import *
 
 
 class ProcIndexView(IndexView):
     form_class = ProcSearchForm
     viewname = 'proc_index'
-    main_template = 'nansatcat/image_index.html'
+    main_template = 'cat/image_index.html'
 
     def set_params(self):
         ''' Set default values for the form '''
@@ -22,21 +22,21 @@ class ProcIndexView(IndexView):
         if chain is None:
             self.image_class = Image
             self.context['chain_id'] = 0
-            self.main_template = 'nansatcat/image_index.html'
+            self.main_template = 'cat/image_index.html'
         else:
             self.image_class = eval(chain.name)
             self.context['chain_id']=chain.id
-            self.main_template = 'nansatproc/%s_index.html' % chain.name.lower()
+            self.main_template = 'proc/%s_index.html' % chain.name.lower()
 
 def proc_image(request, chain_id, image_id):
 
     try:
         chain = Chain.objects.get(id=chain_id)
         theTable = eval(chain.name)
-        template = 'nansatproc/%s_image.html' % chain.name.lower()
+        template = 'proc/%s_image.html' % chain.name.lower()
     except:
         theTable = Image
-        template = 'nansatcat/image.html'
+        template = 'cat/image.html'
 
     image = theTable.objects.get(id=image_id)
     doy = image.start_date.timetuple().tm_yday
@@ -78,10 +78,10 @@ def matchup(request, chain_id, image_id):
     try:
         chain = Chain.objects.get(id=chain_id)
         theTable = eval(chain.name)
-        template = 'nansatproc/%s_images.html' % chain.name.lower()
+        template = 'proc/%s_images.html' % chain.name.lower()
     except:
         theTable = Image
-        template = 'nansatproc/images.html'
+        template = 'proc/images.html'
 
     image = theTable.objects.get(id=image_id)
     images = theTable.objects.filter(border__intersects=image.border)

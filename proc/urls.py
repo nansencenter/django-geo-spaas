@@ -1,14 +1,14 @@
 from django.conf.urls import url
 
-import nansatcat.views
-import nansatproc.views
+import cat.views
+import proc.views
 
 urlpatterns = [
-    url(r'^$', nansatproc.views.ProcIndexView.as_view(), name='proc_index'),
-    url(r'^(?P<image_id>\d+)/$', nansatcat.views.image, name='image'),
-    url(r'^(?P<chain_id>\d+)/(?P<image_id>\d+)/$', nansatproc.views.proc_image, name='proc_image'),
-    url(r'^(?P<chain_id>\d+)/(?P<image_id>\d+)/(?P<bandName>\d+)/$', nansatcat.views.band, name='band'),
+    url(r'^$', proc.views.ProcIndexView.as_view(), name='proc_index'),
+    url(r'^(?P<image_id>\d+)/$', cat.views.image, name='image'),
+    url(r'^(?P<chain_id>\d+)/(?P<image_id>\d+)/$', proc.views.proc_image, name='proc_image'),
+    url(r'^(?P<chain_id>\d+)/(?P<image_id>\d+)/(?P<bandName>\d+)/$', cat.views.band, name='band'),
 
-    url(r'^(?P<chain_id>\d+)/(?P<image_id>\d+)/matchup/$', nansatproc.views.matchup, name='band'),
+    url(r'^(?P<chain_id>\d+)/(?P<image_id>\d+)/matchup/$', proc.views.matchup, name='band'),
 
 ]

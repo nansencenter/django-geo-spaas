@@ -13,7 +13,7 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.query import GeoQuerySet
 
-from nansatcat.models.models import Status, Sensor, Satellite, SourceFile, Band, Location
+from cat.models.models import Status, Sensor, Satellite, SourceFile, Band, Location
 
 class ImageQuerySet(GeoQuerySet):
     def sourcefiles(self):
@@ -37,7 +37,7 @@ class ImageManager(models.GeoManager):
         return self.get_queryset().new_sourcefiles(old_filename)
 
     def get_or_create(self, *args, **kwargs):
-        ''' Create an instance of :model:`nansatcat.Image` given the full
+        ''' Create an instance of :model:`cat.Image` given the full
         path to a Nansat readable product`
 
         Parameters
@@ -46,7 +46,7 @@ class ImageManager(models.GeoManager):
 
         Returns
         -------
-            image : :model:`nansatcat.Image`
+            image : :model:`cat.Image`
                 either successfully created or fetched from the database
             create : bool
                 indicator if image was create (True) or fethced (False)
@@ -155,12 +155,12 @@ class Image(models.Model):
     """ Stores a single dataset that can be read with Nansat,
 
     related to
-    :model:`nansatcat.SourceFile`,
-    :model:`nansatcat.Location`,
-    :model:`nansatcat.Status`,
-    :model:`nansatcat.Sensor`.
-    :model:`nansatcat.Satellite`.
-    :model:`nansatcat.Band`.
+    :model:`cat.SourceFile`,
+    :model:`cat.Location`,
+    :model:`cat.Status`,
+    :model:`cat.Sensor`.
+    :model:`cat.Satellite`.
+    :model:`cat.Band`.
     """
 
     sourcefile = models.ForeignKey(SourceFile, unique=True)

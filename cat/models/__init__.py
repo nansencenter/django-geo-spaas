@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
-from nansatcat.models.models import BadSourceFileError, Location, \
+from cat.models.models import BadSourceFileError, Location, \
     LocationManager, SourceFile, Search, Satellite, Sensor, \
     Band, Status
 
-from nansatcat.models.image import ImageQuerySet, ImageManager, Image
+from cat.models.image import ImageQuerySet, ImageManager, Image
 
 __all__ = [
 'ImageQuerySet',
