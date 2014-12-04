@@ -51,6 +51,7 @@ class ImageManager(models.GeoManager):
             create : bool
                 indicator if image was create (True) or fethced (False)
         '''
+        nborder_points = kwargs.pop('nPoints', None)
         # if fullpath is not provided, fallback to default method
         if len(args) != 1:
             return super(models.GeoManager, self).get_or_create(*args, **kwargs)
@@ -110,7 +111,10 @@ class ImageManager(models.GeoManager):
                 '+00:00').astimezone(pytz.utc)
         image.stop_date = parse(n.get_metadata('stop_date')+
                 '+00:00').astimezone(pytz.utc)
-        image.border = GEOSGeometry(n.get_border_wkt())
+        if nborder_points:
+            image.border = GEOSGeometry(n.get_border_wkt(nPoints=nborder_points))
+        else:
+            image.border = GEOSGeometry(n.get_border_wkt())
 
         # add Bands with essential info
         nBands = n.bands()
