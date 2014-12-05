@@ -181,7 +181,7 @@ class SARWeb(ProcImage):
         return [[np.min(lats), np.min(lons)], [np.max(lats), np.max(lons)]]
 
     def process(self, *args, **kwargs):
-        force = kwargs.pop('force')
+        force = kwargs.pop('force', False)
         if self.image.status.status==Status.BAD_STATUS:
             raise BadSourceFileError('Cannot process %s' % str(self.filename))
 
@@ -222,7 +222,7 @@ class SARWeb(ProcImage):
         if not os.path.isdir(savedir):
             os.mkdir(savedir)
 
-        # color limits ofr various polarizations
+        # color limits for various polarizations
         cLims = {'HH': [-20, 0],
                  'HV': [-30, -10],
                  'VV': [-20, 0],
@@ -231,7 +231,7 @@ class SARWeb(ProcImage):
 
         mask = n['mask']
         for i in range(len(n.bands())):
-            if n.bands()[i+1].has_key('short_name') and n.bands()[i+1]['short_name']=='sigma0':
+            if n.bands()[i+1].has_key('short_name') and 'sigma0' in n.bands()[i+1]['short_name']:
                 self.polarizations.add(Polarization.objects.get(
                     pol=n.bands()[i+1]['polarization']) )
                 # Create quicklooks if they don't already exist
