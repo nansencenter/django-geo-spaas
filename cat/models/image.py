@@ -63,7 +63,7 @@ class ImageManager(models.GeoManager):
             raise Exception('Input should be filename as str')
 
         if not os.path.exists(fullpath):
-            raise IOError('%s does not exsit!' % fullpath)
+            raise IOError('%s does not exist!' % fullpath)
 
         # convert string sourcefile and path into SourceFile and Location
         sourcefile = SourceFile.objects.get_or_create(fullpath)[0]

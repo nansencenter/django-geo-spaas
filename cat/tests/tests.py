@@ -18,14 +18,16 @@ ifiles = glob.glob(os.path.join('/Data/sat/downloads/MERIS', 'MER_FRS_*N1'))
 if not ifiles:
     raise Exception('Folder /Data/sat/downloads/MERIS not mounted')
 
-#class AddImagesTest(TestCase):
-#    def test_add_images_command(self):
-#        out = StringIO()
-#        call_command('add_images', ifiles[0], stdout=out)
-#        self.assertIn('Successfully added satellite image: %s'%ifiles[0],
-#                out.getvalue())
-#
-#    #def test_add_images_ufunc(self):
+class AddImagesTests(TestCase):
+    def test_add_images_command(self):
+        out = StringIO()
+        call_command('add_images', ifiles[0], ifiles[1], stdout=out)
+        self.assertIn('Successfully added satellite image: %s'%ifiles[0],
+                out.getvalue())
+        self.assertIn('Successfully added satellite image: %s'%ifiles[1],
+                out.getvalue())
+
+    #def test_add_images_ufunc(self):
 
 
 class SourceFileTests(TestCase):
