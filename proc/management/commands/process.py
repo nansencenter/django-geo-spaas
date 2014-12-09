@@ -6,13 +6,13 @@
 # Modified:	Morten Wergeland Hansen
 #
 # Created:	09.12.2014
-# Last modified:09.12.2014 13:12
+# Last modified:09.12.2014 13:56
 # Copyright:    (c) NERSC
 # License:      
 #-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand, CommandError
 
-from cat.utils import process
+from proc.utils import process
 
 class Command(BaseCommand):
     args = '<procModel>'
@@ -22,4 +22,4 @@ class Command(BaseCommand):
         if len(args)!=1:
             raise IOError('Please provide a model name')
         process(args[0])
-        self.stdout.write('Successfully processed new data in %s model'%args[0])
+        self.stdout.write('Successfully processed new data in %s'%args[0])

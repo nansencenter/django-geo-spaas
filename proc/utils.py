@@ -6,10 +6,12 @@
 # Modified:	Morten Wergeland Hansen
 #
 # Created:	09.12.2014
-# Last modified:09.12.2014 13:12
+# Last modified:09.12.2014 13:59
 # Copyright:    (c) NERSC
 # License:      
 #-------------------------------------------------------------------------------
+from cat.models.image import Image
+from proc.models import *
 
 def process(TheModel, crit={}, opts=None, force=False):
     # get all images
@@ -35,19 +37,17 @@ def process(TheModel, crit={}, opts=None, force=False):
     if crit.has_key('period_end') and crit['period_end'] is not None:
         qs = qs.filter(start_date__lt=crit['period_end'])
 
-    print qs
-
     if not force:
         newFiles = TheModel.objects.new_sourcefiles(qs.sourcefiles())
-        print newFiles
     else:
         newFiles = qs.sourcefiles()
 
     for newFile in newFiles:
         i, cr = TheModel.create(newFile)
-        print newFile, cr
         status = i.process(opts, force=force)
-        if status ==0:
+        if status==0:
             i.save()
+
+    return newFiles
 
 

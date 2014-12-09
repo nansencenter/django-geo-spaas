@@ -1,8 +1,10 @@
 import os
 import glob
-
 import datetime
+
+from django.core.management import call_command
 from django.test import TestCase
+from django.utils.six import StringIO
 from django.contrib.gis.geos import Polygon
 
 from cat.models import *
@@ -10,6 +12,21 @@ from proc.models import *
 
 idir = '/Data/sat/downloads/'
 ifiles = glob.glob(os.path.join(idir, 'MERIS', 'MER_FRS_1*N1'))
+
+class ProcessTests(TestCase):
+
+    def test_process_command(self):
+        out = StringIO()
+        p = '/Data/sat/downloads/ASAR/miscellaneous/proctest_files'
+        call_command('add_images', p, stdout=out)
+        self.assertIn('Successfully added satellite images:',
+                out.getvalue())
+        self.assertIn('%s'%p, out.getvalue())
+        out = StringIO()
+        call_command('process', SARWeb, stdout=out)
+        self.assertIn("Successfully processed new data in <class 'proc.models.SARWeb'>",
+                out.getvalue())
+
 
 class ChainModelTests(TestCase):
     def test_create_chain(self):
