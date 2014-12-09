@@ -6,15 +6,14 @@
 # Modified:	Morten Wergeland Hansen
 #
 # Created:	05.12.2014
-# Last modified:08.12.2014 16:30
+# Last modified:09.12.2014 13:04
 # Copyright:    (c) NERSC
 # License:      
 #-------------------------------------------------------------------------------
 import os, glob, warnings
+from django.core.management.base import BaseCommand, CommandError
 
 from nansat.tools import NansatReadError
-
-from django.core.management.base import BaseCommand, CommandError
 from cat.utils import add_images
 
 class Command(BaseCommand):
