@@ -7,13 +7,19 @@ import datetime
 from dateutil.parser import parse
 
 from nansat import Nansat, np
-from nansat.tools import WrongMapperError, GDALError
+from nansat.tools import WrongMapperError, NansatReadError
 
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.query import GeoQuerySet
 
 from cat.models.models import Status, Sensor, Satellite, SourceFile, Band, Location
+
+
+class NotImageError(Exception):
+    '''Error for handling files that are not Images (i.e., cannot be opened
+    with Nansat)'''
+    pass
 
 class ImageQuerySet(GeoQuerySet):
     def sourcefiles(self):
@@ -52,23 +58,31 @@ class ImageManager(models.GeoManager):
                 indicator if image was create (True) or fethced (False)
         '''
         nborder_points = kwargs.pop('nPoints', None)
+
         # if fullpath is not provided, fallback to default method
         if len(args) != 1:
             return super(models.GeoManager, self).get_or_create(*args, **kwargs)
 
         fullpath = args[0]
-        mapper = kwargs.get('mapper', '')
-
         if not type(fullpath) in [str, unicode]:
             raise Exception('Input should be filename as str')
-
         if not os.path.exists(fullpath):
             raise IOError('%s does not exist!' % fullpath)
+
+        mapper = kwargs.get('mapper', '')
+
+        try:
+            # open file with Nansat
+            n = Nansat(fullpath, mapperName=mapper)
+        except NansatReadError:
+            # This cancels setting the status of a file if it can't be opened
+            # with nansat
+            raise # re-raises the error
 
         # convert string sourcefile and path into SourceFile and Location
         sourcefile = SourceFile.objects.get_or_create(fullpath)[0]
 
-        # fetch or create an Image
+        # fetch or create Image
         try:
             image = Image.objects.get(sourcefile=sourcefile)
             create = False
@@ -81,21 +95,7 @@ class ImageManager(models.GeoManager):
             # return image from the database
             return image, create
 
-        # open file with Nansat
-        try:
-            n = image.get_nansat(mapper)
-        except:   ### WARNING: any error is swallowed here... Should be fixed.
-            # if file is not openable, warn, set status to Bad and return
-            warnings.warn('\n\n Cannot get Nansat object from %s !! \n\n' % image.sourcefile)
-            image.status = Status.objects.get_or_create(
-                                status=Status.BAD_STATUS,
-                                message=traceback.format_exc())[0]
-            image.save()
-            return image, create
-
-        # if file is openable with Nansat
         # fetch all data from the file
-
         image.mapper = n.mapper
         image.status = Status.objects.get_or_create(
                             status=Status.GOOD_STATUS,
