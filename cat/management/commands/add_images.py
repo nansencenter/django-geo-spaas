@@ -6,21 +6,30 @@
 # Modified:	Morten Wergeland Hansen
 #
 # Created:	05.12.2014
-# Last modified:05.12.2014 17:14
+# Last modified:08.12.2014 16:30
 # Copyright:    (c) NERSC
 # License:      
 #-------------------------------------------------------------------------------
+import os, glob, warnings
+
+from nansat.tools import NansatReadError
+
 from django.core.management.base import BaseCommand, CommandError
-from cat.utils import add_image
+from cat.utils import add_images
 
 class Command(BaseCommand):
-    args = '<input_file input_file ...>'
+    args = '<file_or_folder file_or_folder ...>'
     help = 'Add file to image archive'
 
     def handle(self, *args, **options):
         if len(args)==0:
             raise IOError('Please provide at least one filename')
-        for fname in args:
-            add_image(fname)
-            self.stdout.write('Successfully added satellite image: %s'%fname)
+        added = add_images(*args)
+        if len(added)>1:
+            ff = ['%s\n'%fn for fn in added]
+            self.stdout.write('Successfully added satellite images: \n%s'%ff)
+        elif len(added)==1:
+            self.stdout.write('Successfully added satellite image: %s'%added)
+        else:
+            self.stdout.write('Did not add any images')
 
