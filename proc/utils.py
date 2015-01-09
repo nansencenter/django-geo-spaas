@@ -1,19 +1,19 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
-# Modified:	Morten Wergeland Hansen
+# Modified:     Anton Korosov
 #
-# Created:	09.12.2014
-# Last modified:09.12.2014 13:59
+# Created:      09.12.2014
+# Last modified:09.01.2015
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 from cat.models.image import Image
 from proc.models import *
 
-def process(TheModel, crit={}, opts=None, force=False):
+def process(modelName, crit={}, opts=None, force=False):
     # get all images
     qs = Image.objects.all()
 
@@ -36,6 +36,9 @@ def process(TheModel, crit={}, opts=None, force=False):
     # filter by stop_date
     if crit.has_key('period_end') and crit['period_end'] is not None:
         qs = qs.filter(start_date__lt=crit['period_end'])
+
+    # convert the model name to Class
+    TheModel = eval(modelName)
 
     if not force:
         newFiles = TheModel.objects.new_sourcefiles(qs.sourcefiles())

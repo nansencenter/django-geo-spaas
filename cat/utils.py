@@ -1,14 +1,14 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
-# Modified:	Morten Wergeland Hansen
+# Modified: Morten Wergeland Hansen
 #
-# Created:	05.12.2014
+# Created:  05.12.2014
 # Last modified:08.12.2014 16:31
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 import os, time, warnings, glob
 
@@ -30,12 +30,18 @@ def add_image(filename, mapper='', sensor=''):
         i, cr = Image.objects.get_or_create(filename, mapper=mapper)
         return filename
     else:
-        raise Exception('Image already added') # make custom exception for this?
+        warnings.warn('Image %s already added' % filename) # make custom exception for this?
 
-def add_images_in_dir(dir, *args, **kwargs):
-    '''Add all images in directory dir to cat.models.Image'''
+def add_images_in_dir(inputDir, *args, **kwargs):
+    '''Add all (or with wildcard) images in directory dir to cat.models.Image'''
     added_files = []
-    for ff in glob.glob(os.path.join(dir,'*.*')):
+    if '*' in inputDir or '?' in inputDir:
+        # if dir name contains '*' or '?' consider it a wildcard
+        inputFiles = glob.glob(inputDir)
+    else:
+        inputFiles = glob.glob(os.path.join(inputDir,'*.*'))
+
+    for ff in inputFiles:
         if os.path.isfile(ff):
             try:
                 added_files.append(add_image(ff, *args, **kwargs))
@@ -64,7 +70,7 @@ def add_images(*args, **kwargs):
     ----------
     args : list of filenames, separate filenames, folders
     kwargs: additional keyword arguments for the add_image method
-        
+
     '''
     added_files = []
     for fn in args:
