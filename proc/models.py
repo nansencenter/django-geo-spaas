@@ -81,11 +81,20 @@ class ProcSearch(Search):
     chain = models.ForeignKey(Chain, blank=True, null=True, related_name='procsearches')
 
 
+class Product(ProcImage):
+    ''' Product of processing '''
+    standard_name = models.CharField(max_length=100)
+    long_name = models.CharField(max_length=100)
+    minimum = models.FloatField()
+    maximum = models.FloatField()
+    
+
 class MerisWeb(ProcImage):
     ''' List of images processed with the MerisWeb chain'''
     resolution = models.CharField(max_length=2)     # Spatial resolution
     level = models.CharField(max_length=1)          # Level of processing
-    quicklook = models.ForeignKey(SourceFile, related_name='merisweb_imgs', blank=True, null=True)      # file with quicklook
+    # Product with RGB quicklook
+    product = models.ForeignKey(Product, related_name='merisweb_prods', blank=True, null=True)
     daily = models.BooleanField(default=False)                   # was used in daily processing
     chain = models.ForeignKey(Chain, related_name='merisweb_imgs', blank=True, null=True)
 
@@ -125,8 +134,16 @@ class MerisWeb(ProcImage):
         print 'Generate %s ' % qlName
         f = n.write_figure(qlName, [7, 5, 1], clim=[[5,10,25], [35, 55, 80]])
 
+        # create Product for the quicklook file
+        qlImg, create = Image.objects.create_from_nansat(n, qlName)
+        self.product, create = Product.create(qlImg)
+        self.product.standard_name = 'RGB composite of water leaving radiance'
+        self.product.long_name = 'RGB from 7,5,1 bands'
+        self.product.minimum = 0
+        self.product.maximum = 0
+        self.product.save()
+
         # set all fields
-        self.quicklook = SourceFile.objects.get_or_create(urlName, force=True)[0]
         self.resolution = self.sourcefile.name.replace('__', '_').split('_')[1][0:2]
         self.level = self.sourcefile.name.replace('__', '_').split('_')[2][0]
         self.chain = MerisWeb.get_chain()
