@@ -10,6 +10,7 @@
 # Copyright:    (c) NERSC
 # License:
 #-------------------------------------------------------------------------------
+from django.contrib.gis.geos import GEOSGeometry
 from cat.models.image import Image
 from proc.models import *
 
@@ -37,6 +38,8 @@ def process(modelName, crit={}, opts=None, force=False):
     if crit.has_key('period_end') and crit['period_end'] is not None:
         qs = qs.filter(start_date__lt=crit['period_end'])
 
+    if crit.has_key('polygon') and crit['polygon'] is not None:
+        qs = qs.filter(border__intersects=GEOSGeometry(crit['polygon']))
     # convert the model name to Class
     TheModel = eval(modelName)
 
