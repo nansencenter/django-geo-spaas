@@ -24,7 +24,7 @@ class NotImageError(Exception):
 class ImageQuerySet(GeoQuerySet):
     def sourcefiles(self):
         ''' Get list of full path/file names '''
-        return [os.path.join(p, f) for p,f in self.values_list('sourcefile__location__address', 'sourcefile__name')]
+        return [os.path.join(p, f) for p,f in self.values_list('sourcefile__path__address', 'sourcefile__name')]
 
     def new_sourcefiles(self, old_sourcefiles):
         ''' Get filenames which are not in old_filenames'''
@@ -93,7 +93,7 @@ class ImageManager(models.GeoManager):
             create : bool
                 Was the Image created? (or fetched from database)
         '''
-        
+
         # convert string sourcefile and path into SourceFile and Location
         sourcefile = SourceFile.objects.get_or_create(fullpath)[0]
 
@@ -157,7 +157,7 @@ class Image(models.Model):
     border = models.PolygonField(null=True, blank=True)
 
     objects = ImageManager()
-    
+
     def border2str(self):
         ''' Generate Leaflet JavaScript defining the border polygon'''
         borderStr = '['
