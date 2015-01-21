@@ -79,6 +79,21 @@ class ImageManager(models.GeoManager):
             # with nansat
             raise # re-raises the error
 
+        return self.create_from_nansat(n, fullpath, nborder_points)
+
+    def create_from_nansat(self, n, fullpath, nborder_points=None):
+        ''' Create Image from Nansat object and full path
+        Parameters:
+        -----------
+            n : Nansat object
+            fullpath : string with full path to input file
+        Returns:
+        --------
+            image : Image object
+            create : bool
+                Was the Image created? (or fetched from database)
+        '''
+        
         # convert string sourcefile and path into SourceFile and Location
         sourcefile = SourceFile.objects.get_or_create(fullpath)[0]
 
@@ -89,8 +104,6 @@ class ImageManager(models.GeoManager):
         except Image.DoesNotExist:
             image = Image(sourcefile=sourcefile)
             create = True
-            # presave image for adding Bands later on
-            image.save()
         else:
             # return image from the database
             return image, create
@@ -116,37 +129,6 @@ class ImageManager(models.GeoManager):
         else:
             image.border = GEOSGeometry(n.get_border_wkt())
 
-        # add Bands with essential info
-        nBands = n.bands()
-        for bandNumber in nBands:
-            # get SourceFilename and make SourceFile and Location
-            fullpath = nBands[bandNumber]['SourceFilename']
-
-            # skip non existing or memory bands 
-            # OBS: This excludes all zipped products and possibly other bands
-            # as well - should be rethought...
-            if not os.path.exists(fullpath):
-                continue
-            if fullpath.startswith('/vsimem'):
-                continue
-
-            sourcefile = SourceFile.objects.get_or_create(fullpath)[0]
-
-            # get other relevant information
-            sourceband = int(nBands[bandNumber]['SourceBand'])
-            name = nBands[bandNumber].get('name', 'unknown')
-            standard_name = nBands[bandNumber].get('standard_name', 'unknown')
-
-            # create Band and save
-            band = Band(sourcefile=sourcefile,
-                        sourceband=sourceband,
-                        name=name,
-                        standard_name=standard_name)
-            band.save()
-
-            # add to bands
-            image.bands.add(band)
-
         image.save()
         return image, create
 
@@ -170,7 +152,6 @@ class Image(models.Model):
     start_date = models.DateTimeField(blank=True, null=True)
     stop_date = models.DateTimeField(blank=True, null=True)
     mapper = models.CharField(max_length=100, blank=True)
-    bands = models.ManyToManyField(Band)
 
     # GeoDjango-specific: a geometry field (PolygonField)
     border = models.PolygonField(null=True, blank=True)
