@@ -7,7 +7,7 @@ from django.contrib.gis.db import models
 from nansat.domain import Domain
 from nansat.figure import Figure
 from cat.models import Image, ImageManager, BadSourceFileError, Status,\
-        Search, SourceFile
+        Search, SourceFile, Location
 
 
 class ProcImage(Image):
@@ -87,7 +87,7 @@ class Product(ProcImage):
     long_name = models.CharField(max_length=100)
     minimum = models.FloatField()
     maximum = models.FloatField()
-    
+
 
 class MerisWeb(ProcImage):
     ''' List of images processed with the MerisWeb chain'''
@@ -130,7 +130,12 @@ class MerisWeb(ProcImage):
         qlName = os.path.join(opts['odir'], self.sourcefile.name) + '_.jpg'
         urlName = os.path.join(opts['url'], self.sourcefile.name) + '_.jpg'
         n = self.get_nansat()
-        n.resize(width=300)
+        lons, lats = n.get_corners()
+        srsString = '+proj=latlong +datum=WGS84 +ellps=WGS84 +no_defs'
+        extentString = '-lle %f %f %f %f -tr 0.04 0.04'% (min(lons), min(lats),
+                            max(lons), max(lats))
+        d = Domain(srs=srsString, ext=extentString)
+        n.reproject(d, eResampleAlg=2)
         print 'Generate %s ' % qlName
         f = n.write_figure(qlName, [7, 5, 1], clim=[[5,10,25], [35, 55, 80]])
 
@@ -142,6 +147,10 @@ class MerisWeb(ProcImage):
         self.product.minimum = 0
         self.product.maximum = 0
         self.product.save()
+        # add url of web-file
+        url = Location.objects.get_or_create(opts['url'])[0]
+        self.product.sourcefile.urls.add(url)
+        self.product.sourcefile.save()
 
         # set all fields
         self.resolution = self.sourcefile.name.replace('__', '_').split('_')[1][0:2]

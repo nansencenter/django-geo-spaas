@@ -168,7 +168,7 @@ class Image(models.Model):
 
     def get_nansat(self, mapper=''):
         ''' Return Nansat object of the file '''
-        return Nansat(str(self.sourcefile), mapperName=mapper)
+        return Nansat(str(self.sourcefile.full_path()), mapperName=mapper)
 
     def save(self, *args, **kwargs):
         ''' Check all fields, uniquness in the Image table and save

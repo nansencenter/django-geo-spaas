@@ -50,7 +50,7 @@ class SourceFileTests(TestCase):
 
         self.assertEqual(str(sf1), str(fullpath))
         self.assertEqual(str(sf1.name), name)
-        self.assertEqual(str(sf1.location.address), path)
+        self.assertEqual(str(sf1.path.address), path)
         self.assertEqual(cr1, True)
 
     def test_force_create(self):

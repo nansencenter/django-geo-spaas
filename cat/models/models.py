@@ -141,9 +141,11 @@ class SourceFile(models.Model):
     def __unicode__(self):
         return self.name
 
-    #def get_absolute_path(self):
-    # return the file system path to the file
+    def full_path(self):
+        return os.path.join(self.path.address, self.name)
 
+    def full_http(self):
+        return os.path.join(self.urls.all()[0].address, self.name)
     #def get_absolute_url(self, type):
     # return the url of the file, optionally specifying the type of url (e.g.,
     # http, opendap, ftp, etc.)

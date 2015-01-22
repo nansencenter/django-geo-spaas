@@ -12,6 +12,7 @@ from proc.models import *
 
 
 class ProcIndexView(IndexView):
+    ''' Show several processed images '''
     form_class = ProcSearchForm
     viewname = 'proc_index'
     main_template = 'cat/image_index.html'
@@ -28,7 +29,21 @@ class ProcIndexView(IndexView):
             self.context['chain_id']=chain.id
             self.main_template = 'proc/%s_index.html' % chain.name.lower()
 
+
+class ProductsIndexView(IndexView):
+    ''' Show several processed images '''
+    form_class = ProcSearchForm
+    viewname = 'product_index'
+    main_template = 'cat/image_index.html'
+
+    def set_params(self):
+        ''' Set default values for the form '''
+        self.image_class = Product
+        self.main_template = 'proc/product_index.html'
+
+
 def proc_image(request, chain_id, image_id):
+    ''' Show single processed image '''
 
     try:
         chain = Chain.objects.get(id=chain_id)
@@ -72,6 +87,7 @@ def proc_image(request, chain_id, image_id):
             context_instance=RequestContext(request, context))
 
 def matchup(request, chain_id, image_id):
+    ''' Show single matchup'''
 
     dateHalfWindow = 2 # days
 
