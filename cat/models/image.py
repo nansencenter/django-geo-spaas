@@ -7,7 +7,7 @@ import datetime
 from dateutil.parser import parse
 
 from nansat import Nansat, np
-from nansat.tools import WrongMapperError, GDALError
+from nansat.tools import WrongMapperError, NansatReadError
 
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.contrib.gis.db import models
@@ -15,10 +15,16 @@ from django.contrib.gis.db.models.query import GeoQuerySet
 
 from cat.models.models import Status, Sensor, Satellite, SourceFile, Band, Location
 
+
+class NotImageError(Exception):
+    '''Error for handling files that are not Images (i.e., cannot be opened
+    with Nansat)'''
+    pass
+
 class ImageQuerySet(GeoQuerySet):
     def sourcefiles(self):
         ''' Get list of full path/file names '''
-        return [os.path.join(p, f) for p,f in self.values_list('sourcefile__location__address', 'sourcefile__name')]
+        return [os.path.join(p, f) for p,f in self.values_list('sourcefile__path__address', 'sourcefile__name')]
 
     def new_sourcefiles(self, old_sourcefiles):
         ''' Get filenames which are not in old_filenames'''
@@ -52,50 +58,57 @@ class ImageManager(models.GeoManager):
                 indicator if image was create (True) or fethced (False)
         '''
         nborder_points = kwargs.pop('nPoints', None)
+
         # if fullpath is not provided, fallback to default method
         if len(args) != 1:
             return super(models.GeoManager, self).get_or_create(*args, **kwargs)
 
         fullpath = args[0]
-        mapper = kwargs.get('mapper', '')
-
         if not type(fullpath) in [str, unicode]:
             raise Exception('Input should be filename as str')
-
         if not os.path.exists(fullpath):
-            raise IOError('%s does not exsit!' % fullpath)
+            raise IOError('%s does not exist!' % fullpath)
+
+        mapper = kwargs.get('mapper', '')
+
+        try:
+            # open file with Nansat
+            n = Nansat(fullpath, mapperName=mapper)
+        except NansatReadError:
+            # This cancels setting the status of a file if it can't be opened
+            # with nansat
+            raise # re-raises the error
+
+        return self.create_from_nansat(n, fullpath, nborder_points)
+
+    def create_from_nansat(self, n, fullpath, nborder_points=None):
+        ''' Create Image from Nansat object and full path
+        Parameters:
+        -----------
+            n : Nansat object
+            fullpath : string with full path to input file
+        Returns:
+        --------
+            image : Image object
+            create : bool
+                Was the Image created? (or fetched from database)
+        '''
 
         # convert string sourcefile and path into SourceFile and Location
         sourcefile = SourceFile.objects.get_or_create(fullpath)[0]
 
-        # fetch or create an Image
+        # fetch or create Image
         try:
             image = Image.objects.get(sourcefile=sourcefile)
             create = False
         except Image.DoesNotExist:
             image = Image(sourcefile=sourcefile)
             create = True
-            # presave image for adding Bands later on
-            image.save()
         else:
             # return image from the database
             return image, create
 
-        # open file with Nansat
-        try:
-            n = image.get_nansat(mapper)
-        except:   ### WARNING: any error is swallowed here... Should be fixed.
-            # if file is not openable, warn, set status to Bad and return
-            warnings.warn('\n\n Cannot get Nansat object from %s !! \n\n' % image.sourcefile)
-            image.status = Status.objects.get_or_create(
-                                status=Status.BAD_STATUS,
-                                message=traceback.format_exc())[0]
-            image.save()
-            return image, create
-
-        # if file is openable with Nansat
         # fetch all data from the file
-
         image.mapper = n.mapper
         image.status = Status.objects.get_or_create(
                             status=Status.GOOD_STATUS,
@@ -115,37 +128,6 @@ class ImageManager(models.GeoManager):
             image.border = GEOSGeometry(n.get_border_wkt(nPoints=nborder_points))
         else:
             image.border = GEOSGeometry(n.get_border_wkt())
-
-        # add Bands with essential info
-        nBands = n.bands()
-        for bandNumber in nBands:
-            # get SourceFilename and make SourceFile and Location
-            fullpath = nBands[bandNumber]['SourceFilename']
-
-            # skip non existing or memory bands 
-            # OBS: This excludes all zipped products and possibly other bands
-            # as well - should be rethought...
-            if not os.path.exists(fullpath):
-                continue
-            if fullpath.startswith('/vsimem'):
-                continue
-
-            sourcefile = SourceFile.objects.get_or_create(fullpath)[0]
-
-            # get other relevant information
-            sourceband = int(nBands[bandNumber]['SourceBand'])
-            name = nBands[bandNumber].get('name', 'unknown')
-            standard_name = nBands[bandNumber].get('standard_name', 'unknown')
-
-            # create Band and save
-            band = Band(sourcefile=sourcefile,
-                        sourceband=sourceband,
-                        name=name,
-                        standard_name=standard_name)
-            band.save()
-
-            # add to bands
-            image.bands.add(band)
 
         image.save()
         return image, create
@@ -170,13 +152,12 @@ class Image(models.Model):
     start_date = models.DateTimeField(blank=True, null=True)
     stop_date = models.DateTimeField(blank=True, null=True)
     mapper = models.CharField(max_length=100, blank=True)
-    bands = models.ManyToManyField(Band)
 
     # GeoDjango-specific: a geometry field (PolygonField)
     border = models.PolygonField(null=True, blank=True)
 
     objects = ImageManager()
-    
+
     def border2str(self):
         ''' Generate Leaflet JavaScript defining the border polygon'''
         borderStr = '['
@@ -187,7 +168,7 @@ class Image(models.Model):
 
     def get_nansat(self, mapper=''):
         ''' Return Nansat object of the file '''
-        return Nansat(str(self.sourcefile), mapperName=mapper)
+        return Nansat(str(self.sourcefile.full_path()), mapperName=mapper)
 
     def save(self, *args, **kwargs):
         ''' Check all fields, uniquness in the Image table and save

@@ -7,7 +7,7 @@ from django.contrib.gis.db import models
 from nansat.domain import Domain
 from nansat.figure import Figure
 from cat.models import Image, ImageManager, BadSourceFileError, Status,\
-        Search, SourceFile
+        Search, SourceFile, Location
 
 
 class ProcImage(Image):
@@ -81,11 +81,20 @@ class ProcSearch(Search):
     chain = models.ForeignKey(Chain, blank=True, null=True, related_name='procsearches')
 
 
+class Product(ProcImage):
+    ''' Product of processing '''
+    standard_name = models.CharField(max_length=100)
+    long_name = models.CharField(max_length=100)
+    minimum = models.FloatField()
+    maximum = models.FloatField()
+
+
 class MerisWeb(ProcImage):
     ''' List of images processed with the MerisWeb chain'''
     resolution = models.CharField(max_length=2)     # Spatial resolution
     level = models.CharField(max_length=1)          # Level of processing
-    quicklook = models.ForeignKey(SourceFile, related_name='merisweb_imgs', blank=True, null=True)      # file with quicklook
+    # Product with RGB quicklook
+    product = models.ForeignKey(Product, related_name='merisweb_prods', blank=True, null=True)
     daily = models.BooleanField(default=False)                   # was used in daily processing
     chain = models.ForeignKey(Chain, related_name='merisweb_imgs', blank=True, null=True)
 
@@ -121,12 +130,29 @@ class MerisWeb(ProcImage):
         qlName = os.path.join(opts['odir'], self.sourcefile.name) + '_.jpg'
         urlName = os.path.join(opts['url'], self.sourcefile.name) + '_.jpg'
         n = self.get_nansat()
-        n.resize(width=300)
+        lons, lats = n.get_corners()
+        srsString = '+proj=latlong +datum=WGS84 +ellps=WGS84 +no_defs'
+        extentString = '-lle %f %f %f %f -tr 0.04 0.04'% (min(lons), min(lats),
+                            max(lons), max(lats))
+        d = Domain(srs=srsString, ext=extentString)
+        n.reproject(d, eResampleAlg=2)
         print 'Generate %s ' % qlName
         f = n.write_figure(qlName, [7, 5, 1], clim=[[5,10,25], [35, 55, 80]])
 
+        # create Product for the quicklook file
+        qlImg, create = Image.objects.create_from_nansat(n, qlName)
+        self.product, create = Product.create(qlImg)
+        self.product.standard_name = 'RGB composite of water leaving radiance'
+        self.product.long_name = 'RGB from 7,5,1 bands'
+        self.product.minimum = 0
+        self.product.maximum = 0
+        self.product.save()
+        # add url of web-file
+        url = Location.objects.get_or_create(opts['url'])[0]
+        self.product.sourcefile.urls.add(url)
+        self.product.sourcefile.save()
+
         # set all fields
-        self.quicklook = SourceFile.objects.get_or_create(urlName, force=True)[0]
         self.resolution = self.sourcefile.name.replace('__', '_').split('_')[1][0:2]
         self.level = self.sourcefile.name.replace('__', '_').split('_')[2][0]
         self.chain = MerisWeb.get_chain()

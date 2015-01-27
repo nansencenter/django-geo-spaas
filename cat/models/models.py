@@ -125,28 +125,27 @@ class SourceFileManager(models.Manager):
             raise Exception(''' %s does not exist ''' % fullpath)
 
         path, name = os.path.split(fullpath)
-        location = Location.objects.get_or_create(path)[0]
+        path = Location.objects.get_or_create(path)[0]
 
         return super(models.Manager, self).get_or_create(name=name,
-                                                         location=location)
-
+                                                         path=path)
 
 class SourceFile(models.Model):
     ''' Source of Image Band'''
     name = models.CharField(max_length=200)
-    location = models.ForeignKey(Location)
+    path = models.ForeignKey(Location, blank=True, null=True, related_name='sourcefile_path')
+    urls = models.ManyToManyField(Location, blank=True, null=True, related_name='sourcefile_locations')
 
     objects = SourceFileManager()
 
-    class Meta():
-        unique_together = ['name', 'location']
-
     def __unicode__(self):
-        return os.path.join(self.location.address, self.name)
+        return self.name
 
-    #def get_absolute_path(self):
-    # return the file system path to the file
+    def full_path(self):
+        return os.path.join(self.path.address, self.name)
 
+    def full_http(self):
+        return os.path.join(self.urls.all()[0].address, self.name)
     #def get_absolute_url(self, type):
     # return the url of the file, optionally specifying the type of url (e.g.,
     # http, opendap, ftp, etc.)

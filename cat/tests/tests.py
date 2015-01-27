@@ -6,6 +6,9 @@ from django.contrib.gis.geos import Polygon
 
 from django.core.exceptions import ValidationError
 
+from django.core.management import call_command
+from django.utils.six import StringIO
+
 from nansat import *
 
 from cat.models import *
@@ -14,6 +17,28 @@ from cat.forms import SearchForm
 ifiles = glob.glob(os.path.join('/Data/sat/downloads/MERIS', 'MER_FRS_*N1'))
 if not ifiles:
     raise Exception('Folder /Data/sat/downloads/MERIS not mounted')
+
+class AddImagesTests(TestCase):
+    def test_add_images_command_filenames(self):
+        out = StringIO()
+        call_command('add_images', ifiles[0], ifiles[1], stdout=out)
+        self.assertIn('Successfully added satellite image: %s'%ifiles[0],
+                out.getvalue())
+        self.assertIn('Successfully added satellite image: %s'%ifiles[1],
+                out.getvalue())
+
+    def test_add_images_command_foldernames(self):
+        out = StringIO()
+        p1 = '/Data/sat/downloads/ASAR/miscellaneous'
+        p2 = '/Data/sat/downloads/ASAR/ligurian'
+        call_command('add_images', p2,p1, stdout=out)
+        output = out.getvalue()
+        self.assertIn('Successfully added satellite images:',
+                output)
+        self.assertIn('%s'%p1, output)
+        self.assertIn('%s'%p2, output)
+
+    #def test_add_images_ufunc(self):
 
 
 class SourceFileTests(TestCase):
@@ -25,7 +50,7 @@ class SourceFileTests(TestCase):
 
         self.assertEqual(str(sf1), str(fullpath))
         self.assertEqual(str(sf1.name), name)
-        self.assertEqual(str(sf1.location.address), path)
+        self.assertEqual(str(sf1.path.address), path)
         self.assertEqual(cr1, True)
 
     def test_force_create(self):
