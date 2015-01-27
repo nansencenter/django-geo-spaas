@@ -104,8 +104,12 @@ WSGI_APPLICATION = 'nansencloud.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-#from nansencloud.databases_postgis import *
-from nansencloud.databases import *
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'NAME': 'geodjango.db',
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
