@@ -14,53 +14,33 @@ import os, time, warnings, glob
 
 from cat.models import Image
 
-def get_images_for_sensor(sensor):
-    images = Image.objects.all()
-    if sensor is not '':
-        images = images.filter(sensor__name=sensor)
-    return images
+def get_files_from_dir(inputDir):
+    ''' Get all input valid files from input directory or wildcard '''
 
-def add_image(filename, mapper='', sensor=''):
-    ''' Fill the table Image with core info on satellite images'''
-    images = get_images_for_sensor(sensor)
-
-    # convert to list of full filenames
-    if not filename in images.sourcefiles():
-        # add new file
-        i, cr = Image.objects.get_or_create(filename, mapper=mapper)
-        return filename
+    # get list of entries from wildcard or directory
+    if '*' or '?' in inputDir:
+        globEntries = glob.glob(inputDir)
+    elif os.path.isdir(inputDir):
+        globEntries = glob.glob(os.path.join(inputDir, '*'))
     else:
-        warnings.warn('Image %s already added' % filename) # make custom exception for this?
+        raise TypeError('Wrong input directory or wildcard %s' % inputDir)
 
-def add_images_in_dir(inputDir, *args, **kwargs):
-    '''Add all (or with wildcard) images in directory dir to cat.models.Image'''
-    added_files = []
-    if '*' in inputDir or '?' in inputDir:
-        # if dir name contains '*' or '?' consider it a wildcard
-        inputFiles = glob.glob(inputDir)
-    else:
-        inputFiles = glob.glob(os.path.join(inputDir,'*.*'))
+    # fetch only files from the found entries
+    inputFiles = []
+    for globEntry in globEntries:
+        if os.path.isfile(globEntry):
+            inputFiles.append(globEntry)
 
-    for ff in inputFiles:
-        if os.path.isfile(ff):
-            try:
-                added_files.append(add_image(ff, *args, **kwargs))
-            except Exception as e:
-                warnings.warn(e.message)
-                continue
-    return added_files
+    return inputFiles
 
-def add_images_in_list(filenames, *args, **kwargs):
-    '''Add all images in filenames list to cat.models.Image'''
-    added_files = []
+def get_files_from_list(filenames):
+    '''Get all valid input filenames from list'''
+    inputFiles = []
     for fn in filenames:
         if os.path.isfile(fn):
-            try:
-                added_files.append(add_image(fn, *args, **kwargs))
-            except Exception as e:
-                warnings.warn(e.message)
-                continue
-    return added_files
+            inputFiles.append(fn)
+
+    return inputFiles
 
 def add_images(*args, **kwargs):
     '''
@@ -72,13 +52,32 @@ def add_images(*args, **kwargs):
     kwargs: additional keyword arguments for the add_image method
 
     '''
-    added_files = []
+    # create list with valid input files
+    inputFiles = []
     for fn in args:
         if os.path.isfile(fn):
-            added_files.append(add_image(fn, **kwargs))
-        if os.path.isdir(fn):
-            added_files.extend(add_images_in_dir(fn, **kwargs))
-        if isinstance(fn, list):
-            added_files.extend(add_images_in_list(fn, **kwargs))
-    return added_files
+            inputFiles.append(fn)
+        elif type(fn) in (tuple, list):
+            inputFiles.extend(get_files_from_list(fn))
+        else:
+            try:
+                inputFiles.extend(get_files_from_dir(fn))
+            except TypeError as e:
+                warnings.warn(e.message)
+    inputFiles.sort()
+
+    # get list of files available in the database
+    images = Image.objects.all()
+
+    # get list of new files (exiting on disk but not in the database)
+    newFiles = images.new_sourcefiles(inputFiles)
+
+    # add new files to the database
+    mapper = kwargs.get('mapper', '')
+    addedFiles = []
+    for newFile in newFiles:
+        i, cr = Image.objects.get_or_create(newFile, mapper=mapper)
+        addedFiles.append(i.sourcefile.name)
+
+    return addedFiles
 
