@@ -13,6 +13,8 @@ sudo pip install scipy
 sudo pip install pillow
 sudo pip install netCDF
 sudo pip install nose
+sudo pip install scikit-learn
+
 # for ipython notebook
 sudo pip install pyzmq
 sudo pip install jinja2

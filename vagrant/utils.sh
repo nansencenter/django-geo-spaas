@@ -60,3 +60,9 @@ sudo apt-get install python-gtk2 -y
 sudo apt-get install python-gtk2-dev  -y
 sudo apt-get install x11-apps -y
 sudo apt-get install tk tk-dev -y
+sudo apt-get install libcanberra-gtk-module
+
+# add history lookup with pg-up, pg-dwn
+echo '# alternate mappings for "page up" and "page down" to search the history' >> /home/vagrant/.inputrc
+echo '"\e[5~": history-search-backward' >> /home/vagrant/.inputrc
+echo '"\e[6~": history-search-forward' >> /home/vagrant/.inputrc

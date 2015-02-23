@@ -107,7 +107,7 @@ WSGI_APPLICATION = 'nansencloud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'NAME': 'geodjango.db',
+        'NAME': os.path.join(BASE_DIR,  'geodjango.db'),
         }
     }
 
