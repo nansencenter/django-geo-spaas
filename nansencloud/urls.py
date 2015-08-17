@@ -8,8 +8,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'nansencloud.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$',      include('cat.urls')),
-    url(r'^cat/',   include('cat.urls')),
-    url(r'^proc/', include('proc.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$',      include('nansencloud.cat.urls')),
+    url(r'^cat/',   include('nansencloud.cat.urls')),
+    url(r'^proc/', include('nansencloud.proc.urls')),
 )

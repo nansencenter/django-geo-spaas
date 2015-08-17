@@ -10,8 +10,29 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+#BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+# ./manage.py collectstatic will put app-specific static files here:
+STATIC_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "static")
+# uploaded media will be put here:
+MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "media")
+
+# In our model process methods, we save our static files here (in addition to
+# this we can have static-dirs in our apps that will be found automatically by
+# Django):
+STATICFILES_DIRS = (
+    os.path.join(PACKAGE_ROOT, "static"),
+)
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.6/howto/static-files/
+STATIC_URL = '/site_media/static/'
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+MEDIA_URL = '/site_media/media/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -23,6 +44,27 @@ SECRET_KEY = 'n377^y0m&n7%-(g+o37(7fkkf5@nui_r-3msk_mkl3sp=85319'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = [
+    "django.template.loaders.filesystem.Loader",
+    "django.template.loaders.app_directories.Loader",
+]
+
+TEMPLATE_CONTEXT_PROCESSORS = [
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.core.context_processors.request",
+    "django.contrib.messages.context_processors.messages",
+]
+
+TEMPLATE_DIRS = [
+    os.path.join(PACKAGE_ROOT, "templates"),
+]
 
 ALLOWED_HOSTS = []
 
@@ -36,6 +78,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
+    'django_forms_bootstrap',
+    'leaflet',
+    'nansencloud.cat',
+    'nansencloud.proc',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,8 +105,8 @@ WSGI_APPLICATION = 'test_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'NAME': os.path.join(BASE_DIR,  'geodjango.db'),
     }
 }
 
@@ -76,8 +123,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
-
-STATIC_URL = '/static/'
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (30.0, 0.0),
+    'DEFAULT_ZOOM': 1,
+    'MIN_ZOOM': 1,
+    'MAX_ZOOM': 10,
+    'RESET_VIEW': False,
+    'PLUGINS': {
+        'forms': {
+            'auto-include': True
+        }
+    }
+}
