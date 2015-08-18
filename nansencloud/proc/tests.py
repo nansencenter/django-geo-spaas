@@ -7,8 +7,8 @@ from django.test import TestCase
 from django.utils.six import StringIO
 from django.contrib.gis.geos import Polygon
 
-from cat.models import *
-from proc.models import *
+from nansencloud.cat.models import *
+from nansencloud.proc.models import *
 
 idir = '/Data/sat/downloads/'
 ifiles = glob.glob(os.path.join(idir, 'MERIS', 'MER_FRS_1*N1'))

@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 
 from nansat.domain import Domain
 from nansat.figure import Figure
-from cat.models import Image, ImageManager, BadSourceFileError, Status,\
+from nansencloud.cat.models import Image, ImageManager, BadSourceFileError, Status,\
         Search, SourceFile, Location
 
 

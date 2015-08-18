@@ -11,8 +11,8 @@ from django.utils.six import StringIO
 
 from nansat import *
 
-from cat.models import *
-from cat.forms import SearchForm
+from nansencloud.cat.models import *
+from nansencloud.cat.forms import SearchForm
 
 ifiles = glob.glob(os.path.join('/Data/sat/downloads/MERIS', 'MER_FRS_*N1'))
 if not ifiles:

@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
-from cat.models.models import BadSourceFileError, Location, \
+from nansencloud.cat.models.models import BadSourceFileError, Location, \
     LocationManager, SourceFile, Search, Satellite, Sensor, \
     Band, Status
 
-from cat.models.image import ImageQuerySet, ImageManager, Image
+from nansencloud.cat.models.image import ImageQuerySet, ImageManager, Image
 
 __all__ = [
 'ImageQuerySet',

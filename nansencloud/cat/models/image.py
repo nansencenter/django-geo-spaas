@@ -13,7 +13,7 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.query import GeoQuerySet
 
-from cat.models.models import Status, Sensor, Satellite, SourceFile, Band, Location
+from nansencloud.cat.models.models import Status, Sensor, Satellite, SourceFile, Band, Location
 
 
 class NotImageError(Exception):

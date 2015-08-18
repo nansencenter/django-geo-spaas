@@ -8,9 +8,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-#BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),
+    os.pardir))
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # ./manage.py collectstatic will put app-specific static files here:
@@ -106,7 +106,7 @@ WSGI_APPLICATION = 'test_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'NAME': os.path.join(BASE_DIR,  'geodjango.db'),
+        'NAME': os.path.join(PROJECT_ROOT,  'geodjango.db'),
     }
 }
 
