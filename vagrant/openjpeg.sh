@@ -10,7 +10,8 @@ cd /vagrant
 if [ ! -f openjpeg-2.0.0.tar.gz ]; then
     wget http://sourceforge.net/projects/openjpeg.mirror/files/openjpeg-2.0.0.tar.gz/download -O openjpeg-2.0.0.tar.gz
 fi
-tar xvzf openjpeg-2.0.0.tar.gz
+cd
+tar xvzf /vagrant/openjpeg-2.0.0.tar.gz
 cd openjpeg-2.0.0
 mkdir build
 cd build

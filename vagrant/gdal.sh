@@ -4,7 +4,8 @@ cd /vagrant
 if [ ! -f gdal-1.11.1.tar.gz ]; then
     wget http://download.osgeo.org/gdal/1.11.1/gdal-1.11.1.tar.gz
 fi
-tar -xzvf gdal-1.11.1.tar.gz
+cd
+tar -xzvf /vagrant/gdal-1.11.1.tar.gz
 cd gdal-1.11.1
 
 #  --with-ecw=/usr/local --with-mrsid=/usr/local --with-mrsid-lidar=/usr/local --with-fgdb=/usr/local
