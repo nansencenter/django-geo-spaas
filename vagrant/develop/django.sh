@@ -2,7 +2,6 @@ sudo pip install Django
 sudo pip install django-forms-bootstrap
 sudo pip install django-leaflet
 
-
 # install python-sqlite
 # https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/spatialite/#pysqlite2
 wget https://pypi.python.org/packages/source/p/pysqlite/pysqlite-2.6.3.tar.gz
