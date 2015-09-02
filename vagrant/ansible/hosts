@@ -1,0 +1,17 @@
+[remote:children]
+production
+staging
+
+[servers:children]
+production
+staging
+local
+
+[production]
+www.nansen-cloud.no nickname=production vm=0 branch=production
+
+[staging]
+staging.nansen-cloud.no nickname=staging vm=0 branch=develop
+
+[local]
+local.nansen-cloud.no nickname=local vm=1 branch=develop

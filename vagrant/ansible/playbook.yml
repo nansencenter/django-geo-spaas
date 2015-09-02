@@ -1,0 +1,150 @@
+# Useful resources:
+# http://www.stavros.io/posts/example-provisioning-and-deployment-ansible/
+# https://github.com/azavea/ansible-gdal-netcdf
+# https://github.com/snowplow/ansible-playbooks (see python-data-science.yml)
+---
+- hosts: all
+  vars:
+    python_version: 2.7.10
+    python_version_major_minor: 2.7 # should be compatible with python_version listed above
+    sources_dir: /usr/local/src
+    dev_sources_dir: /home/vagrant/python
+    initfiles:
+      - gunicorn
+
+  tasks:
+    - name: Install required system packages.
+      apt: pkg={{ item }} state=installed update-cache=yes
+      sudo: yes
+      with_items: 
+        - build-essential
+        - unzip
+        - git
+        - libsqlite3-dev
+        - sqlite3 # for the command line client
+        - libspatialite-dev
+        - spatialite-bin
+        - g++
+        - libpng-dev
+        - libjpeg-dev
+        - libtiff5-dev
+        - libgeotiff-dev
+        - libnetcdf-dev
+        - libproj-dev
+        - libgeos-dev
+        - libxml2-dev
+        - libpq-dev
+        - python-dev
+        - python-setuptools
+        - python-numpy
+        - python-scipy
+        - pkg-config
+        - libfreetype6-dev
+        - gdal-bin
+        - python-gdal
+
+    - name: Install required Python packages.
+      easy_install: name={{ item }}
+      sudo: yes
+      with_items: 
+        - pip
+        - virtualenv
+
+    #- name: Ensure ansible-cache directory exists
+    #  shell: mkdir /var/local/ansible-cache creates=/var/local/ansible-cache
+    #  sudo: yes
+    #
+    ## Install Python 
+    #- name: Download Python {{ python_version }}
+    #  get_url: dest=/var/local/ansible-cache url=https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tar.xz
+    #  sudo: yes
+    #
+    #- name: Ensure Python {{ python_version }} is extracted
+    #  shell: chdir=/var/local/ansible-cache tar xJf ./Python-{{ python_version }}.tar.xz -C /opt creates=/opt/Python-{{ python_version }}
+    #  sudo: yes
+    #
+    #- name: Ensure Python {{ python_version }}is configured
+    #  shell: chdir=/opt/Python-{{ python_version }} ./configure --prefix=/opt/python{{ python_version }}
+    #
+    #- name: "Ensure Python {{ python_version }} make'd"
+    #  shell: chdir=/opt/Python-{{ python_version }} make
+    #
+    #- name: Ensure Python {{ python_version }} installed
+    #  shell: chdir=/opt/Python-{{ python_version }} make install  # Need to add a 'creates=' flag here
+    #  sudo: yes
+    
+    # Setup a Python virtual environment to run the tracker
+    #- name: Setup an environment for data science
+    #  shell: /opt/python{{ python_version }}/bin/pyvenv-{{ python_version_major_minor }} python-data-science-environment chdir=/home/vagrant
+    
+    - name: Install packages required for data science 
+      pip: name={{ item }} #virtualenv_command=/opt/python{{ python_version }}/bin/pyvenv virtualenv="/home/vagrant/python-data-science-environment"
+      sudo: yes
+      with_items: 
+        - ipython 
+        - pillow
+        - netCDF
+        - scikit-learn
+        - pyzmq
+        - jinja2
+        - tornado 
+        - ipdb
+        - nose
+        - coverage
+        - matplotlib
+        - Django
+        - django-forms-bootstrap
+        - django-leaflet
+    
+    # - name: Install the packages specified in requirements.txt in the Python 3.3 environment
+    #   pip: requirements=/vagrant/requirements.txt virtualenv=~/snowplow-python-3.3-tracker-environment
+
+    - name: Download basemap
+      sudo: yes
+      get_url: url=http://downloads.sourceforge.net/project/matplotlib/matplotlib-toolkits/basemap-1.0.7/basemap-1.0.7.tar.gz dest={{ sources_dir }}/basemap-1.0.7.tar.gz
+
+    - name: Create basemap directory
+      sudo: yes
+      file: path="{{ sources_dir }}/basemap-1.0.7" state=directory
+
+    - name: Extract basemap
+      sudo: yes
+      unarchive: copy=no src="{{ sources_dir }}/basemap-1.0.7.tar.gz" dest="{{ sources_dir }}/basemap-1.0.7"
+
+    - name: Install geos
+      sudo: yes
+      shell: 'cd {{ sources_dir }}/basemap-1.0.7/geos-3.3.3 ; {{ item }}'
+      args:
+          # The 'creates' argument tells ansible that this file is created by
+          # the shell command. Then, if it exists, there is no need to run the
+          # command (not sure if this is the best file to check for though,
+          # since it is created by ./configure and not ldconfig)
+          creates: "{{ sources_dir }}/basemap-1.0.7/geos-3.3.3/config.log"
+      with_items:
+          - export GEOS_DIR=/usr/local
+          - ./configure --prefix=$GEOS_DIR
+          - make
+          - make install
+          - ldconfig
+
+    - name: Install basemap
+      sudo: yes
+      shell: 'cd {{ sources_dir }}/basemap-1.0.7/ ; {{ item }}'
+      args:
+        creates: /usr/local/lib/python2.7/dist-packages/basemap-1.0.7.egg-info
+      with_items:
+        - export GEOS_DIR=/usr/local
+        - python setup.py install
+
+    
+    - name: Update/checkout Nansat
+      git: repo=https://github.com/nansencenter/nansat 
+           dest="{{ dev_sources_dir }}/nansat/" 
+           version=develop
+           update=yes
+
+    - name: Install Nansat
+      sudo: no
+      shell: 'cd {{ dev_sources_dir }}/nansat ; {{ item }}'
+      with_items:
+          - python setup.py build_ext --inplace
