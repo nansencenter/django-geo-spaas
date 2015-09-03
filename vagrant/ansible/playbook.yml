@@ -42,7 +42,7 @@
         - libfreetype6-dev
         - gdal-bin
         - python-gdal
-        - gdal-dev
+        - libgdal-dev
 
     - name: Install required Python packages.
       easy_install: name={{ item }}
