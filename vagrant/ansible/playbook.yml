@@ -16,7 +16,7 @@
     - name: Install required system packages.
       apt: pkg={{ item }} state=installed update-cache=yes
       sudo: yes
-      with_items: 
+      with_items:
         - build-essential
         - unzip
         - git
@@ -42,11 +42,12 @@
         - libfreetype6-dev
         - gdal-bin
         - python-gdal
+        - gdal-dev
 
     - name: Install required Python packages.
       easy_install: name={{ item }}
       sudo: yes
-      with_items: 
+      with_items:
         - pip
         - virtualenv
 
@@ -54,7 +55,7 @@
     #  shell: mkdir /var/local/ansible-cache creates=/var/local/ansible-cache
     #  sudo: yes
     #
-    ## Install Python 
+    ## Install Python
     #- name: Download Python {{ python_version }}
     #  get_url: dest=/var/local/ansible-cache url=https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tar.xz
     #  sudo: yes
@@ -72,22 +73,22 @@
     #- name: Ensure Python {{ python_version }} installed
     #  shell: chdir=/opt/Python-{{ python_version }} make install  # Need to add a 'creates=' flag here
     #  sudo: yes
-    
+
     # Setup a Python virtual environment to run the tracker
     #- name: Setup an environment for data science
     #  shell: /opt/python{{ python_version }}/bin/pyvenv-{{ python_version_major_minor }} python-data-science-environment chdir=/home/vagrant
-    
-    - name: Install packages required for data science 
+
+    - name: Install packages required for data science
       pip: name={{ item }} #virtualenv_command=/opt/python{{ python_version }}/bin/pyvenv virtualenv="/home/vagrant/python-data-science-environment"
       sudo: yes
-      with_items: 
-        - ipython 
+      with_items:
+        - ipython
         - pillow
         - netCDF
         - scikit-learn
         - pyzmq
         - jinja2
-        - tornado 
+        - tornado
         - ipdb
         - nose
         - coverage
@@ -95,7 +96,7 @@
         - Django
         - django-forms-bootstrap
         - django-leaflet
-    
+
     # - name: Install the packages specified in requirements.txt in the Python 3.3 environment
     #   pip: requirements=/vagrant/requirements.txt virtualenv=~/snowplow-python-3.3-tracker-environment
 
@@ -105,21 +106,22 @@
 
     - name: Create basemap directory
       sudo: yes
-      file: path="{{ sources_dir }}/basemap-1.0.7" state=directory
+      file: path="{{ sources_dir }}/basemap" state=directory
 
     - name: Extract basemap
       sudo: yes
-      unarchive: copy=no src="{{ sources_dir }}/basemap-1.0.7.tar.gz" dest="{{ sources_dir }}/basemap-1.0.7"
+      unarchive: copy=no src="{{ sources_dir }}/basemap-1.0.7.tar.gz" dest="{{ sources_dir }}/basemap/"
 
     - name: Install geos
       sudo: yes
-      shell: 'cd {{ sources_dir }}/basemap-1.0.7/geos-3.3.3 ; {{ item }}'
+      shell: 'cd {{ sources_dir }}/basemap/basemap-1.0.7/geos-3.3.3 ; {{ item }}'
       args:
           # The 'creates' argument tells ansible that this file is created by
           # the shell command. Then, if it exists, there is no need to run the
           # command (not sure if this is the best file to check for though,
           # since it is created by ./configure and not ldconfig)
-          creates: "{{ sources_dir }}/basemap-1.0.7/geos-3.3.3/config.log"
+          # creates: "{{ sources_dir }}/basemap/basemap-1.0.7/geos-3.3.3/config.log"
+          creates: "/usr/local/lib/libgeos-3.3.3.so"
       with_items:
           - export GEOS_DIR=/usr/local
           - ./configure --prefix=$GEOS_DIR
@@ -129,22 +131,22 @@
 
     - name: Install basemap
       sudo: yes
-      shell: 'cd {{ sources_dir }}/basemap-1.0.7/ ; {{ item }}'
+      shell: 'cd {{ sources_dir }}/basemap/basemap-1.0.7/ ; {{ item }}'
       args:
         creates: /usr/local/lib/python2.7/dist-packages/basemap-1.0.7.egg-info
       with_items:
         - export GEOS_DIR=/usr/local
         - python setup.py install
 
-    
+
     - name: Update/checkout Nansat
-      git: repo=https://github.com/nansencenter/nansat 
-           dest="{{ dev_sources_dir }}/nansat/" 
+      git: repo=https://github.com/nansencenter/nansat
+           dest="{{ dev_sources_dir }}/nansat/"
            version=develop
            update=yes
 
     - name: Install Nansat
-      sudo: no
+      sudo: yes
       shell: 'cd {{ dev_sources_dir }}/nansat ; {{ item }}'
       with_items:
-          - python setup.py build_ext --inplace
+          - python setup.py install
