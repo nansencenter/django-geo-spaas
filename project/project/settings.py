@@ -34,6 +34,8 @@ STATIC_URL = '/site_media/static/'
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/site_media/media/'
 
+LOGIN_URL = '/helpdesk/login/'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -75,6 +77,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -83,6 +86,9 @@ INSTALLED_APPS = (
     'leaflet',
     'nansencloud.cat',
     'nansencloud.proc',
+    'markdown_deux',
+    'bootstrapform',
+    'helpdesk',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -8,4 +8,5 @@ urlpatterns = patterns('',
 
     url(r'^', include('nansencloud.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'helpdesk/', include('helpdesk.urls')),
 )
