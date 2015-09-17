@@ -2,8 +2,8 @@ from django.contrib.gis import forms
 
 from leaflet.forms.widgets import LeafletWidget
 
-from cat.forms import SearchForm
-from proc.models import ProcSearch
+from nansencloud.cat.forms import SearchForm
+from nansencloud.proc.models import ProcSearch
 
 class ProcSearchForm(forms.ModelForm):
 

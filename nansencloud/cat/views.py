@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
 
-from cat.models import Image
-from cat.forms import SearchForm
+from nansencloud.cat.models import Image
+from nansencloud.cat.forms import SearchForm
 
 class IndexView(View):
     form_class = SearchForm

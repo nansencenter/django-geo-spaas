@@ -1,6 +1,6 @@
 from django.contrib.gis import forms
 
-from cat.models import Search
+from nansencloud.cat.models import Search
 
 from leaflet.forms.widgets import LeafletWidget
 

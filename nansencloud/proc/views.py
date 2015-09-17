@@ -4,11 +4,11 @@ from django.shortcuts import render, render_to_response
 from django.template.context import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from cat.models import Image
-from cat.views import IndexView
+from nansencloud.cat.models import Image
+from nansencloud.cat.views import IndexView
 
-from proc.forms import ProcSearchForm
-from proc.models import *
+from nansencloud.proc.forms import ProcSearchForm
+from nansencloud.proc.models import *
 
 
 class ProcIndexView(IndexView):

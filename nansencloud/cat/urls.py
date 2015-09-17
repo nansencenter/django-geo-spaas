@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from cat.views import image, band, IndexView
+from nansencloud.cat.views import image, band, IndexView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='index'),
