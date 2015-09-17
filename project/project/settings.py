@@ -1,5 +1,5 @@
 """
-Django settings for test_project project.
+Django settings for project project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -95,9 +95,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'test_project.urls'
+ROOT_URLCONF = 'project.urls'
 
-WSGI_APPLICATION = 'test_project.wsgi.application'
+WSGI_APPLICATION = 'project.wsgi.application'
 
 
 # Database
