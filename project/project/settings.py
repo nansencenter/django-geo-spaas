@@ -34,8 +34,6 @@ STATIC_URL = '/site_media/static/'
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/site_media/media/'
 
-LOGIN_URL = '/helpdesk/login/'
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -84,6 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django_forms_bootstrap',
     'leaflet',
+    'nansencloud',
     'nansencloud.cat',
     'nansencloud.proc',
 )
