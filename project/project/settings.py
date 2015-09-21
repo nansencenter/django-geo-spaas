@@ -86,9 +86,6 @@ INSTALLED_APPS = (
     'leaflet',
     'nansencloud.cat',
     'nansencloud.proc',
-    'markdown_deux',
-    'bootstrapform',
-    'helpdesk',
 )
 
 MIDDLEWARE_CLASSES = (
