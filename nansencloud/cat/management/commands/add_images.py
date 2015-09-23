@@ -14,7 +14,7 @@ import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
 from nansat.tools import NansatReadError
-from cat.utils import add_images
+from nansencloud.cat.utils import add_images
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'

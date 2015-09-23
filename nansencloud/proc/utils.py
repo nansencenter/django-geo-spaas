@@ -11,8 +11,8 @@
 # License:
 #-------------------------------------------------------------------------------
 from django.contrib.gis.geos import GEOSGeometry
-from cat.models.image import Image
-from proc.models import *
+from nansencloud.cat.models.image import Image
+from nansencloud.proc.models import *
 
 def process(modelName, crit={}, opts=None, force=False):
     # get all images

@@ -12,7 +12,7 @@
 #-------------------------------------------------------------------------------
 import os, time, warnings, glob
 
-from cat.models import Image
+from nansencloud.cat.models import Image
 
 def get_files_from_dir(inputDir):
     ''' Get all input valid files from input directory or wildcard '''
@@ -44,7 +44,7 @@ def get_files_from_list(filenames):
 
 def add_images(*args, **kwargs):
     '''
-    Add all images *args to cat.models.Image
+    Add all images *args to nansencloud.cat.models.Image
 
     Parameters
     ----------

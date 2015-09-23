@@ -12,7 +12,7 @@
 #-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand, CommandError
 
-from proc.utils import process
+from nansencloud.proc.utils import process
 
 class Command(BaseCommand):
     args = '<procModel>'

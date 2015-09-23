@@ -24,7 +24,7 @@ class ProcessTests(TestCase):
         self.assertIn('%s'%p, out.getvalue())
         out = StringIO()
         call_command('process', SARWeb, stdout=out)
-        self.assertIn("Successfully processed new data in <class 'proc.models.SARWeb'>",
+        self.assertIn("Successfully processed new data in <class 'nansencloud.proc.models.SARWeb'>",
                 out.getvalue())
 
 

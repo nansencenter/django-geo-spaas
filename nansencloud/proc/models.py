@@ -11,7 +11,7 @@ from nansencloud.cat.models import Image, ImageManager, BadSourceFileError, Stat
 
 
 class ProcImage(Image):
-    ''' Parent of all Image-like classes in proc '''
+    ''' Parent of all Image-like classes in nansencloud.proc '''
     image = models.ForeignKey(Image,
                             parent_link=True,
                             related_name='%(app_label)s_%(class)s_related')
@@ -28,19 +28,19 @@ class ProcImage(Image):
 
         Parameters
         ----------
-            cls : model from proc
+            cls : model from nansencloud.proc
                 MerisWeb or RadarsatWeb or other similar
             image_or_filename : Image or str or unicode
-                if :model:`cat.Image` :
+                if :model:`nansencloud.cat.Image` :
                     the object is created and obj.image is assigned
                 if str or unicode:
-                    first instance of :model:`cat.Image` is
+                    first instance of :model:`nansencloud.cat.Image` is
                     created and saved; then the object is created
         Returns
         -------
             obj : type(cls)
                 Instance of the class that was used with create
-                e.g. :model:`proc.MerisWeb`
+                e.g. :model:`nansencloud.proc.MerisWeb`
             create : bool
                 True, if the object created. False, if fetched from database
 
@@ -77,7 +77,7 @@ class Chain(models.Model):
 
 
 class ProcSearch(Search):
-    ''' Subcalss of cat.Search with reference to Chain '''
+    ''' Subcalss of nansencloud.cat.Search with reference to Chain '''
     chain = models.ForeignKey(Chain, blank=True, null=True, related_name='procsearches')
 
 
