@@ -18,7 +18,7 @@ def get_files_from_dir(inputDir):
     ''' Get all input valid files from input directory or wildcard '''
 
     # get list of entries from wildcard or directory
-    if '*' or '?' in inputDir:
+    if '*' in inputDir or '?' in inputDir:
         globEntries = glob.glob(inputDir)
     elif os.path.isdir(inputDir):
         globEntries = glob.glob(os.path.join(inputDir, '*'))
