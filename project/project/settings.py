@@ -85,7 +85,7 @@ INSTALLED_APPS = (
     'leaflet',
     'nansencloud.cat',
     'nansencloud.proc',
-    'noaa_ndbc',
+    'nansencloud.noaa_ndbc',
 )
 
 MIDDLEWARE_CLASSES = (
