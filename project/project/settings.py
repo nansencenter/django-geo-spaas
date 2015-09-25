@@ -70,7 +70,6 @@ TEMPLATE_DIRS = [
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -86,6 +85,7 @@ INSTALLED_APPS = (
     'leaflet',
     'nansencloud.cat',
     'nansencloud.proc',
+    'noaa_ndbc',
 )
 
 MIDDLEWARE_CLASSES = (
