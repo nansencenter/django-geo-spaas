@@ -1,9 +1,7 @@
-from django.contrib.gis.db import models
+from django.db import models
+
+from nansencloud.catalog.models import Dataset
 
 class StandardMeteorologicalBuoy(models.Model):
+    dataset = models.ForeignKey(Dataset)
     station = models.CharField(max_length=10)
-    location = models.PointField()
-    year = models.IntegerField()
-    opendap = models.URLField()
-
-    objects = models.GeoManager()
