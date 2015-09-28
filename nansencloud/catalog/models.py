@@ -18,9 +18,18 @@ class Source(models.Model):
     SOURCE_TYPES = ((SAT, SAT), (INSITU, INSITU), (MODEL, MODEL))
 
     type = models.CharField(max_length=15, choices=SOURCE_TYPES)
-    platform = models.CharField(max_length=100)
-    tool = models.CharField(max_length=50, 
-        help_text='The tool could be instrument, model version, etc.')
+    tool = models.CharField(max_length=50, default='',
+        help_text='The tool used to produce the data, e.g., model and' \
+            ' version.')
+    platform = models.CharField(max_length=100, default='',
+        help_text='Data recording platform.')
+    sensor = models.CharField(max_length=15, default='', 
+        help_text='The sensor used to record measurements.')
+
+    def save(self):
+        if not self.tool and not (self.platform and self.sensor):
+            raise PermissionDenied
+        super(Source, self).save()
 
 class GeographicLocation(geomodels.Model):
     GRID = 'Grid'
