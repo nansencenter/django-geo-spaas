@@ -77,6 +77,7 @@ class ImageManager(models.GeoManager):
         except NansatReadError:
             # This cancels setting the status of a file if it can't be opened
             # with nansat
+            print(fullpath)
             raise # re-raises the error
 
         return self.create_from_nansat(n, fullpath, nborder_points)
