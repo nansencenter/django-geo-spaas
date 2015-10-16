@@ -74,11 +74,10 @@ class ImageManager(models.GeoManager):
         try:
             # open file with Nansat
             n = Nansat(fullpath, mapperName=mapper)
-        except NansatReadError:
+        except NansatReadError as e:
             # This cancels setting the status of a file if it can't be opened
             # with nansat
-            print(fullpath)
-            raise # re-raises the error
+            raise type(e)(e.message+': '+fullpath) # re-raises the error
 
         return self.create_from_nansat(n, fullpath, nborder_points)
 
