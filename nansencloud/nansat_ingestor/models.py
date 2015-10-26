@@ -26,7 +26,17 @@ class Source(CatalogSource):
     objects = SourceManager()
 
 
+class DataLocationQuerySet(models.QuerySet):
+    def new_uris(self, all_uris):
+        ''' Get filenames which are not in old_filenames'''
+        return sorted(list(frozenset(all_uris).difference(self.values_list(
+                                                    'uri', flat=True))))
+
+
 class DataLocationManager(models.Manager):
+    def get_queryset(self):
+        return DataLocationQuerySet(self.model, using=self._db)
+
     def create(self, *args, **kwargs):
         ''' Create data location of a given protocol '''
         protocol = kwargs.pop('protocol')

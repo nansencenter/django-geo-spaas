@@ -49,7 +49,7 @@ class DataLocation(models.Model):
                        )
 
     protocol = models.CharField(max_length=15, choices=PROTOCOL_CHOICES)
-    uri = models.URLField(max_length=200)
+    uri = models.URLField(max_length=200, unique=True)
     dataset = models.ForeignKey(Dataset)
 
 class Variable(models.Model):

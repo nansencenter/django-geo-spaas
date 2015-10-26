@@ -55,6 +55,15 @@ class TestDataLocation(TestCase):
                                         uri=self.testfile,
                                         dataset=self.ds)
 
+    def test_new_uris(self):
+        ''' Shall return list with only  non existing files '''
+        new_uris = ['/fake/path/file1.ext', '/fake/path/file2.ext']
+        all_uris = new_uris + [self.testfile]
+
+        uris = DataLocation.objects.all().new_uris(all_uris)
+        self.assertEqual(uris, new_uris)
+
+
 """
 class TestNansatIngestor(TestCase):
     def add_asar(self):
