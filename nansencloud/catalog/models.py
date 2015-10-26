@@ -3,13 +3,20 @@ from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 
-class Dataset(models.Model):
-    source = models.OneToOneField('Source')
-    geolocation = models.OneToOneField('GeographicLocation')
-    variables = models.ManyToManyField('Variable')
-    data_location = models.ManyToManyField('DataLocation')
-    time_coverage_start = models.DateTimeField()
-    time_coverage_end = models.DateTimeField()
+class GeographicLocation(geomodels.Model):
+    GRID = 'Grid'
+    POINT = 'Point'
+    TRAJECTORY = 'Trajectory'
+    POLYGON = 'Polygon'
+    GEOGRAPHIC_TYPES = ((GRID, GRID),
+                        (POINT, POINT),
+                        (TRAJECTORY, TRAJECTORY),
+                        (POLYGON, POLYGON))
+
+    geometry = geomodels.GeometryField()
+    type = models.CharField(max_length=15, choices=GEOGRAPHIC_TYPES)
+
+    objects = geomodels.GeoManager()
 
 class Source(models.Model):
     SAT = 'Satellite'
@@ -18,30 +25,21 @@ class Source(models.Model):
     SOURCE_TYPES = ((SAT, SAT), (INSITU, INSITU), (MODEL, MODEL))
 
     type = models.CharField(max_length=15, choices=SOURCE_TYPES)
-    tool = models.CharField(max_length=50, default='',
-        help_text='The tool used to produce the data, e.g., model and' \
-            ' version.')
     platform = models.CharField(max_length=100, default='',
         help_text='Data recording platform.')
-    sensor = models.CharField(max_length=15, default='', 
+    instrument = models.CharField(max_length=15, default='',
         help_text='The sensor used to record measurements.')
+    specs = models.CharField(max_length=50, default='',
+        help_text='Further specifications of the source.')
 
-    def save(self):
-        if not self.tool and not (self.platform and self.sensor):
-            raise PermissionDenied
-        super(Source, self).save()
+class Dataset(models.Model):
+    source = models.OneToOneField(Source)
+    geolocation = models.OneToOneField(GeographicLocation)
+    time_coverage_start = models.DateTimeField()
+    time_coverage_end = models.DateTimeField()
 
-class GeographicLocation(geomodels.Model):
-    GRID = 'Grid'
-    POINT = 'Point'
-    TRAJECTORY = 'Trajectory'
-    GEOGRAPHIC_TYPES = ((GRID, GRID), (POINT, POINT), (TRAJECTORY, TRAJECTORY))
 
-    geometry = geomodels.GeometryField()
-    type = models.CharField(max_length=15, choices=GEOGRAPHIC_TYPES)
-
-    objects = geomodels.GeoManager()
-
+"""
 class Variable(models.Model):
     short_name = models.CharField(max_length=10)
     standard_name = models.CharField(max_length=100)
@@ -66,3 +64,4 @@ class DataLocation(models.Model):
             self.wfs]):
             raise PermissionDenied
         super(DataLocation, self).save()
+"""
