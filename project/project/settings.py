@@ -84,9 +84,9 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'leaflet',
     'nansencloud.cat', # old
-    'nansencloud.catalog', # new 
+    #'nansencloud.catalog', # new
     'nansencloud.proc',
-    'nansencloud.noaa_ndbc',
+    #'nansencloud.noaa_ndbc',
 )
 
 MIDDLEWARE_CLASSES = (

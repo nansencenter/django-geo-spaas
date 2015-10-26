@@ -1,14 +1,14 @@
 from django.test import TestCase
 
+from django.contrib.gis.geos import Polygon
+
 from nansencloud.catalog.models import *
 
-class CatalogTests(TestCase):
+class FeatureTypeTests(TestCase):
+    def test_featuretype(self):
+        ft = FeatureType(wkt='Polygon')
 
-    def test_create_data_location(self):
-        asarfile = '/vagrant/shared/test_data/asar/' \
-            'ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
-        dl = DataLocation(file = asarfile)
-        dl.save()
-        self.assertEqual(dl.file.file.readline(),
-            'PRODUCT="ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1"\n')
-        # Test other functions and attributes
+class GeographicLocationTests(TestCase):
+    def test_geographiclocation(self):
+        gl = GeographicLocation(geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))),
+                                feature_type=FeatureType(wkt='Polygon'))

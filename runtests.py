@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
 # Modified:
@@ -8,13 +9,12 @@
 # Created:
 # Last modified:
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
-#This file mainly exists to allow python setup.py test to work.
+#This file mainly exists to allow 'python setup.py test' to work.
 import os, sys
-os.environ['DJANGO_SETTINGS_MODULE'] = 'test_nansencloud.settings'
-test_dir = os.path.dirname(__file__)
-sys.path.insert(0, test_dir)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'project.settings'
+sys.path.insert(0, 'project')
 
 import django
 django.setup()
