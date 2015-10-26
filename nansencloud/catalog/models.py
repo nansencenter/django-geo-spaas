@@ -4,25 +4,16 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 
 class GeographicLocation(geomodels.Model):
-    GRID = 'Grid'
-    POINT = 'Point'
-    TRAJECTORY = 'Trajectory'
-    POLYGON = 'Polygon'
-    GEOGRAPHIC_TYPES = ((GRID, GRID),
-                        (POINT, POINT),
-                        (TRAJECTORY, TRAJECTORY),
-                        (POLYGON, POLYGON))
-
     geometry = geomodels.GeometryField()
-    type = models.CharField(max_length=15, choices=GEOGRAPHIC_TYPES)
 
     objects = geomodels.GeoManager()
 
+
 class Source(models.Model):
-    SAT = 'Satellite'
+    SATELLITE = 'Satellite'
     INSITU = 'In-situ'
     MODEL = 'Model'
-    SOURCE_TYPES = ((SAT, SAT), (INSITU, INSITU), (MODEL, MODEL))
+    SOURCE_TYPES = ((SATELLITE, SATELLITE), (INSITU, INSITU), (MODEL, MODEL))
 
     type = models.CharField(max_length=15, choices=SOURCE_TYPES)
     platform = models.CharField(max_length=100, default='',
@@ -32,20 +23,47 @@ class Source(models.Model):
     specs = models.CharField(max_length=50, default='',
         help_text='Further specifications of the source.')
 
+
 class Dataset(models.Model):
-    source = models.OneToOneField(Source)
-    geolocation = models.OneToOneField(GeographicLocation)
+    source = models.ForeignKey(Source)
+    geolocation = models.ForeignKey(GeographicLocation)
     time_coverage_start = models.DateTimeField()
     time_coverage_end = models.DateTimeField()
 
 
-"""
+class DataLocation(models.Model):
+    LOCALFILE = 'LOCALFILE'
+    OPENDAP = 'OPENDAP'
+    FTP = 'FTP'
+    HTTP = 'HTTP'
+    HTTPS = 'HTTPS'
+    WMS = 'WMS'
+    WFS = 'WFS'
+    PROTOCOL_CHOICES = ((LOCALFILE, LOCALFILE),
+                        (OPENDAP, OPENDAP),
+                        (FTP,FTP),
+                        (HTTP,HTTP),
+                        (HTTPS,HTTPS),
+                        (WMS,WMS),
+                        (WFS,WFS),
+                       )
+
+    protocol = models.CharField(max_length=15, choices=PROTOCOL_CHOICES)
+    uri = models.URLField(max_length=200)
+    dataset = models.ForeignKey(Dataset)
+
 class Variable(models.Model):
     short_name = models.CharField(max_length=10)
     standard_name = models.CharField(max_length=100)
     long_name = models.CharField(max_length=200)
     units = models.CharField(max_length=10)
+    dataset = models.ForeignKey(Dataset)
 
+class DatasetRelationship(models.Model):
+    child = models.ForeignKey(Dataset, related_name='parents')
+    parent = models.ForeignKey(Dataset, related_name='children')
+
+"""
 # Files are stored locally, not uploaded
 # Optionally we may write a custom file storage system (may be needed with
 # openstack)
