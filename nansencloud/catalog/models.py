@@ -52,12 +52,13 @@ class DataLocation(models.Model):
     uri = models.URLField(max_length=200, unique=True)
     dataset = models.ForeignKey(Dataset)
 
-class Variable(models.Model):
+class Product(models.Model):
     short_name = models.CharField(max_length=10)
     standard_name = models.CharField(max_length=100)
     long_name = models.CharField(max_length=200)
     units = models.CharField(max_length=10)
     dataset = models.ForeignKey(Dataset)
+    location = models.ForeignKey(DataLocation)
 
 class DatasetRelationship(models.Model):
     child = models.ForeignKey(Dataset, related_name='parents')
