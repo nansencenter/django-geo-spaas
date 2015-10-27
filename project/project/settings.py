@@ -85,6 +85,7 @@ INSTALLED_APPS = (
     'leaflet',
     'nansencloud.catalog',
     'nansencloud.nansat_ingestor',
+    'nansencloud.simple_viewer',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',
 )
