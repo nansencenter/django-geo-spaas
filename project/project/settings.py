@@ -83,8 +83,8 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django_forms_bootstrap',
     'leaflet',
-    'nansencloud.catalog', # new
-    'nansencloud.nansat_ingestor', # new
+    'nansencloud.catalog',
+    'nansencloud.nansat_ingestor',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',
 )

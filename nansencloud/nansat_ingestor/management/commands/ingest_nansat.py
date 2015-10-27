@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
 # Modified:
@@ -8,13 +8,12 @@
 # Created:
 # Last modified:
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
-from nansat.tools import NansatReadError
-from nansencloud.nansat_ingestor.utils import nansat_ingest
+from nansencloud.nansat_ingestor.models import DataLocation, Dataset
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'
@@ -23,12 +22,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if len(args)==0:
             raise IOError('Please provide at least one filename')
-        added = nansat_ingest(*args)
-        if len(added)>1:
-            ff = ['%s\n'%fn for fn in added]
-            self.stdout.write('Successfully added: \n%s'%ff)
-        elif len(added)==1:
-            self.stdout.write('Successfully added: %s'%added)
-        else:
-            self.stdout.write('Did not add anything')
+
+        new_uris = DataLocation.objects.all().new_uris(args)
+        for new_uri in new_uris:
+            ds, cr = Dataset.objects.get_or_create(new_uri)
+            self.stdout.write('Successfully added: %s\n' % new_uri)
 

@@ -3,7 +3,7 @@ import datetime
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-
+from django.utils.six import StringIO
 from django.test import TestCase
 
 from nansencloud.nansat_ingestor.models import Source, DataLocation, Dataset, GeographicLocation
@@ -37,6 +37,7 @@ class TestDataset(TestCase):
         self.assertTrue(cr0)
         self.assertFalse(cr1)
 
+
 class TestDataLocation(TestCase):
     def setUp(self):
         self.testfile = '/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
@@ -64,10 +65,9 @@ class TestDataLocation(TestCase):
         self.assertEqual(uris, new_uris)
 
 
-"""
-class TestNansatIngestor(TestCase):
-    def add_asar(self):
+class TestIngestNansatCommand(TestCase):
+    def test_add_asar(self):
+        out = StringIO()
         f = '/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
-        call_command('ingest_nansat', file=f)
-
-"""
+        call_command('ingest_nansat', f, stdout=out)
+        self.assertIn('Successfully added:', out.getvalue())
