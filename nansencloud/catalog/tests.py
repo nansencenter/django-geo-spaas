@@ -60,9 +60,9 @@ class DataLocationTests(TestCase):
         dl.save()
 
 
-class VariableTests(TestCase):
+class ProductTests(TestCase):
     def test_variable(self):
-        ''' Shall create Variable instance '''
+        ''' Shall create Product instance '''
         geolocation = GeographicLocation(
                 geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
@@ -75,11 +75,16 @@ class VariableTests(TestCase):
                             time_coverage_start=datetime.datetime(2010,1,1),
                             time_coverage_end=datetime.datetime(2010,1,2))
         dataset.save()
-        var = Variable(short_name='sst',
+        location = DataLocation(protocol=DataLocation.LOCALFILE,
+                                dataset=dataset,
+                                uri='somefile.txt')
+        location.save()
+        var = Product(short_name='sst',
                         standard_name='sea_surface_temparture',
                         long_name='Temperature of Sea Surface',
                         units='K',
-                        dataset=dataset)
+                        dataset=dataset,
+                        location=location)
         var.save()
 
 class DatasetRelationshipTests(TestCase):
