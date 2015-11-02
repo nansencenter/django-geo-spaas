@@ -1,0 +1,19 @@
+{% extends "viewer/base.html" %}
+
+
+{% block headers %}
+<th>Source</th>
+<th>Start time</th>
+{% endblock headers %}
+
+
+{% block columns %}
+<td>
+    {{ img.source }}
+</td>
+<td>
+    {{ img.time_coverage_start }}
+</td>
+
+{% endblock columns %}
+

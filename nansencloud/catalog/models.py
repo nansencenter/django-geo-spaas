@@ -23,6 +23,9 @@ class Source(models.Model):
     specs = models.CharField(max_length=50, default='',
         help_text='Further specifications of the source.')
 
+    def __str__(self):
+        return '%s/%s' % (self.platform, self.instrument)
+
 
 class Dataset(models.Model):
     source = models.ForeignKey(Source)

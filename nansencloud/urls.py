@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     #url(r'^cat/', include('nansencloud.cat.urls')),
     #url(r'^proc/', include('nansencloud.proc.urls')),
     url(r'^simple/', include('nansencloud.simple_viewer.urls')),
+    url(r'^view/', include('nansencloud.viewer.urls')),
 )

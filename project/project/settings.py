@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'nansencloud.nansat_ingestor',
     'nansencloud.simple_viewer',
     'nansencloud.hab_processing',
+    'nansencloud.viewer',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',
 )
