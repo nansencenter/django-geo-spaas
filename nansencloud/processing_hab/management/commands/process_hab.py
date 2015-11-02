@@ -29,7 +29,7 @@ class Command(BaseCommand):
         call_command('ingest', *args)
 
         # find datasets that don't have chlorophyll
-        rawDatasets = Dataset.objects.exclude(product__short_name='chlor_a')
+        rawDatasets = Dataset.objects.filter(source__instrument='MERIS').exclude(product__short_name='chlor_a')
         for rawDataset in rawDatasets:
             p = Product.process(rawDataset)
             p.save()
