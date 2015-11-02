@@ -30,10 +30,10 @@ class Product(CatalogProduct):
         # actual 'processing'
         print 'PROCESSSS:', dsUri
         n = Nansat(dsUri)
-        l = n['L_413']
+        l = n[3]
         plt.imsave(prodFileName, l[::10, ::10])
 
-        location = DataLocation.objects.get_or_create(protocol='LOCALFILE',
+        location = DataLocation.objects.get_or_create(protocol='HTTP',
                            uri=prodUrl,
                            dataset=dataset)[0]
 
