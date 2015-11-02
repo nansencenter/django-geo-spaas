@@ -13,7 +13,7 @@
 import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
-from nansencloud.nansat_ingestor.models import DataLocation, Dataset
+from nansencloud.ingestor.models import DataLocation, Dataset
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'

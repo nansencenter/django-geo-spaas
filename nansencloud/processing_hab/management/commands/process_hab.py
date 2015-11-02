@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
 
 from nansencloud.catalog.models import Dataset
-from nansencloud.hab_processing.models import Product
+from nansencloud.processing_hab.models import Product
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'
@@ -26,7 +26,7 @@ class Command(BaseCommand):
             raise IOError('Please provide at least one filename')
 
         # first add new images
-        call_command('ingest_nansat', *args)
+        call_command('ingest', *args)
 
         # find datasets that don't have chlorophyll
         rawDatasets = Dataset.objects.exclude(product__short_name='chlor_a')

@@ -6,7 +6,7 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
-from nansencloud.nansat_ingestor.models import Source, DataLocation, Dataset, GeographicLocation
+from nansencloud.ingestor.models import Source, DataLocation, Dataset, GeographicLocation
 
 
 class TestSource(TestCase):
@@ -69,5 +69,5 @@ class TestIngestNansatCommand(TestCase):
     def test_add_asar(self):
         out = StringIO()
         f = '/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
-        call_command('ingest_nansat', f, stdout=out)
+        call_command('ingest', f, stdout=out)
         self.assertIn('Successfully added:', out.getvalue())

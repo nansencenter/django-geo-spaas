@@ -6,9 +6,6 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
-from nansencloud.nansat_ingestor.models import Source, DataLocation, Dataset, GeographicLocation
-
-
 class TestProcessHabCommand(TestCase):
     def test_process_hab(self):
         out = StringIO()
