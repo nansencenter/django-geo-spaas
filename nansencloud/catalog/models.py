@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
@@ -8,6 +10,8 @@ class GeographicLocation(geomodels.Model):
 
     objects = geomodels.GeoManager()
 
+    def __str__(self):
+        return str(self.geometry.geom_type) + str(self.geometry.num_points)
 
 class Source(models.Model):
     SATELLITE = 'Satellite'
@@ -36,6 +40,8 @@ class Dataset(models.Model):
     time_coverage_start = models.DateTimeField()
     time_coverage_end = models.DateTimeField()
 
+    def __str__(self):
+        return '%s/%s' % (self.source.instrument, self.time_coverage_start.isoformat())
 
 class DataLocation(models.Model):
     LOCALFILE = 'LOCALFILE'
@@ -58,6 +64,10 @@ class DataLocation(models.Model):
     uri = models.URLField(max_length=200, unique=True)
     dataset = models.ForeignKey(Dataset)
 
+    def __str__(self):
+        return os.path.split(self.uri)[1]
+
+
 class Product(models.Model):
     short_name = models.CharField(max_length=10)
     standard_name = models.CharField(max_length=100)
@@ -65,6 +75,9 @@ class Product(models.Model):
     units = models.CharField(max_length=10)
     dataset = models.ForeignKey(Dataset)
     location = models.ForeignKey(DataLocation)
+
+    def __str__(self):
+        return '%s/%s' % (self.location, self.short_name)
 
 class DatasetRelationship(models.Model):
     child = models.ForeignKey(Dataset, related_name='parents')
