@@ -84,10 +84,9 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'leaflet',
     'nansencloud.catalog',
-    'nansencloud.nansat_ingestor',
-    'nansencloud.simple_viewer',
-    'nansencloud.hab_processing',
+    'nansencloud.ingestor',
     'nansencloud.viewer',
+    'nansencloud.processing_hab',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',
 )
