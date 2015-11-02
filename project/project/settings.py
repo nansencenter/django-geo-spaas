@@ -141,3 +141,8 @@ LEAFLET_CONFIG = {
         }
     }
 }
+
+PROCESSING_HAB = {
+'outdir': '/vagrant/shared/develop_vm',
+'outhttp': 'http://maires.nerc.no',
+}
