@@ -11,7 +11,9 @@
 # Copyright:    (c) NERSC
 # License:
 #-------------------------------------------------------------------------------
-#This file mainly exists to allow 'python setup.py test' to work.
+#This file mainly exists to allow the following commands to work:
+# python setup.py test
+# ./runtests <appName>
 import os, sys
 import argparse
 
