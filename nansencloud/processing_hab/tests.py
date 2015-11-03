@@ -9,6 +9,6 @@ from django.test import TestCase
 class TestProcessHabCommand(TestCase):
     def test_process_hab(self):
         out = StringIO()
-        f = '/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
+        f = '/vagrant/shared/test_data/obpg_l2/A2015121113500.L2_LAC.NorthNorwegianSeas.hdf'
         call_command('process_hab', f, stdout=out)
         self.assertIn('Successfully processed:', out.getvalue())

@@ -27,10 +27,10 @@ class Source(CatalogSource):
 
 
 class DataLocationQuerySet(models.QuerySet):
-    def new_uris(self, all_uris):
+    def get_non_ingested_uris(self, all_uris):
         ''' Get filenames which are not in old_filenames'''
-        return sorted(list(frozenset(all_uris).difference(self.values_list(
-                                                    'uri', flat=True))))
+        return sorted(list(frozenset(all_uris).difference(
+                            self.values_list('uri', flat=True))))
 
 
 class DataLocationManager(models.Manager):
@@ -53,16 +53,25 @@ class DataLocation(CatalogDataLocation):
 
 
 class DatasetManager(models.Manager):
-    def get_or_create(self, filename):
-        ''' Create dataset and corresponding metadata '''
+    def get_or_create(self, uri):
+        ''' Create dataset and corresponding metadata
+
+        Parameters:
+        ----------
+            uri : str
+            filename openable by Nansat
+        Returns:
+        -------
+            dataset and flag
+        '''
 
         # check if dataset already exists
-        dataLocations = DataLocation.objects.filter(uri=filename)
+        dataLocations = DataLocation.objects.filter(uri=uri)
         if len(dataLocations) > 0:
             return dataLocations[0].dataset, False
 
         # open file with Nansat
-        n = Nansat(filename)
+        n = Nansat(uri)
         # get metadata
         source = Source.objects.get_or_create(
                     type=n.get_metadata('source_type'),
@@ -79,7 +88,7 @@ class DatasetManager(models.Manager):
         ds.save()
 
         dl = DataLocation.objects.get_or_create(protocol=DataLocation.LOCALFILE,
-                                                uri=filename,
+                                                uri=uri,
                                                 dataset=ds)[0]
         return ds, True
 

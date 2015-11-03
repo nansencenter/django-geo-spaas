@@ -16,15 +16,15 @@ from django.core.management.base import BaseCommand, CommandError
 from nansencloud.ingestor.models import DataLocation, Dataset
 
 class Command(BaseCommand):
-    args = '<file_or_folder file_or_folder ...>'
+    args = '<filename filename ...>'
     help = 'Add file to catalog archive'
 
     def handle(self, *args, **options):
         if len(args)==0:
             raise IOError('Please provide at least one filename')
 
-        new_uris = DataLocation.objects.all().new_uris(args)
-        for new_uri in new_uris:
-            ds, cr = Dataset.objects.get_or_create(new_uri)
-            self.stdout.write('Successfully added: %s\n' % new_uri)
+        non_ingested_uris = DataLocation.objects.all().get_non_ingested_uris(args)
+        for non_ingested_uri in non_ingested_uris:
+            ds, cr = Dataset.objects.get_or_create(non_ingested_uri)
+            self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
 
