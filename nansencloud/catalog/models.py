@@ -1,53 +1,89 @@
+import os
+
 from django.db import models
 from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 
-class Dataset(models.Model):
-    source = models.OneToOneField('Source')
-    geolocation = models.OneToOneField('GeographicLocation')
-    variables = models.ManyToManyField('Variable')
-    data_location = models.ManyToManyField('DataLocation')
-    time_coverage_start = models.DateTimeField()
-    time_coverage_end = models.DateTimeField()
-
-class Source(models.Model):
-    SAT = 'Satellite'
-    INSITU = 'In-situ'
-    MODEL = 'Model'
-    SOURCE_TYPES = ((SAT, SAT), (INSITU, INSITU), (MODEL, MODEL))
-
-    type = models.CharField(max_length=15, choices=SOURCE_TYPES)
-    tool = models.CharField(max_length=50, default='',
-        help_text='The tool used to produce the data, e.g., model and' \
-            ' version.')
-    platform = models.CharField(max_length=100, default='',
-        help_text='Data recording platform.')
-    sensor = models.CharField(max_length=15, default='', 
-        help_text='The sensor used to record measurements.')
-
-    def save(self):
-        if not self.tool and not (self.platform and self.sensor):
-            raise PermissionDenied
-        super(Source, self).save()
-
 class GeographicLocation(geomodels.Model):
-    GRID = 'Grid'
-    POINT = 'Point'
-    TRAJECTORY = 'Trajectory'
-    GEOGRAPHIC_TYPES = ((GRID, GRID), (POINT, POINT), (TRAJECTORY, TRAJECTORY))
-
     geometry = geomodels.GeometryField()
-    type = models.CharField(max_length=15, choices=GEOGRAPHIC_TYPES)
 
     objects = geomodels.GeoManager()
 
-class Variable(models.Model):
+    def __str__(self):
+        return str(self.geometry.geom_type) + str(self.geometry.num_points)
+
+class Source(models.Model):
+    SATELLITE = 'Satellite'
+    INSITU = 'In-situ'
+    MODEL = 'Model'
+    SOURCE_TYPES = ((SATELLITE, SATELLITE), (INSITU, INSITU), (MODEL, MODEL))
+
+    type = models.CharField(max_length=15, choices=SOURCE_TYPES)
+    platform = models.CharField(max_length=100, default='',
+        help_text='Data recording platform.')
+    instrument = models.CharField(max_length=15, default='',
+        help_text='The sensor used to record measurements.')
+    specs = models.CharField(max_length=50, default='',
+        help_text='Further specifications of the source.')
+
+    class Meta:
+        unique_together = (("platform", "instrument", "specs"),)
+
+    def __str__(self):
+        return '%s/%s' % (self.platform, self.instrument)
+
+
+class Dataset(models.Model):
+    source = models.ForeignKey(Source)
+    geolocation = models.ForeignKey(GeographicLocation)
+    time_coverage_start = models.DateTimeField()
+    time_coverage_end = models.DateTimeField()
+
+    def __str__(self):
+        return '%s/%s' % (self.source.instrument, self.time_coverage_start.isoformat())
+
+class DataLocation(models.Model):
+    LOCALFILE = 'LOCALFILE'
+    OPENDAP = 'OPENDAP'
+    FTP = 'FTP'
+    HTTP = 'HTTP'
+    HTTPS = 'HTTPS'
+    WMS = 'WMS'
+    WFS = 'WFS'
+    PROTOCOL_CHOICES = ((LOCALFILE, LOCALFILE),
+                        (OPENDAP, OPENDAP),
+                        (FTP,FTP),
+                        (HTTP,HTTP),
+                        (HTTPS,HTTPS),
+                        (WMS,WMS),
+                        (WFS,WFS),
+                       )
+
+    protocol = models.CharField(max_length=15, choices=PROTOCOL_CHOICES)
+    uri = models.URLField(max_length=200, unique=True)
+    dataset = models.ForeignKey(Dataset)
+
+    def __str__(self):
+        return os.path.split(self.uri)[1]
+
+
+class Product(models.Model):
     short_name = models.CharField(max_length=10)
     standard_name = models.CharField(max_length=100)
     long_name = models.CharField(max_length=200)
     units = models.CharField(max_length=10)
+    dataset = models.ForeignKey(Dataset)
+    location = models.ForeignKey(DataLocation)
 
+    def __str__(self):
+        return '%s/%s' % (self.location, self.short_name)
+
+class DatasetRelationship(models.Model):
+    child = models.ForeignKey(Dataset, related_name='parents')
+    parent = models.ForeignKey(Dataset, related_name='children')
+
+"""
 # Files are stored locally, not uploaded
 # Optionally we may write a custom file storage system (may be needed with
 # openstack)
@@ -66,3 +102,4 @@ class DataLocation(models.Model):
             self.wfs]):
             raise PermissionDenied
         super(DataLocation, self).save()
+"""

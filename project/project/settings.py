@@ -83,10 +83,12 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django_forms_bootstrap',
     'leaflet',
-    'nansencloud.cat', # old
-    'nansencloud.catalog', # new 
-    'nansencloud.proc',
-    'nansencloud.noaa_ndbc',
+    'nansencloud.catalog',
+    'nansencloud.ingestor',
+    'nansencloud.viewer',
+    'nansencloud.processing_hab',
+    #'nansencloud.proc',
+    #'nansencloud.noaa_ndbc',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -138,4 +140,9 @@ LEAFLET_CONFIG = {
             'auto-include': True
         }
     }
+}
+
+PROCESSING_HAB = {
+'outdir': '/vagrant/shared/develop_vm',
+'outhttp': 'http://maires.nerc.no',
 }

@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
 # Modified:
@@ -8,7 +8,7 @@
 # Created:
 # Last modified:
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 from setuptools import setup, find_packages
 import sys
@@ -35,7 +35,7 @@ setup(name='nansen-cloud',
       packages = find_packages(),
       include_package_data=True,
       install_requires = install_requires,
-      test_suite='test_nansencloud.runtests.runtests',
+      test_suite='runtests.runtests',
       classifiers = ['Development Status :: 0 - Beta',
                      'Environment :: Web Environment',
                      'Framework :: Django',

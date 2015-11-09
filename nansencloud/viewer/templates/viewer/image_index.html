@@ -1,0 +1,25 @@
+{% extends "viewer/base.html" %}
+
+
+{% block headers %}
+<th>Source</th>
+<th>Start time</th>
+<th>Products</th>
+{% endblock headers %}
+
+
+{% block columns %}
+<td>
+    {{ img.source }}
+</td>
+<td>
+    {{ img.time_coverage_start }}
+</td>
+<td>
+    {% for product in img.product_set.all %}
+        [{{ product.short_name }}]
+    {% endfor %}
+
+</td>
+{% endblock columns %}
+
