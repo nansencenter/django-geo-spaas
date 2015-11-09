@@ -3,3 +3,9 @@
 *.so
 *.o
 databases_postgis.py
+nansencloud/catalog/migrations/*
+!nansencloud/catalog/migrations/__init__.py
+nansencloud/viewer/migrations/*
+!nansencloud/viewer/migrations/__init__.py
+nansencloud/ingestor/migrations/*
+!nansencloud/ingestor/migrations/__init__.py
