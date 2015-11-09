@@ -79,7 +79,10 @@ class ImageManager(models.GeoManager):
             # with nansat
             raise type(e)(e.message+': '+fullpath) # re-raises the error
 
-        return self.create_from_nansat(n, fullpath, nborder_points)
+        try:
+            return self.create_from_nansat(n, fullpath, nborder_points)
+        except Exception as e:
+            raise type(e)(e.message+': '+fullpath) # re-raises the error
 
     def create_from_nansat(self, n, fullpath, nborder_points=None):
         ''' Create Image from Nansat object and full path
