@@ -83,8 +83,56 @@ class ProductTests(TestCase):
                         standard_name='sea_surface_temparture',
                         long_name='Temperature of Sea Surface',
                         units='K',
-                        location=location)
+                        location=location,
+                        time=datetime.datetime(2010,1,2))
         var.save()
+
+    def test_search_datasets(self):
+        ''' Shall create two datasets and only one product
+            shall find one Dataset without products '''
+        source = Source(type=Source.SATELLITE,
+                        platform='AQUA',
+                        instrument='MODIS')
+        source.save()
+
+        geolocation1 = GeographicLocation(
+                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
+        geolocation1.save()
+        dataset1 = Dataset(geolocation=geolocation1,
+                            source=source,
+                            time_coverage_start=datetime.datetime(2010,1,1),
+                            time_coverage_end=datetime.datetime(2010,1,2))
+        dataset1.save()
+        location1 = DataLocation(protocol=DataLocation.LOCALFILE,
+                                dataset=dataset1,
+                                uri='somefile.txt')
+        location1.save()
+        prod = Product(short_name='sst',
+                        standard_name='sea_surface_temparture',
+                        long_name='Temperature of Sea Surface',
+                        units='K',
+                        location=location1,
+                        time=datetime.datetime(2010,1,2))
+        prod.save()
+
+        geolocation2 = GeographicLocation(
+                geometry=Polygon(((0, 1), (0, 10), (10, 10), (0, 10), (0, 1))))
+        geolocation2.save()
+        dataset2 = Dataset(geolocation=geolocation1,
+                            source=source,
+                            time_coverage_start=datetime.datetime(2015,1,1),
+                            time_coverage_end=datetime.datetime(2015,1,2))
+        dataset2.save()
+        location2 = DataLocation(protocol=DataLocation.LOCALFILE,
+                                dataset=dataset2,
+                                uri='somefile2.txt')
+        location2.save()
+
+        newds = Dataset.objects.filter(source__instrument = 'MODIS'
+                ).exclude(datalocation__product__short_name = 'sst' )
+        print newds[0]
+
+        self.assertEqual(newds.count(), 1)
 
 class DatasetRelationshipTests(TestCase):
     def test_variable(self):
