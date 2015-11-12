@@ -83,7 +83,6 @@ class ProductTests(TestCase):
                         standard_name='sea_surface_temparture',
                         long_name='Temperature of Sea Surface',
                         units='K',
-                        dataset=dataset,
                         location=location)
         var.save()
 

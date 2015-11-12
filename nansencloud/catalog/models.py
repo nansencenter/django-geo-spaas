@@ -73,7 +73,6 @@ class Product(models.Model):
     standard_name = models.CharField(max_length=100)
     long_name = models.CharField(max_length=200)
     units = models.CharField(max_length=10)
-    dataset = models.ForeignKey(Dataset)
     location = models.ForeignKey(DataLocation)
 
     def __str__(self):

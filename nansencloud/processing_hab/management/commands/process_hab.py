@@ -37,7 +37,8 @@ class Command(BaseCommand):
         call_command('ingest', *args)
 
         # find datasets that don't have chlorophyll
-        rawDatasets = Dataset.objects.filter(source__instrument='MODIS').exclude(product__short_name='chlor_a')
+        rawDatasets = Dataset.objects.filter( source__instrument = 'MODIS'
+                ).exclude( datalocation__product__short_name = 'chlor_a' )
         for rawDataset in rawDatasets:
             product = self.process(rawDataset)
             self.stdout.write('Successfully processed: %s\n' % product.location.uri)
@@ -64,7 +65,6 @@ class Command(BaseCommand):
             standard_name='chlorophyll_surface',
             long_name='CHLOROPHYLL',
             units='mg -1',
-            dataset=dataset,
             location=location)
 
         product.save()
