@@ -4,7 +4,9 @@ from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import DataLocation as CatalogDataLocation
 from nansencloud.catalog.models import Dataset as CatalogDataset
 
-from nansencloud.ingestor.managers import *
+from nansencloud.ingestor.managers import SourceManager
+from nansencloud.ingestor.managers import DataLocationManager
+from nansencloud.ingestor.managers import DatasetManager
 
 class Source(CatalogSource):
     class Meta:
