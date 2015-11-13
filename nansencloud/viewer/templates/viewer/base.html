@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 {% if greeting %}
                 <h1>{{ greeting }}</h1>
                 {% else %}
@@ -19,7 +19,7 @@
                 </form>
                 <a href="{% url 'index' %}">RELOAD</a>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <div class="pagination">
                     <span class="step-links">
                         {% if images.has_previous %}
@@ -34,8 +34,6 @@
                             <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ images.next_page_number }} ; window.document.forms[1].submit()">next</a>
                         {% endif %}
                     </span>
-                </div>
-                <div>
                 <table border=1>
                     <!-- HEADER -->
                     <tr>
@@ -60,7 +58,7 @@
                             </td>
                         {% endblock columns %}
 
-                        <td><input type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
+                        <td><input class='dsOveraly' type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
                     </tr>
                     {% endfor %}
 
@@ -83,6 +81,7 @@
         var map;
         var mapPolygons = [];
         var mapConstPolygons = [];
+        var mapImageOveralys = new Array();
 
         function add_polygon(id){
             window.mapPolygons[ id ].addTo(window.map);
@@ -95,6 +94,21 @@
         function toggle_polygon(showPoly, id) {
             if (showPoly.checked == true) add_polygon(id);
             else remove_polygon(id);
+        };
+
+        function add_image_overlay(prodButton){
+            mapImageOveralys[ prodButton.id ].addTo(window.map);
+            prodButton.checked = true;
+        }
+
+        function remove_image_overlay(prodButton){
+            window.map.removeLayer(mapImageOveralys[ prodButton.id ]);
+            prodButton.checked = false;
+        }
+
+        function toggle_image_overlay(prodButton) {
+            if (prodButton.checked == true) add_image_overlay(prodButton);
+            else remove_image_overlay(prodButton);
         };
 
         {% for img in images %}
@@ -120,9 +134,25 @@
             if ($(cbstr).prop("checked") == false) remove_polygon(this.id);
         });
 
-        $(':checkbox').click(function() {
+        $('.dsOveraly').click(function() {
             toggle_polygon(this, this.id);
         });
+
+        var prodUrls = new Array();
+        var prodExtents = new Array();
+        {% for img in images %}
+            {% for prod in img.products %}
+            mapImageOveralys["prod_{{ prod.id }}"] = L.imageOverlay('{{ prod.location.uri }}',
+                                                [[{{ img.geolocation.geometry.extent.1 }}, {{ img.geolocation.geometry.extent.0 }}],
+                                                 [{{ img.geolocation.geometry.extent.3 }}, {{ img.geolocation.geometry.extent.2 }}]]);
+            {% endfor %}
+        {% endfor %}
+
+
+        $(".prodButton").click(function() {
+            toggle_image_overlay(this);
+        });
+
     </script>
 
 {% endblock %}

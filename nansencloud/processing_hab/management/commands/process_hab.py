@@ -23,7 +23,7 @@ from django.core.management import call_command
 from django.conf import settings
 
 from nansencloud.catalog.models import Dataset, DataLocation, Product
-
+from nansencloud.processing_hab.tools.modis_l2_image import ModisL2Image
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'
@@ -41,32 +41,35 @@ class Command(BaseCommand):
                 ).exclude( datalocation__product__short_name = 'chlor_a' )
         for rawDataset in rawDatasets:
             product = self.process(rawDataset)
-            self.stdout.write('Successfully processed: %s\n' % product.location.uri)
+            if product is not None:
+                self.stdout.write('Successfully processed: %s\n' % product.location.uri)
 
     def process(self, dataset):
+        ''' L2 processing for HAB '''
+        product = None
         dsUri = dataset.datalocation_set.filter(protocol='LOCALFILE')[0].uri
-        dsBasename = os.path.split(dsUri)[1]
-        prodBasename = dsBasename + 'chlor_a.png'
-        prodFileName = os.path.join(settings.PROCESSING_HAB['outdir'], prodBasename)
-        prodUrl = os.path.join(settings.PROCESSING_HAB['outhttp'], prodBasename)
 
-        # actual 'processing'
-        print 'PROCESSSS:', dsUri
-        n = Nansat(dsUri)
-        l = n[3]
-        plt.imsave(prodFileName, l[::10, ::10])
+        # run processing
+        mi = ModisL2Image(dsUri)
+        productMetadata = mi.process_std(settings.PROCESSING_HAB)
 
-        location = DataLocation.objects.get_or_create(protocol='HTTP',
-                           uri=prodUrl,
+        # add generated products
+        for productMetadatum in productMetadata:
+            prodBaseName = os.path.split(productMetadatum['uri'])[1]
+            prodHttpUri = os.path.join(settings.PROCESSING_HAB['http_address'],
+                                        prodBaseName)
+            location = DataLocation.objects.get_or_create(protocol='HTTP',
+                           uri=prodHttpUri,
                            dataset=dataset)[0]
 
-        product = Product(
-            short_name='chlor_a',
-            standard_name='chlorophyll_surface',
-            long_name='CHLOROPHYLL',
-            units='mg -1',
-            location=location)
+            product = Product(
+                short_name=productMetadatum['short_name'],
+                standard_name=productMetadatum['standard_name'],
+                long_name=productMetadatum['long_name'],
+                units=productMetadatum['units'],
+                location=location,
+                time=dataset.time_coverage_start)
 
-        product.save()
+            product.save()
 
         return product

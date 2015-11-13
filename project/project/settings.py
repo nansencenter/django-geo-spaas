@@ -135,6 +135,7 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 1,
     'MAX_ZOOM': 10,
     'RESET_VIEW': False,
+    'SRID': 3857,
     'PLUGINS': {
         'forms': {
             'auto-include': True
@@ -143,6 +144,6 @@ LEAFLET_CONFIG = {
 }
 
 PROCESSING_HAB = {
-'outdir': '/vagrant/shared/develop_vm',
-'outhttp': 'http://maires.nerc.no',
+    'output_directory': '/vagrant/shared/develop_vm/nansen-cloud/project/project/static/products',
+    'http_address': 'http://192.168.33.10:9090/site_media/static/products',
 }

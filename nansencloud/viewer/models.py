@@ -37,3 +37,9 @@ class Dataset(CatalogDataset):
         borderStr += "]"
         return borderStr
 
+
+    def products(self):
+        ''' Return list of all associated products '''
+        httpDataLocations = self.datalocation_set.filter(protocol='HTTP')
+        products = [hdl.product_set.all()[0] for hdl in httpDataLocations]
+        return products

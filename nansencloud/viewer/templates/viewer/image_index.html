@@ -16,8 +16,8 @@
     {{ img.time_coverage_start }}
 </td>
 <td>
-    {% for product in img.product_set.all %}
-        [{{ product.short_name }}]
+    {% for product in img.products %}
+        {% include "viewer/product_button.html" with product=product%}
     {% endfor %}
 
 </td>
