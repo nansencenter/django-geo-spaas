@@ -99,11 +99,14 @@
         function add_image_overlay(prodButton){
             mapImageOveralys[ prodButton.id ].addTo(window.map);
             prodButton.checked = true;
+            $(prodButton).next("label").css( "color", 'green');
         }
 
         function remove_image_overlay(prodButton){
             window.map.removeLayer(mapImageOveralys[ prodButton.id ]);
             prodButton.checked = false;
+            $(prodButton).next("label").css( "color", 'black');
+
         }
 
         function toggle_image_overlay(prodButton) {
@@ -112,8 +115,8 @@
         };
 
         {% for img in images %}
-            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 1, fillOpacity: 0.3, fillColor: '#f00'});
-            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 0, fillOpacity: 0.1, fillColor: '#00f'});
+            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 1, fillOpacity: 0.05, fillColor: '#f00'});
+            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 0, fillOpacity: 0.05, fillColor: '#00f'});
         {% endfor %}
 
         window.addEventListener("map:init", function (e) {
