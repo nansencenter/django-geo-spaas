@@ -181,7 +181,6 @@ class ModisL2Image(Nansat):
     def process_std(self, settings):
         '''Standard L2-processing: only preview generation'''
         oBaseFileName = os.path.split(self.fileName)[1]
-        rgbName = os.path.join(settings['output_directory'], oBaseFileName + '_rgb.png')
         sstName = os.path.join(settings['output_directory'], oBaseFileName + '_sst.png')
         chlName = os.path.join(settings['output_directory'], oBaseFileName + '_chl.png')
 
@@ -198,22 +197,6 @@ class ModisL2Image(Nansat):
         mask = self['mask']
 
         productMetadata = []
-        # generate RGB quicklook
-        if not os.path.exists(rgbName):
-            self.write_figure(rgbName, ['Rrs_678', 'Rrs_555', 'Rrs_443'],
-                            clim=[[0,0,0],[0.02, 0.025, 0.016]],
-                            mask_array=mask,
-                            mask_lut={0:[128,128,128],
-                                      1:[128,128,128],
-                                      2:[128,128,128]},
-                            transparency=[128,128,128])
-        productMetadata.append(dict(
-            uri = rgbName,
-            short_name = 'rgb',
-            standard_name = 'rgb',
-            long_name='RGB',
-            units='',
-            ))
 
         # generate SST quicklook
         if not os.path.exists(sstName):
