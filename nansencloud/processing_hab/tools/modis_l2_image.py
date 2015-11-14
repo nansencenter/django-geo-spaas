@@ -54,26 +54,6 @@ class ModisL2Image(Nansat):
 
         self.add_mask(cloudBits, debug=debug)
 
-        self.vrt.remove_geolocationArray()
-
-        # use TPS for reprojection
-        self.vrt.tps = True
-
-        # reproject GCPs
-        gcps = self.vrt.dataset.GetGCPs()
-        clon = 0
-        clat = 0
-        k = 0
-        for gcp in gcps:
-            clon += gcp.GCPX
-            clat += gcp.GCPY
-            k += 1
-        clon /= k
-        clat /= k
-        srs = '+proj=stere +datum=WGS84 +ellps=WGS84 +lon_0=%f +lat_0=%f +no_defs' % (clon, clat)
-        print srs
-        self.vrt.reproject_GCPs(srs)
-
         # replace cdom_index and sst with cdom_a and SST
         self.rename_band('cdom_index', 'cdom_a')
         self.rename_band('sst', 'SST')
@@ -250,7 +230,7 @@ class ModisL2Image(Nansat):
         bandMeta = self.bands()[self._get_band_number('SST')]
         productMetadata.append(dict(
             uri = sstName,
-            short_name = bandMeta['short_name'],
+            short_name = 'SST',
             standard_name = bandMeta['standard_name'],
             long_name = bandMeta['long_name'],
             units = bandMeta['units'],
@@ -273,7 +253,7 @@ class ModisL2Image(Nansat):
         bandMeta = self.bands()[self._get_band_number('chlor_a')]
         productMetadata.append(dict(
             uri = chlName,
-            short_name = bandMeta['short_name'],
+            short_name = 'chlor_a',
             standard_name = bandMeta['standard_name'],
             long_name = bandMeta['long_name'],
             units = bandMeta['units'],

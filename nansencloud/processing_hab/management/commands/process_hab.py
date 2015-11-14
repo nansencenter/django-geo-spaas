@@ -50,7 +50,11 @@ class Command(BaseCommand):
         dsUri = dataset.datalocation_set.filter(protocol='LOCALFILE')[0].uri
 
         # run processing
-        mi = ModisL2Image(dsUri)
+        try:
+            mi = ModisL2Image(dsUri)
+        except:
+            return None
+
         productMetadata = mi.process_std(settings.PROCESSING_HAB)
 
         # add generated products
