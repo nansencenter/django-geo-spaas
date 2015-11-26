@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from django.contrib.gis.geos import Polygon
 
+from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.catalog.models import *
 
 class GeographicLocationTests(TestCase):
@@ -17,9 +18,9 @@ class GeographicLocationTests(TestCase):
 class SourceTests(TestCase):
     def test_source(self):
         ''' Shall create Source instance '''
-        source = Source(type='Satellite',
-                        platform='AQUA',
-                        instrument='MODIS')
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
         source.save()
 
 
@@ -29,9 +30,9 @@ class DatasetTests(TestCase):
         geolocation = GeographicLocation(
                 geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
-        source = Source(type=Source.SATELLITE,
-                        platform='AQUA',
-                        instrument='MODIS')
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
         source.save()
         ds = Dataset(geolocation=geolocation, source=source,
                      time_coverage_start=datetime.datetime(2010,1,1),
@@ -45,9 +46,9 @@ class DataLocationTests(TestCase):
         geolocation = GeographicLocation(
                 geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
-        source = Source(type=Source.SATELLITE,
-                        platform='AQUA',
-                        instrument='MODIS')
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
         source.save()
         dataset = Dataset(geolocation=geolocation,
                             source=source,
@@ -66,9 +67,9 @@ class ProductTests(TestCase):
         geolocation = GeographicLocation(
                 geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
-        source = Source(type=Source.SATELLITE,
-                        platform='AQUA',
-                        instrument='MODIS')
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
         source.save()
         dataset = Dataset(geolocation=geolocation,
                             source=source,
@@ -90,9 +91,9 @@ class ProductTests(TestCase):
     def test_search_datasets(self):
         ''' Shall create two datasets and only one product
             shall find one Dataset without products '''
-        source = Source(type=Source.SATELLITE,
-                        platform='AQUA',
-                        instrument='MODIS')
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
         source.save()
 
         geolocation1 = GeographicLocation(
@@ -128,8 +129,9 @@ class ProductTests(TestCase):
                                 uri='somefile2.txt')
         location2.save()
 
-        newds = Dataset.objects.filter(source__instrument = 'MODIS'
-                ).exclude(datalocation__product__short_name = 'sst' )
+        newds = Dataset.objects.filter(
+                source__instrument__short_name = 'MODIS'
+            ).exclude(datalocation__product__short_name = 'sst' )
         print newds[0]
 
         self.assertEqual(newds.count(), 1)
@@ -140,9 +142,9 @@ class DatasetRelationshipTests(TestCase):
         geolocation = GeographicLocation(
                 geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
-        source = Source(type=Source.SATELLITE,
-                        platform='AQUA',
-                        instrument='MODIS')
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
         source.save()
         child = Dataset(geolocation=geolocation,
                             source=source,

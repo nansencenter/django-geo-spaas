@@ -36,8 +36,9 @@ class Command(BaseCommand):
             call_command('ingest', *args)
 
         # find datasets that don't have chlorophyll
-        rawDatasets = Dataset.objects.filter( source__instrument = 'MODIS'
-                ).exclude( datalocation__product__short_name = 'chlor_a' )
+        rawDatasets = Dataset.objects.filter(
+                source__instrument__short_name = 'MODIS'
+            ).exclude( datalocation__product__short_name = 'chlor_a' )
         for rawDataset in rawDatasets:
             product = self.process(rawDataset)
             if product is not None:

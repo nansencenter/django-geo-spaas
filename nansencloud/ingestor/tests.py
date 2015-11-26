@@ -6,6 +6,7 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
+from nansencloud.gcmd_keywords.models import Instrument, Platform
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.ingestor.models import Source, DataLocation, Dataset
 
@@ -13,16 +14,20 @@ from nansencloud.ingestor.models import Source, DataLocation, Dataset
 class TestSource(TestCase):
     def test_create_valid(self):
         ''' shall create and save valid source '''
-        s = Source.objects.create(type=Source.SATELLITE)
+        pp = Platform.objects.get(short_name='ENVISAT')
+        ii = Instrument.objects.get(short_name='MERIS')
+        s = Source.objects.create(platform=pp, instrument=ii)
 
     def test_create_invalid(self):
         ''' shall not create and save invalid source '''
         with self.assertRaises(Exception):
-            Source.objects.create(type='crap')
+            Source.objects.create(platform='crap', instrument='crap')
 
     def test_getorcreate_valid(self):
         ''' create and save valid source '''
-        src, cr = Source.objects.get_or_create(type=Source.SATELLITE)
+        pp = Platform.objects.get(short_name='ENVISAT')
+        ii = Instrument.objects.get(short_name='ASAR')
+        src, cr = Source.objects.get_or_create(platform=pp, instrument=ii)
         self.assertTrue(cr)
 
 

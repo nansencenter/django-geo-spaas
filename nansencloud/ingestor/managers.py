@@ -1,6 +1,9 @@
+import json
+
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
+from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import DataLocation, Source, Dataset
@@ -46,10 +49,29 @@ class DatasetManager(models.Manager):
         # open file with Nansat
         n = Nansat(uri)
         # get metadata
+        try:
+            platform = json.loads(n.get_metadata('platform'))
+        except:
+            import ipdb
+            ipdb.set_trace()
+            print 'hei'
+        instrument = json.loads(n.get_metadata('instrument'))
         source = Source.objects.get_or_create(
-                    platform=n.get_metadata('platform'),
-                    instrument=n.get_metadata('instrument'),
-                    specs=n.get_metadata().get('specs', ''))[0]
+            platform = Platform.objects.get(
+                category=platform['Category'],
+                series_entity=platform['Series_Entity'],
+                short_name=platform['Short_Name'],
+                long_name=platform['Long_Name']
+            ),
+            instrument = Instrument.objects.get(
+                category = instrument['Category'],
+                instrument_class = instrument['Class'],
+                type = instrument['Type'],
+                subtype = instrument['Subtype'],
+                short_name = instrument['Short_Name'],
+                long_name = instrument['Long_Name']
+            ),
+            specs=n.get_metadata().get('specs', ''))[0]
 
         geolocation = GeographicLocation.objects.get_or_create(
                             geometry=WKTReader().read(n.get_border_wkt()))[0]
@@ -63,14 +85,4 @@ class DatasetManager(models.Manager):
                                                 uri=uri,
                                                 dataset=ds)[0]
         return ds, True
-
-class SourceManager(models.Manager):
-    def create(self, *args, **kwargs):
-        ''' Create platform of a given type '''
-        type = kwargs.pop('type')
-        if (type, type) not in CatalogSource.SOURCE_TYPES:
-            raise Exception('Wrong type %s ' % type)
-
-        return Source(type=type, **kwargs)
-
 
