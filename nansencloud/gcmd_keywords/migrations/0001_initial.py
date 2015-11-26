@@ -6,48 +6,33 @@ from django.db import models, migrations
 import os, json
 from nerscmetadata import gcmd_keywords
 
-json_fn = os.path.join(gcmd_keywords.json_path,
-        gcmd_keywords.json_filename)
-if not os.path.isfile(json_fn):
-    gcmd_keywords.write_json()
-
 def add_gcmd_platforms(apps, schema_editor):
-    Platform = apps.get_model("gcmd_keywords", "Platform")
-    platforms = json.load(open(json_fn))['Platforms']
-    # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
-    for category in platforms.keys():
-        if category=='Revision':
+    Platform = apps.get_model('gcmd_keywords', 'Platform')
+    for platform in gcmd_keywords.get_keywords('Platforms'):
+        if platform.keys()[0]=='Revision':
             continue
-        for series_entity in platforms[category].keys():
-            for short_and_long_names in platforms[category][series_entity]:
-                pp = Platform(
-                    category = category,
-                    series_entity = series_entity,
-                    short_name = short_and_long_names[0],
-                    long_name = short_and_long_names[1]
-                )
-                pp.save()
+        pp = Platform(
+                category = platform['Category'],
+                series_entity = platform['Series_Entity'],
+                short_name = platform['Short_Name'],
+                long_name = platform['Long_Name']
+            )
+        pp.save()
 
 def add_gcmd_instruments(apps, schema_editor):
-    Instrument = apps.get_model("gcmd_keywords", "Instrument")
-    instruments = json.load(open(json_fn))['Instruments']
-    # 'Category', 'Class', 'Type', 'Subtype', 'Short_Name', 'Long_Name'
-    for category in instruments.keys():
-        if category=='Revision':
+    Instrument = apps.get_model('gcmd_keywords', 'Instrument')
+    for instrument in gcmd_keywords.get_keywords('Instruments'):
+        if instrument.keys()[0]=='Revision':
             continue
-        for iclass in instruments[category].keys():
-            for type in instruments[category][iclass].keys():
-                for subtype in instruments[category][iclass][type].keys():
-                    for short_and_long_names in instruments[category][iclass][type][subtype]:
-                        ii = Instrument(
-                            category = category,
-                            instrument_class = iclass,
-                            type = type,
-                            subtype = subtype,
-                            short_name = short_and_long_names[0],
-                            long_name = short_and_long_names[1]
-                        )
-                        ii.save()
+        ii = Instrument(
+                category = instrument['Category'],
+                instrument_class = instrument['Class'],
+                type = instrument['Type'],
+                subtype = instrument['Subtype'],
+                short_name = instrument['Short_Name'],
+                long_name = instrument['Long_Name']
+            )
+        ii.save()
 
 class Migration(migrations.Migration):
 
