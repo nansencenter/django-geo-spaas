@@ -30,11 +30,10 @@ class Command(BaseCommand):
     help = 'Add file to catalog archive'
 
     def handle(self, *args, **options):
-        if len(args)==0:
-            raise IOError('Please provide at least one filename')
-
-        # first add new images
-        call_command('ingest', *args)
+        if len(args)>0:
+            #raise IOError('Please provide at least one filename')
+            # first add new images
+            call_command('ingest', *args)
 
         # find datasets that don't have chlorophyll
         rawDatasets = Dataset.objects.filter( source__instrument = 'MODIS'
