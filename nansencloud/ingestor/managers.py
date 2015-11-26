@@ -47,7 +47,6 @@ class DatasetManager(models.Manager):
         n = Nansat(uri)
         # get metadata
         source = Source.objects.get_or_create(
-                    type=n.get_metadata('source_type'),
                     platform=n.get_metadata('platform'),
                     instrument=n.get_metadata('instrument'),
                     specs=n.get_metadata().get('specs', ''))[0]
