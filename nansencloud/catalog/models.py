@@ -18,12 +18,12 @@ class GeographicLocation(geomodels.Model):
 
 class Source(models.Model):
     platform = models.ForeignKey(Platform)
-    sensor = models.ForeignKey(Instrument)
+    instrument = models.ForeignKey(Instrument)
     specs = models.CharField(max_length=50, default='',
         help_text='Further specifications of the source.')
 
     class Meta:
-        unique_together = (("platform", "sensor"),)
+        unique_together = (("platform", "instrument"),)
 
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
