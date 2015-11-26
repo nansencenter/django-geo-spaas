@@ -5,6 +5,8 @@ from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 
+from nansencloud.gcmd_keywords.models import Platform, Instrument
+
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
 
@@ -15,21 +17,13 @@ class GeographicLocation(geomodels.Model):
 
 
 class Source(models.Model):
-    SATELLITE = 'Satellite'
-    INSITU = 'In-situ'
-    MODEL = 'Model'
-    SOURCE_TYPES = ((SATELLITE, SATELLITE), (INSITU, INSITU), (MODEL, MODEL))
-
-    type = models.CharField(max_length=15, choices=SOURCE_TYPES)
-    platform = models.CharField(max_length=100, default='',
-        help_text='Data recording platform.')
-    instrument = models.CharField(max_length=15, default='',
-        help_text='The sensor used to record measurements.')
+    platform = models.ForeignKey(Platform)
+    sensor = models.ForeignKey(Instrument)
     specs = models.CharField(max_length=50, default='',
         help_text='Further specifications of the source.')
 
     class Meta:
-        unique_together = (("platform", "instrument", "specs"),)
+        unique_together = (("platform", "sensor"),)
 
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
