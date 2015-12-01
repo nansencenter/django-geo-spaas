@@ -16,8 +16,7 @@ class Platform(models.Model):
     objects = PlatformManager()
 
     def __str__(self):
-        return self.category + ', ' + self.series_entity + ': ' + \
-                self.long_name + ' (' + self.short_name + ')'
+        return self.short_name
 
 class Instrument(models.Model):
 
@@ -31,6 +30,4 @@ class Instrument(models.Model):
     objects = InstrumentManager()
 
     def __str__(self):
-        return self.category + ', ' + self.instrument_class + ', ' + \
-                self.type + ', ' + self.subtype + ': ' + self.long_name \
-                + ' (' + self.short_name + ')'
+        return self.short_name
