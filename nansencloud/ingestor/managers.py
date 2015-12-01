@@ -8,7 +8,7 @@ from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import DataLocation, Source, Dataset
 
-from nansat import Nansat
+from nansat.nansat import Nansat
 
 class DataLocationQuerySet(models.QuerySet):
     def get_non_ingested_uris(self, all_uris):
@@ -52,9 +52,9 @@ class DatasetManager(models.Manager):
         try:
             platform = json.loads(n.get_metadata('platform'))
         except:
-            import ipdb
-            ipdb.set_trace()
-            print 'hei'
+            print('ADD CORRECT METADATA IN MAPPER %s'%n.mapper)
+            # TODO: add message to error instead of printing like above
+            raise 
         instrument = json.loads(n.get_metadata('instrument'))
         source = Source.objects.get_or_create(
             platform = Platform.objects.get(
