@@ -36,7 +36,8 @@ class Dataset(models.Model):
     time_coverage_end = models.DateTimeField()
 
     def __str__(self):
-        return '%s/%s' % (self.source.instrument, self.time_coverage_start.isoformat())
+        return '%s/%s/%s' % (self.source.platform, self.source.instrument,
+                self.time_coverage_start.isoformat())
 
 
 class DataLocation(models.Model):

@@ -1,15 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:
-# Purpose:
-#
-# Author:       Morten Wergeland Hansen
-# Modified:
-#
-# Created:
-# Last modified:
-# Copyright:    (c) NERSC
-# License:
-#-------------------------------------------------------------------------------
 import os, glob, warnings
 
 import numpy as np
@@ -47,7 +35,7 @@ class Command(BaseCommand):
     def process(self, dataset):
         ''' L2 processing for HAB '''
         product = None
-        dsUri = dataset.datalocation_set.filter(protocol='LOCALFILE')[0].uri
+        dsUri = dataset.datalocation_set.filter(protocol=DataLocation.LOCALFILE)[0].uri
 
         # run processing
         try:

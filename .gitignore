@@ -5,3 +5,5 @@
 databases_postgis.py
 project/project/static/products/*
 project/geodjango.db
+project/project/site_media/media/*
+project/project/site_media/static/*

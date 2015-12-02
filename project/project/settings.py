@@ -13,14 +13,13 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),
     os.pardir))
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-# ./manage.py collectstatic will put app-specific static files here:
+# ./manage.py collectstatic will put the static files (also from the apps)
+# here:
 STATIC_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "static")
 # uploaded media will be put here:
 MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "media")
 
-# In our model process methods, we save our static files here (in addition to
-# this we can have static-dirs in our apps that will be found automatically by
-# Django):
+# Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PACKAGE_ROOT, "static"),
 )
@@ -88,6 +87,7 @@ INSTALLED_APPS = (
     'nansencloud.ingestor',
     'nansencloud.viewer',
     'nansencloud.processing_hab',
+    'nansencloud.processing_sar_nrcs',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',
 )
@@ -145,6 +145,6 @@ LEAFLET_CONFIG = {
 }
 
 PROCESSING_HAB = {
-    'output_directory': '/vagrant/shared/develop_vm/nansen-cloud/project/project/static/products',
-    'http_address': 'http://192.168.33.10:9090/site_media/static/products',
+    'output_directory': os.path.join(MEDIA_ROOT, 'hab/products'),
+    'http_address': os.path.join(MEDIA_URL, 'hab/products'),
 }
