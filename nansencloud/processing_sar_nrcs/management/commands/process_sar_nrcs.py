@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 from django.conf import settings
 from django.core.management import call_command
@@ -40,7 +41,7 @@ class Command(BaseCommand):
         n = Nansat(dsURI)
         lon, lat = n.get_corners()
         d = Domain(NSR(3857),
-                   '-lle %f %f %f %f -tr 500 500' % (
+                   '-lle %f %f %f %f -tr 1000 1000' % (
                         lon.min(), lat.min(), lon.max(), lat.max()))
         n.reproject(d)
 
@@ -73,6 +74,13 @@ class Command(BaseCommand):
         if not os.path.exists(products_media_path):
             os.mkdir(products_media_path)
 
+        clims = {
+            'HH': [-20, 0],
+            'HV': [-30, -10],
+            'VV': [-20, 0],
+            'VH': [-20, 0],
+        }
+
         # Create png's for each band
         num_products = 0
         for band in s0bands:
@@ -86,23 +94,29 @@ class Command(BaseCommand):
                     self.__module__.split('.')[1],
                     prodBaseName, product_filename)
 
-            # Set logscale=True and make sure units become correct...
-            logscale = True
-            if logscale:
-                units = 'dB'
-            else:
-                units = meta['units']
-            n.write_figure(fileName=prodFileURI, bands=band, clim=[-20,0],
-                    logscale=logscale, cmapName='gray')
+            mask = n['swathmask']
+            # Pobably faster to use the Figure class directly (now the band has
+            # to be read twice - see
+            # https://github.com/nansencenter/nansen-cloud/blob/62953ed05b097e2c77529b380649b5c10978f063/proc/models.py)
+            s0 = n[band]
+            mask[s0 == np.nan] = 0
+            mask[s0 <= 0] = 0
+            n.write_figure(fileName=prodFileURI, bands=band,
+                    clim=clims[meta['polarization']],
+                    array_modfunc = lambda x: 10.0*np.log10(x), 
+                    cmapName='gray',
+                    mask_array=mask,
+                    mask_lut={0:[255,0,0]},
+                    transparency=[255,0,0])
 
             location = DataLocation.objects.get_or_create(protocol='HTTP',
                            uri=prodHttpURI,
                            dataset=ds)[0]
             product = Product(
-                short_name=meta['short_name'],
+                short_name='%s_%s'%(meta['short_name'], meta['polarization']),
                 standard_name=meta['standard_name'],
                 long_name=meta['long_name'],
-                units=units,
+                units='dB',
                 location=location,
                 time=ds.time_coverage_start)
 
