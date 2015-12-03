@@ -1,4 +1,5 @@
 {% extends "site_base.html" %}
+{% load staticfiles %}
 {% load leaflet_tags %}
 {% load bootstrap_tags %}
 
@@ -11,15 +12,24 @@
                 {% else %}
                 <h1>Nansen-cloud data archive</h1>
                 {% endif %}
-                <form action="{% url viewname %}" method="post">
-                    {% csrf_token %}
-                    {{ form|as_bootstrap }}
-                    <input type=hidden id="page" name="page" value=1 />
-                    <input type="submit" value="Search" />
-                </form>
-                <a href="{% url 'index' %}">RELOAD</a>
             </div>
-            <div class="col-md-6">
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="col-md-7">
+            <form action="{% url viewname %}" method="post">
+                {% csrf_token %}
+                    {{ form|as_bootstrap }}
+                    {% comment %}
+                    {{ form.polygon }}
+                    {% endcomment %}
+                <input type=hidden id="page" name="page" value=1 />
+                <input type="submit" value="Search" />
+            </form>
+            <a href="{% url 'index' %}">RELOAD</a>
+            </div>
+            <div class="col-md-5">
                 <div class="pagination">
                     <span class="step-links">
                         {% if images.has_previous %}
@@ -37,7 +47,6 @@
                 <table border=1>
                     <!-- HEADER -->
                     <tr>
-                    <th>ID</th>
                     {% block headers %}
                     <th>Filename</th>
                     {% endblock headers %}
@@ -48,9 +57,6 @@
 
                     {% for img in images %}
                     <tr id={{ forloop.counter }}>
-                        <td>
-                        {{ forloop.counter }}
-                        </td>
 
                         {% block columns %}
                             <td>
@@ -58,7 +64,7 @@
                             </td>
                         {% endblock columns %}
 
-                        <td><input class='dsOveraly' type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
+                        <td><input class='dsOverlay' type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
                     </tr>
                     {% endfor %}
 
@@ -78,10 +84,18 @@
 {% block extra_script %}
 
     <script type="text/javascript">
-        var map;
+        var map; //= map('map').SetView([100,60], 13);
         var mapPolygons = [];
         var mapConstPolygons = [];
-        var mapImageOveralys = new Array();
+        var mapImageOverlays = new Array();
+        var MapQuestOpen_Aerial = L.tileLayer(
+            'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+                type: 'sat',
+                ext: 'jpg',
+                attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+                subdomains: '1234'
+        });
+
 
         function add_polygon(id){
             window.mapPolygons[ id ].addTo(window.map);
@@ -97,13 +111,13 @@
         };
 
         function add_image_overlay(prodButton){
-            mapImageOveralys[ prodButton.id ].addTo(window.map);
+            mapImageOverlays[ prodButton.id ].addTo(window.map);
             prodButton.checked = true;
             $(prodButton).next("label").css( "color", 'green');
         }
 
         function remove_image_overlay(prodButton){
-            window.map.removeLayer(mapImageOveralys[ prodButton.id ]);
+            window.map.removeLayer(mapImageOverlays[ prodButton.id ]);
             prodButton.checked = false;
             $(prodButton).next("label").css( "color", 'black');
 
@@ -115,12 +129,14 @@
         };
 
         {% for img in images %}
-            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 1, fillOpacity: 0.05, fillColor: '#f00'});
-            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {weight: 0, fillOpacity: 0.05, fillColor: '#00f'});
+            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 1, fillOpacity: 0.2, fillColor: '#f00'});
+            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 0.5, fillOpacity: 0.05, fillColor: '#b20000'});
         {% endfor %}
 
         window.addEventListener("map:init", function (e) {
             window.map = e.detail.map;
+            window.map.setView([0,0], 2);
+            MapQuestOpen_Aerial.addTo(window.map);
             {% for img in images %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}
@@ -137,7 +153,7 @@
             if ($(cbstr).prop("checked") == false) remove_polygon(this.id);
         });
 
-        $('.dsOveraly').click(function() {
+        $('.dsOverlay').click(function() {
             toggle_polygon(this, this.id);
         });
 
@@ -145,7 +161,7 @@
         var prodExtents = new Array();
         {% for img in images %}
             {% for prod in img.products %}
-            mapImageOveralys["prod_{{ prod.id }}"] = L.imageOverlay('{{ prod.location.uri }}',
+            mapImageOverlays["prod_{{ prod.id }}"] = L.imageOverlay('{% static prod.location.uri %}',
                                                 [[{{ img.geolocation.geometry.extent.1 }}, {{ img.geolocation.geometry.extent.0 }}],
                                                  [{{ img.geolocation.geometry.extent.3 }}, {{ img.geolocation.geometry.extent.2 }}]]);
             {% endfor %}
