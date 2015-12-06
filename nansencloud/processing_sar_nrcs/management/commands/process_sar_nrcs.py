@@ -10,6 +10,8 @@ from nansencloud.catalog.models import DataLocation
 
 from nansat.nansat import Domain, Nansat, Figure, NSR
 
+standard_name = 'surface_backwards_scattering_coefficient_of_radar_wave'
+
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'
     help = 'Add file to catalog archive'
@@ -22,7 +24,7 @@ class Command(BaseCommand):
         # find datasets that don't have NRCS
         rawDatasets = Dataset.objects.filter( source__instrument__type =
                 'Imaging Radars'
-                ).exclude( datalocation__product__short_name = 'nrcs' )
+                ).exclude( datalocation__product__standard_name = standard_name )
         for rawDataset in rawDatasets:
             num = self.process(rawDataset)
             if num>0:
@@ -43,10 +45,9 @@ class Command(BaseCommand):
         d = Domain(NSR(3857),
                    '-lle %f %f %f %f -tr 1000 1000' % (
                         lon.min(), lat.min(), lon.max(), lat.max()))
-        n.reproject(d)
+        n.reproject(d, eResampleAlg=1, tps=True)
 
         # Get all NRCS bands
-        standard_name = 'surface_backwards_scattering_coefficient_of_radar_wave'
         s0bands = []
         for key, value in n.bands().iteritems():
             try:
