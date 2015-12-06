@@ -30,24 +30,33 @@ class DatasetManager(models.Manager):
         if len(dataLocation) > 0:
             return dataLocation[0].dataset, False
 
-        # Read file content and store it in dictionaries
+        # Read file content and store it in geojson compatible dictionaries
+        # Need to play a little with the different geometries - see
+        # http://geojson.org/geojson-spec.html
         ships = {}
         with open(uri, 'r') as f:
             for msg in ais.stream.decode(f):
                 if not ships.has_key(msg['mmsi']):
-                    ships[msg['mmsi']] = {}
-                try:
-                    ships[msg['mmsi']][msg['tagblock_timestamp']] = {
-                        'x': msg['x'],
-                        'y': msg['y'],
-                        'true_heading': msg['true_heading'],
+                    ships[msg['mmsi']] = {
+                        'timestamps': [],
+                        'points': {
+                            'type': 'MultiPoint',
+                            'coordinates': [],
+                        }
                     }
+                try:
+                    ships[msg['mmsi']]['timestamps'].append(
+                        msg['tagblock_timestamp'])
+                    ships[msg['mmsi']]['points']['coordinates'].append(
+                        [msg['x'], msg['y']])
+                    #'true_heading': msg['true_heading'],
                 except KeyError:
                     continue
 
         import ipdb
         ipdb.set_trace()
         print 'hei'
+
 
         ## get metadata
         #try:
