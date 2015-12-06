@@ -62,7 +62,7 @@ class DataLocation(models.Model):
     dataset = models.ForeignKey(Dataset)
 
     def __str__(self):
-        return os.path.split(self.uri)[1]
+        return '%s: %s'%(self.dataset, os.path.split(self.uri)[1])
 
 
 class Product(models.Model):
