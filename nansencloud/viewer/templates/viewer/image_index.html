@@ -17,7 +17,7 @@
 </td>
 <td>
     {% for product in img.products %}
-        <input type="checkbox" id='prod_{{ product.pk }}' id=id='prod_{{ product.pk }}' class='prodButton'  style="width: 0">
+        <input type="checkbox" id='prod_{{ product.pk }}' class='prodButton' style="width: 0">
         <label for='prod_{{ product.pk }}'>{{ product.short_name }}</label>
     {% endfor %}
 
