@@ -9,8 +9,26 @@ from nansencloud.catalog.models import Dataset, Product
 from nansencloud.catalog.models import DataLocation
 
 from nansat.nansat import Domain, Nansat, Figure, NSR
+from sarqp.sarqp import QuadPol
 
 standard_name = 'surface_backwards_scattering_coefficient_of_radar_wave'
+
+def resize(n, resize_factor = 0.5):
+    # resize to correct ratio range:azimuth
+    try:
+        wh_ratio = ( float(n.get_metadata()['LINE_SPACING']) /
+                float(n.get_metadata()['PIXEL_SPACING'])
+            )
+    except Exception as e:
+        print e
+        wh_ratio = ( float(n.get_metadata()['SPH_AZIMUTH_SPACING']) /
+                float(n.get_metadata()['SPH_RANGE_SPACING'])
+            )
+
+    w0 = wh_ratio*n.shape()[1]
+    h0 = n.shape()[0]
+    n.resize( width = w0*resize_factor, height = h0*resize_factor,
+            eResampleAlg=eResampleAlg)
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'
@@ -31,30 +49,48 @@ class Command(BaseCommand):
                 self.stdout.write('Successfully generated %d products from %s'
                         %(num,rawDataset))
 
+        
+
     def process(self, ds):
         ''' Create quicklooks of all NRCS bands.
 
         TODO: move code out of nansencloud into a general SAR processing
         package
         '''
+        clims = {
+            'HH': [-20, 0],
+            'HV': [-30, -10],
+            'VV': [-20, 0],
+            'VH': [-20, 0],
+        }
         dsURI = ds.datalocation_set.filter(
                 protocol=DataLocation.LOCALFILE)[0].uri
 
-        n = Nansat(dsURI)
-        lon, lat = n.get_corners()
-        d = Domain(NSR(3857),
-                   '-lle %f %f %f %f -tr 1000 1000' % (
-                        lon.min(), lat.min(), lon.max(), lat.max()))
-        n.reproject(d, eResampleAlg=1, tps=True)
+        qp = False
+        import ipdb
+        ipdb.set_trace()
+        try:
+            n = QuadPol(dsURI, wind_direction='ncep_wind_online')
+            qp = True
+        except:
+            n = Nansat(dsURI)
 
         # Get all NRCS bands
         s0bands = []
+        pp = []
         for key, value in n.bands().iteritems():
             try:
                 if value['standard_name']==standard_name:
                     s0bands.append(key)
+                    pp.append(value['polarization'])
             except KeyError:
                 continue
+
+        if qp:
+            for i, band in enumerate(s0bands):
+                s0bands[i] = band+'_reduced'
+
+        print('set up processing of reduced images')
 
         # Get the path of nansencloud media files
         ncloud_media_path = os.path.join(settings.MEDIA_ROOT,
@@ -74,13 +110,14 @@ class Command(BaseCommand):
                 prodBaseName)
         if not os.path.exists(products_media_path):
             os.mkdir(products_media_path)
+        if qp:
+            n.export(os.path.join(products_media_path, prodBaseName+'.nc'))
 
-        clims = {
-            'HH': [-20, 0],
-            'HV': [-30, -10],
-            'VV': [-20, 0],
-            'VH': [-20, 0],
-        }
+        lon, lat = n.get_corners()
+        d = Domain(NSR(3857),
+                   '-lle %f %f %f %f -tr 1000 1000' % (
+                        lon.min(), lat.min(), lon.max(), lat.max()))
+        n.reproject(d, eResampleAlg=1, tps=True)
 
         # Create png's for each band
         num_products = 0
@@ -102,13 +139,16 @@ class Command(BaseCommand):
             s0 = n[band]
             mask[s0 == np.nan] = 0
             mask[s0 <= 0] = 0
-            n.write_figure(fileName=prodFileURI, bands=band,
-                    clim=clims[meta['polarization']],
-                    array_modfunc = lambda x: 10.0*np.log10(x), 
-                    cmapName='gray',
+            s0 = np.log10(s0)*10.
+            f = Figure(s0)
+            f.process(
+                    cmin = clims[meta['polarization']][0],
+                    cmax = clims[meta['polarization']][1],
+                    cmapName = 'gray',
                     mask_array=mask,
-                    mask_lut={0:[255,0,0]},
-                    transparency=[255,0,0])
+                    mask_lut={0:[255,0,0]}
+                )
+            f.save(prodFileURI, transparency=[255,0,0])
 
             location = DataLocation.objects.get_or_create(protocol='HTTP',
                            uri=prodHttpURI,
