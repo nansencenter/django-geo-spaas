@@ -8,27 +8,26 @@ from django.core.management.base import BaseCommand
 from nansencloud.catalog.models import Dataset, Product
 from nansencloud.catalog.models import DataLocation
 
+from nansencloud.processing_sar_nrcs.tools import *
+
 from nansat.nansat import Domain, Nansat, Figure, NSR
 from sarqp.sarqp import QuadPol
 
 standard_name = 'surface_backwards_scattering_coefficient_of_radar_wave'
 
-def resize(n, resize_factor = 0.5):
-    # resize to correct ratio range:azimuth
-    try:
-        wh_ratio = ( float(n.get_metadata()['LINE_SPACING']) /
-                float(n.get_metadata()['PIXEL_SPACING'])
-            )
-    except Exception as e:
-        print e
-        wh_ratio = ( float(n.get_metadata()['SPH_AZIMUTH_SPACING']) /
-                float(n.get_metadata()['SPH_RANGE_SPACING'])
-            )
+def create_product(prodHttpURI, ds, meta, units):
+    location = DataLocation.objects.get_or_create(protocol='HTTP',
+                    uri=prodHttpURI,
+                    dataset=ds)[0]
+    product = Product(
+        short_name='%s_%s'%(meta['short_name'], meta['polarization']),
+        standard_name=meta['standard_name'],
+        long_name=meta['long_name'],
+        units=units,
+        location=location,
+        time=ds.time_coverage_start)
 
-    w0 = wh_ratio*n.shape()[1]
-    h0 = n.shape()[0]
-    n.resize( width = w0*resize_factor, height = h0*resize_factor,
-            eResampleAlg=eResampleAlg)
+    product.save()
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'
@@ -54,8 +53,8 @@ class Command(BaseCommand):
     def process(self, ds):
         ''' Create quicklooks of all NRCS bands.
 
-        TODO: move code out of nansencloud into a general SAR processing
-        package
+        TODO: major cleanup + move code out of nansencloud into a general SAR
+        processing package
         '''
         clims = {
             'HH': [-20, 0],
@@ -67,8 +66,6 @@ class Command(BaseCommand):
                 protocol=DataLocation.LOCALFILE)[0].uri
 
         qp = False
-        import ipdb
-        ipdb.set_trace()
         try:
             n = QuadPol(dsURI, wind_direction='ncep_wind_online')
             qp = True
@@ -90,8 +87,6 @@ class Command(BaseCommand):
             for i, band in enumerate(s0bands):
                 s0bands[i] = band+'_reduced'
 
-        print('set up processing of reduced images')
-
         # Get the path of nansencloud media files
         ncloud_media_path = os.path.join(settings.MEDIA_ROOT,
                 self.__module__.split('.')[0])
@@ -110,6 +105,7 @@ class Command(BaseCommand):
                 prodBaseName)
         if not os.path.exists(products_media_path):
             os.mkdir(products_media_path)
+
         if qp:
             n.export(os.path.join(products_media_path, prodBaseName+'.nc'))
 
@@ -121,47 +117,59 @@ class Command(BaseCommand):
 
         # Create png's for each band
         num_products = 0
+        swathmask = n['swathmask']
+        httpURIbase = os.path.join(settings.MEDIA_URL,
+                    self.__module__.split('.')[0],
+                    self.__module__.split('.')[1], prodBaseName)
         for band in s0bands:
             meta = n.bands()[band]
             product_filename = '%s_%s.png'%(meta['short_name'],
                     meta['polarization'])
 
-            prodFileURI = os.path.join(products_media_path, product_filename)
-            prodHttpURI = os.path.join(settings.MEDIA_URL,
-                    self.__module__.split('.')[0],
-                    self.__module__.split('.')[1],
-                    prodBaseName, product_filename)
-
-            mask = n['swathmask']
-            # Pobably faster to use the Figure class directly (now the band has
-            # to be read twice - see
-            # https://github.com/nansencenter/nansen-cloud/blob/62953ed05b097e2c77529b380649b5c10978f063/proc/models.py)
             s0 = n[band]
+            mask = np.copy(swathmask)
             mask[s0 == np.nan] = 0
             mask[s0 <= 0] = 0
             s0 = np.log10(s0)*10.
-            f = Figure(s0)
-            f.process(
-                    cmin = clims[meta['polarization']][0],
-                    cmax = clims[meta['polarization']][1],
-                    cmapName = 'gray',
-                    mask_array=mask,
-                    mask_lut={0:[255,0,0]}
-                )
-            f.save(prodFileURI, transparency=[255,0,0])
 
-            location = DataLocation.objects.get_or_create(protocol='HTTP',
-                           uri=prodHttpURI,
-                           dataset=ds)[0]
-            product = Product(
-                short_name='%s_%s'%(meta['short_name'], meta['polarization']),
-                standard_name=meta['standard_name'],
-                long_name=meta['long_name'],
-                units='dB',
-                location=location,
-                time=ds.time_coverage_start)
+            nansatFigure(s0, mask, min, max, products_media_path,
+                    product_filename)
 
-            product.save()
+            prodFileURI = os.path.join(products_media_path, product_filename)
+            prodHttpURI = os.path.join(httpURIbase, product_filename)
+            create_product(prodHttpURI, ds, meta, 'dB')
             num_products += 1
+
+        if qp:
+            print('Make PR image...')
+            pname = make_PR_image(n, dir=products_media_path)
+            prodFileURI = os.path.join(products_media_path, pname)
+            prodHttpURI = os.path.join(httpURIbase, pname)
+            create_product(prodHttpURI, ds, n.bands()['PR'], 'm/m')
+            num_products += 1
+
+            print('Make PD image...')
+            pname = make_PD_image(n, dir=products_media_path)
+            prodFileURI = os.path.join(products_media_path, pname)
+            prodHttpURI = os.path.join(httpURIbase, pname)
+            create_product(prodHttpURI, ds, n.bands()['PD'], 'm/m')
+            num_products += 1
+
+            try:
+                print('Make NP image...')
+                pname = make_NP_image(n, dir=products_media_path)
+                prodFileURI = os.path.join(products_media_path, pname)
+                prodHttpURI = os.path.join(httpURIbase, pname)
+                create_product(prodHttpURI, ds, n.bands()['PD'], 'm/m')
+                num_products += 1
+            except Exception as e:
+                print e
+            print('Make CP image...')
+            pname = make_NRCS_image(n, 'CP', dir=products_media_path)
+            prodFileURI = os.path.join(products_media_path, pname)
+            prodHttpURI = os.path.join(httpURIbase, pname)
+            create_product(prodHttpURI, ds, n.bands()['PD'], 'm/m')
+            num_products += 1
+
 
         return num_products
