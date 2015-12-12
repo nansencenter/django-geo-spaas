@@ -16,8 +16,12 @@ PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 # ./manage.py collectstatic will put the static files (also from the apps)
 # here:
 STATIC_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "static")
-# uploaded media will be put here:
+# uploaded media will be put here (change in production)
 MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "media")
+# Downloaded datasets will be stored here (change in production)
+DOWNLOAD_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "downloads")
+# Derived parameters will be stored in netcdf's here (change in production)
+PRODUCT_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "products")
 
 # Additional locations of static files
 STATICFILES_DIRS = (
