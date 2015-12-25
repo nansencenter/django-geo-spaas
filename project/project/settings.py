@@ -23,6 +23,17 @@ DOWNLOAD_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "downloads")
 # Derived parameters will be stored in netcdf's here (change in production)
 PRODUCT_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "products")
 
+if not os.path.exists(os.path.join(PACKAGE_ROOT, "site_media")):
+    os.mkdir(os.path.join(PACKAGE_ROOT, "site_media"))
+if not os.path.exists(STATIC_ROOT):
+    os.mkdir(STATIC_ROOT)
+if not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT)
+if not os.path.exists(DOWNLOAD_ROOT):
+    os.mkdir(DOWNLOAD_ROOT)
+if not os.path.exists(PRODUCT_ROOT):
+    os.mkdir(PRODUCT_ROOT)
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PACKAGE_ROOT, "static"),
