@@ -1,4 +1,5 @@
 import json
+from xml.sax.saxutils import unescape
 
 from django.db import models
 from django.contrib.gis.geos import WKTReader
@@ -50,12 +51,14 @@ class DatasetManager(models.Manager):
         n = Nansat(uri)
         # get metadata
         try:
-            platform = json.loads(n.get_metadata('platform'))
+            platform = json.loads( unescape( n.get_metadata('platform'),
+                {'&quot;': '"'}))
         except:
             print('ADD CORRECT METADATA IN MAPPER %s'%n.mapper)
             # TODO: add message to error instead of printing like above
             raise 
-        instrument = json.loads(n.get_metadata('instrument'))
+        instrument = json.loads( unescape( n.get_metadata('instrument'),
+                {'&quot;': '"'}))
         source = Source.objects.get_or_create(
             platform = Platform.objects.get(
                 category=platform['Category'],
