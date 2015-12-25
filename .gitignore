@@ -8,4 +8,6 @@ project/geodjango.db
 project/project/site_media/media/nansencloud/*
 project/project/site_media/media/hab/*
 project/project/site_media/static/*
+project/project/site_media/downloads/*
+project/project/site_media/products/*
 !project/project/site_media/media/nansencloud/README.md
