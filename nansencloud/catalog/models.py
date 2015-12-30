@@ -42,7 +42,6 @@ class Dataset(models.Model):
     time_coverage_start = models.DateTimeField()
     time_coverage_end = models.DateTimeField()
 
-    # Is this really more efficient than a direct ManyToMany link?
     parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
     source = models.ForeignKey(Source)
     geolocation = models.ForeignKey(GeographicLocation)
