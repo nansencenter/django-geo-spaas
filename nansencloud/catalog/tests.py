@@ -34,9 +34,12 @@ class DatasetTests(TestCase):
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
-        ds = Dataset(geolocation=geolocation, source=source,
-                     time_coverage_start=datetime.datetime(2010,1,1),
-                     time_coverage_end=datetime.datetime(2010,1,2))
+        ds = Dataset(entry_title='Test dataset', 
+                time_coverage_start=datetime.datetime(2010,1,1),
+                time_coverage_end=datetime.datetime(2010,1,2),
+                source=source,
+                geolocation=geolocation)
+        # NOTE: No parameters added here...
         ds.save()
 
 
@@ -50,10 +53,12 @@ class DataLocationTests(TestCase):
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
-        dataset = Dataset(geolocation=geolocation,
-                            source=source,
-                            time_coverage_start=datetime.datetime(2010,1,1),
-                            time_coverage_end=datetime.datetime(2010,1,2))
+        dataset = Dataset(
+                    entry_title = 'Test dataset',
+                    time_coverage_start=datetime.datetime(2010,1,1),
+                    time_coverage_end=datetime.datetime(2010,1,2),
+                    source=source,
+                    geolocation=geolocation)
         dataset.save()
         dl = DataLocation(protocol=DataLocation.LOCALFILE,
                           uri='URL',
@@ -61,6 +66,8 @@ class DataLocationTests(TestCase):
         dl.save()
 
 
+# Populate Parameter table with CF-variables and change this class to
+# DatasetParameterTests
 class ProductTests(TestCase):
     def test_variable(self):
         ''' Shall create Product instance '''

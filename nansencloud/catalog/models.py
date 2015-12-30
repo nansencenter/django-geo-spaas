@@ -28,11 +28,14 @@ class Source(models.Model):
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
 
+# Must be filled with standard variables, perhaps also moved to another app
 class Parameter(models.Model):
     short_name = models.CharField(max_length=10)
     standard_name = models.CharField(max_length=100)
     long_name = models.CharField(max_length=200)
     units = models.CharField(max_length=10)
+
+    #gcmd_science_keyword = models.OneToOneField(ScienceKeyword)
 
     def __str__(self):
         return '%s/%s' % (self.location, self.short_name)
@@ -42,9 +45,10 @@ class Dataset(models.Model):
     time_coverage_start = models.DateTimeField()
     time_coverage_end = models.DateTimeField()
 
-    parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
     source = models.ForeignKey(Source)
     geolocation = models.ForeignKey(GeographicLocation)
+
+    parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
 
     def __str__(self):
         return '%s' %self.entry_title
