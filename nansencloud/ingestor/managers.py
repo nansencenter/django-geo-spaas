@@ -1,4 +1,4 @@
-import json
+import json, urllib
 from xml.sax.saxutils import unescape
 
 from django.db import models
@@ -7,27 +7,27 @@ from django.contrib.gis.geos import WKTReader
 from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
-from nansencloud.catalog.models import DataLocation, Source, Dataset
+from nansencloud.catalog.models import DatasetLocation, Source, Dataset
 
 from nansat.nansat import Nansat
 
-class DataLocationQuerySet(models.QuerySet):
+class DatasetLocationQuerySet(models.QuerySet):
     def get_non_ingested_uris(self, all_uris):
         ''' Get filenames which are not in old_filenames'''
         return sorted(list(frozenset(all_uris).difference(
                             self.values_list('uri', flat=True))))
 
-class DataLocationManager(models.Manager):
+class DatasetLocationManager(models.Manager):
     def get_queryset(self):
-        return DataLocationQuerySet(self.model, using=self._db)
+        return DatasetLocationQuerySet(self.model, using=self._db)
 
     def create(self, *args, **kwargs):
         ''' Create data location of a given protocol '''
         protocol = kwargs.pop('protocol')
-        if (protocol, protocol) not in DataLocation.PROTOCOL_CHOICES:
+        if (protocol, protocol) not in DatasetLocation.PROTOCOL_CHOICES:
             raise Exception('Wrong protocol %s ' % protocol)
 
-        return DataLocation(protocol=protocol, **kwargs)
+        return DatasetLocation(protocol=protocol, **kwargs)
 
 class DatasetManager(models.Manager):
     def get_or_create(self, uri):
@@ -36,19 +36,25 @@ class DatasetManager(models.Manager):
         Parameters:
         ----------
             uri : str
-            filename openable by Nansat
+                  URI to file or stream openable by Nansat
         Returns:
         -------
             dataset and flag
         '''
 
+        # Validate uri with URLValidator?
+
         # check if dataset already exists
-        dataLocations = DataLocation.objects.filter(uri=uri)
+        dataLocations = DatasetLocation.objects.filter(uri=uri)
         if len(dataLocations) > 0:
             return dataLocations[0].dataset, False
 
-        # open file with Nansat
-        n = Nansat(uri)
+        # Check if data should be read as stream or as file? Or just:
+        # open with Nansat
+        try:
+            n = Nansat(uri)
+        except:
+            n = Nansat(urllib.urlretrieve(uri)[0])
         # get metadata
         try:
             platform = json.loads( unescape( n.get_metadata('platform'),
@@ -84,8 +90,7 @@ class DatasetManager(models.Manager):
                     time_coverage_end=n.get_metadata('time_coverage_end'))
         ds.save()
 
-        dl = DataLocation.objects.get_or_create(protocol=DataLocation.LOCALFILE,
-                                                uri=uri,
-                                                dataset=ds)[0]
+        dl = DatasetLocation.objects.get_or_create(uri=uri, dataset=ds)[0]
+
         return ds, True
 

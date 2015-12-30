@@ -28,76 +28,62 @@ class Source(models.Model):
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
 
+class Parameter(models.Model):
+    short_name = models.CharField(max_length=10)
+    standard_name = models.CharField(max_length=100)
+    long_name = models.CharField(max_length=200)
+    units = models.CharField(max_length=10)
+
+    def __str__(self):
+        return '%s/%s' % (self.location, self.short_name)
 
 class Dataset(models.Model):
-    source = models.ForeignKey(Source)
-    geolocation = models.ForeignKey(GeographicLocation)
+    entry_title = models.CharField(max_length=100)
     time_coverage_start = models.DateTimeField()
     time_coverage_end = models.DateTimeField()
 
+    # Is this really more efficient than a direct ManyToMany link?
+    parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
+    source = models.ForeignKey(Source)
+    geolocation = models.ForeignKey(GeographicLocation)
+
     def __str__(self):
-        return '%s/%s/%s' % (self.source.platform, self.source.instrument,
-                self.time_coverage_start.isoformat())
+        return '%s' %self.entry_title
+
+class DatasetParameter(models.Model):
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
+    parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '%s:%s' %(self.dataset, self.parameter)
+
+class VisualizationParameter(models.Model):
+    visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
+    ds_parameter = models.ForeignKey(DatasetParameter, on_delete=models.CASCADE)
+
+class Visualization(models.Model):
+    
+    uri = models.URLField()
+    # A visualization may contain more than one parameter, and the same
+    # parameter can be visualized in many ways..
+    parameters = models.ManyToManyField(DatasetParameter,
+            through=VisualizationParameter)
+
+    #def get_absolut_url(self):
 
 
-class DataLocation(models.Model):
-    LOCALFILE = 'LOCALFILE'
-    OPENDAP = 'OPENDAP'
-    FTP = 'FTP'
-    HTTP = 'HTTP'
-    HTTPS = 'HTTPS'
-    WMS = 'WMS'
-    WFS = 'WFS'
-    PROTOCOL_CHOICES = ((LOCALFILE, LOCALFILE),
-                        (OPENDAP, OPENDAP),
-                        (FTP,FTP),
-                        (HTTP,HTTP),
-                        (HTTPS,HTTPS),
-                        (WMS,WMS),
-                        (WFS,WFS),
-                       )
+class DatasetLocation(models.Model):
 
-    protocol = models.CharField(max_length=15, choices=PROTOCOL_CHOICES)
     uri = models.URLField(max_length=200, unique=True)
     dataset = models.ForeignKey(Dataset)
 
     def __str__(self):
         return '%s: %s'%(self.dataset, os.path.split(self.uri)[1])
 
-
-class Product(models.Model):
-    short_name = models.CharField(max_length=10)
-    standard_name = models.CharField(max_length=100)
-    long_name = models.CharField(max_length=200)
-    units = models.CharField(max_length=10)
-    location = models.ForeignKey(DataLocation)
-    time = models.DateTimeField()
-
-    def __str__(self):
-        return '%s/%s' % (self.location, self.short_name)
-
+    def protocol(self):
+        return self.uri.split(':')[0]
 
 class DatasetRelationship(models.Model):
     child = models.ForeignKey(Dataset, related_name='parents')
     parent = models.ForeignKey(Dataset, related_name='children')
 
-"""
-# Files are stored locally, not uploaded
-# Optionally we may write a custom file storage system (may be needed with
-# openstack)
-fs = FileSystemStorage(location='/vagrant/shared/test_data')
-class DataLocation(models.Model):
-    file = models.FileField(storage=fs, default=None, null=True)
-    dap = models.URLField(default=None, null=True)
-    ftp = models.URLField(default=None, null=True)
-    http = models.URLField(default=None, null=True)
-    wms = models.URLField(default=None, null=True)
-    wfs = models.URLField(default=None, null=True)
-
-    def save(self):
-        # Check that at least one field is populated
-        if not any([self.file, self.dap, self.ftp, self.http, self.wms,
-            self.wfs]):
-            raise PermissionDenied
-        super(DataLocation, self).save()
-"""
