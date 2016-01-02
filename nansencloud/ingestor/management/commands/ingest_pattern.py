@@ -8,8 +8,8 @@ class Command(BaseCommand):
     help = 'Add files matching given pattern to the catalog archive'
 
     def handle(self, *args, **options):
-        if len(args)==0:
-            raise IOError('Please provide a pattern')
+        if not len(args)==1:
+            raise IOError('Please provide one pattern enclosed by quotes')
 
         fn = glob.glob(args[0])
         for f in fn:
