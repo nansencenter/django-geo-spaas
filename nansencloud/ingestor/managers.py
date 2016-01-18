@@ -30,7 +30,7 @@ class DataLocationManager(models.Manager):
         return DataLocation(protocol=protocol, **kwargs)
 
 class DatasetManager(models.Manager):
-    def get_or_create(self, uri):
+    def get_or_create(self, uri, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
@@ -48,7 +48,7 @@ class DatasetManager(models.Manager):
             return dataLocations[0].dataset, False
 
         # open file with Nansat
-        n = Nansat(uri)
+        n = Nansat(uri, **kwargs)
         # get metadata
         try:
             platform = json.loads( unescape( n.get_metadata('platform'),
