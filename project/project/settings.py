@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'nansencloud.viewer',
     'nansencloud.processing_hab',
     'nansencloud.processing_sar_nrcs',
+    'nansencloud.processing_sar_doppler',
     'nansencloud.processing_ais',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',
