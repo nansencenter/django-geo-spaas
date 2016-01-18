@@ -341,13 +341,13 @@ def make_NRCS_image( nobj, bandname, fn='', dir='.', max=np.nan, min=np.nan,
     nobj.undo()
     return fn
 
-def nansatFigure(nparr, mask, min, max, dir, fn):
+def nansatFigure(nparr, mask, min, max, dir, fn, cmapName='gray'):
 
     f = Figure(nparr)
     f.process(
         cmin = min,
         cmax = max,
-        cmapName = 'gray',
+        cmapName = cmapName,
         mask_array=mask,
         mask_lut={0:[255,0,0]}
     )
