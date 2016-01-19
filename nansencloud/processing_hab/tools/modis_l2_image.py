@@ -189,7 +189,7 @@ class ModisL2Image(Nansat):
 
         lon, lat = self.get_corners()
         d = Domain(NSR(3857),
-                   '-lle %f %f %f %f -tr 5000 5000' % (
+                   '-lle %f %f %f %f -tr 1000 1000' % (
                                 lon.min(), lat.min(), lon.max(), lat.max()))
         self.reproject(d)
 
@@ -210,14 +210,15 @@ class ModisL2Image(Nansat):
                             transparency=[128,128,128])
             except:
                 self.logger.error('No SST in %s' % self.name)
-        bandMeta = self.bands()[self._get_band_number('SST')]
-        productMetadata.append(dict(
-            uri = sstName,
-            short_name = 'SST',
-            standard_name = bandMeta['standard_name'],
-            long_name = bandMeta['long_name'],
-            units = bandMeta['units'],
-            ))
+            else:
+                bandMeta = self.bands()[self._get_band_number('SST')]
+                productMetadata.append(dict(
+                    uri = sstName,
+                    short_name = 'SST',
+                    standard_name = bandMeta['standard_name'],
+                    long_name = bandMeta['long_name'],
+                    units = bandMeta['units'],
+                    ))
 
         # generate image with flags
         if not os.path.exists(chlName):

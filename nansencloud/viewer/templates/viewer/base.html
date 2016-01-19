@@ -129,8 +129,8 @@
         };
 
         {% for img in images %}
-            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 1, fillOpacity: 0.2, fillColor: '#f00'});
-            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 0.5, fillOpacity: 0.05, fillColor: '#b20000'});
+            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#fff', weight: 1, fillOpacity: 0.05, fillColor: '#f00'});
+            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#fff', weight: 0.5, fillOpacity: 0.0, fillColor: '#b20000'});
         {% endfor %}
 
         window.addEventListener("map:init", function (e) {
