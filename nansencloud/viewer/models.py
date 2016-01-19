@@ -29,6 +29,13 @@ class Dataset(CatalogDataset):
     class Meta:
         proxy = True
 
+    # TODO: return javascript string according to geometry type
+    def geo_js(self):
+        return "L.polygon( %s, {color: '#fff', weight: 1, fillOpacity: 0.05, fillColor: '#f00'});" %self.border2str()
+
+    def const_geo_js(self):
+        return "L.polygon( %s, {color: '#fff', weight: 0.5, fillOpacity: 0, fillColor: '#b20000'});" %self.border2str()
+
     def border2str(self):
         ''' Generate Leaflet JavaScript defining the border polygon'''
         borderStr = '['

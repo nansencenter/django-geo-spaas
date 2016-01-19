@@ -16,8 +16,23 @@ PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 # ./manage.py collectstatic will put the static files (also from the apps)
 # here:
 STATIC_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "static")
-# uploaded media will be put here:
+# uploaded media will be put here (change in production)
 MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "media")
+# Downloaded datasets will be stored here (change in production)
+DOWNLOAD_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "downloads")
+# Derived parameters will be stored in netcdf's here (change in production)
+PRODUCT_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "products")
+
+if not os.path.exists(os.path.join(PACKAGE_ROOT, "site_media")):
+    os.mkdir(os.path.join(PACKAGE_ROOT, "site_media"))
+if not os.path.exists(STATIC_ROOT):
+    os.mkdir(STATIC_ROOT)
+if not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT)
+if not os.path.exists(DOWNLOAD_ROOT):
+    os.mkdir(DOWNLOAD_ROOT)
+if not os.path.exists(PRODUCT_ROOT):
+    os.mkdir(PRODUCT_ROOT)
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -88,6 +103,7 @@ INSTALLED_APPS = (
     'nansencloud.viewer',
     'nansencloud.processing_hab',
     'nansencloud.processing_sar_nrcs',
+    'nansencloud.processing_sar_doppler',
     'nansencloud.processing_ais',
     #'nansencloud.proc',
     #'nansencloud.noaa_ndbc',

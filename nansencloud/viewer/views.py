@@ -12,6 +12,7 @@ from nansencloud.viewer.forms import SearchForm
 
 class IndexView(View):
     form_class = SearchForm
+    # The use of "image" here may be wrong - perhaps better to use "dataset"?
     image_class = Dataset
     main_template = 'viewer/image_index.html'
     viewname = 'index'

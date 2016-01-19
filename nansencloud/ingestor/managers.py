@@ -1,4 +1,5 @@
 import json
+from xml.sax.saxutils import unescape
 
 from django.db import models
 from django.contrib.gis.geos import WKTReader
@@ -29,7 +30,7 @@ class DataLocationManager(models.Manager):
         return DataLocation(protocol=protocol, **kwargs)
 
 class DatasetManager(models.Manager):
-    def get_or_create(self, uri):
+    def get_or_create(self, uri, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
@@ -47,15 +48,17 @@ class DatasetManager(models.Manager):
             return dataLocations[0].dataset, False
 
         # open file with Nansat
-        n = Nansat(uri)
+        n = Nansat(uri, **kwargs)
         # get metadata
         try:
-            platform = json.loads(n.get_metadata('platform'))
+            platform = json.loads( unescape( n.get_metadata('platform'),
+                {'&quot;': '"'}))
         except:
             print('ADD CORRECT METADATA IN MAPPER %s'%n.mapper)
             # TODO: add message to error instead of printing like above
             raise 
-        instrument = json.loads(n.get_metadata('instrument'))
+        instrument = json.loads( unescape( n.get_metadata('instrument'),
+                {'&quot;': '"'}))
         source = Source.objects.get_or_create(
             platform = Platform.objects.get(
                 category=platform['Category'],
