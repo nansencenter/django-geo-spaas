@@ -42,13 +42,20 @@ class Parameter(models.Model):
 
 class Dataset(models.Model):
     entry_title = models.CharField(max_length=100)
+    parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
+    ISO_topic_category =
+    data_center = models.ForeignKey(DataCenter)
+    summary = models.TextField()
+    metadata_name = models.CharField(max_length=50, default='CEOS IDN DIF')
+    metadata_version = 
+
+
     time_coverage_start = models.DateTimeField()
     time_coverage_end = models.DateTimeField()
 
     source = models.ForeignKey(Source)
     geolocation = models.ForeignKey(GeographicLocation)
 
-    parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
 
     def __str__(self):
         return '%s' %self.entry_title
