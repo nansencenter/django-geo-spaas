@@ -31,3 +31,59 @@ class Instrument(models.Model):
 
     def __str__(self):
         return self.short_name
+
+class ISOTopicCategory(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+class DataCenter(models.Model):
+    bucket_level0 = models.CharField(max_length=200)
+    bucket_level1 = models.CharField(max_length=200)
+    bucket_level2 = models.CharField(max_length=200)
+    bucket_level3 = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=50)
+    long_name = models.CharField(max_length=200)
+    data_center_url = models.URLField()
+
+    def __str__(self):
+        return self.short_name
+
+class Location(models.Model):
+    category = models.CharField(max_length=50)
+    type = models.CharField(max_length=50)
+    subregion1 = models.CharField(max_length=50)
+    subregion2 = models.CharField(max_length=50)
+    subregion3 = models.CharField(max_length=50)
+
+    def __str__(self):
+        return '%s %s' %(self.subregion2, self.subregion3)
+
+class Project(models.Model):
+    bucket = models.CharField(max_length=6)
+    short_Name = models.CharField(max_length=80)
+    long_Name = models.CharField(max_length=220)
+
+    def __str__(self):
+        return self.short_name
+
+class HorizontalDataResolution(models.Model):
+    range = models.CharField(max_length=220)
+
+    def __str__(self):
+        return self.range
+
+class VerticalDataResolution(models.Model):
+    range = models.CharField(max_length=220)
+
+    def __str__(self):
+        return self.range
+
+class TemporalDataResolution(models.Model):
+    range = models.CharField(max_length=220)
+
+    def __str__(self):
+        return self.range
+
