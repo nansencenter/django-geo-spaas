@@ -116,13 +116,28 @@ class Dataset(models.Model):
             null=True)
     progress = models.CharField(max_length=31, choices=PROGRESS_CHOICES,
             blank=True, null=True)
+    #related_url = models.ManyToManyField(RelatedURL, blank=True, null=True)
 
     # Recommended fields
-    
-
+    #DIF_revision_history included by ForeignKey from DIFRevisionHistory 
+    # keyword
+    #originating_center
+    #references
+    #parent_DIF
+    #IDN_node
+    #DIF_creation_date
+    #last_DIF_revision_date
+    #future_DIF_review_date
+    #privacy_status
+    #extended_metadata
 
     def __str__(self):
         return '%s' %self.entry_title
+
+class DIFRevisionHistoryItem(models.Model):
+    dataset = models.ForeignKey(Dataset)
+    date = models.DateField()
+    text = models.TextField()
 
 class DataResolution(models.Model):
     dataset = models.ForeignKey(Dataset)
