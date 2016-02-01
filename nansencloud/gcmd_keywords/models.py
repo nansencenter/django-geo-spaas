@@ -33,6 +33,18 @@ class Instrument(models.Model):
         return self.short_name
 
 class ISOTopicCategory(models.Model):
+    '''
+    The <ISO_Topic_Category> field is used to identify the keywords in the ISO
+    19115 - Geographic Information Metadata (http://www.isotc211.org/) Topic
+    Category Code List. It is a high-level geographic data thematic
+    classification to assist in the grouping and search of available geographic
+    data sets.
+
+    Directory Interchange Format (DIF) Writer's Guide, 2015.
+    Global Change Master Directory.
+    National Aeronautics and Space Administration.
+    [http://gcmd.nasa.gov/add/difguide/]. 
+    '''
     name = models.CharField(max_length=100)
     description = models.TextField()
 

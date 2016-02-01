@@ -4,12 +4,13 @@ from django.db import models
 from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
+from django.utils.translation import ugettext as _
 
 from nansencloud.gcmd_keywords.models import Platform
 from nansencloud.gcmd_keywords.models import Instrument
 from nansencloud.gcmd_keywords.models import ISOTopicCategory
 from nansencloud.gcmd_keywords.models import DataCenter
-from nansencloud.gcmd_keywords.models import Location
+from nansencloud.gcmd_keywords.models import Location as GCMDLocation
 from nansencloud.gcmd_keywords.models import Project
 from nansencloud.gcmd_keywords.models import HorizontalDataResolution
 from nansencloud.gcmd_keywords.models import VerticalDataResolution
@@ -28,7 +29,7 @@ class Source(models.Model):
     platform = models.ForeignKey(Platform)
     instrument = models.ForeignKey(Instrument)
     specs = models.CharField(max_length=50, default='',
-        help_text='Further specifications of the source.')
+        help_text=_('Further specifications of the source.'))
 
     class Meta:
         unique_together = (("platform", "instrument"),)
@@ -70,6 +71,13 @@ class Personnel(models.Model):
     postal_code = models.CharField(max_length=80)
     country = models.CharField(max_length=80)
 
+    class Meta:
+        permissions = (
+                ("accessLevel0", "Can access all data"),
+                ("accessLevel1", "Can access data at own data center"),
+                ("accessLevel2", "Can access public data only"),
+            )
+
 class Dataset(models.Model):
     ''' 
     For a full description of the DIF format, see
@@ -81,18 +89,27 @@ class Dataset(models.Model):
     PLANNED = 'Planned'
     PROGRESS_CHOICES = ((COMPLETE, COMPLETE), (INWORK, INWORK), (PLANNED,
         PLANNED))
+    ACCESS_LEVEL0 = 'accessLevel0'
+    ACCESS_LEVEL1 = 'accessLevel1'
+    ACCESS_LEVEL2 = 'accessLevel2'
+    ACCESS_CHOICES = (
+            (ACCESS_LEVEL0, _('Accessible to contact person or data producer and superusers')),
+            (ACCESS_LEVEL1, _('Accessible to personnel at origination data center')),
+            (ACCESS_LEVEL2, _('Accessible to the public')),
+        )
 
     # Required fields
-    entry_title = models.CharField(max_length=220)
+    # TO NETCDF: entry_title = models.CharField(max_length=220)
     parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
     ISO_topic_category = models.ForeignKey(ISOTopicCategory)
     data_center = models.ForeignKey(DataCenter)
-    summary = models.TextField()
-    metadata_name = models.CharField(max_length=50, default='CEOS IDN DIF')
-    metadata_version = models.CharField(max_length=50, default='VERSION 9.9')
+    # TO NETCDF: summary = models.TextField()
+    # TO NETCDF: metadata_name = models.CharField(max_length=50, default='CEOS IDN DIF')
+    # TO NETCDF: metadata_version = models.CharField(max_length=50, default='VERSION 9.9')
 
     # Highly recommended fields
-    # data_set_citation's are included by foreignkey from DatasetCitation
+    # TO NETCDF: data_set_citation's (now included by foreignkey from
+    #            DatasetCitation)
     personnel = models.ForeignKey(Personnel, blank=True, null=True) # = contact person
     # Instrument and platform:
     source = models.ForeignKey(Source, blank=True, null=True)
@@ -100,45 +117,52 @@ class Dataset(models.Model):
     time_coverage_end = models.DateTimeField(blank=True, null=True)
     #paleo_temporal_coverage skipped
     spatial_coverage = models.ForeignKey(SpatialCoverage, blank=True, null=True)
-    location = models.ForeignKey(Location, blank=True, null=True)
-    # data_resolution's are included by foreignkey from DataResolution
+    # TO NETCDF: gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True)
+    
+    # TO NETCDF: data_resolution's (now included by foreignkey from
+    #            DataResolution)
+
     projects = models.ManyToManyField(Project, blank=True, null=True)
-    quality = models.TextField(blank=True, null=True)
+    # TO NETCDF: quality = models.TextField(blank=True, null=True)
     access_constraints = models.TextField(blank=True, null=True)
     use_constraints = models.TextField(blank=True, null=True)
-    distribution_media = models.CharField(max_length=80, blank=True, null=True)
-    distribution_size = models.CharField(max_length=80, blank=True, null=True)
-    distribution_format = models.CharField(max_length=80, blank=True, null=True)
-    distribution_fee = models.CharField(max_length=80, blank=True, null=True)
-    # Language list in  the ISO 639 language codes:
-    # http://www.loc.gov/standards/iso639-2/php/code_list.php
-    language = models.CharField(maX_length=80, default='English', blank=True,
-            null=True)
-    progress = models.CharField(max_length=31, choices=PROGRESS_CHOICES,
-            blank=True, null=True)
-    #related_url = models.ManyToManyField(RelatedURL, blank=True, null=True)
+    # TO NETCDF: distribution_media = models.CharField(max_length=80, blank=True, null=True)
+    # TO NETCDF: distribution_size = models.CharField(max_length=80, blank=True, null=True)
+    # TO NETCDF: distribution_format = models.CharField(max_length=80, blank=True, null=True)
+    # TO NETCDF: distribution_fee = models.CharField(max_length=80, blank=True, null=True)
+    # TO NETCDF: # Language list in  the ISO 639 language codes:
+    # TO NETCDF: # http://www.loc.gov/standards/iso639-2/php/code_list.php
+    # TO NETCDF: language = models.CharField(maX_length=80, default='English', blank=True,
+    # TO NETCDF:         null=True)
+    # TO NETCDF: progress = models.CharField(max_length=31, choices=PROGRESS_CHOICES,
+    # TO NETCDF:         blank=True, null=True)
+    # TO NETCDF: related_url = models.ManyToManyField(RelatedURL, blank=True, null=True)
 
     # Recommended fields
     #DIF_revision_history included by ForeignKey from DIFRevisionHistory 
     # keyword
-    #originating_center
-    #references
-    #parent_DIF
-    #IDN_node
-    #DIF_creation_date
-    #last_DIF_revision_date
-    #future_DIF_review_date
-    #privacy_status
-    #extended_metadata
+    # TO NETCDF: originating_center
+    # TO NETCDF: references
+    # IN DatasetRelationship: parent_DIF
+    # TO NETCDF: IDN_node
+    # TO NETCDF: DIF_creation_date
+    # TO NETCDF: last_DIF_revision_date
+    # TO NETCDF: future_DIF_review_date
+    privacy_status = models.CharField(max_length=15, choices=ACCESS_CHOICES)
+    # TO NETCDF: extended_metadata
 
     def __str__(self):
-        return '%s' %self.entry_title
+        #return '%s' %self.entry_title
+        return '%s/%s/%s' % (self.source.platform, self.source.instrument,
+                self.time_coverage_start.isoformat())
 
+# TO NETCDF ONLY?
 class DIFRevisionHistoryItem(models.Model):
     dataset = models.ForeignKey(Dataset)
     date = models.DateField()
     text = models.TextField()
 
+# TO NETCDF ONLY?
 class DataResolution(models.Model):
     dataset = models.ForeignKey(Dataset)
     latitude_resolution = models.CharField(max_length=50)
@@ -150,6 +174,7 @@ class DataResolution(models.Model):
     temporal_resolution = models.CharField(max_length=220)
     temporal_resolution_range = models.ForeignKey(TemporalDataResolution)
 
+# TO NETCDF ONLY?
 class DatasetCitation(models.Model):
     dataset = models.ForeignKey(Dataset)
     dataset_creator = models.ForeignKey(Personnel)
@@ -192,7 +217,7 @@ class Visualization(models.Model):
     #def get_absolut_url(self):
 
 
-class DatasetLocation(models.Model):
+class DatasetURI(models.Model):
 
     uri = models.URLField(max_length=200, unique=True)
     dataset = models.ForeignKey(Dataset)
