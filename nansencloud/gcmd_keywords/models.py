@@ -52,6 +52,9 @@ class ISOTopicCategory(models.Model):
         return self.name
 
 class DataCenter(models.Model):
+    ''' The data center is needed to control data access and also for indexing
+    to allow search.
+    '''
     bucket_level0 = models.CharField(max_length=200)
     bucket_level1 = models.CharField(max_length=200)
     bucket_level2 = models.CharField(max_length=200)
@@ -72,6 +75,18 @@ class Location(models.Model):
 
     def __str__(self):
         return '%s %s' %(self.subregion2, self.subregion3)
+
+# Must be filled with standard variables
+class Parameter(models.Model):
+    short_name = models.CharField(max_length=10)
+    standard_name = models.CharField(max_length=100)
+    long_name = models.CharField(max_length=200)
+    units = models.CharField(max_length=10)
+
+    #gcmd_science_keyword = models.OneToOneField(ScienceKeyword)
+
+    def __str__(self):
+        return '%s' %self.short_name
 
 class Project(models.Model):
     bucket = models.CharField(max_length=6)

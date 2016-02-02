@@ -11,12 +11,11 @@ from nansencloud.gcmd_keywords.models import Instrument
 from nansencloud.gcmd_keywords.models import ISOTopicCategory
 from nansencloud.gcmd_keywords.models import DataCenter
 from nansencloud.gcmd_keywords.models import Location as GCMDLocation
-from nansencloud.gcmd_keywords.models import Project
 from nansencloud.gcmd_keywords.models import HorizontalDataResolution
 from nansencloud.gcmd_keywords.models import VerticalDataResolution
 from nansencloud.gcmd_keywords.models import TemporalDataResolution
 
-class SpatialCoverage(geomodels.Model):
+class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
 
     objects = geomodels.GeoManager()
@@ -37,21 +36,9 @@ class Source(models.Model):
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
 
-# Must be filled with standard variables, perhaps also moved to another app
-class Parameter(models.Model):
-    short_name = models.CharField(max_length=10)
-    standard_name = models.CharField(max_length=100)
-    long_name = models.CharField(max_length=200)
-    units = models.CharField(max_length=10)
-
-    #gcmd_science_keyword = models.OneToOneField(ScienceKeyword)
-
-    def __str__(self):
-        return '%s/%s' % (self.location, self.short_name)
-
 class Role(models.Model):
     INVESTIGATOR = 'Investigator'
-    TECH_CONTACT = 'Technical Contact'
+    TECH_CONTACT = 'Technical Contact' # I interpret this as the data center contact
     DIF_AUTHOR = 'DIF Author'
     ROLE_CHOICES = ((INVESTIGATOR, INVESTIGATOR), (TECH_CONTACT, TECH_CONTACT),
             (DIF_AUTHOR, DIF_AUTHOR))
@@ -59,10 +46,12 @@ class Role(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
 class Personnel(models.Model):
-    # This class follows the fields specified in
-    # http://gcmd.nasa.gov/add/difguide/personnel.html, except those already
-    # present in django.contrib.auth.User
-    # We may use django-userena to handle Personnel and other users..
+    '''
+    This class follows the fields specified in
+    http://gcmd.nasa.gov/add/difguide/personnel.html, except those already
+    present in django.contrib.auth.User
+    We may use django-userena to handle Personnel and other users..
+    '''
     phone = models.CharField(max_length=80)
     fax = models.CharField(max_length=80)
     address = models.CharField(max_length=80)
@@ -80,120 +69,75 @@ class Personnel(models.Model):
 
 class Dataset(models.Model):
     ''' 
+    The Dataset model contains fields from the GCMD DIF conventions that are
+    used for indexing and search.
+
     For a full description of the DIF format, see
     http://gcmd.nasa.gov/add/difguide/index.html and
     http://gcmd.nasa.gov/add/difguide/WRITEADIF.pdf
+
+    Fields:
+    -------
+    entry_title : CharField
+    parameters: ManyToManyField to Parameter through DatasetParameter
+    ISO_topic_category : ForeignKey to ISOTopicCategory
+    data_center : ForeignKey to DataCenter
+    summary : TextField
+            In addition to some general information, the summary should also
+            contain information about the project from/for which the data was
+            collected/created
+    source : ForeignKey to Source
+            Contains information about the instrument and platform by which the
+            data was collected
+    time_coverage_start : DateTimeField
+    time_coverage_end : DateTimeField
+    geographic_location : ForeignKey to GeographicLocation
+    gcmd_location : ForeignKey to gcmd_keywords.models.Location
+    access_constraints : CharField
+            Determines the access level of the Dataset: Limited, In-house, or
+            Public
+
     '''
-    COMPLETE = 'Complete'
-    INWORK = 'In Work'
-    PLANNED = 'Planned'
-    PROGRESS_CHOICES = ((COMPLETE, COMPLETE), (INWORK, INWORK), (PLANNED,
-        PLANNED))
     ACCESS_LEVEL0 = 'accessLevel0'
     ACCESS_LEVEL1 = 'accessLevel1'
     ACCESS_LEVEL2 = 'accessLevel2'
     ACCESS_CHOICES = (
-            (ACCESS_LEVEL0, _('Accessible to contact person or data producer and superusers')),
-            (ACCESS_LEVEL1, _('Accessible to personnel at origination data center')),
-            (ACCESS_LEVEL2, _('Accessible to the public')),
+            (ACCESS_LEVEL0, _('Limited')),
+            (ACCESS_LEVEL1, _('In-house')),
+            (ACCESS_LEVEL2, _('Public')),
         )
 
-    # Required fields
-    # TO NETCDF: entry_title = models.CharField(max_length=220)
+    # DIF required fields
+    entry_title = models.CharField(max_length=220)
     parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
     ISO_topic_category = models.ForeignKey(ISOTopicCategory)
     data_center = models.ForeignKey(DataCenter)
-    # TO NETCDF: summary = models.TextField()
-    # TO NETCDF: metadata_name = models.CharField(max_length=50, default='CEOS IDN DIF')
-    # TO NETCDF: metadata_version = models.CharField(max_length=50, default='VERSION 9.9')
+    summary = models.TextField()
 
-    # Highly recommended fields
-    # TO NETCDF: data_set_citation's (now included by foreignkey from
-    #            DatasetCitation)
-    personnel = models.ForeignKey(Personnel, blank=True, null=True) # = contact person
-    # Instrument and platform:
+    # DIF highly recommended fields
     source = models.ForeignKey(Source, blank=True, null=True)
     time_coverage_start = models.DateTimeField(blank=True, null=True)
     time_coverage_end = models.DateTimeField(blank=True, null=True)
-    #paleo_temporal_coverage skipped
-    spatial_coverage = models.ForeignKey(SpatialCoverage, blank=True, null=True)
-    # TO NETCDF: gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True)
-    
-    # TO NETCDF: data_resolution's (now included by foreignkey from
-    #            DataResolution)
-
-    projects = models.ManyToManyField(Project, blank=True, null=True)
-    # TO NETCDF: quality = models.TextField(blank=True, null=True)
-    access_constraints = models.TextField(blank=True, null=True)
-    use_constraints = models.TextField(blank=True, null=True)
-    # TO NETCDF: distribution_media = models.CharField(max_length=80, blank=True, null=True)
-    # TO NETCDF: distribution_size = models.CharField(max_length=80, blank=True, null=True)
-    # TO NETCDF: distribution_format = models.CharField(max_length=80, blank=True, null=True)
-    # TO NETCDF: distribution_fee = models.CharField(max_length=80, blank=True, null=True)
-    # TO NETCDF: # Language list in  the ISO 639 language codes:
-    # TO NETCDF: # http://www.loc.gov/standards/iso639-2/php/code_list.php
-    # TO NETCDF: language = models.CharField(maX_length=80, default='English', blank=True,
-    # TO NETCDF:         null=True)
-    # TO NETCDF: progress = models.CharField(max_length=31, choices=PROGRESS_CHOICES,
-    # TO NETCDF:         blank=True, null=True)
-    # TO NETCDF: related_url = models.ManyToManyField(RelatedURL, blank=True, null=True)
-
-    # Recommended fields
-    #DIF_revision_history included by ForeignKey from DIFRevisionHistory 
-    # keyword
-    # TO NETCDF: originating_center
-    # TO NETCDF: references
-    # IN DatasetRelationship: parent_DIF
-    # TO NETCDF: IDN_node
-    # TO NETCDF: DIF_creation_date
-    # TO NETCDF: last_DIF_revision_date
-    # TO NETCDF: future_DIF_review_date
-    privacy_status = models.CharField(max_length=15, choices=ACCESS_CHOICES)
-    # TO NETCDF: extended_metadata
+    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True)
+    gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True)
+    access_constraints = models.CharField(max_length=50,
+            choices=ACCESS_CHOICES, blank=True, null=True)
 
     def __str__(self):
-        #return '%s' %self.entry_title
         return '%s/%s/%s' % (self.source.platform, self.source.instrument,
                 self.time_coverage_start.isoformat())
 
-# TO NETCDF ONLY?
-class DIFRevisionHistoryItem(models.Model):
-    dataset = models.ForeignKey(Dataset)
-    date = models.DateField()
-    text = models.TextField()
-
-# TO NETCDF ONLY?
-class DataResolution(models.Model):
-    dataset = models.ForeignKey(Dataset)
-    latitude_resolution = models.CharField(max_length=50)
-    longitude_resolution = models.CharField(max_length=50)
-    horizontal_resolution = models.CharField(max_length=220)
-    horizontal_resolution_range = models.ForeignKey(HorizontalDataResolution)
-    vertical_resolution = models.CharField(max_length=220)
-    vertical_resolution_range = models.ForeignKey(VerticalDataResolution)
-    temporal_resolution = models.CharField(max_length=220)
-    temporal_resolution_range = models.ForeignKey(TemporalDataResolution)
-
-# TO NETCDF ONLY?
-class DatasetCitation(models.Model):
-    dataset = models.ForeignKey(Dataset)
-    dataset_creator = models.ForeignKey(Personnel)
-    dataset_editor = models.ForeignKey(Personnel)
-    dataset_publisher = models.ForeignKey(DataCenter)
-    #dataset_title = models.CharField(max_length=220) # Same as entry_title in Dataset
-    dataset_series_name = models.CharField(max_length=220)
-    dataset_release_date = models.DateField()
-    dataset_release_place = models.CharField(max_length=80)
-    version = models.Charfield(max_length=15)
-    issue_identification = models.CharField(max_length=80)
-    data_presentation_form = models.CharField(max_length=80)
-    other_citation_details = models.CharField(max_length=220)
-    dataset_DOI = models.CharField(max_length=220)
-    online_resource = models.URLField(max_length=600)
-
-    def __str__(self):
-        return self.dataset_DOI
-    
+# Keep this for reference if we want to add it
+#class DataResolution(models.Model):
+#    dataset = models.ForeignKey(Dataset)
+#    latitude_resolution = models.CharField(max_length=50)
+#    longitude_resolution = models.CharField(max_length=50)
+#    horizontal_resolution = models.CharField(max_length=220)
+#    horizontal_resolution_range = models.ForeignKey(HorizontalDataResolution)
+#    vertical_resolution = models.CharField(max_length=220)
+#    vertical_resolution_range = models.ForeignKey(VerticalDataResolution)
+#    temporal_resolution = models.CharField(max_length=220)
+#    temporal_resolution_range = models.ForeignKey(TemporalDataResolution)
 
 class DatasetParameter(models.Model):
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
