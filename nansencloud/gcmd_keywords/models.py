@@ -46,7 +46,8 @@ class ISOTopicCategory(models.Model):
     [http://gcmd.nasa.gov/add/difguide/]. 
     '''
     name = models.CharField(max_length=100)
-    description = models.TextField()
+    # see http://gcmd.gsfc.nasa.gov/add/difguide/iso_topics.html for
+    #description = models.TextField() 
 
     def __str__(self):
         return self.name
