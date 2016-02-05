@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import ugettext as _
 
+from nansencloud.gcmd_keywords.models import ScienceKeyword
 from nansencloud.gcmd_keywords.models import Platform
 from nansencloud.gcmd_keywords.models import Instrument
 from nansencloud.gcmd_keywords.models import ISOTopicCategory
@@ -66,6 +67,28 @@ class Personnel(models.Model):
                 ("accessLevel1", "Can access data at own data center"),
                 ("accessLevel2", "Can access public data only"),
             )
+
+# Must be filled with standard variables
+class Parameter(models.Model):
+    ''' This table resembles the well-known-variables in nansat (wkv.xml) -
+    perhaps there should be an exact mapping between this table and the
+    wkv.xml-file...
+    '''
+    short_name = models.CharField(max_length=10)
+    long_name = models.CharField(max_length=200)
+    units = models.CharField(max_length=10)
+
+    # blank=True and null=True to allow for variables not in the gcmd science
+    # keywords table:
+    gcmd_science_keyword = models.OneToOneField(ScienceKeyword, blank=True,
+            null=True)
+    # blank=True and null=True to allow for variables not in the CF standard
+    # names table:
+    cf_standard_name = models.OneToOneField(CFStandardName, blank=True,
+            null=True)
+
+    def __str__(self):
+        return '%s' %self.short_name
 
 class Dataset(models.Model):
     ''' 

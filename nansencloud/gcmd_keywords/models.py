@@ -77,22 +77,19 @@ class Location(models.Model):
     def __str__(self):
         return '%s %s' %(self.subregion2, self.subregion3)
 
-# Must be filled with standard variables
-class Parameter(models.Model):
-    short_name = models.CharField(max_length=10)
-    standard_name = models.CharField(max_length=100)
-    long_name = models.CharField(max_length=200)
-    units = models.CharField(max_length=10)
-
-    #gcmd_science_keyword = models.OneToOneField(ScienceKeyword)
-
-    def __str__(self):
-        return '%s' %self.short_name
+class ScienceKeyword(models.Model):
+    category = models.CharField(max_length=30)
+    topic = models.CharField(max_length=30)
+    term = models.CharField(max_length=30)
+    variable_level_1 = models.CharField(max_length=30)
+    variable_level_2 = models.CharField(max_length=30)
+    variable_level_3 = models.CharField(max_length=30)
+    detailed_variable = models.CharField(max_length=80)
 
 class Project(models.Model):
     bucket = models.CharField(max_length=6)
-    short_Name = models.CharField(max_length=80)
-    long_Name = models.CharField(max_length=220)
+    short_name = models.CharField(max_length=80)
+    long_name = models.CharField(max_length=220)
 
     def __str__(self):
         return self.short_name
