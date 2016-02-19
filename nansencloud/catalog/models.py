@@ -70,22 +70,17 @@ class Personnel(models.Model):
 
 # Must be filled with standard variables
 class Parameter(models.Model):
-    ''' This table resembles the well-known-variables in nansat (wkv.xml) -
-    perhaps there should be an exact mapping between this table and the
-    wkv.xml-file...
-    '''
-    short_name = models.CharField(max_length=10)
-    long_name = models.CharField(max_length=200)
-    units = models.CharField(max_length=10)
+    ## These fields may (and probably will) cause ambiguities - better to remove
+    ## them entirely
+    #short_name = models.CharField(max_length=10)
+    #long_name = models.CharField(max_length=200)
+    #units = models.CharField(max_length=10)
 
-    # blank=True and null=True to allow for variables not in the gcmd science
-    # keywords table:
-    gcmd_science_keyword = models.OneToOneField(ScienceKeyword, blank=True,
-            null=True)
-    # blank=True and null=True to allow for variables not in the CF standard
-    # names table:
-    cf_standard_name = models.OneToOneField(CFStandardName, blank=True,
-            null=True)
+    cf_standard_name = models.OneToOneField(CFStandardName)
+    # The science keywords are less specific than the CF standard names -
+    # therefore one science keyword can be in many parameters, whereas the CF
+    # standard names are one-to-one
+    gcmd_science_keyword = models.ForeignKey(ScienceKeyword)
 
     def __str__(self):
         return '%s' %self.short_name
