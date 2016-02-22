@@ -7,27 +7,19 @@ from django.contrib.gis.geos import WKTReader
 from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
-from nansencloud.catalog.models import DatasetLocation, Source, Dataset
+from nansencloud.catalog.models import DatasetURI, Source, Dataset
 
 from nansat.nansat import Nansat
 
-class DatasetLocationQuerySet(models.QuerySet):
+class DatasetURIQuerySet(models.QuerySet):
     def get_non_ingested_uris(self, all_uris):
         ''' Get filenames which are not in old_filenames'''
         return sorted(list(frozenset(all_uris).difference(
                             self.values_list('uri', flat=True))))
 
-class DatasetLocationManager(models.Manager):
+class DatasetURIManager(models.Manager):
     def get_queryset(self):
-        return DatasetLocationQuerySet(self.model, using=self._db)
-
-    def create(self, *args, **kwargs):
-        ''' Create data location of a given protocol '''
-        protocol = kwargs.pop('protocol')
-        if (protocol, protocol) not in DatasetLocation.PROTOCOL_CHOICES:
-            raise Exception('Wrong protocol %s ' % protocol)
-
-        return DatasetLocation(protocol=protocol, **kwargs)
+        return DatasetURIQuerySet(self.model, using=self._db)
 
 class DatasetManager(models.Manager):
     def get_or_create(self, uri):
@@ -45,7 +37,7 @@ class DatasetManager(models.Manager):
         # Validate uri with URLValidator?
 
         # check if dataset already exists
-        dataLocations = DatasetLocation.objects.filter(uri=uri)
+        dataLocations = DatasetURI.objects.filter(uri=uri)
         if len(dataLocations) > 0:
             return dataLocations[0].dataset, False
 
@@ -90,7 +82,7 @@ class DatasetManager(models.Manager):
                     time_coverage_end=n.get_metadata('time_coverage_end'))
         ds.save()
 
-        dl = DatasetLocation.objects.get_or_create(uri=uri, dataset=ds)[0]
+        dl = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
 
         return ds, True
 

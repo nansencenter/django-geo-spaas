@@ -8,7 +8,7 @@ from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import Dataset
-from nansencloud.ingestor.models import DatasetLocation, Source
+from nansencloud.ingestor.models import DatasetURI, Source
 
 
 class DatasetManager(models.Manager):
@@ -26,7 +26,7 @@ class DatasetManager(models.Manager):
         '''
 
         # check if data location already exists
-        dataLocation = DatasetLocation.objects.filter(uri=uri)
+        dataLocation = DatasetURI.objects.filter(uri=uri)
         if len(dataLocation) > 0:
             return dataLocation[0].dataset, False
 
@@ -91,7 +91,7 @@ class DatasetManager(models.Manager):
         #            time_coverage_end=n.get_metadata('time_coverage_end'))
         #ds.save()
 
-        #dl = DatasetLocation.objects.get_or_create(protocol=DatasetLocation.LOCALFILE,
+        #dl = DatasetURI.objects.get_or_create(
         #                                        uri=uri,
         #                                        dataset=ds)[0]
         #return ds, True

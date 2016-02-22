@@ -11,7 +11,7 @@
 # License:      
 #-------------------------------------------------------------------------------
 import os, json
-from nerscmetadata import gcmd_keywords
+from pythesint import gcmd_thesaurus
 
 from django.db import models
 
@@ -20,7 +20,7 @@ class PlatformManager(models.Manager):
     def create_from_gcmd_keywords(self):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
-        for platform in gcmd_keywords.get_keywords('Platforms', update=True):
+        for platform in gcmd_thesaurus.get_list('Platforms', update=True):
             if platform.keys()[0]=='Revision':
                 continue
             pp, created = self.get_or_create(
@@ -37,7 +37,7 @@ class InstrumentManager(models.Manager):
     def create_from_gcmd_keywords(self):
         # 'Category', 'Class', 'Type', 'Subtype', 'Short_Name', 'Long_Name'
         num = 0
-        for instrument in gcmd_keywords.get_keywords('Instruments', update=True):
+        for instrument in gcmd_thesaurus.get_list('Instruments', update=True):
             if instrument.keys()[0]=='Revision':
                 continue
             ii, created = self.get_or_create(

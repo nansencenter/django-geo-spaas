@@ -37,15 +37,6 @@ class Source(models.Model):
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
 
-class Role(models.Model):
-    INVESTIGATOR = 'Investigator'
-    TECH_CONTACT = 'Technical Contact' # I interpret this as the data center contact
-    DIF_AUTHOR = 'DIF Author'
-    ROLE_CHOICES = ((INVESTIGATOR, INVESTIGATOR), (TECH_CONTACT, TECH_CONTACT),
-            (DIF_AUTHOR, DIF_AUTHOR))
-    personnel = models.ForeignKey(Personnel)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-
 class Personnel(models.Model):
     '''
     This class follows the fields specified in
@@ -68,18 +59,31 @@ class Personnel(models.Model):
                 ("accessLevel2", "Can access public data only"),
             )
 
-# Must be filled with standard variables
-class Parameter(models.Model):
-    ## These fields may (and probably will) cause ambiguities - better to remove
-    ## them entirely
-    #short_name = models.CharField(max_length=10)
-    #long_name = models.CharField(max_length=200)
-    #units = models.CharField(max_length=10)
+class Role(models.Model):
+    INVESTIGATOR = 'Investigator'
+    TECH_CONTACT = 'Technical Contact' # I interpret this as the data center contact
+    DIF_AUTHOR = 'DIF Author'
+    ROLE_CHOICES = ((INVESTIGATOR, INVESTIGATOR), (TECH_CONTACT, TECH_CONTACT),
+            (DIF_AUTHOR, DIF_AUTHOR))
+    personnel = models.ForeignKey(Personnel)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
-    cf_standard_name = models.OneToOneField(CFStandardName)
+class Parameter(models.Model):
+    ''' Standard name (and unit) is taken from the CF variables but in case a
+    geophysical parameter is not in the CF standard names table it needs to be
+    taken from wkv.xml (in nansat).
+
+    Short name is taken from wkv.xml
+
+    The table should also include the relevant GCMD science keyword 
+    '''
+    standard_name = models.CharField(max_length=300)
+    short_name = models.CharField(max_length=30)
+    units = models.CharField(max_length=10)
+
     # The science keywords are less specific than the CF standard names -
-    # therefore one science keyword can be in many parameters, whereas the CF
-    # standard names are one-to-one
+    # therefore one science keyword can be in many parameters, whereas the
+    # CF/WKV standard names are unique
     gcmd_science_keyword = models.ForeignKey(ScienceKeyword)
 
     def __str__(self):
