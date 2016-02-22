@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 
 import os, json
-from nerscmetadata import gcmd_keywords
+from pythesint import gcmd_thesaurus
 
 def add_gcmd_platforms(apps, schema_editor):
     Platform = apps.get_model('gcmd_keywords', 'Platform')
