@@ -169,21 +169,6 @@ class DatasetParameter(models.Model):
     def __str__(self):
         return '%s:%s' %(self.dataset, self.parameter)
 
-class VisualizationParameter(models.Model):
-    visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
-    ds_parameter = models.ForeignKey(DatasetParameter, on_delete=models.CASCADE)
-
-class Visualization(models.Model):
-    
-    uri = models.URLField()
-    # A visualization may contain more than one parameter, and the same
-    # parameter can be visualized in many ways..
-    parameters = models.ManyToManyField(DatasetParameter,
-            through=VisualizationParameter)
-
-    #def get_absolut_url(self):
-
-
 class DatasetURI(models.Model):
 
     uri = models.URLField(max_length=200, unique=True)

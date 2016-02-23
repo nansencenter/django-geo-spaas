@@ -3,6 +3,7 @@ from django.contrib.gis.db import models as geomodels
 
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import Dataset as CatalogDataset
+from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter 
 
 
 class Search(geomodels.Model):
@@ -50,3 +51,19 @@ class Dataset(CatalogDataset):
         httpDataLocations = self.datalocation_set.filter(protocol='HTTP')
         products = [hdl.product_set.all()[0] for hdl in httpDataLocations]
         return products
+
+class VisualizationParameter(models.Model):
+    visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
+    ds_parameter = models.ForeignKey(CatalogDatasetParameter, on_delete=models.CASCADE)
+
+class Visualization(models.Model):
+    
+    uri = models.URLField()
+    # A visualization may contain more than one parameter, and the same
+    # parameter can be visualized in many ways..
+    parameters = models.ManyToManyField(CatalogDatasetParameter,
+            through=VisualizationParameter)
+
+    #def get_absolut_url(self):
+
+
