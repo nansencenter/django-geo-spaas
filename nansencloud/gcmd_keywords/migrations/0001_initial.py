@@ -3,7 +3,22 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 
-import nansencloud.gcmd_keywords.add_lists
+from nansencloud.gcmd_keywords.models import Instrument
+from nansencloud.gcmd_keywords.models import Platform
+from nansencloud.gcmd_keywords.models import ScienceKeyword
+from nansencloud.gcmd_keywords.models import DataCenter
+
+def add_gcmd_platforms(apps, schema_editor):
+    Platform.objects.create_from_gcmd_keywords()
+
+def add_gcmd_instruments(apps, schema_editor):
+    Instrument.objects.create_from_gcmd_keywords()
+
+def add_gcmd_science_keywords(apps, schema_editor):
+    ScienceKeyword.objects.create_from_gcmd_keywords()
+
+def add_data_centers(apps, schema_editor):
+    DataCenter.objects.create_from_gcmd_keywords()
 
 class Migration(migrations.Migration):
 
@@ -107,8 +122,9 @@ class Migration(migrations.Migration):
                 ('range', models.CharField(max_length=220)),
             ],
         ),
-        migrations.RunPython(nansencloud.gcmd_keywords.add_lists.add_gcmd_instruments),
-        migrations.RunPython(nansencloud.gcmd_keywords.add_lists.add_gcmd_platforms),
-        migrations.RunPython(nansencloud.gcmd_keywords.add_lists.add_gcmd_science_keywords),
-        migrations.RunPython(nansencloud.gcmd_keywords.add_lists.add_data_centers),
+        migrations.RunPython(add_gcmd_instruments),
+        migrations.RunPython(add_gcmd_platforms),
+        migrations.RunPython(add_gcmd_science_keywords),
+        migrations.RunPython(add_data_centers),
+        # TODO: Add the other GCMD lists...
     ]

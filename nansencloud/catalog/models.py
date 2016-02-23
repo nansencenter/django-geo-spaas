@@ -84,7 +84,8 @@ class Parameter(models.Model):
     # The science keywords are less specific than the CF standard names -
     # therefore one science keyword can be in many parameters, whereas the
     # CF/WKV standard names are unique
-    gcmd_science_keyword = models.ForeignKey(ScienceKeyword)
+    gcmd_science_keyword = models.ForeignKey(ScienceKeyword, blank=True,
+            null=True)
 
     def __str__(self):
         return '%s' %self.short_name

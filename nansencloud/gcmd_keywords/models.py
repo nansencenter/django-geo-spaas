@@ -2,6 +2,8 @@ from django.db import models
 
 from nansencloud.gcmd_keywords.managers import PlatformManager
 from nansencloud.gcmd_keywords.managers import InstrumentManager
+from nansencloud.gcmd_keywords.managers import DataCenterManager
+from nansencloud.gcmd_keywords.managers import ScienceKeywordManager
 
 # GCMD keywords loaded into the models in migrations/0001_initial.py using the
 # nersc-metadata package
@@ -64,6 +66,8 @@ class DataCenter(models.Model):
     long_name = models.CharField(max_length=200)
     data_center_url = models.URLField()
 
+    objects = DataCenterManager()
+
     def __str__(self):
         return self.short_name
 
@@ -85,6 +89,11 @@ class ScienceKeyword(models.Model):
     variable_level_2 = models.CharField(max_length=30)
     variable_level_3 = models.CharField(max_length=30)
     detailed_variable = models.CharField(max_length=80)
+
+    objects = ScienceKeywordManager()
+
+    def __str__(self):
+        return '%s' %self.detailed_variable
 
 class Project(models.Model):
     bucket = models.CharField(max_length=6)
