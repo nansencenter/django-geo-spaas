@@ -12,15 +12,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='DataLocation',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-            },
-            bases=('catalog.datalocation',),
-        ),
-        migrations.CreateModel(
             name='Dataset',
             fields=[
             ],
@@ -28,6 +19,15 @@ class Migration(migrations.Migration):
                 'proxy': True,
             },
             bases=('catalog.dataset',),
+        ),
+        migrations.CreateModel(
+            name='DatasetURI',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('catalog.dataseturi',),
         ),
         migrations.CreateModel(
             name='Source',

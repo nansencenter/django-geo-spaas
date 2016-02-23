@@ -8,7 +8,7 @@ from django.test import TestCase
 
 from nansencloud.gcmd_keywords.models import Instrument, Platform
 from nansencloud.catalog.models import GeographicLocation
-from nansencloud.ingestor.models import Source, DataLocation, Dataset
+from nansencloud.ingestor.models import Source, DatasetURI, Dataset
 
 
 class TestSource(TestCase):
@@ -44,21 +44,21 @@ class TestDataset(TestCase):
         self.assertFalse(cr1)
 
 
-class TestDataLocation(TestCase):
+class TestDatasetURI(TestCase):
     def setUp(self):
         self.testfile = '/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
         self.ds = Dataset.objects.get_or_create(self.testfile)[0]
 
     def test_create_valid(self):
-        ''' Shall create valid DataLocation '''
-        dl = DataLocation.objects.create(protocol=DataLocation.LOCALFILE,
+        ''' Shall create valid DatasetURI '''
+        dl = DatasetURI.objects.create(protocol=DatasetURI.LOCALFILE,
                                         uri=self.testfile,
                                         dataset=self.ds)
 
     def test_create_invalid(self):
-        ''' Shall not create invalid DataLocation '''
+        ''' Shall not create invalid DatasetURI '''
         with self.assertRaises(Exception):
-            dl = DataLocation.objects.create(protocol='crap',
+            dl = DatasetURI.objects.create(protocol='crap',
                                         uri=self.testfile,
                                         dataset=self.ds)
 
@@ -67,7 +67,7 @@ class TestDataLocation(TestCase):
         new_uris = ['/fake/path/file1.ext', '/fake/path/file2.ext']
         all_uris = new_uris + [self.testfile]
 
-        uris = DataLocation.objects.all().get_non_ingested_uris(all_uris)
+        uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
         self.assertEqual(uris, new_uris)
 
 
