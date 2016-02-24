@@ -91,3 +91,94 @@ class DataCenterManager(models.Manager):
             )
             if created: num+=1
         print("Successfully added %d new data centers" %num)
+
+class HorizontalDataResolutionManager(models.Manager):
+
+    def create_from_gcmd_keywords(self):
+        num = 0
+        pythesint.update_vocabulary(pythesint.GCMD_HORIZONTAL_DATA_RESOLUTION)
+        for hdr in pythesint.get_list(pythesint.GCMD_HORIZONTAL_DATA_RESOLUTION):
+            if hdr.keys()[0]=='Revision':
+                continue
+            hh, created = self.get_or_create(
+                    range=hdr['Horizontal_Resolution_Range']
+                )
+            if created: num+=1
+        print('Successfully added %d new horizontal data resolution ranges'
+                %num)
+
+class VerticalDataResolutionManager(models.Manager):
+
+    def create_from_gcmd_keywords(self):
+        num = 0
+        pythesint.update_vocabulary(pythesint.GCMD_VERTICAL_DATA_RESOLUTION)
+        for vdr in pythesint.get_list(pythesint.GCMD_VERTICAL_DATA_RESOLUTION):
+            if vdr.keys()[0]=='Revision':
+                continue
+            vv, created = self.get_or_create(
+                    range=vdr['Vertical_Resolution_Range']
+                )
+            if created: num+=1
+        print('Successfully added %d new vertical data resolution ranges' %num)
+
+class TemporalDataResolutionManager(models.Manager):
+
+    def create_from_gcmd_keywords(self):
+        num = 0
+        pythesint.update_vocabulary(pythesint.GCMD_TEMPORAL_DATA_RESOLUTION)
+        for tdr in pythesint.get_list(pythesint.GCMD_TEMPORAL_DATA_RESOLUTION):
+            if tdr.keys()[0]=='Revision':
+                continue
+            tt, created = self.get_or_create(
+                    range=tdr['Temporal_Resolution_Range']
+                )
+            if created: num+=1
+        print('Successfully added %d new temporal data resolution ranges' %num)
+
+class ProjectManager(models.Manager):
+
+    def create_from_gcmd_keywords(self):
+        num = 0
+        pythesint.update_vocabulary(pythesint.GCMD_PROJECTS)
+        for p in pythesint.get_list(pythesint.GCMD_PROJECTS):
+            if p.keys()[0]=='Revision':
+                continue
+            pp, created = self.get_or_create(
+                bucket = p['Bucket'],
+                short_name = p['Short_Name'],
+                long_name = p['Long_Name']
+            )
+            if created: num+=1
+        print('Successfully added %d new projects' %num)
+
+class ISOTopicCategoryManager(models.Manager):
+
+    def create_from_gcmd_keywords(self):
+        num = 0
+        pythesint.update_vocabulary(pythesint.ISO19115_TOPIC_CATEGORIES)
+        for iso in pythesint.get_list(pythesint.ISO19115_TOPIC_CATEGORIES):
+            ii, created = self.get_or_create(
+                    name = iso['iso_topic_category']
+                )
+            if created: num+=1
+        print('Successfully added %d new ISO 19115 topic categories' %num)
+
+class LocationManager(models.Manager):
+
+
+    def create_from_gcmd_keywords(self):
+        num = 0
+        pythesint.update_vocabulary(pythesint.GCMD_LOCATIONS)
+        for loc in pythesint.get_list(pythesint.GCMD_LOCATIONS):
+            if loc.keys()[0]=='Revision':
+                continue
+            ll, created = self.get_or_create(
+                category = loc['Location_Category'],
+                type = loc['Location_Type'],
+                subregion1 = loc['Location_Subregion1'],
+                subregion2 = loc['Location_Subregion2'],
+                subregion3 = loc['Location_Subregion3']
+            )
+            if created: num+=1
+        print('Successfully added %d new locations' %num)
+

@@ -7,6 +7,12 @@ from nansencloud.gcmd_keywords.models import Instrument
 from nansencloud.gcmd_keywords.models import Platform
 from nansencloud.gcmd_keywords.models import ScienceKeyword
 from nansencloud.gcmd_keywords.models import DataCenter
+from nansencloud.gcmd_keywords.models import HorizontalDataResolution
+from nansencloud.gcmd_keywords.models import VerticalDataResolution
+from nansencloud.gcmd_keywords.models import TemporalDataResolution
+from nansencloud.gcmd_keywords.models import Project
+from nansencloud.gcmd_keywords.models import ISOTopicCategory
+from nansencloud.gcmd_keywords.models import Location
 
 def add_gcmd_platforms(apps, schema_editor):
     Platform.objects.create_from_gcmd_keywords()
@@ -19,6 +25,24 @@ def add_gcmd_science_keywords(apps, schema_editor):
 
 def add_data_centers(apps, schema_editor):
     DataCenter.objects.create_from_gcmd_keywords()
+
+def add_horizontal_data_resolutions(app, schema_editor):
+    HorizontalDataResolution.objects.create_from_gcmd_keywords()
+
+def add_vertical_data_resolutions(app, schema_editor):
+    VerticalDataResolution.objects.create_from_gcmd_keywords()
+
+def add_temporal_data_resolutions(app, schema_editor):
+    TemporalDataResolution.objects.create_from_gcmd_keywords()
+
+def add_projects(app, schema_editor):
+    Project.objects.create_from_gcmd_keywords()
+
+def add_iso_topic_categories(app, schema_editor):
+    ISOTopicCategory.objects.create_from_gcmd_keywords()
+
+def add_locations(app, schema_editor):
+    Location.objects.create_from_gcmd_keywords()
 
 class Migration(migrations.Migration):
 
@@ -126,5 +150,11 @@ class Migration(migrations.Migration):
         migrations.RunPython(add_gcmd_platforms),
         migrations.RunPython(add_gcmd_science_keywords),
         migrations.RunPython(add_data_centers),
+        migrations.RunPython(add_horizontal_data_resolutions),
+        migrations.RunPython(add_vertical_data_resolutions),
+        migrations.RunPython(add_temporal_data_resolutions),
+        migrations.RunPython(add_projects),
+        migrations.RunPython(add_iso_topic_categories),
+        migrations.RunPython(add_locations),
         # TODO: Add the other GCMD lists...
     ]

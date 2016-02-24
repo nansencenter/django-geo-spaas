@@ -7,22 +7,36 @@ from django.contrib.gis.geos import Polygon
 from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.catalog.models import *
 
-class GeographicLocationTests(TestCase):
-    def test_geographiclocation(self):
-        ''' Shall create GeographicLocation instance '''
+class DataCenterTests(TestCase):
+
+    pass
+
+class DatasetParameterTests(TestCase):
+
+    pass
+
+class DatasetRelationshipTests(TestCase):
+    def test_variable(self):
+        ''' Shall create DatasetRelationship instance '''
         geolocation = GeographicLocation(
-            geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
+                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
-
-
-class SourceTests(TestCase):
-    def test_source(self):
-        ''' Shall create Source instance '''
         p = Platform.objects.get(short_name='AQUA')
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
-
+        child = Dataset(geolocation=geolocation,
+                            source=source,
+                            time_coverage_start=datetime.datetime(2010,1,1),
+                            time_coverage_end=datetime.datetime(2010,1,2))
+        child.save()
+        parent = Dataset(geolocation=geolocation,
+                            source=source,
+                            time_coverage_start=datetime.datetime(2010,1,2),
+                            time_coverage_end=datetime.datetime(2010,1,3))
+        parent.save()
+        dr = DatasetRelationship(child=child, parent=parent)
+        dr.save()
 
 class DatasetTests(TestCase):
     def test_dataset(self):
@@ -38,13 +52,12 @@ class DatasetTests(TestCase):
                 time_coverage_start=datetime.datetime(2010,1,1),
                 time_coverage_end=datetime.datetime(2010,1,2),
                 source=source,
-                geolocation=geolocation)
-        # NOTE: No parameters added here...
+                geographic_location=geolocation)
         ds.save()
+        # Add parameter
 
-
-class DataLocationTests(TestCase):
-    def test_DataLocation(self):
+class DatasetURITests(TestCase):
+    def test_DatasetURI(self):
         ''' Shall create DataLocation instance '''
         geolocation = GeographicLocation(
                 geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
@@ -65,9 +78,37 @@ class DataLocationTests(TestCase):
                           dataset=dataset)
         dl.save()
 
+class GeographicLocationTests(TestCase):
+    def test_geographiclocation(self):
+        ''' Shall create GeographicLocation instance '''
+        geolocation = GeographicLocation(
+            geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
+        geolocation.save()
+
+class PersonnelTests(TestCase):
+
+    pass
+
+class ParameterTests(TestCase):
+
+    pass
+
+class RoleTests(TestCase):
+
+    pass
+
+class SourceTests(TestCase):
+    def test_source(self):
+        ''' Shall create Source instance '''
+        p = Platform.objects.get(short_name='AQUA')
+        i = Instrument.objects.get(short_name='MODIS')
+        source = Source(platform=p, instrument=i)
+        source.save()
+
+
+
 
 # Populate Parameter table with CF-variables and change this class to
-# DatasetParameterTests
 class ProductTests(TestCase):
     def test_variable(self):
         ''' Shall create Product instance '''
@@ -143,25 +184,4 @@ class ProductTests(TestCase):
 
         self.assertEqual(newds.count(), 1)
 
-class DatasetRelationshipTests(TestCase):
-    def test_variable(self):
-        ''' Shall create DatasetRelationship instance '''
-        geolocation = GeographicLocation(
-                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation.save()
-        p = Platform.objects.get(short_name='AQUA')
-        i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
-        child = Dataset(geolocation=geolocation,
-                            source=source,
-                            time_coverage_start=datetime.datetime(2010,1,1),
-                            time_coverage_end=datetime.datetime(2010,1,2))
-        child.save()
-        parent = Dataset(geolocation=geolocation,
-                            source=source,
-                            time_coverage_start=datetime.datetime(2010,1,2),
-                            time_coverage_end=datetime.datetime(2010,1,3))
-        parent.save()
-        dr = DatasetRelationship(child=child, parent=parent)
-        dr.save()
+

@@ -4,6 +4,12 @@ from nansencloud.gcmd_keywords.managers import PlatformManager
 from nansencloud.gcmd_keywords.managers import InstrumentManager
 from nansencloud.gcmd_keywords.managers import DataCenterManager
 from nansencloud.gcmd_keywords.managers import ScienceKeywordManager
+from nansencloud.gcmd_keywords.managers import ProjectManager
+from nansencloud.gcmd_keywords.managers import HorizontalDataResolutionManager
+from nansencloud.gcmd_keywords.managers import VerticalDataResolutionManager
+from nansencloud.gcmd_keywords.managers import TemporalDataResolutionManager
+from nansencloud.gcmd_keywords.managers import ISOTopicCategoryManager
+from nansencloud.gcmd_keywords.managers import LocationManager
 
 # GCMD keywords loaded into the models in migrations/0001_initial.py using the
 # nersc-metadata package
@@ -51,6 +57,8 @@ class ISOTopicCategory(models.Model):
     # see http://gcmd.gsfc.nasa.gov/add/difguide/iso_topics.html for
     #description = models.TextField() 
 
+    objects = ISOTopicCategoryManager()
+
     def __str__(self):
         return self.name
 
@@ -78,6 +86,8 @@ class Location(models.Model):
     subregion2 = models.CharField(max_length=50)
     subregion3 = models.CharField(max_length=50)
 
+    objects = LocationManager()
+
     def __str__(self):
         return '%s %s' %(self.subregion2, self.subregion3)
 
@@ -100,11 +110,15 @@ class Project(models.Model):
     short_name = models.CharField(max_length=80)
     long_name = models.CharField(max_length=220)
 
+    objects = ProjectManager()
+
     def __str__(self):
         return self.short_name
 
 class HorizontalDataResolution(models.Model):
     range = models.CharField(max_length=220)
+
+    objects = HorizontalDataResolutionManager()
 
     def __str__(self):
         return self.range
@@ -112,11 +126,15 @@ class HorizontalDataResolution(models.Model):
 class VerticalDataResolution(models.Model):
     range = models.CharField(max_length=220)
 
+    objects = VerticalDataResolutionManager()
+
     def __str__(self):
         return self.range
 
 class TemporalDataResolution(models.Model):
     range = models.CharField(max_length=220)
+
+    objects = TemporalDataResolutionManager()
 
     def __str__(self):
         return self.range
