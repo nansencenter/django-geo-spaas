@@ -180,6 +180,10 @@ class DatasetURI(models.Model):
     def protocol(self):
         return self.uri.split(':')[0]
 
+    def save(self):
+        # Check that the uri exists?
+        super(DatasetURI, self).save()
+
 class DatasetRelationship(models.Model):
     child = models.ForeignKey(Dataset, related_name='parents')
     parent = models.ForeignKey(Dataset, related_name='children')
