@@ -1,7 +1,7 @@
-from django.utils import timezone
+import mock
 
 from django.test import TestCase
-
+from django.utils import timezone
 from django.contrib.gis.geos import Polygon
 
 from nansencloud.gcmd_keywords.models import Platform, Instrument
@@ -37,39 +37,15 @@ class DatasetTests(TestCase):
 
 class DatasetURITests(TestCase):
 
-    def test_DatasetURI(self):
+    def test_DatasetURI_created(self):
         uri = 'file://this/is/some/file'
         mock_dataset = mock.create_autospec(Dataset)
+        mock_dataset._state = mock.Mock()
+        mock_dataset.id = 1
         dsuri = DatasetURI(uri=uri, dataset=mock_dataset)
         dsuri.save()
-        etitle = dsuri.dataset.entry_title 
-        # Check that the entry_title attribute was accessed
-
-
-        ''' Shall create DataLocation instance '''
-        geolocation = GeographicLocation(
-                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation.save()
-        p = Platform.objects.get(short_name='AQUA')
-        i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
-        dataset = Dataset(
-                    entry_title = 'Test dataset',
-                    ISO_topic_category = iso_category,
-                    data_center = dc,
-                    summary = 'This is a quite short summary about the test' \
-                                ' dataset.',
-                    time_coverage_start=timezone.datetime(2010,1,1,tzinfo=timezone.utc),
-                    time_coverage_end=timezone.datetime(2010,1,2,
-                        tzinfo=timezone.utc),
-                    source=source,
-                    geolocation=geolocation)
-        dataset.save()
-        dl = DataLocation(protocol=DataLocation.LOCALFILE,
-                          uri='URL',
-                          dataset=dataset)
-        dl.save()
+        # Check the uri
+        self.assertEqual(dsuri.uri, uri)
 
 class DatasetParameterTests(TestCase):
 
