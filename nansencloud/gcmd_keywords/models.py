@@ -26,6 +26,9 @@ class Platform(models.Model):
     def __str__(self):
         return self.short_name
 
+    def natural_key(self):
+        return (self.short_name)
+
 class Instrument(models.Model):
 
     category = models.CharField(max_length=100)
@@ -39,6 +42,9 @@ class Instrument(models.Model):
 
     def __str__(self):
         return self.short_name
+
+    def natural_key(self):
+        return (self.short_name)
 
 class ISOTopicCategory(models.Model):
     '''
@@ -62,6 +68,9 @@ class ISOTopicCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def natural_key(self):
+        return (self.name)
+
 class DataCenter(models.Model):
     ''' The data center is needed to control data access and also for indexing
     to allow search.
@@ -79,6 +88,9 @@ class DataCenter(models.Model):
     def __str__(self):
         return self.short_name
 
+    def natural_key(self):
+        return (self.short_name)
+
 class Location(models.Model):
     category = models.CharField(max_length=50)
     type = models.CharField(max_length=50)
@@ -90,6 +102,10 @@ class Location(models.Model):
 
     def __str__(self):
         return '%s %s' %(self.subregion2, self.subregion3)
+
+    def natural_key(self):
+        return (category, type, subregion1, subregion2,
+            subregion3)
 
 class ScienceKeyword(models.Model):
     category = models.CharField(max_length=30)
@@ -105,6 +121,10 @@ class ScienceKeyword(models.Model):
     def __str__(self):
         return '%s' %self.detailed_variable
 
+    def natural_key(self):
+        return (self.category, self.topic, self.term, self.variable_level_1,
+                self.variable_level_2, self.variable_level_3)
+
 class Project(models.Model):
     bucket = models.CharField(max_length=6)
     short_name = models.CharField(max_length=80)
@@ -115,6 +135,9 @@ class Project(models.Model):
     def __str__(self):
         return self.short_name
 
+    def natural_key(self):
+        return (self.bucket, self.short_name)
+
 class HorizontalDataResolution(models.Model):
     range = models.CharField(max_length=220)
 
@@ -122,6 +145,9 @@ class HorizontalDataResolution(models.Model):
 
     def __str__(self):
         return self.range
+
+    def natural_key(self):
+        return (self.range)
 
 class VerticalDataResolution(models.Model):
     range = models.CharField(max_length=220)
@@ -131,6 +157,9 @@ class VerticalDataResolution(models.Model):
     def __str__(self):
         return self.range
 
+    def natural_key(self):
+        return (self.range)
+
 class TemporalDataResolution(models.Model):
     range = models.CharField(max_length=220)
 
@@ -138,4 +167,7 @@ class TemporalDataResolution(models.Model):
 
     def __str__(self):
         return self.range
+
+    def natural_key(self):
+        return (self.range)
 

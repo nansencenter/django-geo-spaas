@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
+from django.core.validators import URLValidator
 from django.utils.translation import ugettext as _
 
 from nansencloud.gcmd_keywords.models import ScienceKeyword
@@ -15,6 +16,8 @@ from nansencloud.gcmd_keywords.models import Location as GCMDLocation
 from nansencloud.gcmd_keywords.models import HorizontalDataResolution
 from nansencloud.gcmd_keywords.models import VerticalDataResolution
 from nansencloud.gcmd_keywords.models import TemporalDataResolution
+
+from nansencloud.catalog.managers import SourceManager
 
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
@@ -31,11 +34,16 @@ class Source(models.Model):
     specs = models.CharField(max_length=50, default='',
         help_text=_('Further specifications of the source.'))
 
+    objects = SourceManager()
+
     class Meta:
         unique_together = (("platform", "instrument"),)
 
     def __str__(self):
         return '%s/%s' % (self.platform, self.instrument)
+
+    def natural_key(self):
+        return (self.platform.short_name, self.instrument.short_name)
 
 class Personnel(models.Model):
     '''
@@ -171,7 +179,8 @@ class DatasetParameter(models.Model):
 
 class DatasetURI(models.Model):
 
-    uri = models.URLField(max_length=200, unique=True)
+    uri = models.URLField(max_length=200, unique=True,
+            validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
     dataset = models.ForeignKey(Dataset)
 
     def __str__(self):
@@ -181,6 +190,8 @@ class DatasetURI(models.Model):
         return self.uri.split(':')[0]
 
     def save(self):
+        # Force field validation
+        self.full_clean()
         # Check that the uri exists?
         super(DatasetURI, self).save()
 
