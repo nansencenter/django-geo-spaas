@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
 # Modified:
@@ -8,10 +8,10 @@
 # Created:
 # Last modified:
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 import os, json
-import pythesint
+import pythesint as pti
 
 from django.db import models
 
@@ -20,8 +20,8 @@ class PlatformManager(models.Manager):
     def create_from_gcmd_keywords(self):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_PLATFORMS)
-        for platform in pythesint.get_list(pythesint.GCMD_PLATFORMS):
+        pti.update_gcmd_platform()
+        for platform in pti.get_gcmd_platform_list():
             if platform.keys()[0]=='Revision':
                 continue
             pp, created = self.get_or_create(
@@ -37,8 +37,8 @@ class InstrumentManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_INSTRUMENTS)
-        for instrument in pythesint.get_list(pythesint.GCMD_INSTRUMENTS):
+        pti.update_gcmd_instrument()
+        for instrument in pti.get_gcmd_instrument_list():
             if instrument.keys()[0]=='Revision':
                 continue
             ii, created = self.get_or_create(
@@ -56,8 +56,8 @@ class ScienceKeywordManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_SCIENCE_KEYWORDS)
-        for skw in pythesint.get_list(pythesint.GCMD_SCIENCE_KEYWORDS):
+        pti.update_gcmd_science_keyword()
+        for skw in pti.get_gcmd_science_keyword_list():
             if skw.keys()[0]=='Revision':
                 continue
             ii, created = self.get_or_create(
@@ -76,8 +76,8 @@ class DataCenterManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_DATA_CENTERS)
-        for dc in pythesint.get_list(pythesint.GCMD_DATA_CENTERS):
+        pti.update_gcmd_provider()
+        for dc in pti.get_gcmd_provider_list():
             if dc.keys()[0]=='Revision':
                 continue
             dd, created = self.get_or_create(
@@ -96,8 +96,8 @@ class HorizontalDataResolutionManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_HORIZONTAL_DATA_RESOLUTION)
-        for hdr in pythesint.get_list(pythesint.GCMD_HORIZONTAL_DATA_RESOLUTION):
+        pti.update_gcmd_horizontalresolutionrange()
+        for hdr in pti.get_gcmd_horizontalresolutionrange_list():
             if hdr.keys()[0]=='Revision':
                 continue
             hh, created = self.get_or_create(
@@ -111,8 +111,8 @@ class VerticalDataResolutionManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_VERTICAL_DATA_RESOLUTION)
-        for vdr in pythesint.get_list(pythesint.GCMD_VERTICAL_DATA_RESOLUTION):
+        pti.update_gcmd_verticalresolutionrange()
+        for vdr in pti.get_gcmd_verticalresolutionrange_list():
             if vdr.keys()[0]=='Revision':
                 continue
             vv, created = self.get_or_create(
@@ -125,8 +125,8 @@ class TemporalDataResolutionManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_TEMPORAL_DATA_RESOLUTION)
-        for tdr in pythesint.get_list(pythesint.GCMD_TEMPORAL_DATA_RESOLUTION):
+        pti.update_gcmd_temporalresolutionrange()
+        for tdr in pti.get_gcmd_temporalresolutionrange_list():
             if tdr.keys()[0]=='Revision':
                 continue
             tt, created = self.get_or_create(
@@ -139,8 +139,8 @@ class ProjectManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_PROJECTS)
-        for p in pythesint.get_list(pythesint.GCMD_PROJECTS):
+        pti.update_gcmd_project()
+        for p in pti.get_gcmd_project_list():
             if p.keys()[0]=='Revision':
                 continue
             pp, created = self.get_or_create(
@@ -155,8 +155,8 @@ class ISOTopicCategoryManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.ISO19115_TOPIC_CATEGORIES)
-        for iso in pythesint.get_list(pythesint.ISO19115_TOPIC_CATEGORIES):
+        pti.update_iso19115_topic_category()
+        for iso in pti.get_iso19115_topic_category_list():
             ii, created = self.get_or_create(
                     name = iso['iso_topic_category']
                 )
@@ -168,8 +168,8 @@ class LocationManager(models.Manager):
 
     def create_from_gcmd_keywords(self):
         num = 0
-        pythesint.update_vocabulary(pythesint.GCMD_LOCATIONS)
-        for loc in pythesint.get_list(pythesint.GCMD_LOCATIONS):
+        pti.update_gcmd_location()
+        for loc in pti.get_gcmd_location_list():
             if loc.keys()[0]=='Revision':
                 continue
             ll, created = self.get_or_create(

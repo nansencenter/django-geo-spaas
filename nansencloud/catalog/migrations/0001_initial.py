@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
                 ('standard_name', models.CharField(max_length=300)),
                 ('short_name', models.CharField(max_length=30)),
                 ('units', models.CharField(max_length=10)),
-                ('gcmd_science_keyword', models.ForeignKey(to='gcmd_keywords.ScienceKeyword')),
+                ('gcmd_science_keyword', models.ForeignKey(blank=True, to='gcmd_keywords.ScienceKeyword', null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -98,26 +98,6 @@ class Migration(migrations.Migration):
                 ('instrument', models.ForeignKey(to='gcmd_keywords.Instrument')),
                 ('platform', models.ForeignKey(to='gcmd_keywords.Platform')),
             ],
-        ),
-        migrations.CreateModel(
-            name='Visualization',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('uri', models.URLField()),
-            ],
-        ),
-        migrations.CreateModel(
-            name='VisualizationParameter',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('ds_parameter', models.ForeignKey(to='catalog.DatasetParameter')),
-                ('visualization', models.ForeignKey(to='catalog.Visualization')),
-            ],
-        ),
-        migrations.AddField(
-            model_name='visualization',
-            name='parameters',
-            field=models.ManyToManyField(to='catalog.DatasetParameter', through='catalog.VisualizationParameter'),
         ),
         migrations.AddField(
             model_name='datasetparameter',
