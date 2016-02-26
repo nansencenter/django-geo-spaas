@@ -17,6 +17,9 @@ from django.db import models
 
 class PlatformManager(models.Manager):
 
+    def get_by_natural_key(self, short_name):
+        return self.get(short_name=short_name)
+
     def create_from_gcmd_keywords(self):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
@@ -34,6 +37,9 @@ class PlatformManager(models.Manager):
         print("Successfully added %d new platforms" %num)
 
 class InstrumentManager(models.Manager):
+
+    def get_by_natural_key(self, short_name):
+        return self.get(short_name=short_name)
 
     def create_from_gcmd_keywords(self):
         num = 0
@@ -53,6 +59,13 @@ class InstrumentManager(models.Manager):
         print("Successfully added %d new instruments" %num)
 
 class ScienceKeywordManager(models.Manager):
+
+    def get_by_natural_key(self, category, topic, term, variable_level_1,
+            variable_level_2, variable_level_3):
+        return self.get(category=category, topic=topic, term=term,
+                variable_level_1=variable_level_1,
+                variable_level_2=variable_level_2,
+                variable_level_3=variable_level_3)
 
     def create_from_gcmd_keywords(self):
         num = 0
@@ -74,6 +87,9 @@ class ScienceKeywordManager(models.Manager):
 
 class DataCenterManager(models.Manager):
 
+    def get_by_natural_key(self, sname):
+        return self.get(short_name=sname)
+
     def create_from_gcmd_keywords(self):
         num = 0
         pti.update_gcmd_provider()
@@ -94,6 +110,9 @@ class DataCenterManager(models.Manager):
 
 class HorizontalDataResolutionManager(models.Manager):
 
+    def get_by_natural_key(self, hrr):
+        return self.get(range=hrr)
+
     def create_from_gcmd_keywords(self):
         num = 0
         pti.update_gcmd_horizontalresolutionrange()
@@ -109,6 +128,9 @@ class HorizontalDataResolutionManager(models.Manager):
 
 class VerticalDataResolutionManager(models.Manager):
 
+    def get_by_natural_key(self, vrr):
+        return self.get(range=vrr)
+
     def create_from_gcmd_keywords(self):
         num = 0
         pti.update_gcmd_verticalresolutionrange()
@@ -123,6 +145,9 @@ class VerticalDataResolutionManager(models.Manager):
 
 class TemporalDataResolutionManager(models.Manager):
 
+    def get_by_natural_key(self, trr):
+        return self.get(range=trr)
+
     def create_from_gcmd_keywords(self):
         num = 0
         pti.update_gcmd_temporalresolutionrange()
@@ -136,6 +161,9 @@ class TemporalDataResolutionManager(models.Manager):
         print('Successfully added %d new temporal data resolution ranges' %num)
 
 class ProjectManager(models.Manager):
+
+    def get_by_natural_key(self, bucket, short_name):
+        return self.get(bucket=bucket, short_name=short_name)
 
     def create_from_gcmd_keywords(self):
         num = 0
@@ -153,6 +181,9 @@ class ProjectManager(models.Manager):
 
 class ISOTopicCategoryManager(models.Manager):
 
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
     def create_from_gcmd_keywords(self):
         num = 0
         pti.update_iso19115_topic_category()
@@ -165,6 +196,10 @@ class ISOTopicCategoryManager(models.Manager):
 
 class LocationManager(models.Manager):
 
+    def get_by_natural_key(self, category, type, subregion1, subregion2,
+            subregion3):
+        return self.get(category=category, type=type, subregion1=subregion1,
+                subregion2=subregion2, subregion3=subregion3)
 
     def create_from_gcmd_keywords(self):
         num = 0

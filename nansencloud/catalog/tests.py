@@ -1,27 +1,28 @@
 import mock
+import json
 
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.gis.geos import Polygon
+from django.core.management import call_command
+from django.core.exceptions import ValidationError
 
 from nansencloud.gcmd_keywords.models import Platform, Instrument
 from nansencloud.gcmd_keywords.models import ISOTopicCategory, DataCenter
 from nansencloud.catalog.models import *
 
 class DatasetTests(TestCase):
+
+    fixtures = ["gcmd", "catalog"]
+
     def test_dataset(self):
         ''' Shall create Dataset instance '''
-        geolocation = GeographicLocation(
-                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation.save()
         iso_category = ISOTopicCategory.objects.get(name='Oceans')
         dc = DataCenter.objects.get(short_name='NERSC')
-        p = Platform.objects.get(short_name='AQUA')
-        i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
+        source = Source.objects.get(pk=1)
+        et = 'Test dataset'
         ds = Dataset(
-                entry_title='Test dataset', 
+                entry_title=et, 
                 ISO_topic_category = iso_category,
                 data_center = dc,
                 summary = 'This is a quite short summary about the test' \
@@ -31,21 +32,39 @@ class DatasetTests(TestCase):
                 time_coverage_end=timezone.datetime(2010,1,2,
                     tzinfo=timezone.utc),
                 source=source,
-                geographic_location=geolocation)
+                geographic_location=self.geolocation)
         ds.save()
+        self.assertEqual(ds.entry_title, et)
         # Add parameter
+        ## Dump data for use in fixture
+        #with open('dataset.json', 'w') as out:
+        #    call_command('dumpdata', '--natural-foreign', '--traceback',
+        #            '--indent=4',
+        #            'catalog.Dataset', 
+        #            'catalog.GeographicLocation',
+        #            stdout=out)
 
 class DatasetURITests(TestCase):
 
+    fixtures = ["gcmd", "catalog"]
+
+    def setUp(self):
+        self.dataset = Dataset.objects.get(pk=1)
+
     def test_DatasetURI_created(self):
         uri = 'file://this/is/some/file'
-        mock_dataset = mock.create_autospec(Dataset)
-        mock_dataset._state = mock.Mock()
-        mock_dataset.id = 1
-        dsuri = DatasetURI(uri=uri, dataset=mock_dataset)
-        dsuri.save()
-        # Check the uri
+        dsuri = DatasetURI(uri=uri, dataset=self.dataset)
+        try:
+            dsuri.save()
+        except ValidationError as e:
+            print(e.message)
         self.assertEqual(dsuri.uri, uri)
+
+    def test_fail_invalid_uri(self):
+        uri = '/this/is/some/file/but/not/an/uri'
+        with self.assertRaises(ValidationError):
+            dsuri = DatasetURI(uri=uri, dataset=self.dataset)
+            dsuri.save()
 
 class DatasetParameterTests(TestCase):
 
