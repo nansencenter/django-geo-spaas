@@ -20,6 +20,7 @@ class DatasetTests(TestCase):
         iso_category = ISOTopicCategory.objects.get(name='Oceans')
         dc = DataCenter.objects.get(short_name='NERSC')
         source = Source.objects.get(pk=1)
+        geolocation = GeographicLocation.objects.get(pk=1)
         et = 'Test dataset'
         ds = Dataset(
                 entry_title=et, 
@@ -32,7 +33,7 @@ class DatasetTests(TestCase):
                 time_coverage_end=timezone.datetime(2010,1,2,
                     tzinfo=timezone.utc),
                 source=source,
-                geographic_location=self.geolocation)
+                geographic_location=geolocation)
         ds.save()
         self.assertEqual(ds.entry_title, et)
         # Add parameter
