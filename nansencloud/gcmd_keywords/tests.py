@@ -51,7 +51,6 @@ class LocationTests(TestCase):
     fixtures = ["gcmd"]
 
     def test_get_location(self):
-        ADD LOCATIONS TO FIXTURE
         loc = Location.objects.get(subregion2='KENYA')
         self.assertEqual(loc.type, 'AFRICA')
 

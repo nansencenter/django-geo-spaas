@@ -123493,5 +123493,5571 @@
   },
   "model": "gcmd_keywords.isotopiccategory",
   "pk": 19
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 1,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 2,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 3,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 4,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "ANGOLA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 5,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "CAMEROON",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 6,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "CENTRAL AFRICAN REPUBLIC",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 7,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "CHAD",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 8,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "CONGO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 9,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "CONGO, DEMOCRATIC REPUBLIC",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 10,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "EQUATORIAL GUINEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 11,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "GABON",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 12,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "LAKE CHAD",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 13,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "CENTRAL AFRICA",
+        "subregion2": "ZAIRE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 14,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 15,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "BURUNDI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 16,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "DJIBOUTI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 17,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "ERITREA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 18,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "ETHIOPIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 19,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "KENYA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 20,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "LAKE MALAWI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 21,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "LAKE TANGANYIKA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 22,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "LAKE VICTORIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 23,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "MALAWI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 24,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "MOZAMBIQUE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 25,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "RWANDA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 26,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "SOMALIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 27,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "TANZANIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 28,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "UGANDA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 29,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "ZAMBIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 30,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "EASTERN AFRICA",
+        "subregion2": "ZIMBABWE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 31,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 32,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "ALGERIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 33,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "EGYPT",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 34,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "LIBYA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 35,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "MOROCCO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 36,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "SOUTH SUDAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 37,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "SUDAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 38,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "NORTHERN AFRICA",
+        "subregion2": "TUNISIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 39,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "SOUTHERN AFRICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 40,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "SOUTHERN AFRICA",
+        "subregion2": "BOTSWANA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 41,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "SOUTHERN AFRICA",
+        "subregion2": "LESOTHO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 42,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "SOUTHERN AFRICA",
+        "subregion2": "NAMIBIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 43,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "SOUTHERN AFRICA",
+        "subregion2": "SOUTH AFRICA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 44,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "SOUTHERN AFRICA",
+        "subregion2": "SWAZILAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 45,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 46,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "BENIN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 47,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "BURKINA FASO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 48,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "COTE D'IVOIRE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 49,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "GAMBIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 50,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "GHANA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 51,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "GUINEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 52,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "GUINEA-BISSAU",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 53,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "LIBERIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 54,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "MALI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 55,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "MAURITANIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 56,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "NIGER",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 57,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "NIGERIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 58,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "SENEGAL",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 59,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "SIERRA LEONE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 60,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "TOGO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 61,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AFRICA",
+        "subregion1": "WESTERN AFRICA",
+        "subregion2": "WESTERN SAHARA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 62,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ANTARCTICA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 63,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ANTARCTICA",
+        "subregion1": "ROSS ISLAND",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 64,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ANTARCTICA",
+        "subregion1": "TERRA NOVA BAY",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 65,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ANTARCTICA",
+        "subregion1": "TERRA NOVA BAY",
+        "subregion2": "MT MELBOURNE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 66,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ANTARCTICA",
+        "subregion1": "TERRA NOVA BAY",
+        "subregion2": "MT RITTMAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 67,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 68,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 69,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "CHINA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 70,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "CHINA",
+        "subregion3": "HONG KONG"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 71,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "CHINA",
+        "subregion3": "MACAU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 72,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "JAPAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 73,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "MONGOLIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 74,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "NORTH KOREA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 75,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "SOUTH KOREA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 76,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "EASTERN ASIA",
+        "subregion2": "TAIWAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 77,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 78,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "AFGHANISTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 79,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "ARAL SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 80,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "BANGLADESH",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 81,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "BHUTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 82,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "INDIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 83,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "IRAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 84,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "KAZAKHSTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 85,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "KYRGYZSTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 86,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "NEPAL",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 87,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "PAKISTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 88,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "TAJIKISTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 89,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "TURKMENISTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 90,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHCENTRAL ASIA",
+        "subregion2": "UZBEKISTAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 91,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHEASTERN ASIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 92,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHEASTERN ASIA",
+        "subregion2": "BURMA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 93,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHEASTERN ASIA",
+        "subregion2": "CAMBODIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 94,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHEASTERN ASIA",
+        "subregion2": "LAO PEOPLE'S DEMOCRATIC REPUBLIC",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 95,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHEASTERN ASIA",
+        "subregion2": "THAILAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 96,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHEASTERN ASIA",
+        "subregion2": "VIETNAM",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 97,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "SOUTHERN ASIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 98,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 99,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "ARMENIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 100,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "AZERBAIJAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 101,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "BLACK SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 102,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "CASPIAN SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 103,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "GEORGIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 104,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 105,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "BAHRAIN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 106,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "GAZA STRIP"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 107,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "IRAQ"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 108,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "ISRAEL"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 109,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "JORDAN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 110,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "KUWAIT"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 111,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "LEBANON"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 112,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "OMAN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 113,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "PALESTINE"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 114,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "QATAR"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 115,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "SAUDI ARABIA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 116,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "SYRIAN ARAB REPUBLIC"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 117,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "UNITED ARAB EMIRATES"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 118,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "MIDDLE EAST",
+        "subregion3": "YEMEN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 119,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "ASIA",
+        "subregion1": "WESTERN ASIA",
+        "subregion2": "TURKEY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 120,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AUSTRALIA/NEW ZEALAND",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 121,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AUSTRALIA/NEW ZEALAND",
+        "subregion1": "AUSTRALIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 122,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "AUSTRALIA/NEW ZEALAND",
+        "subregion1": "NEW ZEALAND",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 123,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 124,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "CENTRAL EUROPE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 125,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 126,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "BELARUS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 127,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "BLACK SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 128,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "BULGARIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 129,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "BYELORUSSIAN SSR",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 130,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "CZECH REPUBLIC",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 131,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "HUNGARY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 132,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "MOLDOVA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 133,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "POLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 134,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "ROMANIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 135,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "RUSSIAN FEDERATION",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 136,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "RUSSIAN FEDERATION",
+        "subregion3": "LAKE BAYKAL"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 137,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "SLOVAKIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 138,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "EASTERN EUROPE",
+        "subregion2": "UKRAINE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 139,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 140,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "BRITISH ISLES",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 141,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "BRITISH ISLES",
+        "subregion3": "CHANNEL ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 142,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "BRITISH ISLES",
+        "subregion3": "IRELAND"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 143,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "BRITISH ISLES",
+        "subregion3": "UNITED KINGDOM"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 144,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "ESTONIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 145,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "ICELAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 146,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "LATVIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 147,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "LITHUANIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 148,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "SCANDINAVIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 149,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "SCANDINAVIA",
+        "subregion3": "ALAND ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 150,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "SCANDINAVIA",
+        "subregion3": "DENMARK"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 151,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "SCANDINAVIA",
+        "subregion3": "FINLAND"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 152,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "SCANDINAVIA",
+        "subregion3": "NORWAY"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 153,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "NORTHERN EUROPE",
+        "subregion2": "SCANDINAVIA",
+        "subregion3": "SWEDEN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 154,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 155,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "ALBANIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 156,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "ANDORRA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 157,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "BOSNIA AND HERZEGOVINA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 158,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "CROATIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 159,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "GREECE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 160,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "ITALY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 161,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "MACEDONIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 162,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "MONTENEGRO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 163,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "SAN MARINO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 164,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "SERBIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 165,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "SERBIA",
+        "subregion3": "KOSOVO"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 166,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "SLOVENIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 167,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "SPAIN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 168,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "SPAIN",
+        "subregion3": "GIBRALTAR"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 169,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "SOUTHERN EUROPE",
+        "subregion2": "VATICAN CITY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 170,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 171,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "AUSTRIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 172,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "BELGIUM",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 173,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "FRANCE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 174,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "GERMANY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 175,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "LIECHTENSTEIN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 176,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "LUXEMBOURG",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 177,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "MONACO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 178,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "NETHERLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 179,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "PORTUGAL",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 180,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "EUROPE",
+        "subregion1": "WESTERN EUROPE",
+        "subregion2": "SWITZERLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 181,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 182,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 183,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "ALBERTA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 184,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "BRITISH COLUMBIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 185,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "GEORGIAN BAY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 186,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "GREAT LAKES, CANADA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 187,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "HUDSON BAY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 188,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "MANITOBA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 189,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "NEW BRUNSWICK",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 190,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "NEWFOUNDLAND AND LABRADOR",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 191,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "NORTHWEST TERRITORIES",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 192,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "NOVA SCOTIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 193,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "NOVA SCOTIA",
+        "subregion3": "SCOTIAN SHELF"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 194,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "NUNAVUT",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 195,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "ONTARIO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 196,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "PRINCE EDWARD ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 197,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "QUEBEC",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 198,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "SASKATCHEWAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 199,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CANADA",
+        "subregion2": "YUKON TERRITORY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 200,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 201,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "BELIZE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 202,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "COSTA RICA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 203,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "EL SALVADOR",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 204,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "GUATEMALA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 205,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "HONDURAS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 206,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "NICARAGUA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 207,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "CENTRAL AMERICA",
+        "subregion2": "PANAMA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 208,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "GREENLAND",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 209,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "MEXICO",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 210,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 211,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "ALABAMA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 212,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "ALASKA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 213,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "ARIZONA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 214,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "ARKANSAS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 215,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "CALIFORNIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 216,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "COLORADO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 217,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "CONNECTICUT",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 218,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "DELAWARE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 219,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "DISTRICT OF COLUMBIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 220,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "FLORIDA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 221,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "GEORGIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 222,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "GREAT LAKES",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 223,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "HAWAII",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 224,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "IDAHO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 225,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "ILLINOIS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 226,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "INDIANA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 227,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "IOWA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 228,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "KANSAS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 229,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "KENTUCKY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 230,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "LOUISIANA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 231,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MAINE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 232,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MARYLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 233,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MASSACHUSETTS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 234,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MICHIGAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 235,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MINNESOTA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 236,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MISSISSIPPI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 237,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MISSOURI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 238,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "MONTANA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 239,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NEBRASKA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 240,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NEVADA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 241,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NEW HAMPSHIRE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 242,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NEW JERSEY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 243,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NEW MEXICO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 244,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NEW YORK",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 245,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NORTH CAROLINA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 246,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "NORTH DAKOTA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 247,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "OHIO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 248,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "OKLAHOMA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 249,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "OREGON",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 250,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "PENNSYLVANIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 251,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "RHODE ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 252,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "SOUTH CAROLINA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 253,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "SOUTH DAKOTA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 254,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "TENNESSEE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 255,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "TEXAS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 256,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "UTAH",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 257,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "VERMONT",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 258,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "VIRGINIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 259,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "WASHINGTON",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 260,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "WEST VIRGINIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 261,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "WISCONSIN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 262,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "NORTH AMERICA",
+        "subregion1": "UNITED STATES OF AMERICA",
+        "subregion2": "WYOMING",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 263,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 264,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "AMAZONIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 265,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "ARGENTINA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 266,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "BOLIVIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 267,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "BRAZIL",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 268,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "CHILE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 269,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "COLOMBIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 270,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "ECUADOR",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 271,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "FRENCH GUIANA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 272,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "GUYANA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 273,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "PARAGUAY",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 274,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "PERU",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 275,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "SURINAME",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 276,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "URUGUAY",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 277,
+    "fields": {
+        "category": "CONTINENT",
+        "type": "SOUTH AMERICA",
+        "subregion1": "VENEZUELA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 278,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 279,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "ARCTIC",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 280,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "EASTERN HEMISPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 281,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "EQUATORIAL",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 282,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "EURASIA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 283,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "GLOBAL",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 284,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "GLOBAL LAND",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 285,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "GLOBAL OCEAN",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 286,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "MID-LATITUDE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 287,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "NORTHERN HEMISPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 288,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "OCEANIA",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 289,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "POLAR",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 290,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "SAHEL",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 291,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "SOUTHERN HEMISPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 292,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "TROPICS",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 293,
+    "fields": {
+        "category": "GEOGRAPHIC REGION",
+        "type": "WESTERN HEMISPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 294,
+    "fields": {
+        "category": "OCEAN",
+        "type": "",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 295,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ARCTIC OCEAN",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 296,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ARCTIC OCEAN",
+        "subregion1": "BARENTS SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 297,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ARCTIC OCEAN",
+        "subregion1": "BEAUFORT SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 298,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ARCTIC OCEAN",
+        "subregion1": "CHUKCHI SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 299,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 300,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 301,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "AZORES",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 302,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "BALTIC SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 303,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "BAY OF FUNDY",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 304,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "BERMUDA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 305,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CANARY ISLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 306,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CAPE COD",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 307,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CAPE VERDE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 308,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 309,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ANGUILLA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 310,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ANTIGUA AND BARBUDA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 311,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ARUBA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 312,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "BAHAMAS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 313,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "BARBADOS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 314,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "BONAIRE"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 315,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "CARIBBEAN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 316,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "CAYMAN ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 317,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "CUBA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 318,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "CURACAO"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 319,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "DOMINICA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 320,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "DOMINICAN REPUBLIC"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 321,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "GRENADA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 322,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "GUADELOUPE"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 323,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "HAITI"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 324,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "JAMAICA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 325,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "MARTINIQUE"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 326,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "MONTSERRAT"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 327,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "NAVASSA ISLAND"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 328,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "NETHERLANDS ANTILLES"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 329,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "PUERTO RICO"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 330,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "SABA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 331,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST BARTHELEMY"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 332,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST EUSTATIUS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 333,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST KITTS AND NEVIS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 334,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST LUCIA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 335,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST MAARTEN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 336,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST MARTIN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 337,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "ST VINCENT AND THE GRENADINES"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 338,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "TRINIDAD AND TOBAGO"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 339,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "TRISTAN DA CUNHA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 340,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "TURKS AND CAICOS ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 341,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "CARIBBEAN SEA",
+        "subregion3": "VIRGIN ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 342,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "DAVIS STRAIT",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 343,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "GEORGES BANK",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 344,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "GRAND BANKS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 345,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "GULF OF MAINE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 346,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "GULF OF MEXICO",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 347,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "GULF OF ST LAWRENCE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 348,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "IRISH SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 349,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "IRISH SEA",
+        "subregion3": "ISLE OF MAN"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 350,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "LONG ISLAND SOUND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 351,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MADEIRA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 352,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 353,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "ADRIATIC SEA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 354,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "CEUTA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 355,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "CORSICA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 356,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "CYPRUS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 357,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "DHEKELIA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 358,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "MALTA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 359,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "SARDINIA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 360,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "MEDITERRANEAN SEA",
+        "subregion3": "SICILY"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 361,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "NORTH SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 362,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "NORTH SEA",
+        "subregion3": "LAESO"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 363,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "NORWEGIAN SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 364,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "NORWEGIAN SEA",
+        "subregion3": "FAEROE ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 365,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "SABLE ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 366,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "ST PIERRE AND MIQUELON",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 367,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "NORTH ATLANTIC OCEAN",
+        "subregion2": "SVALBARD AND JAN MAYEN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 368,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 369,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "ASCENSION ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 370,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "BOUVET ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 371,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "FALKLAND ISLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 372,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "GOUGH ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 373,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "SAO TOME AND PRINCIPE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 374,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "SOUTH GEORGIA ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 375,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "SOUTH ORKNEY ISLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 376,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "SOUTH SANDWICH ISLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 377,
+    "fields": {
+        "category": "OCEAN",
+        "type": "ATLANTIC OCEAN",
+        "subregion1": "SOUTH ATLANTIC OCEAN",
+        "subregion2": "ST HELENA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 378,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 379,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "AMSTERDAM AND ST. PAUL ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 380,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "AMSTERDAM AND ST. PAUL ISLANDS",
+        "subregion2": "POINTE BENEDICTE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 381,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "ANDAMAN ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 382,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "ARABIAN SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 383,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "ARABIAN SEA",
+        "subregion2": "PERSIAN GULF",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 384,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "BAY OF BENGAL",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 385,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "BRUNEI",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 386,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "CHRISTMAS ISLAND",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 387,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "COCOS ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 388,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "COMOROS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 389,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "CROZET ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 390,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "CROZET ISLANDS",
+        "subregion2": "ILE DE LA POSSESSION, BASE ALFRED FAURE",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 391,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "CROZET ISLANDS",
+        "subregion2": "POSSESSION ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 392,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "INDONESIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 393,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "INDONESIA",
+        "subregion2": "SUMATRA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 394,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "KERGUELEN ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 395,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "KERGUELEN ISLANDS",
+        "subregion2": "PORT-AUX-FRANCAIS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 396,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "MADAGASCAR",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 397,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "MALAYSIA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 398,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "MALDIVES",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 399,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "MAURITIUS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 400,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "NICOBAR ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 401,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "RED SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 402,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "REUNION",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 403,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "SEYCHELLES",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 404,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "SINGAPORE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 405,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "SRI LANKA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 406,
+    "fields": {
+        "category": "OCEAN",
+        "type": "INDIAN OCEAN",
+        "subregion1": "ZANZIBAR",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 407,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 408,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 409,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "AMERICAN SAMOA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 410,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "BAKER ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 411,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 412,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "HAWAII ISLAND"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 413,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "KAHOOLAWE"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 414,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "KAUAI"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 415,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "LANAI"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 416,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "MAUI"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 417,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "MOLOKAI"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 418,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "NIIHAU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 419,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HAWAIIAN ISLANDS",
+        "subregion3": "OAHU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 420,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "HOWLAND ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 421,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "JARVIS ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 422,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "JOHNSTON ATOLL",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 423,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "KINGMAN REEF",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 424,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "KIRIBATI",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 425,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "MIDWAY ATOLL",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 426,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "PALMYRA ATOLL",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 427,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "CENTRAL PACIFIC OCEAN",
+        "subregion2": "WAKE ISLAND",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 428,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "EASTERN PACIFIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 429,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "EASTERN PACIFIC OCEAN",
+        "subregion2": "GALAPAGOS ISLANDS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 430,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "NORTH PACIFIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 431,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "NORTH PACIFIC OCEAN",
+        "subregion2": "BERING SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 432,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "NORTH PACIFIC OCEAN",
+        "subregion2": "GULF OF ALASKA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 433,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "NORTH PACIFIC OCEAN",
+        "subregion2": "OKINAWA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 434,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "NORTH PACIFIC OCEAN",
+        "subregion2": "SEA OF JAPAN",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 435,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "NORTH PACIFIC OCEAN",
+        "subregion2": "SEA OF OKHOTSK",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 436,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 437,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "MELANESIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 438,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "MELANESIA",
+        "subregion3": "NEW CALEDONIA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 439,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "MELANESIA",
+        "subregion3": "PAPUA NEW GUINEA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 440,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "MELANESIA",
+        "subregion3": "SOLOMON ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 441,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "MELANESIA",
+        "subregion3": "VANUATU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 442,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 443,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "COOK ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 444,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "FIJI"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 445,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "FRENCH POLYNESIA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 446,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "NIUE"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 447,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "NORFOLK ISLAND"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 448,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "PITCAIRN ISLAND"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 449,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "PITCAIRN ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 450,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "SAMOA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 451,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "TOKELAU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 452,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "TONGA"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 453,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "TUVALU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 454,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "SOUTH PACIFIC OCEAN",
+        "subregion2": "POLYNESIA",
+        "subregion3": "WALLIS AND FUTUNA ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 455,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 456,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "EAST CHINA SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 457,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "MICRONESIA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 458,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "MICRONESIA",
+        "subregion3": "GUAM"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 459,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "MICRONESIA",
+        "subregion3": "MARSHALL ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 460,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "MICRONESIA",
+        "subregion3": "NAURU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 461,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "MICRONESIA",
+        "subregion3": "NORTHERN MARIANA ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 462,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "MICRONESIA",
+        "subregion3": "PALAU"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 463,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "PHILIPPINES",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 464,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "SOUTH CHINA AND EASTERN ARCHIPELAGIC SEAS",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 465,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "SOUTH CHINA SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 466,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "SOUTH CHINA SEA",
+        "subregion3": "SPRATLY ISLANDS"
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 467,
+    "fields": {
+        "category": "OCEAN",
+        "type": "PACIFIC OCEAN",
+        "subregion1": "WESTERN PACIFIC OCEAN",
+        "subregion2": "YELLOW SEA",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 468,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 469,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "BELLINGSHAUSEN SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 470,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "HEARD AND MCDONALD ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 471,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "MACQUARIE ISLAND",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 472,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "ROSS SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 473,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "SOUTH SHETLAND ISLANDS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 474,
+    "fields": {
+        "category": "OCEAN",
+        "type": "SOUTHERN OCEAN",
+        "subregion1": "WEDDELL SEA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 475,
+    "fields": {
+        "category": "SOLID EARTH",
+        "type": "",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 476,
+    "fields": {
+        "category": "SOLID EARTH",
+        "type": "CORE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 477,
+    "fields": {
+        "category": "SOLID EARTH",
+        "type": "CRUST",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 478,
+    "fields": {
+        "category": "SOLID EARTH",
+        "type": "MANTLE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 479,
+    "fields": {
+        "category": "SPACE",
+        "type": "",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 480,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 481,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "BOW SHOCK",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 482,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "CUSP",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 483,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "HIGH LATITUDE MAGNETOSPHERE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 484,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "INNER MAGNETOSPHERE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 485,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "MAGNETOPAUSE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 486,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "MAGNETOSPHERE (OTHER)",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 487,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "MAGNETOTAIL",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 488,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "NEUTRAL SHEET",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 489,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "SPACE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 490,
+    "fields": {
+        "category": "SPACE",
+        "type": "EARTH MAGNETIC FIELD",
+        "subregion1": "VAN ALLEN RADIATION BELTS",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 491,
+    "fields": {
+        "category": "SPACE",
+        "type": "SOLAR REGION",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 492,
+    "fields": {
+        "category": "SPACE",
+        "type": "SOLAR REGION",
+        "subregion1": "CHROMOSPHERE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 493,
+    "fields": {
+        "category": "SPACE",
+        "type": "SOLAR REGION",
+        "subregion1": "CORONA",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 494,
+    "fields": {
+        "category": "SPACE",
+        "type": "SOLAR REGION",
+        "subregion1": "PHOTOSPHERE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 495,
+    "fields": {
+        "category": "SPACE",
+        "type": "SOLAR REGION",
+        "subregion1": "SOLAR CORE",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 496,
+    "fields": {
+        "category": "SPACE",
+        "type": "SOLAR REGION",
+        "subregion1": "SOLAR INTERIOR",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 497,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 498,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "BOUNDARY LAYER",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 499,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "IONOSPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 500,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "LAND SURFACE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 501,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "MESOSPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 502,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "SEA FLOOR",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 503,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "SEA SURFACE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 504,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "STRATOSPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 505,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "THERMOSPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "model": "gcmd_keywords.location",
+    "pk": 506,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "TROPOSPHERE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
 }
 ]
