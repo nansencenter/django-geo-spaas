@@ -69,7 +69,24 @@ class DatasetURITests(TestCase):
 
 class DatasetParameterTests(TestCase):
 
-    pass
+    fixtures = ["gcmd", "catalog"]
+
+    def test_add_well_known_variables(self):
+        Parameter.objects.create_from_standards()
+        ## Dump data for use in fixture
+        #with open('parameters.json', 'w') as out:
+        #    call_command('dumpdata', '--natural-foreign', '--traceback',
+        #            '--indent=4',
+        #            'catalog.Parameter', 
+        #            stdout=out)
+
+    def test_add_sar_sigma0(self):
+        ds = Dataset.objects.get(pk=1)
+        p = Parameter.objects.get(
+                standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
+        dp = DatasetParameter(dataset=ds, parameter=p)
+        dp.save()
+        self.assertEqual(dp.parameter.short_name, 'sigma0')
 
 class DatasetRelationshipTests(TestCase):
     def test_variable(self):

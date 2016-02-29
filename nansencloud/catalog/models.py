@@ -18,6 +18,7 @@ from nansencloud.gcmd_keywords.models import VerticalDataResolution
 from nansencloud.gcmd_keywords.models import TemporalDataResolution
 
 from nansencloud.catalog.managers import SourceManager
+from nansencloud.catalog.managers import ParameterManager
 
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
@@ -95,8 +96,13 @@ class Parameter(models.Model):
     gcmd_science_keyword = models.ForeignKey(ScienceKeyword, blank=True,
             null=True)
 
+    objects = ParameterManager()
+
     def __str__(self):
         return '%s' %self.short_name
+
+    def natural_key(self):
+        return (self.standard_name)
 
 class Dataset(models.Model):
     ''' 
@@ -190,7 +196,13 @@ class DatasetURI(models.Model):
         return self.uri.split(':')[0]
 
     def save(self):
-        # Force field validation
+        # Validation is not usually done in the models but rather via form
+        # validation. We should discuss if we want it or not. Presently, we
+        # check only that the uri is valid but we may also check if it exists
+        # (although this isn't normally done either - see
+        # https://docs.djangoproject.com/en/dev/internals/deprecation/ and
+        # search "verify_exists")
+        # Force field validation 
         self.full_clean()
         # Check that the uri exists?
         super(DatasetURI, self).save()

@@ -21,3 +21,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Instrument.objects.create_from_gcmd_keywords()
         Platform.objects.create_from_gcmd_keywords()
+        # TODO: Add remaining lists

@@ -13,6 +13,8 @@ from nansencloud.gcmd_keywords.models import VerticalDataResolution
 
 class DataCenterTests(TestCase):
 
+    fixtures = ["gcmd"]
+
     def test_get_datacenter(self):
         dc = DataCenter.objects.get(short_name='NERSC')
         # OBS: Note error in the long name - they have been notified and this
@@ -22,11 +24,15 @@ class DataCenterTests(TestCase):
 
 class HorizontalDataResolutionTests(TestCase):
 
+    fixtures = ["gcmd"]
+
     def test_get_horizontal_range(self):
         rr = HorizontalDataResolution.objects.get(range='< 1 meter')
         self.assertEqual(rr.range, '< 1 meter')
 
 class InstrumentTests(TestCase):
+
+    fixtures = ["gcmd"]
 
     def test_get_instrument(self):
         ii = Instrument.objects.get(short_name='ASAR')
@@ -34,11 +40,15 @@ class InstrumentTests(TestCase):
 
 class ISOTopicCategoryTests(TestCase):
 
+    fixtures = ["gcmd"]
+
     def test_get_iso_category(self):
         cat = ISOTopicCategory.objects.get(name='Oceans')
         self.assertEqual(cat.name, 'Oceans')
 
 class LocationTests(TestCase):
+
+    fixtures = ["gcmd"]
 
     def test_get_location(self):
         loc = Location.objects.get(subregion2='KENYA')
@@ -46,11 +56,15 @@ class LocationTests(TestCase):
 
 class PlatformTests(TestCase):
 
+    fixtures = ["gcmd"]
+
     def test_get_platform(self):
         p = Platform.objects.get(short_name='ENVISAT')
         self.assertEqual(p.category, 'Earth Observation Satellites')
 
 class ProjectTests(TestCase):
+
+    fixtures = ["gcmd"]
 
     def test_get_project(self):
         p = Project.objects.get(short_name='ACSOE')
@@ -59,11 +73,15 @@ class ProjectTests(TestCase):
 
 class ScienceKeywordTests(TestCase):
 
+    fixtures = ["gcmd"]
+
     def test_get_science_keyword(self):
         kw = ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT')
         self.assertEqual(kw.topic, 'SPECTRAL/ENGINEERING')
 
 class TemporalDataResolutionTests(TestCase):
+
+    fixtures = ["gcmd"]
 
     def test_get_temporal_range(self):
         tr = TemporalDataResolution.objects.get(range='1 minute - < 1 hour')
@@ -71,7 +89,11 @@ class TemporalDataResolutionTests(TestCase):
 
 class VerticalDataResolutionTests(TestCase):
 
+    fixtures = ["gcmd"]
+
     def test_get_vertical_range(self):
+        import ipdb
+        ipdb.set_trace()
         vr = VerticalDataResolution.objects.get(
                 range='10 meters - < 30 meters')
         self.assertEqual(vr.range, '10 meters - < 30 meters')
