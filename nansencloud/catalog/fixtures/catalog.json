@@ -23,7 +23,22 @@
         "source": ["AQUA", "MODIS"],
         "geographic_location": 1,
         "data_center": ["NERSC"],
-        "gcmd_location": null,
+        "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
+        "ISO_topic_category": ["Oceans"],
+        "access_constraints": null
+    }
+},{
+    "pk": 2,
+    "model": "catalog.dataset",
+    "fields": {
+        "entry_title": "Test child dataset",
+        "time_coverage_end": "2010-01-03T00:00:00Z",
+        "time_coverage_start": "2010-01-02T00:00:00Z",
+        "summary": "This is a quite short summary about the test dataset.",
+        "source": ["AQUA", "MODIS"],
+        "geographic_location": 1,
+        "data_center": ["NERSC"],
+        "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
         "ISO_topic_category": ["Oceans"],
         "access_constraints": null
     }

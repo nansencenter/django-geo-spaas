@@ -1,4 +1,3 @@
-import mock
 import json
 
 from django.test import TestCase
@@ -45,6 +44,20 @@ class DatasetTests(TestCase):
         #            'catalog.GeographicLocation',
         #            stdout=out)
 
+    def test_search_datasets(self):
+        ''' Shall add one parameter to the first dataset
+            shall find one Dataset without sst '''
+        dataset1 = Dataset.objects.get(pk=1)
+        p = Parameter.objects.get(
+                standard_name='sea_surface_temperature')
+        dp = DatasetParameter(dataset=dataset1, parameter=p)
+        dp.save()
+        dsearch = Dataset.objects.filter( source__instrument__short_name =
+                'MODIS')
+        dsearch = dsearch.exclude(datasetparameter__parameter__short_name =
+                'SST' )
+        self.assertEqual(dsearch.count(), 1)
+
 class DatasetURITests(TestCase):
 
     fixtures = ["gcmd", "catalog"]
@@ -89,31 +102,19 @@ class DatasetParameterTests(TestCase):
         self.assertEqual(dp.parameter.short_name, 'sigma0')
 
 class DatasetRelationshipTests(TestCase):
+
+    fixtures = ["gcmd", "catalog"]
+
     def test_variable(self):
-        ''' Shall create DatasetRelationship instance '''
-        geolocation = GeographicLocation(
-                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation.save()
-        p = Platform.objects.get(short_name='AQUA')
-        i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
-        child = Dataset(geolocation=geolocation,
-                            source=source,
-                            time_coverage_start=timezone.datetime(2010,1,1,
-                                tzinfo=timezone.utc),
-                            time_coverage_end=timezone.datetime(2010,1,2,
-                                tzinfo=timezone.utc))
-        child.save()
-        parent = Dataset(geolocation=geolocation,
-                            source=source,
-                            time_coverage_start=timezone.datetime(2010,1,2,
-                                tzinfo=timezone.utc),
-                            time_coverage_end=timezone.datetime(2010,1,3,
-                                tzinfo=timezone.utc))
-        parent.save()
+        ''' Shall create DatasetRelationship instance 
+        NOTE: this example dataset relationship doesn't seem very realistic. We
+        should create a proper test that repeats the way we plan to use this...
+        '''
+        child = Dataset.objects.get(pk=1)
+        parent = Dataset.objects.get(pk=2)
         dr = DatasetRelationship(child=child, parent=parent)
         dr.save()
+        self.assertEqual(dr.child.source, dr.parent.source)
 
 class GeographicLocationTests(TestCase):
     def test_geographiclocation(self):
@@ -124,10 +125,15 @@ class GeographicLocationTests(TestCase):
 
 class PersonnelTests(TestCase):
 
+    ''' We should add user admin with, e.g., with the Personnel model. Skip
+    testing before that is in place
+    '''
     pass
 
 class ParameterTests(TestCase):
-
+    ''' This is probably not needed as it should be covered by the
+    DatasetParameterTests
+    '''
     pass
 
 class RoleTests(TestCase):
@@ -135,96 +141,12 @@ class RoleTests(TestCase):
     pass
 
 class SourceTests(TestCase):
+
+    fixtures = ["gcmd"]
+
     def test_source(self):
         ''' Shall create Source instance '''
         p = Platform.objects.get(short_name='AQUA')
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
-
-
-
-
-# Populate Parameter table with CF-variables and change this class to
-class ProductTests(TestCase):
-    def test_variable(self):
-        ''' Shall create Product instance '''
-        geolocation = GeographicLocation(
-                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation.save()
-        p = Platform.objects.get(short_name='AQUA')
-        i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
-        dataset = Dataset(geolocation=geolocation,
-                            source=source,
-                            time_coverage_start=timezone.datetime(2010,1,1,
-                                tzinfo=timezone.utc),
-                            time_coverage_end=timezone.datetime(2010,1,2,
-                                tzinfo=timezone.utc))
-        dataset.save()
-        location = DataLocation(protocol=DataLocation.LOCALFILE,
-                                dataset=dataset,
-                                uri='somefile.txt')
-        location.save()
-        var = Product(short_name='sst',
-                        standard_name='sea_surface_temparture',
-                        long_name='Temperature of Sea Surface',
-                        units='K',
-                        location=location,
-                        time=timezone.datetime(2010,1,2, tzinfo=timezone.utc))
-        var.save()
-
-    def test_search_datasets(self):
-        ''' Shall create two datasets and only one product
-            shall find one Dataset without products '''
-        p = Platform.objects.get(short_name='AQUA')
-        i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
-
-        geolocation1 = GeographicLocation(
-                geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation1.save()
-        dataset1 = Dataset(geolocation=geolocation1,
-                            source=source,
-                            time_coverage_start=timezone.datetime(2010,1,1,
-                                tzinfo=timezone.utc),
-                            time_coverage_end=timezone.datetime(2010,1,2,
-                                tzinfo=timezone.utc))
-        dataset1.save()
-        location1 = DataLocation(protocol=DataLocation.LOCALFILE,
-                                dataset=dataset1,
-                                uri='somefile.txt')
-        location1.save()
-        prod = Product(short_name='sst',
-                        standard_name='sea_surface_temparture',
-                        long_name='Temperature of Sea Surface',
-                        units='K',
-                        location=location1,
-                        time=timezone.datetime(2010,1,2, tzinfo=timezone.utc))
-        prod.save()
-
-        geolocation2 = GeographicLocation(
-                geometry=Polygon(((0, 1), (0, 10), (10, 10), (0, 10), (0, 1))))
-        geolocation2.save()
-        dataset2 = Dataset(geolocation=geolocation1,
-                            source=source,
-                            time_coverage_start=timezone.datetime(2015,1,1,
-                                tzinfo=timezone.utc),
-                            time_coverage_end=timezone.datetime(2015,1,2,
-                                tzinfo=timezone.utc))
-        dataset2.save()
-        location2 = DataLocation(protocol=DataLocation.LOCALFILE,
-                                dataset=dataset2,
-                                uri='somefile2.txt')
-        location2.save()
-
-        newds = Dataset.objects.filter(
-                source__instrument__short_name = 'MODIS'
-            ).exclude(datalocation__product__short_name = 'sst' )
-        print newds[0]
-
-        self.assertEqual(newds.count(), 1)
-
-
