@@ -8,7 +8,7 @@ from nansencloud.vocabularies.models import Platform, Instrument
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import Dataset
-from nansencloud.ingestor.models import DatasetURI, Source
+from nansencloud.nansat_ingestor.models import DatasetURI, Source
 
 
 class DatasetManager(models.Manager):

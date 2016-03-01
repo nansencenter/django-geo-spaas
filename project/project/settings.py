@@ -99,7 +99,7 @@ INSTALLED_APPS = (
     'leaflet',
     'nansencloud.vocabularies',
     'nansencloud.catalog',
-    #'nansencloud.ingestor',
+    'nansencloud.nansat_ingestor',
     #'nansencloud.viewer',
     #'nansencloud.processing_hab',
     #'nansencloud.processing_sar_nrcs',

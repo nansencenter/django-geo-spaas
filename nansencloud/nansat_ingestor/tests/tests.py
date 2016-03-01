@@ -8,7 +8,7 @@ from django.test import TestCase
 
 from nansencloud.vocabularies.models import Instrument, Platform
 from nansencloud.catalog.models import GeographicLocation
-from nansencloud.ingestor.models import Source, DatasetURI, Dataset
+from nansencloud.nansat_ingestor.models import Source, DatasetURI, Dataset
 
 
 class TestSource(TestCase):
