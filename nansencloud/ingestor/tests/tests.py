@@ -6,7 +6,7 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
-from nansencloud.gcmd_keywords.models import Instrument, Platform
+from nansencloud.vocabularies.models import Instrument, Platform
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.ingestor.models import Source, DatasetURI, Dataset
 

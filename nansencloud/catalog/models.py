@@ -7,18 +7,18 @@ from django.core.files.storage import FileSystemStorage
 from django.core.validators import URLValidator
 from django.utils.translation import ugettext as _
 
-from nansencloud.gcmd_keywords.models import ScienceKeyword
-from nansencloud.gcmd_keywords.models import Platform
-from nansencloud.gcmd_keywords.models import Instrument
-from nansencloud.gcmd_keywords.models import ISOTopicCategory
-from nansencloud.gcmd_keywords.models import DataCenter
-from nansencloud.gcmd_keywords.models import Location as GCMDLocation
-from nansencloud.gcmd_keywords.models import HorizontalDataResolution
-from nansencloud.gcmd_keywords.models import VerticalDataResolution
-from nansencloud.gcmd_keywords.models import TemporalDataResolution
+from nansencloud.vocabularies.models import Parameter
+from nansencloud.vocabularies.models import ScienceKeyword
+from nansencloud.vocabularies.models import Platform
+from nansencloud.vocabularies.models import Instrument
+from nansencloud.vocabularies.models import ISOTopicCategory
+from nansencloud.vocabularies.models import DataCenter
+from nansencloud.vocabularies.models import Location as GCMDLocation
+from nansencloud.vocabularies.models import HorizontalDataResolution
+from nansencloud.vocabularies.models import VerticalDataResolution
+from nansencloud.vocabularies.models import TemporalDataResolution
 
 from nansencloud.catalog.managers import SourceManager
-from nansencloud.catalog.managers import ParameterManager
 
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
@@ -77,33 +77,6 @@ class Role(models.Model):
     personnel = models.ForeignKey(Personnel)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
-class Parameter(models.Model):
-    ''' Standard name (and unit) is taken from the CF variables but in case a
-    geophysical parameter is not in the CF standard names table it needs to be
-    taken from wkv.xml (in nansat).
-
-    Short name is taken from wkv.xml
-
-    The table should also include the relevant GCMD science keyword 
-    '''
-    standard_name = models.CharField(max_length=300)
-    short_name = models.CharField(max_length=30)
-    units = models.CharField(max_length=10)
-
-    # The science keywords are less specific than the CF standard names -
-    # therefore one science keyword can be in many parameters, whereas the
-    # CF/WKV standard names are unique
-    gcmd_science_keyword = models.ForeignKey(ScienceKeyword, blank=True,
-            null=True)
-
-    objects = ParameterManager()
-
-    def __str__(self):
-        return '%s' %self.short_name
-
-    def natural_key(self):
-        return (self.standard_name)
-
 class Dataset(models.Model):
     ''' 
     The Dataset model contains fields from the GCMD DIF conventions that are
@@ -129,7 +102,7 @@ class Dataset(models.Model):
     time_coverage_start : DateTimeField
     time_coverage_end : DateTimeField
     geographic_location : ForeignKey to GeographicLocation
-    gcmd_location : ForeignKey to gcmd_keywords.models.Location
+    gcmd_location : ForeignKey to vocabularies.models.Location
     access_constraints : CharField
             Determines the access level of the Dataset: Limited, In-house, or
             Public

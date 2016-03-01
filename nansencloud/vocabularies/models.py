@@ -1,15 +1,16 @@
 from django.db import models
 
-from nansencloud.gcmd_keywords.managers import PlatformManager
-from nansencloud.gcmd_keywords.managers import InstrumentManager
-from nansencloud.gcmd_keywords.managers import DataCenterManager
-from nansencloud.gcmd_keywords.managers import ScienceKeywordManager
-from nansencloud.gcmd_keywords.managers import ProjectManager
-from nansencloud.gcmd_keywords.managers import HorizontalDataResolutionManager
-from nansencloud.gcmd_keywords.managers import VerticalDataResolutionManager
-from nansencloud.gcmd_keywords.managers import TemporalDataResolutionManager
-from nansencloud.gcmd_keywords.managers import ISOTopicCategoryManager
-from nansencloud.gcmd_keywords.managers import LocationManager
+from nansencloud.vocabularies.managers import ParameterManager
+from nansencloud.vocabularies.managers import PlatformManager
+from nansencloud.vocabularies.managers import InstrumentManager
+from nansencloud.vocabularies.managers import DataCenterManager
+from nansencloud.vocabularies.managers import ScienceKeywordManager
+from nansencloud.vocabularies.managers import ProjectManager
+from nansencloud.vocabularies.managers import HorizontalDataResolutionManager
+from nansencloud.vocabularies.managers import VerticalDataResolutionManager
+from nansencloud.vocabularies.managers import TemporalDataResolutionManager
+from nansencloud.vocabularies.managers import ISOTopicCategoryManager
+from nansencloud.vocabularies.managers import LocationManager
 
 # GCMD keywords loaded into the models in migrations/0001_initial.py using the
 # nersc-metadata package
@@ -170,4 +171,32 @@ class TemporalDataResolution(models.Model):
 
     def natural_key(self):
         return (self.range)
+
+class Parameter(models.Model):
+    ''' Standard name (and unit) is taken from the CF variables but in case a
+    geophysical parameter is not in the CF standard names table it needs to be
+    taken from wkv.xml (in nansat).
+
+    Short name is taken from wkv.xml
+
+    The table should also include the relevant GCMD science keyword 
+    '''
+    standard_name = models.CharField(max_length=300)
+    short_name = models.CharField(max_length=30)
+    units = models.CharField(max_length=10)
+
+    # The science keywords are less specific than the CF standard names -
+    # therefore one science keyword can be in many parameters, whereas the
+    # CF/WKV standard names are unique
+    gcmd_science_keyword = models.ForeignKey(ScienceKeyword, blank=True,
+            null=True)
+
+    objects = ParameterManager()
+
+    def __str__(self):
+        return '%s' %self.short_name
+
+    def natural_key(self):
+        return (self.standard_name)
+
 

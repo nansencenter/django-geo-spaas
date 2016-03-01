@@ -97,7 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django_forms_bootstrap',
     'leaflet',
-    'nansencloud.gcmd_keywords',
+    'nansencloud.vocabularies',
     'nansencloud.catalog',
     #'nansencloud.ingestor',
     #'nansencloud.viewer',

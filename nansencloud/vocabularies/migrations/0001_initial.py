@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -60,6 +61,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Parameter',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('standard_name', models.CharField(max_length=300)),
+                ('short_name', models.CharField(max_length=30)),
+                ('units', models.CharField(max_length=10)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Platform',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -104,5 +114,10 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('range', models.CharField(max_length=220)),
             ],
+        ),
+        migrations.AddField(
+            model_name='parameter',
+            name='gcmd_science_keyword',
+            field=models.ForeignKey(blank=True, to='vocabularies.ScienceKeyword', null=True),
         ),
     ]

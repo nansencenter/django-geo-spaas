@@ -15,12 +15,43 @@ import pythesint as pti
 
 from django.db import models
 
+class ParameterManager(models.Manager):
+
+    ''' Fields:
+    standard_name
+    short_name
+    units 
+    gcmd_science_keyword 
+    '''
+
+    def get_by_natural_key(self, stdname):
+        return self.get(standard_name=stdname)
+
+    def create_from_vocabularies(self):
+        ''' Create parameter instances from the nersc wkv list.
+        '''
+        warnings.warn('''
+        Because we do not yet have the mapping between the different
+        vocabularies, the GCMD science keywords are not linked to the catalog
+        parameter table
+        ''')
+        num = 0
+        pti.update_wkv_variable()
+        for wkv in pti.get_wkv_variable_list():
+            pp, created = self.get_or_create(
+                standard_name = wkv['standard_name'],
+                short_name = wkv['short_name'],
+                units = wkv['units']
+            )
+            if created: num+=1
+        print("Added %d new parameters" %num)
+
 class PlatformManager(models.Manager):
 
     def get_by_natural_key(self, short_name):
         return self.get(short_name=short_name)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
         pti.update_gcmd_platform()
@@ -41,7 +72,7 @@ class InstrumentManager(models.Manager):
     def get_by_natural_key(self, short_name):
         return self.get(short_name=short_name)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_instrument()
         for instrument in pti.get_gcmd_instrument_list():
@@ -67,7 +98,7 @@ class ScienceKeywordManager(models.Manager):
                 variable_level_2=variable_level_2,
                 variable_level_3=variable_level_3)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_science_keyword()
         for skw in pti.get_gcmd_science_keyword_list():
@@ -90,7 +121,7 @@ class DataCenterManager(models.Manager):
     def get_by_natural_key(self, sname):
         return self.get(short_name=sname)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_provider()
         for dc in pti.get_gcmd_provider_list():
@@ -113,7 +144,7 @@ class HorizontalDataResolutionManager(models.Manager):
     def get_by_natural_key(self, hrr):
         return self.get(range=hrr)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_horizontalresolutionrange()
         for hdr in pti.get_gcmd_horizontalresolutionrange_list():
@@ -131,7 +162,7 @@ class VerticalDataResolutionManager(models.Manager):
     def get_by_natural_key(self, vrr):
         return self.get(range=vrr)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_verticalresolutionrange()
         for vdr in pti.get_gcmd_verticalresolutionrange_list():
@@ -148,7 +179,7 @@ class TemporalDataResolutionManager(models.Manager):
     def get_by_natural_key(self, trr):
         return self.get(range=trr)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_temporalresolutionrange()
         for tdr in pti.get_gcmd_temporalresolutionrange_list():
@@ -165,7 +196,7 @@ class ProjectManager(models.Manager):
     def get_by_natural_key(self, bucket, short_name):
         return self.get(bucket=bucket, short_name=short_name)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_project()
         for p in pti.get_gcmd_project_list():
@@ -184,7 +215,7 @@ class ISOTopicCategoryManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_iso19115_topic_category()
         for iso in pti.get_iso19115_topic_category_list():
@@ -201,7 +232,7 @@ class LocationManager(models.Manager):
         return self.get(category=category, type=type, subregion1=subregion1,
                 subregion2=subregion2, subregion3=subregion3)
 
-    def create_from_gcmd_keywords(self):
+    def create_from_vocabularies(self):
         num = 0
         pti.update_gcmd_location()
         for loc in pti.get_gcmd_location_list():

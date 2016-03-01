@@ -6,8 +6,8 @@ from django.contrib.gis.geos import Polygon
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
 
-from nansencloud.gcmd_keywords.models import Platform, Instrument
-from nansencloud.gcmd_keywords.models import ISOTopicCategory, DataCenter
+from nansencloud.vocabularies.models import Platform, Instrument, Parameter
+from nansencloud.vocabularies.models import ISOTopicCategory, DataCenter
 from nansencloud.catalog.models import *
 
 class DatasetTests(TestCase):
@@ -127,12 +127,6 @@ class PersonnelTests(TestCase):
 
     ''' We should add user admin with, e.g., with the Personnel model. Skip
     testing before that is in place
-    '''
-    pass
-
-class ParameterTests(TestCase):
-    ''' This is probably not needed as it should be covered by the
-    DatasetParameterTests
     '''
     pass
 

@@ -4,7 +4,7 @@ from xml.sax.saxutils import unescape
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
-from nansencloud.gcmd_keywords.models import Platform, Instrument
+from nansencloud.vocabularies.models import Platform, Instrument
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import DatasetURI, Source, Dataset
