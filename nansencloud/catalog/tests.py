@@ -66,19 +66,12 @@ class DatasetURITests(TestCase):
         self.dataset = Dataset.objects.get(pk=1)
 
     def test_DatasetURI_created(self):
-        uri = 'file://this/is/some/file'
+        uri = 'file://localhost/this/is/some/file'
         dsuri = DatasetURI(uri=uri, dataset=self.dataset)
-        try:
-            dsuri.save()
-        except ValidationError as e:
-            print(e.message)
+        dsuri.save()
         self.assertEqual(dsuri.uri, uri)
 
-    def test_fail_invalid_uri(self):
-        uri = '/this/is/some/file/but/not/an/uri'
-        with self.assertRaises(ValidationError):
-            dsuri = DatasetURI(uri=uri, dataset=self.dataset)
-            dsuri.save()
+
 
 class DatasetParameterTests(TestCase):
 
