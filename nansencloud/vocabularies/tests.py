@@ -23,7 +23,7 @@ class ParameterTests(TestCase):
 
 class DataCenterTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_datacenter(self):
         dc = DataCenter.objects.get(short_name='NERSC')
@@ -34,7 +34,7 @@ class DataCenterTests(TestCase):
 
 class HorizontalDataResolutionTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_horizontal_range(self):
         rr = HorizontalDataResolution.objects.get(range='< 1 meter')
@@ -42,7 +42,7 @@ class HorizontalDataResolutionTests(TestCase):
 
 class InstrumentTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_instrument(self):
         ii = Instrument.objects.get(short_name='ASAR')
@@ -50,7 +50,7 @@ class InstrumentTests(TestCase):
 
 class ISOTopicCategoryTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_iso_category(self):
         cat = ISOTopicCategory.objects.get(name='Oceans')
@@ -58,7 +58,7 @@ class ISOTopicCategoryTests(TestCase):
 
 class LocationTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_location(self):
         loc = Location.objects.get(subregion2='KENYA')
@@ -66,7 +66,7 @@ class LocationTests(TestCase):
 
 class PlatformTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_platform(self):
         p = Platform.objects.get(short_name='ENVISAT')
@@ -74,7 +74,7 @@ class PlatformTests(TestCase):
 
 class ProjectTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_project(self):
         p = Project.objects.get(short_name='ACSOE')
@@ -83,7 +83,7 @@ class ProjectTests(TestCase):
 
 class ScienceKeywordTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_science_keyword(self):
         kw = ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT')
@@ -91,7 +91,7 @@ class ScienceKeywordTests(TestCase):
 
 class TemporalDataResolutionTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_temporal_range(self):
         tr = TemporalDataResolution.objects.get(range='1 minute - < 1 hour')
@@ -99,7 +99,7 @@ class TemporalDataResolutionTests(TestCase):
 
 class VerticalDataResolutionTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_get_vertical_range(self):
         vr = VerticalDataResolution.objects.get(

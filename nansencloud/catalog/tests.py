@@ -12,7 +12,7 @@ from nansencloud.catalog.models import *
 
 class DatasetTests(TestCase):
 
-    fixtures = ["gcmd", "catalog"]
+    fixtures = ["vocabularies", "catalog"]
 
     def test_dataset(self):
         ''' Shall create Dataset instance '''
@@ -60,7 +60,7 @@ class DatasetTests(TestCase):
 
 class DatasetURITests(TestCase):
 
-    fixtures = ["gcmd", "catalog"]
+    fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
         self.dataset = Dataset.objects.get(pk=1)
@@ -82,16 +82,7 @@ class DatasetURITests(TestCase):
 
 class DatasetParameterTests(TestCase):
 
-    fixtures = ["gcmd", "catalog"]
-
-    def test_add_well_known_variables(self):
-        Parameter.objects.create_from_standards()
-        ## Dump data for use in fixture
-        #with open('parameters.json', 'w') as out:
-        #    call_command('dumpdata', '--natural-foreign', '--traceback',
-        #            '--indent=4',
-        #            'catalog.Parameter', 
-        #            stdout=out)
+    fixtures = ["vocabularies", "catalog"]
 
     def test_add_sar_sigma0(self):
         ds = Dataset.objects.get(pk=1)
@@ -103,7 +94,7 @@ class DatasetParameterTests(TestCase):
 
 class DatasetRelationshipTests(TestCase):
 
-    fixtures = ["gcmd", "catalog"]
+    fixtures = ["vocabularies", "catalog"]
 
     def test_variable(self):
         ''' Shall create DatasetRelationship instance 
@@ -136,7 +127,7 @@ class RoleTests(TestCase):
 
 class SourceTests(TestCase):
 
-    fixtures = ["gcmd"]
+    fixtures = ["vocabularies"]
 
     def test_source(self):
         ''' Shall create Source instance '''
