@@ -74,7 +74,10 @@ class IndexView(View):
         images = images.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
         images = images.filter(time_coverage_start__lte=self.form.cleaned_data['date1'])
         if self.form.cleaned_data['polygon'] is not None:
-            images = images.filter(geolocation__geometry__intersects=self.form.cleaned_data['polygon'])
+            images = images.filter(
+                    geographic_location__geometry__intersects
+                    = self.form.cleaned_data['polygon']
+                )
         if self.form.cleaned_data['source'] is not None:
             images = images.filter(source=self.form.cleaned_data['source'])
 

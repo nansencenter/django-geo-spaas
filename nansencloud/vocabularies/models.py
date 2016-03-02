@@ -25,7 +25,7 @@ class Platform(models.Model):
     objects = PlatformManager()
 
     def __str__(self):
-        return self.short_name
+        return str(self.short_name)
 
     def natural_key(self):
         return (self.short_name)
@@ -42,7 +42,7 @@ class Instrument(models.Model):
     objects = InstrumentManager()
 
     def __str__(self):
-        return self.short_name
+        return str(self.short_name)
 
     def natural_key(self):
         return (self.short_name)
@@ -67,7 +67,7 @@ class ISOTopicCategory(models.Model):
     objects = ISOTopicCategoryManager()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def natural_key(self):
         return (self.name)
@@ -87,7 +87,7 @@ class DataCenter(models.Model):
     objects = DataCenterManager()
 
     def __str__(self):
-        return self.short_name
+        return str(self.short_name)
 
     def natural_key(self):
         return (self.short_name)
@@ -102,7 +102,7 @@ class Location(models.Model):
     objects = LocationManager()
 
     def __str__(self):
-        return '%s %s' %(self.subregion2, self.subregion3)
+        return str('%s %s' %(self.subregion2, self.subregion3))
 
     def natural_key(self):
         return (category, type, subregion1, subregion2,
@@ -120,7 +120,7 @@ class ScienceKeyword(models.Model):
     objects = ScienceKeywordManager()
 
     def __str__(self):
-        return '%s' %self.detailed_variable
+        return str('%s' %self.detailed_variable)
 
     def natural_key(self):
         return (self.category, self.topic, self.term, self.variable_level_1,
@@ -134,7 +134,7 @@ class Project(models.Model):
     objects = ProjectManager()
 
     def __str__(self):
-        return self.short_name
+        return str(self.short_name)
 
     def natural_key(self):
         return (self.bucket, self.short_name)
@@ -145,7 +145,7 @@ class HorizontalDataResolution(models.Model):
     objects = HorizontalDataResolutionManager()
 
     def __str__(self):
-        return self.range
+        return str(self.range)
 
     def natural_key(self):
         return (self.range)
@@ -156,7 +156,7 @@ class VerticalDataResolution(models.Model):
     objects = VerticalDataResolutionManager()
 
     def __str__(self):
-        return self.range
+        return str(self.range)
 
     def natural_key(self):
         return (self.range)
@@ -167,7 +167,7 @@ class TemporalDataResolution(models.Model):
     objects = TemporalDataResolutionManager()
 
     def __str__(self):
-        return self.range
+        return str(self.range)
 
     def natural_key(self):
         return (self.range)
@@ -194,7 +194,7 @@ class Parameter(models.Model):
     objects = ParameterManager()
 
     def __str__(self):
-        return '%s' %self.short_name
+        return str('%s' %self.short_name)
 
     def natural_key(self):
         return (self.standard_name)

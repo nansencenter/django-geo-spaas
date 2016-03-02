@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('uri', models.URLField()),
+                ('title', models.CharField(default=b'', max_length=50)),
             ],
         ),
         migrations.CreateModel(
@@ -49,7 +50,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='visualization',
-            name='parameters',
+            name='ds_parameters',
             field=models.ManyToManyField(to='catalog.DatasetParameter', through='viewer.VisualizationParameter'),
         ),
     ]

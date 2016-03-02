@@ -45,25 +45,30 @@ class Dataset(CatalogDataset):
         borderStr += "]"
         return borderStr
 
-
-    def products(self):
-        ''' Return list of all associated products '''
-        httpDataLocations = self.datalocation_set.filter(protocol='HTTP')
-        products = [hdl.product_set.all()[0] for hdl in httpDataLocations]
-        return products
+    def visualizations(self):
+        ''' Return list of all associated visualizations '''
+        return Visualization.objects.filter(
+            ds_parameters__dataset=self).distinct()
 
 class VisualizationParameter(models.Model):
     visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
     ds_parameter = models.ForeignKey(CatalogDatasetParameter, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.ds_parameter.__str__()
 
 class Visualization(models.Model):
     
     uri = models.URLField()
     # A visualization may contain more than one parameter, and the same
     # parameter can be visualized in many ways..
-    parameters = models.ManyToManyField(CatalogDatasetParameter,
+    ds_parameters = models.ManyToManyField(CatalogDatasetParameter,
             through=VisualizationParameter)
+    title = models.CharField(max_length=50, default='')
 
-    #def get_absolut_url(self):
+    def __str__(self):
+        return self.title
+
+    #def get_absolute_url(self):
 
 
