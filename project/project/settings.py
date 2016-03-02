@@ -100,7 +100,7 @@ INSTALLED_APPS = (
     'nansencloud.vocabularies',
     'nansencloud.catalog',
     'nansencloud.nansat_ingestor',
-    #'nansencloud.viewer',
+    'nansencloud.viewer',
     #'nansencloud.processing_hab',
     #'nansencloud.processing_sar_nrcs',
     #'nansencloud.processing_ais',

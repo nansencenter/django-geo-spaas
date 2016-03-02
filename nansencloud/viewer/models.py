@@ -40,7 +40,7 @@ class Dataset(CatalogDataset):
     def border2str(self):
         ''' Generate Leaflet JavaScript defining the border polygon'''
         borderStr = '['
-        for coord in self.geolocation.geometry.coords[0]:
+        for coord in self.geographic_location.geometry.coords[0]:
             borderStr += '[%f, %f],' % coord[::-1]
         borderStr += "]"
         return borderStr
