@@ -49,8 +49,6 @@ class DatasetManager(models.Manager):
         else:
             n = Nansat(uri)
         # get metadata
-        import ipdb
-        ipdb.set_trace()
         platform = json.loads( unescape( n.get_metadata('platform'),
                 {'&quot;': '"'}))
         instrument = json.loads( unescape( n.get_metadata('instrument'),
