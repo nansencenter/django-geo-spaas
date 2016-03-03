@@ -1,17 +1,17 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.gis.db import models as geomodels
 
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import Dataset as CatalogDataset
 from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter 
 
-
 class Search(geomodels.Model):
     ''' Search parameters '''
-    sdate = geomodels.DateTimeField(blank=True, null=True) # when was search
-    date0 = geomodels.DateField()                          # from this date
-    date1 = geomodels.DateField()                          # until this date
-    source = geomodels.ForeignKey(CatalogSource, blank=True, null=True)
+    sdate = models.DateTimeField() # when was search
+    date0 = models.DateField()
+    date1 = models.DateField()
+    source = models.ForeignKey(CatalogSource, blank=True, null=True)
 
     # GeoDjango-specific: a geometry field (PolygonField), and
     # overriding the default manager with a GeoManager instance.

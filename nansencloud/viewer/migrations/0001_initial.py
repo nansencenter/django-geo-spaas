@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Search',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sdate', models.DateTimeField(null=True, blank=True)),
+                ('sdate', models.DateTimeField()),
                 ('date0', models.DateField()),
                 ('date1', models.DateField()),
                 ('polygon', django.contrib.gis.db.models.fields.PolygonField(srid=4326, null=True, blank=True)),

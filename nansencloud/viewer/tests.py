@@ -4,37 +4,20 @@ from django.test import TestCase
 from django.utils import timezone
 from django.contrib.gis.db import models as geomodels
 from django.contrib.gis.geos import Polygon, LinearRing
+from django.core.urlresolvers import reverse
 
 from nansencloud.vocabularies.models import Parameter
 from nansencloud.catalog.models import Source
 from nansencloud.catalog.models import DatasetParameter
+from nansencloud.catalog.models import GeographicLocation
 from nansencloud.viewer import forms
 from nansencloud.viewer.models import Search
 from nansencloud.viewer.models import Dataset
 from nansencloud.viewer.models import Visualization
 from nansencloud.viewer.models import VisualizationParameter
 
-class FormTests(TestCase):
-
-    fixtures = ["vocabularies", "catalog"]
-
-    def test_search_form(self):
-        ext_coords = ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))
-        #int_coords = ((0.4, 0.4), (0.4, 0.6), (0.6, 0.6), (0.6, 0.4), (0.4,
-        #    0.4))
-        #poly = Polygon(ext_coords, int_coords)
-        poly = Polygon(LinearRing(ext_coords))
-        date0 = '2010-01-01', #timezone.datetime(2010,1,1, tzinfo=timezone.utc)
-        date1 = '2011-01-01', #timezone.datetime(2011,1,1, tzinfo=timezone.utc)
-        source = Source.objects.get(pk=1)
-        test_search = {
-                'polygon': poly,
-                'date0': date0, 
-                'date1': date1,
-                'source': source
-            }
-        form = forms.SearchForm(data=test_search)
-        self.failUnless(form.is_valid())
+from nansencloud.viewer.views import DisplayForm
+from nansencloud.viewer.views import SearchDatasets
 
 class ModelTests(TestCase):
 
@@ -111,11 +94,38 @@ class ModelTests(TestCase):
 
 class ViewTests(TestCase):
 
-    def test_call_index_view_loads(self):
-        raise NotImplementedError
+    fixtures = ["vocabularies", "catalog"]
 
-    def test_call_index_view_blank_form(self):
-        raise NotImplementedError
+    def setUp(self):
+        loc = GeographicLocation.objects.get(pk=1)
+        date0 = timezone.datetime(2010,1,1, tzinfo=timezone.utc).date()
+        date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
+        source = Source.objects.get(pk=1)
+        self.valid_form = {
+                'polygon': loc.geometry,
+                'date0': date0, 
+                'date1': date1,
+                'source': source.id
+            }
+        self.invalid_form = {
+                'polygon': 1,
+                'date0': date0, 
+                'date1': date1,
+                'source': source.id
+            }
 
-    def test_call_index_view_invalid_form(self):
-        raise NotImplementedError
+    def test_search_form(self):
+        form = forms.SearchForm(data=self.valid_form)
+        self.failUnless(form.is_valid())
+
+    def test_index_loads(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_index_loads_valid_search(self):
+        response = self.client.post(reverse('index'), self.valid_form)
+        self.assertEqual(response.status_code, 200)
+
+    def test_index_fails_invalid_search(self):
+        response = self.client.post(reverse('index'), self.invalid_form)
+        self.assertFormError(response)
