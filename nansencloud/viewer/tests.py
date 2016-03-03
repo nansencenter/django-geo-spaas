@@ -2,9 +2,9 @@ from mock.mock import MagicMock, patch, create_autospec
 
 from django.test import TestCase
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 from django.contrib.gis.db import models as geomodels
 from django.contrib.gis.geos import Polygon, LinearRing
-from django.core.urlresolvers import reverse
 
 from nansencloud.vocabularies.models import Parameter
 from nansencloud.catalog.models import Source
@@ -102,7 +102,7 @@ class ViewTests(TestCase):
         date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
         source = Source.objects.get(pk=1)
         self.valid_form = {
-                'polygon': loc.geometry,
+                'polygon': Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0, 0))), #loc.geometry,
                 'date0': date0, 
                 'date1': date1,
                 'source': source.id
