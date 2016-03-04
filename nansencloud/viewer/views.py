@@ -55,13 +55,12 @@ class SearchDatasets(FormView):
         ipdb.set_trace()
         return super(SearchDatasets, self).is_valid(*args, **kwargs)
 
-    def form_valid(self, *args, **kwargs):
-        # This method is called when valid form data has been POSTed, so we can
-        # store the search
-        s = self.get_form().save(commit=False)
-        s.sdate = datetime.datetime.today()
-        s.save()
-        return super(SearchDatasets, self).form_valid(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        search = super(SearchDataset, self).save(*args, **kwargs)
+        # Add date of search to the model instance
+        search.sdate = datetime.datetime.today()
+        search.save()
+        return search
 
 # See
 # https://docs.djangoproject.com/es/1.9/topics/class-based-views/mixins/#an-alternative-better-solution
