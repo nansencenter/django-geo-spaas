@@ -1,5 +1,5 @@
 import datetime
-import datetime
+from dateutil.parser import parse
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -63,15 +63,11 @@ class SearchDatasets(FormView):
         s.save()
         return super(SearchDatasets, self).form_valid(*args, **kwargs)
 
-#    def post(self, request, *args, **kwargs):
-#        import ipdb
-#        ipdb.set_trace()
-#        return super(SearchDatasets, self).post(request, *args, **kwargs)
-
 # See
 # https://docs.djangoproject.com/es/1.9/topics/class-based-views/mixins/#an-alternative-better-solution
 class DatasetsShow(ListView):
 
+    form_class = SearchForm
     template_name = 'viewer/image_index.html'
     model = Dataset
     paginate_by = 20
@@ -81,29 +77,30 @@ class DatasetsShow(ListView):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            date0 = form.cleaned_data['date0']
+            date1 = form.cleaned_data['date1']
+            polygon = form.cleaned_data['polygon']
+            source = form.cleaned_data['source']
+
         import ipdb
         ipdb.set_trace()
-
-        view = SearchDatasets.as_view()
-        result = view(request, *args, **kwargs)
-        form = result.context_data['form']
-        date0 = form.cleaned_data['date0']
-        date1 = form.cleaned_data['date1']
 
         datasets = Dataset.objects.all()
         datasets = datasets.order_by('time_coverage_start')
         datasets = datasets.filter(time_coverage_start__gte=date0)
         datasets = datasets.filter(time_coverage_start__lte=date1)
-        if form.cleaned_data['polygon'] is not None:
+        if polygon is not None:
             datasets = datasets.filter(
-                    geographic_location__geometry__intersects
-                    = form.cleaned_data['polygon']
-                )
-        if form.cleaned_data['source'] is not None:
-            datasets = datasets.filter(source=form.cleaned_data['source'])
+                    geographic_location__geometry__intersects=polygon)
+        if source is not None:
+            datasets = datasets.filter(source=source)
         self.object_list = datasets
 
-        return result
+        view = SearchDatasets.as_view()
+        return view(request, *args, **kwargs)
+
 
     ## The use of "image" here may be wrong - perhaps better to use "dataset"?
     #image_class = Dataset
