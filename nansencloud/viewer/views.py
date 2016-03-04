@@ -15,7 +15,7 @@ from nansencloud.viewer.forms import SearchForm
 
 class DisplayForm(TemplateView):
 
-    template_name = 'viewer/image_index.html' 
+    template_name = 'viewer/image_index.html'
 
     def get_context_data(self, **kwargs):
         context = super(DisplayForm, self).get_context_data(**kwargs)
@@ -33,27 +33,27 @@ class SearchDatasets(FormView):
     def dispatch(self, *args, **kwargs):
         import ipdb
         ipdb.set_trace()
-        super(SearchDatasets, self).dispatch(*args, **kwargs)
+        return super(SearchDatasets, self).dispatch(*args, **kwargs)
 
     def get_template_names(self, *args, **kwargs):
         import ipdb
         ipdb.set_trace()
-        super(SearchDatasets, self).get_template_names(*args, **kwargs)
+        return super(SearchDatasets, self).get_template_names(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         import ipdb
         ipdb.set_trace()
-        super(SearchDatasets, self).get_context_data(*args, **kwargs)
+        return super(SearchDatasets, self).get_context_data(*args, **kwargs)
 
     def from_invalid(self, *args, **kwargs):
         import ipdb
         ipdb.set_trace()
-        super(SearchDatasets, self).form_invalid(*args, **kwargs)
+        return super(SearchDatasets, self).form_invalid(*args, **kwargs)
 
     def is_valid(self, *args, **kwargs):
         import ipdb
         ipdb.set_trace()
-        super(SearchDatasets, self).is_valid(*args, **kwargs)
+        return super(SearchDatasets, self).is_valid(*args, **kwargs)
 
     def form_valid(self, *args, **kwargs):
         # This method is called when valid form data has been POSTed, so we can
@@ -61,13 +61,18 @@ class SearchDatasets(FormView):
         s = self.get_form().save(commit=False)
         s.sdate = datetime.datetime.today()
         s.save()
-        return super(FormView, self).form_valid(*args, **kwargs)
+        return super(SearchDatasets, self).form_valid(*args, **kwargs)
+
+#    def post(self, request, *args, **kwargs):
+#        import ipdb
+#        ipdb.set_trace()
+#        return super(SearchDatasets, self).post(request, *args, **kwargs)
 
 # See
 # https://docs.djangoproject.com/es/1.9/topics/class-based-views/mixins/#an-alternative-better-solution
 class DatasetsShow(ListView):
 
-    template_name = 'viewer/image_index.html' 
+    template_name = 'viewer/image_index.html'
     model = Dataset
     paginate_by = 20
 
@@ -76,6 +81,9 @@ class DatasetsShow(ListView):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
+
         view = SearchDatasets.as_view()
         result = view(request, *args, **kwargs)
         form = result.context_data['form']
@@ -96,7 +104,7 @@ class DatasetsShow(ListView):
         self.object_list = datasets
 
         return result
-        
+
     ## The use of "image" here may be wrong - perhaps better to use "dataset"?
     #image_class = Dataset
     #main_template = 'viewer/image_index.html'
