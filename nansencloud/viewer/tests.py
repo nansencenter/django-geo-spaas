@@ -16,9 +16,6 @@ from nansencloud.viewer.models import Dataset
 from nansencloud.viewer.models import Visualization
 from nansencloud.viewer.models import VisualizationParameter
 
-from nansencloud.viewer.views import DisplayForm
-from nansencloud.viewer.views import SearchDatasets
-
 class ModelTests(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
@@ -119,12 +116,12 @@ class ViewTests(TestCase):
         form = forms.SearchForm(data=self.valid_form)
         self.failUnless(form.is_valid())
 
-    def test_index_loads(self):
+    def test_search_loads(self):
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
         # Check initial values of date0 and date1
 
-    def test_index_loads_valid_search(self):
+    def test_search_loads_valid(self):
         response = self.client.post(reverse('index'), self.valid_form)
         self.assertEqual(response.status_code, 200)
 

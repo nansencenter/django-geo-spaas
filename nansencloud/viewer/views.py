@@ -1,10 +1,8 @@
-import datetime
-import datetime
-
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, FormMixin
@@ -27,82 +25,78 @@ class DisplayForm(TemplateView):
 class SearchDatasets(FormView):
 
     form_class = SearchForm
-    template_name = 'viewer/image_index.html'
-    success_url = reverse_lazy('index')
-
-    def dispatch(self, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
-        return super(SearchDatasets, self).dispatch(*args, **kwargs)
-
-    def get_template_names(self, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
-        return super(SearchDatasets, self).get_template_names(*args, **kwargs)
+    template_name = 'viewer/search_form.html'
+    success_url = reverse('display')
 
     def get_context_data(self, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
-        return super(SearchDatasets, self).get_context_data(*args, **kwargs)
-
-    def from_invalid(self, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
-        return super(SearchDatasets, self).form_invalid(*args, **kwargs)
-
-    def is_valid(self, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
-        return super(SearchDatasets, self).is_valid(*args, **kwargs)
+        context = super(SearchDatasets, self).get_context_data()
+        # Add extra context here, either an actual dataset queryset or the form
+        # cleaned data that can be used for search in the db
+        content['test'] = 'hei'
+        return context
 
     def save(self, *args, **kwargs):
         search = super(SearchDataset, self).save(*args, **kwargs)
         # Add date of search to the model instance
-        search.sdate = datetime.datetime.today()
+        search.sdate = timezone.now()
         search.save()
         return search
 
-#    def post(self, request, *args, **kwargs):
-#        import ipdb
-#        ipdb.set_trace()
-#        return super(SearchDatasets, self).post(request, *args, **kwargs)
-
 # See
 # https://docs.djangoproject.com/es/1.9/topics/class-based-views/mixins/#an-alternative-better-solution
-class DatasetsShow(ListView):
+class DisplayDatasets(ListView):
 
+    form_class = SearchForm
     template_name = 'viewer/image_index.html'
     model = Dataset
     paginate_by = 20
 
-    def get(self, request, *args, **kwargs):
-        view = DisplayForm.as_view()
-        return view(request, *args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        import ipdb; ipdb.set_trace()
 
-    def post(self, request, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
+        form = self.form_class(self.request.POST)
+        context = super(DisplayDatasets, self).get_context_data(*args,
+                **kwargs)
 
-        view = SearchDatasets.as_view()
-        result = view(request, *args, **kwargs)
-        form = result.context_data['form']
-        date0 = form.cleaned_data['date0']
-        date1 = form.cleaned_data['date1']
+        return context
 
-        datasets = Dataset.objects.all()
-        datasets = datasets.order_by('time_coverage_start')
-        datasets = datasets.filter(time_coverage_start__gte=date0)
-        datasets = datasets.filter(time_coverage_start__lte=date1)
-        if form.cleaned_data['polygon'] is not None:
-            datasets = datasets.filter(
-                    geographic_location__geometry__intersects
-                    = form.cleaned_data['polygon']
-                )
-        if form.cleaned_data['source'] is not None:
-            datasets = datasets.filter(source=form.cleaned_data['source'])
-        self.object_list = datasets
+    #def get(self, request, *args, **kwargs):
+    #    form = self.form_class(request.POST)
+    #    self.context['form'] = form
+    #    self.object_list = Dataset.objects.filter(time_coverage_start__ge =
+    #            timezone.now()-timezone.datetime.timedelta(2))
+    #    return view(request, *args, **kwargs)
 
-        return result
+    #def post(self, request, *args, **kwargs):
+    #    #view = SearchDatasets.as_view()
+    #    #response = view(request, *args, **kwargs)
+
+    #    form = self.form_class(request.POST)
+    #    #if form.is_valid():
+    #    #else:
+    #    #    self.get(
+
+    #    import ipdb
+    #    ipdb.set_trace()
+
+    #    form = response.context_data['form']
+    #    date0 = form.cleaned_data['date0']
+    #    date1 = form.cleaned_data['date1']
+
+    #    datasets = Dataset.objects.all()
+    #    datasets = datasets.order_by('time_coverage_start')
+    #    datasets = datasets.filter(time_coverage_start__gte=date0)
+    #    datasets = datasets.filter(time_coverage_start__lte=date1)
+    #    if form.cleaned_data['polygon'] is not None:
+    #        datasets = datasets.filter(
+    #                geographic_location__geometry__intersects
+    #                = form.cleaned_data['polygon']
+    #            )
+    #    if form.cleaned_data['source'] is not None:
+    #        datasets = datasets.filter(source=form.cleaned_data['source'])
+    #    self.object_list = datasets
+
+    #    return response
 
     ## The use of "image" here may be wrong - perhaps better to use "dataset"?
     #image_class = Dataset
