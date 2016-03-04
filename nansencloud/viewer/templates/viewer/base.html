@@ -18,7 +18,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="col-md-7">
-            <form action="{% url 'index' %}" method="post">
+            <form action="{% url viewname %}" method="post">
                 {% csrf_token %}
                     {{ form|as_bootstrap }}
                     {% comment %}
@@ -32,16 +32,16 @@
             <div class="col-md-5">
                 <div class="pagination">
                     <span class="step-links">
-                        {% if object_list.has_previous %}
-                            <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ object_list.previous_page_number }} ; window.document.forms[1].submit()">previous</a>
+                        {% if images.has_previous %}
+                            <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ images.previous_page_number }} ; window.document.forms[1].submit()">previous</a>
                         {% endif %}
 
                         <span class="current">
-                            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+                            Page {{ images.number }} of {{ images.paginator.num_pages }}.
                         </span>
 
-                        {% if object_list.has_next %}
-                            <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ object_list.next_page_number }} ; window.document.forms[1].submit()">next</a>
+                        {% if images.has_next %}
+                            <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ images.next_page_number }} ; window.document.forms[1].submit()">next</a>
                         {% endif %}
                     </span>
                 <table border=1>
@@ -53,9 +53,9 @@
                     <th>Show</th>
                     </tr>
 
-                {% if object_list %}
+                {% if images %}
 
-                    {% for img in object_list %}
+                    {% for img in images %}
                     <tr id={{ forloop.counter }}>
 
                         {% block columns %}
@@ -69,7 +69,7 @@
                     {% endfor %}
 
                 {% else %}
-                    <tr><td colspan=10>No object_list are available.</td></tr>
+                    <tr><td colspan=10>No images are available.</td></tr>
                 {% endif %}
 
                 </table>
@@ -128,7 +128,7 @@
             else remove_image_overlay(prodButton);
         };
 
-        {% for img in object_list %}
+        {% for img in images %}
             mapPolygons[ {{ forloop.counter }} ] = {{ img.geo_js|safe }}
             mapConstPolygons[ {{ forloop.counter }} ] = {{ img.const_geo_js|safe }}
             {% comment %}
@@ -141,7 +141,7 @@
             window.map = e.detail.map;
             window.map.setView([0,0], 2);
             MapQuestOpen_Aerial.addTo(window.map);
-            {% for img in object_list %}
+            {% for img in images %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}
 
@@ -163,7 +163,7 @@
 
         var prodUrls = new Array();
         var prodExtents = new Array();
-        {% for img in object_list %}
+        {% for img in images %}
             {% for prod in img.products %}
             mapImageOverlays["prod_{{ prod.id }}"] = L.imageOverlay('{% static prod.location.uri %}',
                                                 [[{{ img.geolocation.geometry.extent.1 }}, {{ img.geolocation.geometry.extent.0 }}],

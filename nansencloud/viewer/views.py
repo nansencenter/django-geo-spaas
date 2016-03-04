@@ -2,187 +2,104 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse, reverse_lazy
-from django.views.generic.base import View, TemplateView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, FormMixin
-from django.views.generic.list import ListView, MultipleObjectMixin
+from django.views.generic import View
 
+#from nansencloud.catalog.models import Dataset
 from nansencloud.viewer.models import Dataset
 from nansencloud.viewer.forms import SearchForm
 
-class DisplayForm(TemplateView):
-
-    template_name = 'viewer/image_index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(DisplayForm, self).get_context_data(**kwargs)
-        context['form'] = SearchForm()
-        # If we want to show some datasets by default, e.g., from the last few
-        # days, we can load them here
-        return context
-
-class SearchDatasets(FormView):
-
+class IndexView(View):
     form_class = SearchForm
-    template_name = 'viewer/search_form.html'
-    success_url = reverse('display')
+    image_class = Dataset
+    main_template = 'viewer/image_index.html'
+    viewname = 'index'
+    form = None
+    context = {}
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(SearchDatasets, self).get_context_data()
-        # Add extra context here, either an actual dataset queryset or the form
-        # cleaned data that can be used for search in the db
-        content['test'] = 'hei'
-        return context
+    def set_form_defaults(self, request):
+        ''' Set default values for the form '''
+        self.form = self.form_class(
+                    {'date0' : timezone.datetime(2000,1,1,tzinfo=timezone.utc).date(),
+                     'date1' : timezone.now().date()})
 
-    def save(self, *args, **kwargs):
-        search = super(SearchDataset, self).save(*args, **kwargs)
-        # Add date of search to the model instance
-        search.sdate = timezone.now()
-        search.save()
-        return search
+    def set_params(self):
+        ''' Set attributes based on form '''
+        pass
 
-# See
-# https://docs.djangoproject.com/es/1.9/topics/class-based-views/mixins/#an-alternative-better-solution
-class DisplayDatasets(ListView):
+    def get(self, request, *args, **kwargs):
+        ''' Render page if no data is given '''
+        # set default values of form
+        self.set_form_defaults(request)
+        self.form.is_valid()
 
-    form_class = SearchForm
-    template_name = 'viewer/image_index.html'
-    model = Dataset
-    paginate_by = 20
+        # modify attributes based on self.form
+        self.set_params()
+        return self.render(request)
 
-    def get_context_data(self, *args, **kwargs):
-        import ipdb; ipdb.set_trace()
+    def post(self, request, *args, **kwargs):
+        ''' Render page is some data is given in the form '''
+        # set default values of form
+        self.set_form_defaults(request)
 
-        form = self.form_class(self.request.POST)
-        context = super(DisplayDatasets, self).get_context_data(*args,
-                **kwargs)
+        # create new form from POST data
+        form = self.form_class(request.POST)
 
-        return context
+        # replace erroneous data in the form with default values
+        if not form.is_valid():
+            for errorField in form.errors:
+                form.cleaned_data[errorField] = self.form[errorField]
 
-    #def get(self, request, *args, **kwargs):
-    #    form = self.form_class(request.POST)
-    #    self.context['form'] = form
-    #    self.object_list = Dataset.objects.filter(time_coverage_start__ge =
-    #            timezone.now()-timezone.datetime.timedelta(2))
-    #    return view(request, *args, **kwargs)
+        # keep the query
+        if form.is_valid():
+            s = form.save(commit=False)
+            s.sdate = timezone.now().date()
+            s.save()
 
-    #def post(self, request, *args, **kwargs):
-    #    #view = SearchDatasets.as_view()
-    #    #response = view(request, *args, **kwargs)
+        # keep the form in self
+        self.form = form
+        self.form.is_valid()
 
-    #    form = self.form_class(request.POST)
-    #    #if form.is_valid():
-    #    #else:
-    #    #    self.get(
+        # modify attributes based on self.form
+        self.set_params()
+        return self.render(request)
 
-    #    import ipdb
-    #    ipdb.set_trace()
+    def render(self, request):
+        ''' Render page based on form data '''
+        # filter images
+        images = self.image_class.objects.all()
+        images = images.order_by('time_coverage_start')
+        images = images.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
+        images = images.filter(time_coverage_start__lte=self.form.cleaned_data['date1'])
+        if self.form.cleaned_data['polygon'] is not None:
+            images = images.filter(
+                    geographic_location__geometry__intersects
+                    = self.form.cleaned_data['polygon']
+                )
+        if self.form.cleaned_data['source'] is not None:
+            images = images.filter(source=self.form.cleaned_data['source'])
 
-    #    form = response.context_data['form']
-    #    date0 = form.cleaned_data['date0']
-    #    date1 = form.cleaned_data['date1']
+        # debuggin outuput
+        greeting = ''
+        #greeting += 'greet: ' + str(request.POST)
+        #greeting += str(self.form.cleaned_data['sensor'])
 
-    #    datasets = Dataset.objects.all()
-    #    datasets = datasets.order_by('time_coverage_start')
-    #    datasets = datasets.filter(time_coverage_start__gte=date0)
-    #    datasets = datasets.filter(time_coverage_start__lte=date1)
-    #    if form.cleaned_data['polygon'] is not None:
-    #        datasets = datasets.filter(
-    #                geographic_location__geometry__intersects
-    #                = form.cleaned_data['polygon']
-    #            )
-    #    if form.cleaned_data['source'] is not None:
-    #        datasets = datasets.filter(source=form.cleaned_data['source'])
-    #    self.object_list = datasets
+        # paginating
+        page = request.POST.get('page', 1)
+        paginator = Paginator(images, 20)
+        try:
+            images = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            images = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            images = paginator.page(paginator.num_pages)
 
-    #    return response
-
-    ## The use of "image" here may be wrong - perhaps better to use "dataset"?
-    #image_class = Dataset
-    #main_template = 'viewer/image_index.html'
-    #viewname = 'index'
-    #form = None
-    #context = {}
-
-    #def set_form_defaults(self, request):
-    #    ''' Set default values for the form '''
-    #    self.form = self.form_class(
-    #                {'date0' : datetime.date(2000,1,1),
-    #                 'date1' : datetime.date.today()})
-
-    #def set_params(self):
-    #    ''' Set attributes based on form '''
-    #    pass
-
-    #def get(self, request, *args, **kwargs):
-    #    ''' Render page if no data is given '''
-    #    # set default values of form
-    #    #self.set_form_defaults(request)
-    #    import ipdb
-    #    ipdb.set_trace()
-    #    self.form.is_valid()
-
-    #    # modify attributes based on self.form
-    #    self.set_params()
-    #    return self.render(request)
-
-    #def post(self, request, *args, **kwargs):
-    #    ''' Render page is some data is given in the form '''
-    #    # set default values of form
-    #    #self.set_form_defaults(request)
-
-    #    # create new form from POST data
-    #    form = self.form_class(request.POST)
-
-    #    ## replace erroneous data in the form with default values
-    #    #if not form.is_valid():
-    #    #    for errorField in form.errors:
-    #    #        form.cleaned_data[errorField] = self.form[errorField]
-
-    #    # keep the query
-    #    if form.is_valid():
-    #        s = form.save(commit=False)
-    #        s.sdate = datetime.datetime.today()
-    #        s.save()
-
-    #    ## keep the form in self
-    #    #self.form = form
-    #    #self.form.is_valid()
-
-    #    ## modify attributes based on self.form
-    #    #self.set_params()
-    #    #return self.render(request)
-
-    #def get_context_data(self, *args, **kwargs):
-    #    context = super(IndexView, self).get_context_data(*args, **kwargs)
-
-    #    ''' Render page based on form data '''
-    #    # filter images
-    #    # debuggin outuput
-    #    greeting = ''
-    #    #greeting += 'greet: ' + str(request.POST)
-    #    #greeting += str(self.form.cleaned_data['sensor'])
-
-    #    # paginating
-    #    page = request.POST.get('page', 1)
-    #    paginator = Paginator(images, 20)
-    #    try:
-    #        images = paginator.page(page)
-    #    except PageNotAnInteger:
-    #        # If page is not an integer, deliver first page.
-    #        images = paginator.page(1)
-    #    except EmptyPage:
-    #        # If page is out of range (e.g. 9999), deliver last page of results.
-    #        images = paginator.page(paginator.num_pages)
-
-    #    context['images'] = images
-    #    context['form'] = self.form
-    #    context['greeting'] = greeting
-    #    context['viewname'] = self.viewname
-
-    #    return context
-    #    #return render(request, self.main_template, self.context)
+        self.context['images'] = images
+        self.context['form'] = self.form
+        self.context['greeting'] = greeting
+        self.context['viewname'] = self.viewname
+        return render(request, self.main_template, self.context)
 
 def image(request, image_id):
     image = Dataset.objects.get(id=image_id)
