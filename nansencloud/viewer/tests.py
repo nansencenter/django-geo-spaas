@@ -89,7 +89,7 @@ class ModelTests(TestCase):
         self.assertEqual(visparam0.ds_parameter.dataset.pk, self.ds.pk)
         self.assertIsInstance(visparam0.__str__(), str)
 
-class ViewTests(TestCase):
+class FormAndViewTests(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
 
@@ -117,6 +117,7 @@ class ViewTests(TestCase):
         self.failUnless(form.is_valid())
 
     def test_search_loads(self):
+        # this also tests urls.py...
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
         # Check initial values of date0 and date1
@@ -128,4 +129,3 @@ class ViewTests(TestCase):
     def test_index_fails_invalid_search(self):
         with self.assertRaises(ValueError):
             response = self.client.post(reverse('index'), self.invalid_form)
-        #self.assertFormError(response)
