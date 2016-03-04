@@ -30,6 +30,31 @@ class SearchDatasets(FormView):
     template_name = 'viewer/image_index.html'
     success_url = reverse_lazy('index')
 
+    def dispatch(self, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
+        super(SearchDatasets, self).dispatch(*args, **kwargs)
+
+    def get_template_names(self, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
+        super(SearchDatasets, self).get_template_names(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
+        super(SearchDatasets, self).get_context_data(*args, **kwargs)
+
+    def from_invalid(self, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
+        super(SearchDatasets, self).form_invalid(*args, **kwargs)
+
+    def is_valid(self, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
+        super(SearchDatasets, self).is_valid(*args, **kwargs)
+
     def form_valid(self, *args, **kwargs):
         # This method is called when valid form data has been POSTed, so we can
         # store the search
@@ -46,16 +71,14 @@ class DatasetsShow(ListView):
     model = Dataset
     paginate_by = 20
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         view = DisplayForm.as_view()
-        return view(*args, **kwargs)
+        return view(request, *args, **kwargs)
 
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         view = SearchDatasets.as_view()
-        result = view(*args, **kwargs)
+        result = view(request, *args, **kwargs)
         form = result.context_data['form']
-        import ipdb
-        ipdb.set_trace()
         date0 = form.cleaned_data['date0']
         date1 = form.cleaned_data['date1']
 
