@@ -125,6 +125,7 @@ class ViewTests(TestCase):
         response = self.client.post(reverse('index'), self.valid_form)
         self.assertEqual(response.status_code, 200)
 
-    #def test_index_fails_invalid_search(self):
-    #    response = self.client.post(reverse('index'), self.invalid_form)
-    #    self.assertFormError(response)
+    def test_index_fails_invalid_search(self):
+        with self.assertRaises(ValueError):
+            response = self.client.post(reverse('index'), self.invalid_form)
+        #self.assertFormError(response)
