@@ -16,11 +16,27 @@ class Migration(migrations.Migration):
             name='Search',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sdate', models.DateTimeField(null=True, blank=True)),
+                ('sdate', models.DateTimeField()),
                 ('date0', models.DateField()),
                 ('date1', models.DateField()),
                 ('polygon', django.contrib.gis.db.models.fields.PolygonField(srid=4326, null=True, blank=True)),
                 ('source', models.ForeignKey(blank=True, to='catalog.Source', null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Visualization',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('uri', models.URLField()),
+                ('title', models.CharField(default=b'', max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='VisualizationParameter',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('ds_parameter', models.ForeignKey(to='catalog.DatasetParameter')),
+                ('visualization', models.ForeignKey(to='viewer.Visualization')),
             ],
         ),
         migrations.CreateModel(
@@ -31,5 +47,10 @@ class Migration(migrations.Migration):
                 'proxy': True,
             },
             bases=('catalog.dataset',),
+        ),
+        migrations.AddField(
+            model_name='visualization',
+            name='ds_parameters',
+            field=models.ManyToManyField(to='catalog.DatasetParameter', through='viewer.VisualizationParameter'),
         ),
     ]

@@ -1,0 +1,118 @@
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% load bootstrap_tags %}
+
+<form action="{% url 'search' %}" method="post">
+    {% csrf_token %}
+    {{ form|as_bootstrap }}
+    <input type=hidden id="page" name="page" value=1 />
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Search</>
+    </div>
+</form>
+
+{% block extra_script %}
+
+    {% comment %}
+    this needs to be cleaned up when we can display the web page in the
+    browser
+    {% endcomment %}
+
+
+    <script type="text/javascript">
+        var map; //= map('map').SetView([100,60], 13);
+        var mapPolygons = [];
+        var mapConstPolygons = [];
+        var mapImageOverlays = new Array();
+        var MapQuestOpen_Aerial = L.tileLayer(
+            'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+                type: 'sat',
+                ext: 'jpg',
+                attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+                subdomains: '1234'
+        });
+
+
+        function add_polygon(id){
+            window.mapPolygons[ id ].addTo(window.map);
+        }
+
+        function remove_polygon(id){
+            window.map.removeLayer(window.mapPolygons[ id ]);
+        }
+
+        function toggle_polygon(showPoly, id) {
+            if (showPoly.checked == true) add_polygon(id);
+            else remove_polygon(id);
+        };
+
+        function add_image_overlay(prodButton){
+            mapImageOverlays[ prodButton.id ].addTo(window.map);
+            prodButton.checked = true;
+            $(prodButton).next("label").css( "color", 'green');
+        }
+
+        function remove_image_overlay(prodButton){
+            window.map.removeLayer(mapImageOverlays[ prodButton.id ]);
+            prodButton.checked = false;
+            $(prodButton).next("label").css( "color", 'black');
+
+        }
+
+        function toggle_image_overlay(prodButton) {
+            if (prodButton.checked == true) add_image_overlay(prodButton);
+            else remove_image_overlay(prodButton);
+        };
+
+        {% for img in object_list %}
+            mapPolygons[ {{ forloop.counter }} ] = {{ img.geo_js|safe }}
+            mapConstPolygons[ {{ forloop.counter }} ] = {{ img.const_geo_js|safe }}
+            {% comment %}
+            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 1, fillOpacity: 0.2, fillColor: '#f00'});
+            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 0.5, fillOpacity: 0.05, fillColor: '#b20000'});
+            {% endcomment %}
+        {% endfor %}
+
+        window.addEventListener("map:init", function (e) {
+            window.map = e.detail.map;
+            window.map.setView([0,0], 2);
+            MapQuestOpen_Aerial.addTo(window.map);
+            {% for img in object_list %}
+                window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
+            {% endfor %}
+
+        }, false);
+
+        $( "tr" ).mouseover(function() {
+            cbstr = ':checkbox[name=' + this.id + ']';
+            if ($(cbstr).prop("checked") == false) add_polygon(this.id);
+        });
+
+        $( "tr" ).mouseout(function() {
+            cbstr = ':checkbox[name=' + this.id + ']';
+            if ($(cbstr).prop("checked") == false) remove_polygon(this.id);
+        });
+
+        $('.dsOverlay').click(function() {
+            toggle_polygon(this, this.id);
+        });
+
+        var prodUrls = new Array();
+        var prodExtents = new Array();
+        {% for img in object_list %}
+            {% for prod in img.products %}
+            mapImageOverlays["prod_{{ prod.id }}"] = L.imageOverlay('{% static prod.location.uri %}',
+                                                [[{{ img.geolocation.geometry.extent.1 }}, {{ img.geolocation.geometry.extent.0 }}],
+                                                 [{{ img.geolocation.geometry.extent.3 }}, {{ img.geolocation.geometry.extent.2 }}]]);
+            {% endfor %}
+        {% endfor %}
+
+
+        $(".prodButton").click(function() {
+            toggle_image_overlay(this);
+        });
+
+    </script>
+
+{% endblock %}
+

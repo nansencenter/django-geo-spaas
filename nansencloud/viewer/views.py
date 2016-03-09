@@ -1,8 +1,6 @@
-import datetime
-import datetime
-
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
 
@@ -12,7 +10,6 @@ from nansencloud.viewer.forms import SearchForm
 
 class IndexView(View):
     form_class = SearchForm
-    # The use of "image" here may be wrong - perhaps better to use "dataset"?
     image_class = Dataset
     main_template = 'viewer/image_index.html'
     viewname = 'index'
@@ -22,8 +19,8 @@ class IndexView(View):
     def set_form_defaults(self, request):
         ''' Set default values for the form '''
         self.form = self.form_class(
-                    {'date0' : datetime.date(2000,1,1),
-                     'date1' : datetime.date.today()})
+                    {'date0' : timezone.datetime(2000,1,1,tzinfo=timezone.utc).date(),
+                     'date1' : timezone.now().date()})
 
     def set_params(self):
         ''' Set attributes based on form '''
@@ -55,7 +52,7 @@ class IndexView(View):
         # keep the query
         if form.is_valid():
             s = form.save(commit=False)
-            s.sdate = datetime.datetime.today()
+            s.sdate = timezone.now().date()
             s.save()
 
         # keep the form in self
@@ -74,7 +71,10 @@ class IndexView(View):
         images = images.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
         images = images.filter(time_coverage_start__lte=self.form.cleaned_data['date1'])
         if self.form.cleaned_data['polygon'] is not None:
-            images = images.filter(geolocation__geometry__intersects=self.form.cleaned_data['polygon'])
+            images = images.filter(
+                    geographic_location__geometry__intersects
+                    = self.form.cleaned_data['polygon']
+                )
         if self.form.cleaned_data['source'] is not None:
             images = images.filter(source=self.form.cleaned_data['source'])
 

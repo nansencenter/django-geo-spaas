@@ -1,0 +1,46 @@
+[{
+    "pk": 1,
+    "model": "catalog.source",
+    "fields": {
+        "platform": ["AQUA"],
+        "instrument": ["MODIS"],
+        "specs": "Nothing special"
+    }
+},{
+    "pk": 1,
+    "model": "catalog.geographiclocation",
+    "fields": {
+        "geometry": "SRID=4326;POLYGON ((0.0000000000000000 0.0000000000000000, 0.0000000000000000 10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 0.0000000000000000, 0.0000000000000000 0.0000000000000000))"
+    }
+},{
+    "pk": 1,
+    "model": "catalog.dataset",
+    "fields": {
+        "entry_title": "Test dataset",
+        "time_coverage_end": "2010-01-02T00:00:00Z",
+        "time_coverage_start": "2010-01-01T00:00:00Z",
+        "summary": "This is a quite short summary about the test dataset.",
+        "source": ["AQUA", "MODIS"],
+        "geographic_location": 1,
+        "data_center": ["NERSC"],
+        "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
+        "ISO_topic_category": ["Oceans"],
+        "access_constraints": null
+    }
+},{
+    "pk": 2,
+    "model": "catalog.dataset",
+    "fields": {
+        "entry_title": "Test child dataset",
+        "time_coverage_end": "2010-01-03T00:00:00Z",
+        "time_coverage_start": "2010-01-02T00:00:00Z",
+        "summary": "This is a quite short summary about the test dataset.",
+        "source": ["AQUA", "MODIS"],
+        "geographic_location": 1,
+        "data_center": ["NERSC"],
+        "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
+        "ISO_topic_category": ["Oceans"],
+        "access_constraints": null
+    }
+}
+]

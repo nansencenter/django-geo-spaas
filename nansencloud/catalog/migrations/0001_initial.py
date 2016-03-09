@@ -2,30 +2,37 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.core.validators
 import django.contrib.gis.db.models.fields
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gcmd_keywords', '0001_initial'),
+        ('vocabularies', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DataLocation',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('protocol', models.CharField(max_length=15, choices=[(b'LOCALFILE', b'LOCALFILE'), (b'OPENDAP', b'OPENDAP'), (b'FTP', b'FTP'), (b'HTTP', b'HTTP'), (b'HTTPS', b'HTTPS'), (b'WMS', b'WMS'), (b'WFS', b'WFS')])),
-                ('uri', models.URLField(unique=True)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Dataset',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('time_coverage_start', models.DateTimeField()),
-                ('time_coverage_end', models.DateTimeField()),
+                ('entry_title', models.CharField(max_length=220)),
+                ('summary', models.TextField()),
+                ('time_coverage_start', models.DateTimeField(null=True, blank=True)),
+                ('time_coverage_end', models.DateTimeField(null=True, blank=True)),
+                ('access_constraints', models.CharField(blank=True, max_length=50, null=True, choices=[(b'accessLevel0', 'Limited'), (b'accessLevel1', 'In-house'), (b'accessLevel2', 'Public')])),
+                ('ISO_topic_category', models.ForeignKey(to='vocabularies.ISOTopicCategory')),
+                ('data_center', models.ForeignKey(to='vocabularies.DataCenter')),
+                ('gcmd_location', models.ForeignKey(blank=True, to='vocabularies.Location', null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='DatasetParameter',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('dataset', models.ForeignKey(to='catalog.Dataset')),
+                ('parameter', models.ForeignKey(to='vocabularies.Parameter')),
             ],
         ),
         migrations.CreateModel(
@@ -37,6 +44,14 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='DatasetURI',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('uri', models.URLField(unique=True, validators=[django.core.validators.URLValidator(schemes=['http', 'https', 'ftp', 'ftps', b'file'])])),
+                ('dataset', models.ForeignKey(to='catalog.Dataset')),
+            ],
+        ),
+        migrations.CreateModel(
             name='GeographicLocation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -44,43 +59,55 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Product',
+            name='Personnel',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('short_name', models.CharField(max_length=10)),
-                ('standard_name', models.CharField(max_length=100)),
-                ('long_name', models.CharField(max_length=200)),
-                ('units', models.CharField(max_length=10)),
-                ('time', models.DateTimeField()),
-                ('location', models.ForeignKey(to='catalog.DataLocation')),
+                ('phone', models.CharField(max_length=80)),
+                ('fax', models.CharField(max_length=80)),
+                ('address', models.CharField(max_length=80)),
+                ('city', models.CharField(max_length=80)),
+                ('province_or_state', models.CharField(max_length=80)),
+                ('postal_code', models.CharField(max_length=80)),
+                ('country', models.CharField(max_length=80)),
+            ],
+            options={
+                'permissions': (('accessLevel0', 'Can access all data'), ('accessLevel1', 'Can access data at own data center'), ('accessLevel2', 'Can access public data only')),
+            },
+        ),
+        migrations.CreateModel(
+            name='Role',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('role', models.CharField(max_length=20, choices=[(b'Investigator', b'Investigator'), (b'Technical Contact', b'Technical Contact'), (b'DIF Author', b'DIF Author')])),
+                ('personnel', models.ForeignKey(to='catalog.Personnel')),
             ],
         ),
         migrations.CreateModel(
             name='Source',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('specs', models.CharField(default=b'', help_text=b'Further specifications of the source.', max_length=50)),
-                ('platform', models.ForeignKey(to='gcmd_keywords.Platform')),
-                ('sensor', models.ForeignKey(to='gcmd_keywords.Instrument')),
+                ('specs', models.CharField(default=b'', help_text='Further specifications of the source.', max_length=50)),
+                ('instrument', models.ForeignKey(to='vocabularies.Instrument')),
+                ('platform', models.ForeignKey(to='vocabularies.Platform')),
             ],
         ),
         migrations.AddField(
             model_name='dataset',
-            name='geolocation',
-            field=models.ForeignKey(to='catalog.GeographicLocation'),
+            name='geographic_location',
+            field=models.ForeignKey(blank=True, to='catalog.GeographicLocation', null=True),
+        ),
+        migrations.AddField(
+            model_name='dataset',
+            name='parameters',
+            field=models.ManyToManyField(to='vocabularies.Parameter', through='catalog.DatasetParameter'),
         ),
         migrations.AddField(
             model_name='dataset',
             name='source',
-            field=models.ForeignKey(to='catalog.Source'),
-        ),
-        migrations.AddField(
-            model_name='datalocation',
-            name='dataset',
-            field=models.ForeignKey(to='catalog.Dataset'),
+            field=models.ForeignKey(blank=True, to='catalog.Source', null=True),
         ),
         migrations.AlterUniqueTogether(
             name='source',
-            unique_together=set([('platform', 'sensor')]),
+            unique_together=set([('platform', 'instrument')]),
         ),
     ]

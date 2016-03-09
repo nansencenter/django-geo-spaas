@@ -1,16 +1,17 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.gis.db import models as geomodels
 
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import Dataset as CatalogDataset
-
+from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter 
 
 class Search(geomodels.Model):
     ''' Search parameters '''
-    sdate = geomodels.DateTimeField(blank=True, null=True) # when was search
-    date0 = geomodels.DateField()                          # from this date
-    date1 = geomodels.DateField()                          # until this date
-    source = geomodels.ForeignKey(CatalogSource, blank=True, null=True)
+    sdate = models.DateTimeField() # when was search
+    date0 = models.DateField()
+    date1 = models.DateField()
+    source = models.ForeignKey(CatalogSource, blank=True, null=True)
 
     # GeoDjango-specific: a geometry field (PolygonField), and
     # overriding the default manager with a GeoManager instance.
@@ -39,14 +40,35 @@ class Dataset(CatalogDataset):
     def border2str(self):
         ''' Generate Leaflet JavaScript defining the border polygon'''
         borderStr = '['
-        for coord in self.geolocation.geometry.coords[0]:
+        for coord in self.geographic_location.geometry.coords[0]:
             borderStr += '[%f, %f],' % coord[::-1]
         borderStr += "]"
         return borderStr
 
+    def visualizations(self):
+        ''' Return list of all associated visualizations '''
+        return Visualization.objects.filter(
+            ds_parameters__dataset=self).distinct()
 
-    def products(self):
-        ''' Return list of all associated products '''
-        httpDataLocations = self.datalocation_set.filter(protocol='HTTP')
-        products = [hdl.product_set.all()[0] for hdl in httpDataLocations]
-        return products
+class VisualizationParameter(models.Model):
+    visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
+    ds_parameter = models.ForeignKey(CatalogDatasetParameter, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.ds_parameter.__str__()
+
+class Visualization(models.Model):
+    
+    uri = models.URLField()
+    # A visualization may contain more than one parameter, and the same
+    # parameter can be visualized in many ways..
+    ds_parameters = models.ManyToManyField(CatalogDatasetParameter,
+            through=VisualizationParameter)
+    title = models.CharField(max_length=50, default='')
+
+    def __str__(self):
+        return self.title
+
+    #def get_absolute_url(self):
+
+

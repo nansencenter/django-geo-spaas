@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from sarqp.sarqp import QuadPol
-from nansencloud.ingestor.models import DataLocation, Dataset
+from nansencloud.nansat_ingestor.models import DataLocation, Dataset
 
 class Command(BaseCommand):
     args = '<filename filename ...>'
@@ -19,8 +19,6 @@ class Command(BaseCommand):
             wind_product_path = os.path.join(settings.PRODUCT_ROOT, 'sar_wind')
             wind_product_basename = os.path.basename(non_ingested_uri
                         ).split('.')[0] + '_windfield.nc'
-
-            # Process SAR data
             qp = QuadPol(non_ingested_uri, wind_direction='ncep_wind_online',
                     wind_product_path = wind_product_path,
                     wind_product_basename = wind_product_basename,

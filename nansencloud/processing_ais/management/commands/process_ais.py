@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from nansencloud.ingestor.models import DataLocation
+from nansencloud.nansat_ingestor.models import DataLocation
 from nansencloud.processing_ais.models import Dataset
 
 class Command(BaseCommand):
