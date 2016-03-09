@@ -17,7 +17,7 @@ from nansencloud.catalog.models import DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
 
-    def get_or_create(self, uri):
+    def get_or_create(self, uri, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
