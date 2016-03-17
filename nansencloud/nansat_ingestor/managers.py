@@ -1,6 +1,5 @@
 import warnings
 import json, urllib2
-from urlparse import urlparse
 from xml.sax.saxutils import unescape
 
 from nansat.nansat import Nansat
@@ -8,6 +7,7 @@ from nansat.nansat import Nansat
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
+from nansencloud.utils import validate_uri, nansat_filename
 from nansencloud.vocabularies.models import Platform
 from nansencloud.vocabularies.models import Instrument
 from nansencloud.vocabularies.models import DataCenter
@@ -30,24 +30,14 @@ class DatasetManager(models.Manager):
         '''
 
         # Validate uri - this should fail if the data isn't available
-        request = urllib2.Request(uri)
-        response = urllib2.urlopen(request)
-        response.close()
-        uri_content = urlparse(uri)
+        validate_uri(uri)
 
         # check if dataset already exists
         uris = DatasetURI.objects.filter(uri=uri)
         if len(uris) > 0:
             return uris[0].dataset, False
 
-        # Check if data should be read as stream or as file? Or just:
-        # open with Nansat
-        if uri_content.scheme=='file':
-            n = Nansat(uri_content.path)
-        elif uri_content.scheme=='ftp':
-            n = Nansat(urllib.urlretrieve(uri)[0])
-        else:
-            n = Nansat(uri)
+        n = Nansat(nansat_filename(uri))
         # get metadata
         platform = json.loads( unescape( n.get_metadata('platform'),
                 {'&quot;': '"'}))
