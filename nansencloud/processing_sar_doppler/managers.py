@@ -41,7 +41,7 @@ class DatasetManager(DM):
                 )[0]
             
             fdg = n.geophysical_doppler_shift(
-                    wind=nansat_filename(wind.datalocation_set.all()[0].uri)
+                    wind=nansat_filename(wind.dataseturi_set.all()[0].uri)
                 )
             n.add_band(array=fdg, parameters={
                 'wkv': 'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
@@ -55,6 +55,8 @@ class DatasetManager(DM):
             # OBS: these lines are only correct if the media_path method is run
             # from the management commad..
             mm = self.__module__.split('.')
+            import ipdb
+            ipdb.set_trace()
             module = '%s.%s' %(mm[0],mm[1])
             media_path = vtools.media_path(module, n.fileName)
             prodName = 'rvl_ss%d.png'%i
