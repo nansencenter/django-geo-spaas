@@ -57,8 +57,8 @@ class DatasetManager(DM):
             # use - see nansat issue #166
             # (https://github.com/nansencenter/nansat/issues/166)
             lon[i], lat[i] = swath_data[i].get_geolocation_grids()
-            astep[i] = max(1, lon[i].shape[0] / num_border_points)
-            rstep[i] = max(1, lon[i].shape[1] / num_border_points)
+            astep[i] = max(1, (lon[i].shape[0]-1) / num_border_points)
+            rstep[i] = max(1, (lon[i].shape[1]-1) / num_border_points)
             az_left_lon[i] = lon[i][0:-1:astep[i],0]
             az_left_lat[i] = lat[i][0:-1:astep[i],0]
             ra_upper_lon[i] = lon[i][-1,0:-1:rstep[i]] 
@@ -67,6 +67,15 @@ class DatasetManager(DM):
             az_right_lat[i] = lat[i][0:-1:astep[i],-1]
             ra_lower_lon[i] = lon[i][0,0:-1:rstep[i]]
             ra_lower_lat[i] = lat[i][0,0:-1:rstep[i]] 
+            # number of elements should be 11...
+            assert len(az_left_lon[i])==11
+            assert len(ra_upper_lon[i])==11
+            assert len(az_right_lon[i])==11
+            assert len(ra_lower_lon[i])==11
+            assert len(az_left_lat[i])==11
+            assert len(ra_upper_lat[i])==11
+            assert len(az_right_lat[i])==11
+            assert len(ra_lower_lat[i])==11
 
         lons = np.concatenate((az_left_lon[0], ra_upper_lon[0][1:],
             ra_upper_lon[1][1:], ra_upper_lon[2][1:], ra_upper_lon[3][1:],
