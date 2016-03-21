@@ -69,7 +69,11 @@ class DatasetManager(DM):
             ra_lower_lat[i] = lat[i][0,0:-1:rstep[i]] 
             # number of elements should be 11...
             assert len(az_left_lon[i])==11
-            assert len(ra_upper_lon[i])==11
+            try:
+                assert len(ra_upper_lon[i])==11
+            except:
+                import ipdb; ipdb.set_trace()
+                print('hei')
             assert len(az_right_lon[i])==11
             assert len(ra_lower_lon[i])==11
             assert len(az_left_lat[i])==11
