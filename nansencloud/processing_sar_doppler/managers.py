@@ -11,7 +11,10 @@ from django.contrib.gis.geos import WKTReader
 
 from nansencloud.utils import nansat_filename, media_path
 from nansencloud.vocabularies.models import Parameter
+from nansencloud.catalog.models import DatasetParameter
 from nansencloud.catalog.models import Dataset, DatasetURI
+from nansencloud.viewer.models import Visualization
+from nansencloud.viewer.models import VisualizationParameter
 from nansencloud.nansat_ingestor.managers import DatasetManager as DM
 
 # This should probably be done differently..
@@ -57,52 +60,59 @@ class DatasetManager(DM):
             # use - see nansat issue #166
             # (https://github.com/nansencenter/nansat/issues/166)
             lon[i], lat[i] = swath_data[i].get_geolocation_grids()
-            astep[i] = max(1, (lon[i].shape[0]-1) / num_border_points)
-            rstep[i] = max(1, (lon[i].shape[1]-1) / num_border_points)
+            astep[i] = max(1, (lon[i].shape[0]/2*2-1) / num_border_points)
+            rstep[i] = max(1, (lon[i].shape[1]/2*2-1) / num_border_points)
             az_left_lon[i] = lon[i][0:-1:astep[i],0]
             az_left_lat[i] = lat[i][0:-1:astep[i],0]
-            ra_upper_lon[i] = lon[i][-1,0:-1:rstep[i]] 
-            ra_upper_lat[i] = lat[i][-1,0:-1:rstep[i]]
             az_right_lon[i] = lon[i][0:-1:astep[i],-1]
             az_right_lat[i] = lat[i][0:-1:astep[i],-1]
-            ra_lower_lon[i] = lon[i][0,0:-1:rstep[i]]
-            ra_lower_lat[i] = lat[i][0,0:-1:rstep[i]] 
-            # number of elements should be 11...
+            #ra_upper_lon[i] = lon[i][-1,0:-1:rstep[i]] 
+            #ra_upper_lat[i] = lat[i][-1,0:-1:rstep[i]]
+            #ra_lower_lon[i] = lon[i][0,0:-1:rstep[i]]
+            #ra_lower_lat[i] = lat[i][0,0:-1:rstep[i]] 
+            ra_upper_lon[i] = lon[i][-1,0] 
+            ra_upper_lat[i] = lat[i][-1,0]
+            ra_lower_lon[i] = lon[i][0,0]
+            ra_lower_lat[i] = lat[i][0,0] 
             assert len(az_left_lon[i])==11
-            try:
-                assert len(ra_upper_lon[i])==11
-            except:
-                import ipdb; ipdb.set_trace()
-                print('hei')
             assert len(az_right_lon[i])==11
-            assert len(ra_lower_lon[i])==11
             assert len(az_left_lat[i])==11
-            assert len(ra_upper_lat[i])==11
             assert len(az_right_lat[i])==11
-            assert len(ra_lower_lat[i])==11
+            assert np.isscalar(ra_upper_lon[i])
+            assert np.isscalar(ra_lower_lon[i])
+            assert np.isscalar(ra_upper_lat[i])
+            assert np.isscalar(ra_lower_lat[i])
 
-        lons = np.concatenate((az_left_lon[0], ra_upper_lon[0][1:],
-            ra_upper_lon[1][1:], ra_upper_lon[2][1:], ra_upper_lon[3][1:],
-            ra_upper_lon[4][1:], az_right_lon[4][1:], ra_lower_lon[0][1:],
-            ra_lower_lon[1][1:], ra_lower_lon[2][1:], ra_lower_lon[3][1:],
-            ra_lower_lon[4][1:-2]))
+        # Solve problem with swath overlaps...
+        #vecfilt = lamdba x,y: x[x>y] if np.all(gg_lon>0) else x[x<y]
+        #gg_lon = np.gradient(ra_upper_lon[0])
+        #assert np.all(gg_lon>0) or np.all(gg_lon<0)
+        #upper_lons = np.concatenate((az_left_lon[0], ra_upper_lon[0], 
+        #        vecfilt(ra_upper_lon[1],ra_upper_lon[0][-1]),
+        #        vecfilt(ra_upper_lon[2],ra_upper_lon[1][-1]),
+        #        vecfilt(ra_upper_lon[3],ra_upper_lon[2][-1]),
+        #        vecfilt(ra_upper_lon[4],ra_upper_lon[3][-1])))
+        lons = np.concatenate((az_left_lon[0], [ra_upper_lon[0]],
+            [ra_upper_lon[1]], [ra_upper_lon[2]], [ra_upper_lon[3]],
+            [ra_upper_lon[4]], np.flipud(az_right_lon[4]), [ra_lower_lon[4]],
+            [ra_lower_lon[3]], [ra_lower_lon[2]], [ra_lower_lon[1]],
+            [ra_lower_lon[0]]))
         # apply 180 degree correction to longitude - code copied from
         # get_border_wkt...
-        for ilon, lon in enumerate(lons):
-            lons[ilon] = copysign(acos(cos(lon * pi / 180.)) / pi * 180,
-                    sin(lon * pi / 180.))
-        lats = np.concatenate((az_left_lat[0], ra_upper_lat[0][1:],
-            ra_upper_lat[1][1:], ra_upper_lat[2][1:], ra_upper_lat[3][1:],
-            ra_upper_lat[4][1:], az_right_lat[4][1:], ra_lower_lat[0][1:],
-            ra_lower_lat[1][1:], ra_lower_lat[2][1:], ra_lower_lat[3][1:],
-            ra_lower_lat[4][1:-2]))
-        polyCont = ','.join(str(lon) + ' ' + str(lat) for lon, lat in zip(lons,
+        for ilon, llo in enumerate(lons):
+            lons[ilon] = copysign(acos(cos(llo * pi / 180.)) / pi * 180,
+                    sin(llo * pi / 180.))
+        lats = np.concatenate((az_left_lat[0], [ra_upper_lat[0]],
+            [ra_upper_lat[1]], [ra_upper_lat[2]], [ra_upper_lat[3]],
+            [ra_upper_lat[4]], np.flipud(az_right_lat[4]), [ra_lower_lat[4]],
+            [ra_lower_lat[3]], [ra_lower_lat[2]], [ra_lower_lat[1]],
+            [ra_lower_lat[0]]))
+        polyCont = ','.join(str(llo) + ' ' + str(lla) for llo, lla in zip(lons,
             lats))
         wkt = 'POLYGON((%s))' % polyCont
 
-        import ipdb; ipdb.set_trace()
-
-        geometry=WKTReader().read(wkt)
+        geoloc.geometry = WKTReader().read(wkt)
+        geoloc.save()
 
         # Change the geolocation to cover all subswaths
             #geolocation = GeographicLocation.objects.get_or_create(
@@ -123,36 +133,50 @@ class DatasetManager(DM):
                     wind=nansat_filename(wind.dataseturi_set.all()[0].uri)
                 )
             swath_data[i].add_band(array=fdg, parameters={
-                'wkv': 'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
-
-            lon, lat = swath_data[i].get_corners()
-            d = Domain(NSR(3857),
-                   '-lle %f %f %f %f -tr 1000 1000' % (
-                        lon.min(), lat.min(), lon.max(), lat.max()))
-            swath_data[i].reproject(d, eResampleAlg=1, tps=True)
+                'wkv': 'surface_backwards_doppler_frequency_shift_of_radar_wave'})
 
             # OBS: these lines are only correct if the media_path method is run
             # from the management commad..
             mm = self.__module__.split('.')
             module = '%s.%s' %(mm[0],mm[1])
-            media_path = media_path(module, swath_data[i].fileName)
-            prodName = 'fdg_subswath_%d.png'%i
+            mp = media_path(module, swath_data[i].fileName)
 
+            filename = 'satproj_fdg_subswath_%d.png'%i
+            swath_data[i].write_figure(os.path.join(mp, filename),
+                    bands='fdg', clim=[-60,60], cmapName='jet')
+            # Add figure to db...
+
+            # Reproject to leaflet projection
+            xlon, xlat = swath_data[i].get_corners()
+            d = Domain(NSR(3857),
+                   '-lle %f %f %f %f -tr 1000 1000' % (
+                        xlon.min(), xlat.min(), xlon.max(), xlat.max()))
+            swath_data[i].reproject(d, eResampleAlg=1, tps=True)
+
+            filename = 'fdg_subswath_%d.png'%i
+            swath_data[i].write_figure(os.path.join(mp, filename),
+                    bands='fdg', clim=[-60,60], cmapName='jet',
+                    mask_array=swath_data[i]['swathmask'],
+                    mask_lut={0:[255,0,0]})
             # change the below to using write_figure
-            nansatFigure(swath_data[i]['fdg'], swath_data[i]['swathmask'], -60, 60, media_path,
-                    prodName, cmapName='jet')
+            #nansatFigure(swath_data[i]['fdg'], swath_data[i]['swathmask'],
+            #-60, 60, mp, prodName, cmapName='jet')
 
-            # Now add figure to db...
-            uri = DatasetURI.objects.get_or_create(
-                    uri='file://localhost/%s' % media_path,
-                    dataset=ds)[0]
-            meta = swath_data[i].bands()[swath_data[i]._get_band_number('fdg')]
-            #product = Product(
-            #    short_name='%s_ss%d'%(meta['short_name'], i),
-            #    standard_name=meta['standard_name'],
-            #    long_name=meta['long_name'],
-            #    units='Hz',
-            #    location=location,
-            #    time=ds.time_coverage_start)
+            # Get DatasetParameter
+            dsp, created = DatasetParameter.objects.get_or_create(dataset=ds,
+                    parameter = Parameter.objects.get(
+                        standard_name =
+                        'surface_backwards_doppler_frequency_shift_of_radar_wave'
+                        ))
 
-            #product.save()
+            # Create Visualization
+            vv = Visualization(
+                    uri='file://localhost%s/%s' % (mp, filename),
+                    title='Geophysical Doppler shift in leaflet projection')
+            vv.save()
+
+            # Create VisualizationParameter
+            vp = VisualizationParameter(visualization=vv, ds_parameter=dsp)
+            vp.save()
+
+        return ds, True
