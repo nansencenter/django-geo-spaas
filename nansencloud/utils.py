@@ -45,3 +45,10 @@ def nansat_filename(uri):
     else:
         return uri
 
+def uris_from_args(*args):
+    if len(args[0].split(':'))==1:
+        uris = ['file://localhost' + fn for fn in args]
+    else:
+        uris = [uri for uri in args]
+    return uris
+
