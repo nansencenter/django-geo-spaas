@@ -1,0 +1,26 @@
+{% extends "viewer/base.html" %}
+
+
+{% block headers %}
+<th>Source</th>
+<th>Start time</th>
+<th>Visualizations</th>
+{% endblock headers %}
+
+
+{% block columns %}
+<td>
+    {{ img.source }}
+</td>
+<td>
+    {{ img.time_coverage_start }}
+</td>
+<td>
+    {% for viz in img.visualizations %}
+        <input type="checkbox" id='prod_{{ viz.pk }}' class='prodButton' style="width: 0">
+        <label for='prod_{{ viz.pk }}'>{{ viz.title }}</label>
+    {% endfor %}
+
+</td>
+{% endblock columns %}
+

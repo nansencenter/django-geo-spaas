@@ -13,14 +13,28 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),
     os.pardir))
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-# ./manage.py collectstatic will put app-specific static files here:
+# ./manage.py collectstatic will put the static files (also from the apps)
+# here:
 STATIC_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "static")
-# uploaded media will be put here:
+# uploaded media should be put here (change in production)
 MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "media")
+# Downloaded datasets should be stored here (change in production)
+DOWNLOAD_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "downloads")
+# Derived parameters should be stored in netcdf's here (change in production)
+PRODUCT_ROOT = os.path.join(PACKAGE_ROOT, "site_media", "products")
 
-# In our model process methods, we save our static files here (in addition to
-# this we can have static-dirs in our apps that will be found automatically by
-# Django):
+if not os.path.exists(os.path.join(PACKAGE_ROOT, "site_media")):
+    os.mkdir(os.path.join(PACKAGE_ROOT, "site_media"))
+if not os.path.exists(STATIC_ROOT):
+    os.mkdir(STATIC_ROOT)
+if not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT)
+if not os.path.exists(DOWNLOAD_ROOT):
+    os.mkdir(DOWNLOAD_ROOT)
+if not os.path.exists(PRODUCT_ROOT):
+    os.mkdir(PRODUCT_ROOT)
+
+# Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PACKAGE_ROOT, "static"),
 )
@@ -68,7 +82,6 @@ TEMPLATE_DIRS = [
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -83,8 +96,16 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'leaflet',
     'nansencloud',
-    'nansencloud.cat',
-    'nansencloud.proc',
+    'nansencloud.vocabularies',
+    'nansencloud.catalog',
+    'nansencloud.nansat_ingestor',
+    'nansencloud.viewer',
+    #'nansencloud.processing_hab',
+    #'nansencloud.processing_sar', # not sure if we should split or not...
+    #'nansencloud.processing_sar_nrcs',
+    'nansencloud.processing_sar_doppler',
+    #'nansencloud.processing_ais',
+    #'nansencloud.noaa_ndbc',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -131,9 +152,15 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 1,
     'MAX_ZOOM': 10,
     'RESET_VIEW': False,
+    'SRID': 3857,
     'PLUGINS': {
         'forms': {
             'auto-include': True
         }
     }
+}
+
+PROCESSING_HAB = {
+    'output_directory': os.path.join(MEDIA_ROOT, 'hab/products'),
+    'http_address': os.path.join(MEDIA_URL, 'hab/products'),
 }
