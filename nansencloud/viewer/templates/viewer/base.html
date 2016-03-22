@@ -164,10 +164,14 @@
         var prodUrls = new Array();
         var prodExtents = new Array();
         {% for img in images %}
-            {% for prod in img.products %}
-            mapImageOverlays["prod_{{ prod.id }}"] = L.imageOverlay('{% static prod.location.uri %}',
-                                                [[{{ img.geolocation.geometry.extent.1 }}, {{ img.geolocation.geometry.extent.0 }}],
-                                                 [{{ img.geolocation.geometry.extent.3 }}, {{ img.geolocation.geometry.extent.2 }}]]);
+            {% for viz in img.visualizations %}
+            mapImageOverlays["prod_{{ viz.id }}"] = L.imageOverlay('{{ viz.get_absolute_url }}',
+                    [
+                        [{{ viz.geographic_location.geometry.extent.1 }}, 
+                            {{ viz.geographic_location.geometry.extent.0 }}],
+                        [{{ viz.geographic_location.geometry.extent.3 }},
+                            {{ viz.geographic_location.geometry.extent.2 }}]
+                    ]);
             {% endfor %}
         {% endfor %}
 

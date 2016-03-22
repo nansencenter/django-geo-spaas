@@ -1,7 +1,11 @@
+import os
+
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models as geomodels
 
+from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import Dataset as CatalogDataset
 from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter 
@@ -65,10 +69,13 @@ class Visualization(models.Model):
     ds_parameters = models.ManyToManyField(CatalogDatasetParameter,
             through=VisualizationParameter)
     title = models.CharField(max_length=50, default='')
+    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True)
 
     def __str__(self):
         return self.title
 
-    #def get_absolute_url(self):
+    def get_absolute_url(self):
+        return os.path.join(settings.MEDIA_URL,
+                self.uri.split(settings.MEDIA_URL)[1])
 
 
