@@ -11,8 +11,8 @@ class Command(BaseCommand):
             'display in Leaflet'
 
     def handle(self, *args, **kwargs):
-        if not len(args)==1:
-            raise IOError('Please provide one filename only')
+        #if not len(args)==1:
+        #    raise IOError('Please provide one filename only')
 
         for non_ingested_uri in uris_from_args(*args):
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)

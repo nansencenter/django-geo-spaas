@@ -129589,5 +129589,55 @@
     },
     "model": "vocabularies.parameter",
     "pk": 53
+},
+{
+    "fields": {
+        "units": "Hz",
+        "standard_name": "anomaly_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave",
+        "gcmd_science_keyword": null,
+        "short_name": "dca"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 54
+},
+{
+    "fields": {
+        "units": "Hz",
+        "standard_name": "surface_backwards_doppler_centroid_frequency_shift_of_radar_wave_due_to_wind_waves",
+        "gcmd_science_keyword": null,
+        "short_name": "fww"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 55
+},
+{
+    "fields": {
+        "units": "na",
+        "standard_name": "valid_pixels_in_grid_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave",
+        "gcmd_science_keyword": null,
+        "short_name": "valid_doppler"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 56
+},
+{
+    "fields": {
+        "units": "na",
+        "standard_name": "valid_land_pixels_in_grid_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave",
+        "gcmd_science_keyword": null,
+        "short_name": "valid_land_doppler"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 57
+},
+{
+    "fields": {
+        "units": "na",
+        "standard_name": "valid_sea_pixels_in_grid_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave",
+        "gcmd_science_keyword": null,
+        "short_name": "valid_sea_doppler"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 58
 }
 ]

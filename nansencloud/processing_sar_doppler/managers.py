@@ -29,13 +29,14 @@ class DatasetManager(DM):
 
     def get_or_create(self, uri, *args, **kwargs):
         # ingest file to db
-        super(DatasetManager, self).get_or_create(uri, *args, **kwargs)
+        ds, created = super(DatasetManager, self).get_or_create(uri, *args,
+                **kwargs)
 
-        # Get geolocation of dataset - this must be updated
-        ds = self.filter(dataseturi__uri=uri)[0]
-        geoloc = ds.geographic_location
+        ''' Update dataset border geometry
 
-        # Update dataset border #
+        This must be done every time a Doppler file is processed. It is time
+        consuming and would benefit from improvements...
+        '''
         n_subswaths = 5
         fn = nansat_filename(uri)
         swath_data = {}
@@ -128,9 +129,16 @@ class DatasetManager(DM):
         polyCont = ','.join(str(llo) + ' ' + str(lla) for llo, lla in zip(lons,
             lats))
         wkt = 'POLYGON((%s))' % polyCont
+        new_geometry = WKTReader().read(wkt)
+
+        # Get geolocation of dataset - this must be updated
+        geoloc = ds.geographic_location
+        # Check geometry, return if it is the same as the stored one
+        if geoloc.geometry == new_geometry:
+            return ds, False
 
         # Change the dataset geolocation to cover all subswaths
-        geoloc.geometry = WKTReader().read(wkt)
+        geoloc.geometry = new_geometry
         geoloc.save()
 
         mm = self.__module__.split('.')
@@ -147,18 +155,19 @@ class DatasetManager(DM):
                     time_coverage_start__gte = \
                         parse(swath_data[i].get_metadata()['time_coverage_start']) - timedelta(3)
                 )[0]
-            
-            fdg = swath_data[i].geophysical_doppler_shift(
-                    wind=nansat_filename(wind.dataseturi_set.all()[0].uri)
+            fww = swath_data[i].wind_waves_doppler(
+                    nansat_filename(wind.dataseturi_set.all()[0].uri)
                 )
-            swath_data[i].add_band(array=fdg, parameters={
-                'wkv': 'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'
+            swath_data[i].add_band(array=fww, parameters={
+                'wkv':
+                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
             })
 
-            filename = 'satproj_fdg_subswath_%d.png'%i
-            swath_data[i].write_figure(os.path.join(mp, filename),
-                    bands='fdg', clim=[-60,60], cmapName='jet')
-            # Add figure to db...
+            # Maybe add figures in satellite projection...
+            #filename = 'satproj_fdg_subswath_%d.png'%i
+            #swath_data[i].write_figure(os.path.join(mp, filename),
+            #        bands='fdg', clim=[-60,60], cmapName='jet')
+            ## Add figure to db...
 
             # Reproject to leaflet projection
             xlon, xlat = swath_data[i].get_corners()
@@ -167,34 +176,39 @@ class DatasetManager(DM):
                         xlon.min(), xlat.min(), xlon.max(), xlat.max()))
             swath_data[i].reproject(d, eResampleAlg=1, tps=True)
 
-            filename = 'fdg_subswath_%d.png'%i
-            swath_data[i].write_figure(os.path.join(mp, filename),
-                    bands='fdg', clim=[-60,60], cmapName='jet',
+            # The following figures are created when ingesting data:
+            ingest_creates = [
+                    'valid_doppler', 'valid_land_doppler', 'valid_sea_doppler',
+                    'dca', 'fww',
+                ]
+            # (the geophysical doppler shift must be added in a separate
+            # manager method in order to estimate the range bias after
+            # processing multiple files)
+
+            for band in ingest_creates:
+                filename = '%s_subswath_%d.png'%(i, band)
+                param = Parameter.objects.get(short_name = band)
+                swath_data[i].write_figure(os.path.join(mp, filename),
+                    bands=band,
                     mask_array=swath_data[i]['swathmask'],
                     mask_lut={0:[128,128,128]}, transparency=[128,128,128])
-            # change the below to using write_figure
-            #nansatFigure(swath_data[i]['fdg'], swath_data[i]['swathmask'],
-            #-60, 60, mp, prodName, cmapName='jet')
 
-            # Get DatasetParameter
-            dsp, created = DatasetParameter.objects.get_or_create(dataset=ds,
-                    parameter = Parameter.objects.get(
-                        standard_name =
-                        'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'
-                        ))
+                # Get DatasetParameter
+                dsp, created = DatasetParameter.objects.get_or_create(dataset=ds,
+                    parameter = param)
 
-            # Create Visualization
-            geom = GeographicLocation.objects.get_or_create(
+                # Create Visualization
+                geom = GeographicLocation.objects.get_or_create(
                     geometry=WKTReader().read(swath_data[i].get_border_wkt()))[0]
-            vv = Visualization(
+                vv = Visualization(
                     uri='file://localhost%s/%s' % (mp, filename),
-                    title='Geophysical Doppler shift (swath %s)' %(i+1),
+                    title='%s (swath %s)' %(param.long_name, i+1),
                     geographic_location = geom
                 )
-            vv.save()
+                vv.save()
 
-            # Create VisualizationParameter
-            vp = VisualizationParameter(visualization=vv, ds_parameter=dsp)
-            vp.save()
+                # Create VisualizationParameter
+                vp = VisualizationParameter(visualization=vv, ds_parameter=dsp)
+                vp.save()
 
         return ds, True
