@@ -9,7 +9,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
-from nansencloud.utils import nansat_filename, media_path
+from nansencloud.utils import nansat_filename, media_path, product_path
 from nansencloud.vocabularies.models import Parameter
 from nansencloud.catalog.models import DatasetParameter, GeographicLocation
 from nansencloud.catalog.models import Dataset, DatasetURI
@@ -144,8 +144,14 @@ class DatasetManager(DM):
         mm = self.__module__.split('.')
         module = '%s.%s' %(mm[0],mm[1])
         mp = media_path(module, swath_data[i].fileName)
+        ppath = product_path(module, swath_data[i].fileName)
 
         for i in range(n_subswaths):
+            # Add Doppler anomaly
+            swath_data[i].add_band(array=swath_data[i].anomaly(), parameters={
+                'wkv':
+                'anomaly_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave'
+            })
             # search db for model wind field - simply take first item for
             # now...
             wind = Dataset.objects.filter(
@@ -155,13 +161,36 @@ class DatasetManager(DM):
                     time_coverage_start__gte = \
                         parse(swath_data[i].get_metadata()['time_coverage_start']) - timedelta(3)
                 )[0]
+            bandnum = swath_data[i]._get_band_number({
+                'standard_name': \
+                    'surface_backwards_doppler_centroid_frequency_shift_of_radar_wave',
+                })
+            pol = swath_data[i].get_metadata(bandID=bandnum, key='polarization')
             fww = swath_data[i].wind_waves_doppler(
-                    nansat_filename(wind.dataseturi_set.all()[0].uri)
+                    nansat_filename(wind.dataseturi_set.all()[0].uri),
+                    pol
                 )
-            swath_data[i].add_band(array=fww, parameters={
-                'wkv':
-                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
+            swath_data[i].add_band(array=fww, parameters={'wkv':
+            'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
             })
+
+            swath_data[i].add_band(array=swath_data[i].geophysical_doppler_shift(
+                    wind = nansat_filename(wind.dataseturi_set.all()[0].uri)
+                ),
+                    parameters={'wkv':
+                        'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
+
+            # Export data to netcdf
+            print('Exporting %s (subswath %d)' %(swath_data[i].fileName, i+1))
+            fn = os.path.join(
+                    ppath, 
+                    os.path.basename(swath_data[i].fileName).split('.')[0] 
+                        + 'subswath%d.nc'%(i+1)
+                )
+            swath_data[i].export(fileName=fn)
+            ncuri = os.path.join('file://localhost', fn)
+            new_uri, created = DatasetURI.objects.get_or_create(uri=ncuri,
+                    dataset=ds)
 
             # Maybe add figures in satellite projection...
             #filename = 'satproj_fdg_subswath_%d.png'%i
@@ -176,17 +205,18 @@ class DatasetManager(DM):
                         xlon.min(), xlat.min(), xlon.max(), xlat.max()))
             swath_data[i].reproject(d, eResampleAlg=1, tps=True)
 
-            # The following figures are created when ingesting data:
+            # Visualizations of the following bands (short_names) are created
+            # when ingesting data:
             ingest_creates = [
                     'valid_doppler', 'valid_land_doppler', 'valid_sea_doppler',
-                    'dca', 'fww',
+                    'dca', 'fww', 'fdg',
                 ]
-            # (the geophysical doppler shift must be added in a separate
+            # (the geophysical doppler shift must later be added in a separate
             # manager method in order to estimate the range bias after
             # processing multiple files)
-
             for band in ingest_creates:
-                filename = '%s_subswath_%d.png'%(i, band)
+                filename = '%s_subswath_%d.png'%(band, i)
+                # check uniqueness of parameter
                 param = Parameter.objects.get(short_name = band)
                 swath_data[i].write_figure(os.path.join(mp, filename),
                     bands=band,
@@ -202,7 +232,7 @@ class DatasetManager(DM):
                     geometry=WKTReader().read(swath_data[i].get_border_wkt()))[0]
                 vv = Visualization(
                     uri='file://localhost%s/%s' % (mp, filename),
-                    title='%s (swath %s)' %(param.long_name, i+1),
+                    title='%s (swath %d)' %(param.standard_name, i+1),
                     geographic_location = geom
                 )
                 vv.save()
