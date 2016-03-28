@@ -5,7 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
 
 #from nansencloud.catalog.models import Dataset
-from nansencloud.viewer.models import Dataset
+from nansencloud.viewer.models import Dataset, Visualization
 from nansencloud.viewer.forms import SearchForm
 
 class IndexView(View):
@@ -78,6 +78,22 @@ class IndexView(View):
         if self.form.cleaned_data['source'] is not None:
             images = images.filter(source=self.form.cleaned_data['source'])
 
+        params = []
+        for image in images:
+            visualizations = image.visualizations()
+            for viz in visualizations:
+                for ds_parameter in viz.ds_parameters.all():
+                    if not ds_parameter.parameter.standard_name in params:
+                        params.append(ds_parameter.parameter.standard_name)
+
+        visualizations = {}
+        for pp in params:
+            visualizations[pp] = []
+            for ds in images:
+                visualizations[pp].extend(Visualization.objects.filter(
+                    ds_parameters__parameter__standard_name=pp,
+                    ds_parameters__dataset=ds))
+
         # debuggin outuput
         greeting = ''
         #greeting += 'greet: ' + str(request.POST)
@@ -95,6 +111,8 @@ class IndexView(View):
             # If page is out of range (e.g. 9999), deliver last page of results.
             images = paginator.page(paginator.num_pages)
 
+        self.context['params'] = params
+        self.context['visualizations'] = visualizations
         self.context['images'] = images
         self.context['form'] = self.form
         self.context['greeting'] = greeting
