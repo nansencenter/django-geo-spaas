@@ -38,10 +38,10 @@
                     <form>
                         {% for pp in params %}
                         <tr><td>
-                            <input type="radio" id='{{ pp }}'
-                                name='choose_viz' class='vizButton'
+                            <input type="checkbox" id='viz_{{ pp }}'
+                                class='vizButton'
                                 style="width: 0">
-                            <label for='{{ pp }}'>{{ pp }}</label>
+                            <label for='viz_{{ pp }}'>{{ pp }}</label>
                         </td></tr>
                         {% endfor %}
                     </form>
@@ -135,32 +135,34 @@
             $(prodButton).next("label").css( "color", 'green');
         }
 
-        function add_vizParam_overlay(vizButton){
-            for ( var vizp in mapVizParamOverlays[ vizButton.id ]){
-                vizp.addTo(window.map);
-            }
-            vizButton.checked = true;
-            $(vizButton).next("label").css( "color", 'green');
-        }
-
         function remove_image_overlay(prodButton){
             window.map.removeLayer(mapImageOverlays[ prodButton.id ]);
             prodButton.checked = false;
             $(prodButton).next("label").css( "color", 'black');
         }
 
-        function remove_vizParam_overlay(vizButton){
-            for (var vizp in mapVizParamOverlays[ vizButton.id ]){
-                window.map.removeLayer(vizp);
-            }
-            vizButton.checked = false;
-            $(vizButton).next("label").css( "color", 'black');
-        }
-
         function toggle_image_overlay(prodButton) {
             if (prodButton.checked == true) add_image_overlay(prodButton);
             else remove_image_overlay(prodButton);
         };
+
+        function add_vizParam_overlay(vizButton){
+            for ( var cnt in mapVizParamOverlays[ vizButton.id ]){
+                prodID = mapVizParamOverlays[ vizButton.id ][cnt];
+                mapImageOverlays[ prodID ].addTo(window.map);
+            }
+            vizButton.checked = true;
+            $(vizButton).next("label").css( "color", 'green');
+        }
+
+        function remove_vizParam_overlay(vizButton){
+            for ( var cnt in mapVizParamOverlays[ vizButton.id ]){
+                prodID = mapVizParamOverlays[ vizButton.id ][cnt];
+                window.map.removeLayer(mapImageOverlays[ prodID ]);
+            }
+            vizButton.checked = false;
+            $(vizButton).next("label").css( "color", 'black');
+        }
 
         function toggle_vizParam_overlay(vizButton) {
             if (vizButton.checked == true) add_vizParam_overlay(vizButton);
@@ -186,6 +188,8 @@
 
         }, false);
 
+        /*
+        // TODO: triggers add/remove polygon when hover any TR
         $( "tr" ).mouseover(function() {
             cbstr = ':checkbox[name=' + this.id + ']';
             if ($(cbstr).prop("checked") == false) add_polygon(this.id);
@@ -195,6 +199,7 @@
             cbstr = ':checkbox[name=' + this.id + ']';
             if ($(cbstr).prop("checked") == false) remove_polygon(this.id);
         });
+        */
 
         $('.dsOverlay').click(function() {
             toggle_polygon(this, this.id);
@@ -206,7 +211,7 @@
             {% for viz in img.visualizations %}
             mapImageOverlays["prod_{{ viz.id }}"] = L.imageOverlay('{{ viz.get_absolute_url }}',
                     [
-                        [{{ viz.geographic_location.geometry.extent.1 }}, 
+                        [{{ viz.geographic_location.geometry.extent.1 }},
                             {{ viz.geographic_location.geometry.extent.0 }}],
                         [{{ viz.geographic_location.geometry.extent.3 }},
                             {{ viz.geographic_location.geometry.extent.2 }}]
@@ -214,16 +219,11 @@
             {% endfor %}
         {% endfor %}
 
+
         {% for pp, vlist in visualizations.iteritems %}
             mapVizParamOverlays["viz_{{ pp }}"] = [
             {% for viz in vlist %}
-                L.imageOverlay('{{ viz.get_absolute_url }}',
-                    [
-                        [{{ viz.geographic_location.geometry.extent.1 }}, 
-                            {{ viz.geographic_location.geometry.extent.0 }}],
-                        [{{ viz.geographic_location.geometry.extent.3 }},
-                            {{ viz.geographic_location.geometry.extent.2 }}]
-                    ]),
+                'prod_{{ viz.id }}',
             {% endfor %}
             ];
         {% endfor %}
