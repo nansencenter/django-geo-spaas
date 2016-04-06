@@ -19,7 +19,8 @@ class IndexView(View):
     def set_form_defaults(self, request):
         ''' Set default values for the form '''
         self.form = self.form_class(
-                    {'date0' : timezone.datetime(2000,1,1,tzinfo=timezone.utc).date(),
+                    {'date0' :
+                        timezone.datetime(2000,1,1,tzinfo=timezone.utc).date(),
                      'date1' : timezone.now().date()})
 
     def set_params(self):
@@ -68,8 +69,9 @@ class IndexView(View):
         # filter images
         images = self.image_class.objects.all()
         images = images.order_by('time_coverage_start')
+        t1 = self.form.cleaned_data['date1'] + timezone.timedelta(hours=24)
         images = images.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
-        images = images.filter(time_coverage_end__lte=self.form.cleaned_data['date1'])
+        images = images.filter(time_coverage_end__lte=t1)
         if self.form.cleaned_data['polygon'] is not None:
             images = images.filter(
                     geographic_location__geometry__intersects
