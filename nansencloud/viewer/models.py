@@ -8,7 +8,7 @@ from django.contrib.gis.db import models as geomodels
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import Dataset as CatalogDataset
-from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter 
+from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter
 
 class Search(geomodels.Model):
     ''' Search parameters '''
@@ -34,12 +34,23 @@ class Dataset(CatalogDataset):
     class Meta:
         proxy = True
 
-    # TODO: return javascript string according to geometry type
+    jsPolygonTemplate = "L.polygon( %s, {color: '#fff', weight: %f, fillOpacity: %f, fillColor: '%s'});"
+    jsPointTemplate = "L.marker([%f, %f]);"
+
+    def geo_js_generic(self, weight, fillOpacity, fillColor, **kwargs):
+        if self.geographic_location.geometry.geom_type == 'Polygon':
+            jscode = self.jsPolygonTemplate % (self.border2str(), weight, fillOpacity, fillColor)
+        elif self.geographic_location.geometry.geom_type == 'Point':
+            jscode = self.jsPointTemplate % (self.geographic_location.geometry.coords[1],
+                                            self.geographic_location.geometry.coords[0])
+        return jscode
+
+
     def geo_js(self):
-        return "L.polygon( %s, {color: '#fff', weight: 1, fillOpacity: 0.05, fillColor: '#f00'});" %self.border2str()
+        return self.geo_js_generic(1, 0.05, '#f00')
 
     def const_geo_js(self):
-        return "L.polygon( %s, {color: '#fff', weight: 0.5, fillOpacity: 0, fillColor: '#b20000'});" %self.border2str()
+        return self.geo_js_generic(0.5, 0, '#b20000')
 
     def border2str(self):
         ''' Generate Leaflet JavaScript defining the border polygon'''
@@ -62,7 +73,7 @@ class VisualizationParameter(models.Model):
         return self.ds_parameter.__str__()
 
 class Visualization(models.Model):
-    
+
     uri = models.URLField()
     # A visualization may contain more than one parameter, and the same
     # parameter can be visualized in many ways..

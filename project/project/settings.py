@@ -107,7 +107,7 @@ INSTALLED_APPS = (
     'nansencloud.processing_sar_doppler',
     #'nansencloud.processing_ais',
     #'nansencloud.proc',
-    #'nansencloud.noaa_ndbc',
+    'nansencloud.noaa_ndbc',
 )
 
 MIDDLEWARE_CLASSES = (
