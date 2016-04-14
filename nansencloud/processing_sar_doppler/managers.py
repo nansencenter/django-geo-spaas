@@ -181,11 +181,11 @@ class DatasetManager(DM):
                         'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
 
             # Export data to netcdf
-            print('Exporting %s (subswath %d)' %(swath_data[i].fileName, i+1))
+            print('Exporting %s (subswath %d)' %(swath_data[i].fileName, i))
             fn = os.path.join(
                     ppath, 
                     os.path.basename(swath_data[i].fileName).split('.')[0] 
-                        + 'subswath%d.nc'%(i+1)
+                        + 'subswath%d.nc'%(i)
                 )
             swath_data[i].export(fileName=fn)
             ncuri = os.path.join('file://localhost', fn)
