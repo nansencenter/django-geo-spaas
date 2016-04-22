@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -35,16 +37,17 @@ class Dataset(CatalogDataset):
         proxy = True
 
     jsPolygonTemplate = "L.polygon( %s, {color: '#fff', weight: %f, fillOpacity: %f, fillColor: '%s'});"
-    jsPointTemplate = "L.marker([%f, %f]);"
+    jsPointTemplate = "L.marker( %s );"
+    jsLineStringTemplate = "L.polyline( %s, {color: 'red'});"
 
     def geo_js_generic(self, weight, fillOpacity, fillColor, **kwargs):
         if self.geographic_location.geometry.geom_type == 'Polygon':
-            jscode = self.jsPolygonTemplate % (self.border2str(), weight, fillOpacity, fillColor)
+            jscode = self.jsPolygonTemplate % (self.geom2str(), weight, fillOpacity, fillColor)
         elif self.geographic_location.geometry.geom_type == 'Point':
-            jscode = self.jsPointTemplate % (self.geographic_location.geometry.coords[1],
-                                            self.geographic_location.geometry.coords[0])
+            jscode = self.jsPointTemplate % (self.geom2str())
+        elif self.geographic_location.geometry.geom_type == 'LineString':
+            jscode = self.jsLineStringTemplate % (self.geom2str())
         return jscode
-
 
     def geo_js(self):
         return self.geo_js_generic(1, 0.05, '#f00')
@@ -52,13 +55,11 @@ class Dataset(CatalogDataset):
     def const_geo_js(self):
         return self.geo_js_generic(0.5, 0, '#b20000')
 
-    def border2str(self):
-        ''' Generate Leaflet JavaScript defining the border polygon'''
-        borderStr = '['
-        for coord in self.geographic_location.geometry.coords[0]:
-            borderStr += '[%f, %f],' % coord[::-1]
-        borderStr += "]"
-        return borderStr
+    def geom2str(self):
+        ''' String representation of geometry corrdinates '''
+        return np.array2string(np.array(
+                        self.geographic_location.geometry.coords)[...,::-1],
+                        separator=',')
 
     def visualizations(self):
         ''' Return list of all associated visualizations '''
