@@ -71,22 +71,19 @@ class DatasetManager(DM):
             ra_upper_lat[i] = lat[i][-1,0:-1:rstep[i]]
             ra_lower_lon[i] = lon[i][0,0:-1:rstep[i]]
             ra_lower_lat[i] = lat[i][0,0:-1:rstep[i]] 
-            #ra_upper_lon[i] = lon[i][-1,0] 
-            #ra_upper_lat[i] = lat[i][-1,0]
-            #ra_lower_lon[i] = lon[i][0,0]
-            #ra_lower_lat[i] = lat[i][0,0] 
-            assert len(az_left_lon[i])==11
-            assert len(az_right_lon[i])==11
-            assert len(az_left_lat[i])==11
-            assert len(az_right_lat[i])==11
-            assert len(ra_upper_lon[i])==11
-            assert len(ra_lower_lon[i])==11
-            assert len(ra_upper_lat[i])==11
-            assert len(ra_lower_lat[i])==11
-            #assert np.isscalar(ra_upper_lon[i])
-            #assert np.isscalar(ra_lower_lon[i])
-            #assert np.isscalar(ra_upper_lat[i])
-            #assert np.isscalar(ra_lower_lat[i])
+            #assert len(az_left_lon[i])==11
+            #assert len(az_right_lon[i])==11
+            #assert len(az_left_lat[i])==11
+            #assert len(az_right_lat[i])==11
+            #try:
+            #    assert len(ra_upper_lon[i])==11
+            #except:
+            #    import ipdb
+            #    ipdb.set_trace()
+            #    print('hei')
+            #assert len(ra_lower_lon[i])==11
+            #assert len(ra_upper_lat[i])==11
+            #assert len(ra_lower_lat[i])==11
 
         # Solve problem with swath overlaps...
         ##vecfilt = lamdba x,y: x[x>y] if np.all(gg_lon>0) else x[x<y]
@@ -187,6 +184,8 @@ class DatasetManager(DM):
                     os.path.basename(swath_data[i].fileName).split('.')[0] 
                         + 'subswath%d.nc'%(i)
                 )
+            swath_data[i].set_metadata(key='Originating file',
+                    value=swath_data[i].fileName)
             swath_data[i].export(fileName=fn)
             ncuri = os.path.join('file://localhost', fn)
             new_uri, created = DatasetURI.objects.get_or_create(uri=ncuri,
