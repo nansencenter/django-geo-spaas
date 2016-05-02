@@ -27,7 +27,7 @@ from sardoppler.sardoppler import Doppler
 
 class DatasetManager(DM):
 
-    def get_or_create(self, uri, *args, **kwargs):
+    def get_or_create(self, uri, reprocess=False, *args, **kwargs):
         # ingest file to db
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
@@ -57,8 +57,7 @@ class DatasetManager(DM):
         for i in range(n_subswaths):
             # Read subswaths 
             swath_data[i] = Doppler(fn, subswath=i)
-            # Should use nansat.domain.get_border, but it must become easier to
-            # use - see nansat issue #166
+            # Should use nansat.domain.get_border - see nansat issue #166
             # (https://github.com/nansencenter/nansat/issues/166)
             lon[i], lat[i] = swath_data[i].get_geolocation_grids()
             astep[i] = max(1, (lon[i].shape[0]/2*2-1) / num_border_points)
@@ -71,34 +70,6 @@ class DatasetManager(DM):
             ra_upper_lat[i] = lat[i][-1,0:-1:rstep[i]]
             ra_lower_lon[i] = lon[i][0,0:-1:rstep[i]]
             ra_lower_lat[i] = lat[i][0,0:-1:rstep[i]] 
-            #assert len(az_left_lon[i])==11
-            #assert len(az_right_lon[i])==11
-            #assert len(az_left_lat[i])==11
-            #assert len(az_right_lat[i])==11
-            #try:
-            #    assert len(ra_upper_lon[i])==11
-            #except:
-            #    import ipdb
-            #    ipdb.set_trace()
-            #    print('hei')
-            #assert len(ra_lower_lon[i])==11
-            #assert len(ra_upper_lat[i])==11
-            #assert len(ra_lower_lat[i])==11
-
-        # Solve problem with swath overlaps...
-        ##vecfilt = lamdba x,y: x[x>y] if np.all(gg_lon>0) else x[x<y]
-        ##gg_lon = np.gradient(ra_upper_lon[0])
-        ##assert np.all(gg_lon>0) or np.all(gg_lon<0)
-        ##upper_lons = np.concatenate((az_left_lon[0], ra_upper_lon[0], 
-        ##        vecfilt(ra_upper_lon[1],ra_upper_lon[0][-1]),
-        ##        vecfilt(ra_upper_lon[2],ra_upper_lon[1][-1]),
-        ##        vecfilt(ra_upper_lon[3],ra_upper_lon[2][-1]),
-        ##        vecfilt(ra_upper_lon[4],ra_upper_lon[3][-1])))
-        #lons = np.concatenate((az_left_lon[0], [ra_upper_lon[0]],
-        #    [ra_upper_lon[1]], [ra_upper_lon[2]], [ra_upper_lon[3]],
-        #    [ra_upper_lon[4]], np.flipud(az_right_lon[4]), [ra_lower_lon[4]],
-        #    [ra_lower_lon[3]], [ra_lower_lon[2]], [ra_lower_lon[1]],
-        #    [ra_lower_lon[0]]))
         lons = np.concatenate((az_left_lon[0], ra_upper_lon[0],
             ra_upper_lon[1], ra_upper_lon[2], ra_upper_lon[3],
             ra_upper_lon[4], np.flipud(az_right_lon[4]),
@@ -111,11 +82,6 @@ class DatasetManager(DM):
         for ilon, llo in enumerate(lons):
             lons[ilon] = copysign(acos(cos(llo * pi / 180.)) / pi * 180,
                     sin(llo * pi / 180.))
-        #lats = np.concatenate((az_left_lat[0], [ra_upper_lat[0]],
-        #    [ra_upper_lat[1]], [ra_upper_lat[2]], [ra_upper_lat[3]],
-        #    [ra_upper_lat[4]], np.flipud(az_right_lat[4]), [ra_lower_lat[4]],
-        #    [ra_lower_lat[3]], [ra_lower_lat[2]], [ra_lower_lat[1]],
-        #    [ra_lower_lat[0]]))
         lats = np.concatenate((az_left_lat[0], ra_upper_lat[0],
             ra_upper_lat[1], ra_upper_lat[2], ra_upper_lat[3],
             ra_upper_lat[4], np.flipud(az_right_lat[4]),
@@ -131,12 +97,13 @@ class DatasetManager(DM):
         # Get geolocation of dataset - this must be updated
         geoloc = ds.geographic_location
         # Check geometry, return if it is the same as the stored one
-        if geoloc.geometry == new_geometry:
+        if geoloc.geometry == new_geometry and not reprocess:
             return ds, False
 
-        # Change the dataset geolocation to cover all subswaths
-        geoloc.geometry = new_geometry
-        geoloc.save()
+        if geoloc.geometry != new_geometry:
+            # Change the dataset geolocation to cover all subswaths
+            geoloc.geometry = new_geometry
+            geoloc.save()
 
         mm = self.__module__.split('.')
         module = '%s.%s' %(mm[0],mm[1])
@@ -227,17 +194,17 @@ class DatasetManager(DM):
                     parameter = param)
 
                 # Create Visualization
-                geom = GeographicLocation.objects.get_or_create(
-                    geometry=WKTReader().read(swath_data[i].get_border_wkt()))[0]
-                vv = Visualization(
+                geom, created = GeographicLocation.objects.get_or_create(
+                    geometry=WKTReader().read(swath_data[i].get_border_wkt()))
+                vv, created = Visualization.objects.get_or_create(
                     uri='file://localhost%s/%s' % (mp, filename),
                     title='%s (swath %d)' %(param.standard_name, i+1),
                     geographic_location = geom
                 )
-                vv.save()
 
                 # Create VisualizationParameter
-                vp = VisualizationParameter(visualization=vv, ds_parameter=dsp)
-                vp.save()
+                vp, created = VisualizationParameter.objects.get_or_create(
+                        visualization=vv, ds_parameter=dsp
+                    )
 
         return ds, True

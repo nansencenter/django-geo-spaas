@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 
 from nansencloud.utils import uris_from_args
 from nansencloud.catalog.models import DatasetURI
-from nansencloud.processing_sar_doppler.models import Dataset
+from nansencloud.processing_old_doppler.models import Dataset
 
 class Command(BaseCommand):
     args = '<filename>'
@@ -23,7 +23,8 @@ class Command(BaseCommand):
         for non_ingested_uri in uris_from_args(*args):
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
             ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **options)
-            self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
+            if cr:
+                self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
 
 
 

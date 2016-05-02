@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     #'nansencloud.processing_sar', # not sure if we should split or not...
     #'nansencloud.processing_sar_nrcs',
     'nansencloud.processing_sar_doppler',
+    'nansencloud.processing_old_doppler',
     #'nansencloud.processing_ais',
     #'nansencloud.proc',
     'nansencloud.noaa_ndbc',

@@ -13,10 +13,6 @@ def module_path(module, root):
 
 
 def path(module, filename, root):
-    # Check that the file exists
-    if not os.path.exists(filename):
-        raise IOError('%s: File does not exist' %filename)
-
     mp = module_path(module, root)
 
     # Get the path of media files created from <filename>

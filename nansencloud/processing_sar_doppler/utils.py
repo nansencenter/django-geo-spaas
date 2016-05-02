@@ -116,11 +116,23 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR', platform='ENVISAT')
         }
 
     # Show this in presentation:
-    count, anglebins, dcabins, im = plt.hist2d(view_angle, dca, 70, cmin=1,
+    count, anglebins, dcabins, im = plt.hist2d(view_angle, dca, 100, cmin=1,
             range=[[np.min(view_angle), np.max(view_angle)], freqLims[swath]])
     plt.colorbar()
     plt.show()
     #plt.close()
+    countLims = {
+            0: 600,
+            1: 250,
+            2: 500,
+            3: 140,
+            4: 130,
+        }
+
+    dcabins_grid, anglebins_grid = np.meshgrid(dcabins[:-1], anglebins[:-1])
+    anglebins_vec = anglebins_grid[count>countLims[swath]]
+    dcabins_vec = dcabins_grid[count>countLims[swath]]
+
 
     va4interp = []
     rb4interp = []
@@ -134,37 +146,68 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR', platform='ENVISAT')
         va4interp.append(np.mean(view_angle[ind0:ind1]))
         rb4interp.append(np.median(dca[ind0:ind1]))
         std_rb4interp.append(np.std(dca[ind0:ind1]))
+    va4interp = np.array(va4interp)
+    rb4interp = np.array(rb4interp)
+    std_rb4interp = np.array(std_rb4interp)
 
-    countLims = {
-            0: 600,
-            1: 250,
-            2: 500,
-            3: 140,
-            4: 130,
-        }
-
-    dcabins_grid, anglebins_grid = np.meshgrid(dcabins[:-1], anglebins[:-1])
-    anglebins_vec = anglebins_grid[count>countLims[swath]]
-    dcabins_vec = dcabins_grid[count>countLims[swath]]
-
-    guess = [.1,.1,.1,.1,.1,.1]
-    [a,b,c,d,e,f], params_cov = optimize.curve_fit(rb_model_func,
-            va4interp, rb4interp, guess)
-            #anglebins_vec, dcabins_vec, guess)
-
-    n = Doppler(swath_files[0])
-    van = np.mean(n['sensor_view'], axis=0)
-    plt.plot(van, rb_model_func(van,a,b,c,d,e,f), 'r--')
-    plt.plot(anglebins_vec, dcabins_vec, '.')
+    van = n['sensor_view']
+    rbfull = van.copy()
+    rbfull[:,:] = np.nan
+    # Is there a more efficient method than looping?
+    import time
+    start_time = time.time()
+    for ii in range(len(anglebins)-1):
+        vaii0 = anglebins[ii]
+        vaii1 = anglebins[ii+1]
+        rbfull[(van>=vaii0) & (van<=vaii1)] = \
+                np.median(dca[(view_angle>=vaii0) & (view_angle<=vaii1)])
+    print("--- %s seconds ---" % (time.time() - start_time))
+    plt.plot(np.mean(van, axis=0), np.mean(rbfull, axis=0), '.')
+    #plt.plot(anglebins_vec, dcabins_vec, '.')
     plt.show()
 
-    import ipdb
-    ipdb.set_trace()
+
+    #guess = [.1,.1,.1,.1,.1,.1]
+    #[a,b,c,d,e,f], params_cov = optimize.curve_fit(rb_model_func,
+    #        va4interp, rb4interp, guess)
+    #        #anglebins_vec, dcabins_vec, guess)
+
+    #n = Doppler(swath_files[0])
+    #van = np.mean(n['sensor_view'], axis=0)
+    #plt.plot(van, rb_model_func(van,a,b,c,d,e,f), 'r--')
+    #plt.plot(anglebins_vec, dcabins_vec, '.')
+    #plt.show()
+
+    #ww = 1./std_rb4interp
+    #ww[np.isinf(ww)] = 0
+    #rbinterp = UnivariateSpline(
+    #        va4interp,
+    #        rb4interp,
+    #        w = ww, 
+    #        k = 5
+    #    )
+
+    #van = n['sensor_view']
+    #y = rbinterp(van.flatten())
+    #rbfull = y.reshape(van.shape)
+    #plt.plot(np.mean(van, axis=0), np.mean(rbfull, axis=0), 'r--')
+    #plt.plot(anglebins_vec, dcabins_vec, '.')
+    #plt.show()
+
 
     for ff in swath_files:
+        start_time = time.time()
         n = Doppler(ff)
-        rb = rb_model_func(n['sensor_view'], a, b, c, d, e, f)
-        fdg = n['dca'] - rb
+        van = n['sensor_view']
+        rbfull = van.copy()
+        rbfull[:,:] = np.nan
+        for ii in range(len(anglebins)-1):
+            vaii0 = anglebins[ii]
+            vaii1 = anglebins[ii+1]
+            rbfull[(van>=vaii0) & (van<=vaii1)] = \
+                    np.median(dca[(view_angle>=vaii0) & (view_angle<=vaii1)])
+
+        fdg = n.anomaly() - rbfull
         n.add_band(array=fdg,
             parameters={'wkv':
                 'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
@@ -199,10 +242,11 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR', platform='ENVISAT')
 
         # Update figure
         n.write_figure(os.path.join(mp, pngfilename),
-                clim = [-200,200],
+                clim = [-60,60],
                 bands=band+'_000',
                 mask_array=n['swathmask'],
                 mask_lut={0:[128,128,128]}, transparency=[128,128,128])
+        print("--- %s seconds ---" % (time.time() - start_time))
 
 
 
