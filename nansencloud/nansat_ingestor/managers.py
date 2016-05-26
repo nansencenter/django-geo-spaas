@@ -37,7 +37,7 @@ class DatasetManager(models.Manager):
         if len(uris) > 0:
             return uris[0].dataset, False
 
-        n = Nansat(nansat_filename(uri))
+        n = Nansat(nansat_filename(uri), **kwargs)
         # get metadata
         platform = json.loads( unescape( n.get_metadata('platform'),
                 {'&quot;': '"'}))
@@ -70,7 +70,7 @@ class DatasetManager(models.Manager):
         except:
             entrytitle = 'NONE'
             warnings.warn('''
-                Entry title is hardcoded to "NONE" - this should 
+                Entry title is hardcoded to "NONE" - this should
                 be provided in the nansat metadata instead..
                 ''')
         try:
@@ -78,7 +78,7 @@ class DatasetManager(models.Manager):
         except:
             sname = 'NERSC'
             warnings.warn('''
-                Data center is hardcoded to "NERSC" - this should 
+                Data center is hardcoded to "NERSC" - this should
                 be provided in the nansat metadata instead..
                 ''')
         dc = DataCenter.objects.get(short_name=sname)
@@ -87,7 +87,7 @@ class DatasetManager(models.Manager):
         except:
             isocatname = 'Oceans'
             warnings.warn('''
-                ISO topic category is hardcoded to "Oceans" - this should 
+                ISO topic category is hardcoded to "Oceans" - this should
                 be provided in the nansat metadata instead..
                 ''')
         iso_category = ISOTopicCategory.objects.get(name=isocatname)
@@ -96,11 +96,11 @@ class DatasetManager(models.Manager):
         except:
             summary = 'NONE'
             warnings.warn('''
-                Summary is hardcoded to "NONE" - this should 
+                Summary is hardcoded to "NONE" - this should
                 be provided in the nansat metadata instead..
                 ''')
         ds = Dataset(
-                entry_title=entrytitle, 
+                entry_title=entrytitle,
                 ISO_topic_category = iso_category,
                 data_center = dc,
                 summary = summary,
