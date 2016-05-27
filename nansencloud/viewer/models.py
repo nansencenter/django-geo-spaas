@@ -57,9 +57,11 @@ class Dataset(CatalogDataset):
 
     def geom2str(self):
         ''' String representation of geometry corrdinates '''
-        return np.array2string(np.array(
-                        self.geographic_location.geometry.coords)[...,::-1],
-                        separator=',')
+        coords = np.array(self.geographic_location.geometry.coords)
+        if len(coords.shape) == 3:
+            coords = coords[0]
+        geomstr = '[%s]' % ','.join(['[%f, %f]' % (aa[0], aa[1]) for aa in coords[...,::-1]])
+        return geomstr
 
     def visualizations(self):
         ''' Return list of all associated visualizations '''
