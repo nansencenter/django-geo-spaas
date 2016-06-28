@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     #'nansencloud.processing_ais',
     #'nansencloud.proc',
     'nansencloud.noaa_ndbc',
+    'nansencloud.ingest_lance_buoys',
 )
 
 MIDDLEWARE_CLASSES = (
