@@ -36,12 +36,11 @@ class Command(BaseCommand):
                 uris_from_args(*args)
             )
 
+        nansat_options = {}
         if options['nansat_option']:
-            nansat_options = {}
             for opt in options['nansat_option']:
                 var, val = opt.split('=')
-                val = {'True': True}.get(val, val)
-                val = {'False': False}.get(val, val)
+                val = {'True': True, 'False': False}.get(val, val)
                 nansat_options[var] = val
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
