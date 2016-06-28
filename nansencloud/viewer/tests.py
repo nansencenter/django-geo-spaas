@@ -48,7 +48,7 @@ class ModelTests(TestCase):
         source = Source.objects.get(pk=1)
         ext_coords = ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))
         polygon = Polygon(LinearRing(ext_coords))
-        
+
         search = Search(sdate=sdate, date0=date0, date1=date1, source=source,
                 polygon=polygon)
         search.save()
@@ -61,8 +61,8 @@ class ModelTests(TestCase):
     def test_dataset_const_geojs(self):
         self.assertIsInstance(self.ds.const_geo_js(), str)
 
-    def test_dataset_border2str(self):
-        self.assertIsInstance(self.ds.border2str(), str)
+    def test_dataset_geom2str(self):
+        self.assertIsInstance(self.ds.geom2str(), str)
 
     #@patch(Visualization.objects, 'filter')
     #def test_dataset_visualizations(self, visfilter_mock):
@@ -119,13 +119,13 @@ class FormAndViewTests(TestCase):
         self.valid_form = {
                 'polygon': str(Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0,
                     0)))), #loc.geometry,
-                'date0': date0, 
+                'date0': date0,
                 'date1': date1,
                 'source': source.id
             }
         self.invalid_form = {
                 'polygon': 1,
-                'date0': date0, 
+                'date0': date0,
                 'date1': date1,
                 'source': source.id
             }
