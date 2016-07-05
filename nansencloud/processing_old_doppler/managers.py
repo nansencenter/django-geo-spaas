@@ -27,60 +27,64 @@ class DatasetManager(DM):
         # ingest file to db
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
-        if not created:
+        if not created and not reprocess:
             return ds, created
 
 
         fn = nansat_filename(uri)
-        try:
-            n = Nansat(fn)
+        #try:
+        n = Nansat(fn)
 
-            mm = self.__module__.split('.')
-            module = '%s.%s' %(mm[0],mm[1])
-            mp = media_path(module, n.fileName)
-            ppath = product_path(module, n.fileName)
+        mm = self.__module__.split('.')
+        module = '%s.%s' %(mm[0],mm[1])
+        mp = media_path(module, n.fileName)
+        ppath = product_path(module, n.fileName)
 
-            fdg = n['dop_coef_observed'] - n['dop_coef_predicted'] \
-                    - n['azibias'] - n['range_bias_scene']
-            n.add_band(array=fdg,
-                parameters={'wkv':
-                    'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
+        fdg = n['dop_coef_observed'] - n['dop_coef_predicted'] \
+                - n['azibias'] - n['range_bias_scene']
+        fdg[fdg>200] = np.nan
+        n.add_band(array=fdg,
+            parameters={'wkv':
+                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
 
-            # Reproject to leaflet projection
-            xlon, xlat = n.get_corners()
-            d = Domain(NSR(3857),
-                    '-lle %f %f %f %f -tr 1000 1000' % (
-                        xlon.min(), xlat.min(), xlon.max(), xlat.max()))
-            n.reproject(d, eResampleAlg=1, tps=True)
+        n.export('fdg.nc', bands=['fdg_000'])
+        nn = Nansat('fdg.nc')
 
-            band = 'fdg'
-            filename = '_%s.png'%band
-            # check uniqueness of parameter
-            param = Parameter.objects.get(short_name = band)
-            n.write_figure(os.path.join(mp, filename),
-                bands=band+'_000',
-                mask_array=n['swathmask'],
-                mask_lut={0:[128,128,128]}, transparency=[128,128,128]
+        # Reproject to leaflet projection
+        xlon, xlat = nn.get_corners()
+        d = Domain(NSR(3857),
+                '-lle %f %f %f %f -tr 1000 1000' % (
+                    xlon.min(), xlat.min(), xlon.max(), xlat.max()))
+        nn.reproject(d, eResampleAlg=1, tps=True)
+
+        band = 'fdg'
+        filename = '_%s.png'%band
+        # check uniqueness of parameter
+        param = Parameter.objects.get(short_name = band)
+        nn.write_figure(os.path.join(mp, filename),
+            bands=band+'_000',
+            mask_array=nn['swathmask'],
+            mask_lut={0:[128,128,128]}, transparency=[128,128,128]
+        )
+
+        # Get DatasetParameter
+        dsp, created = DatasetParameter.objects.get_or_create(dataset=ds,
+                    parameter = param)
+
+        # Create Visualization
+        geom, created = GeographicLocation.objects.get_or_create(
+                    geometry=WKTReader().read(nn.get_border_wkt()))
+        vv, created = Visualization.objects.get_or_create(
+                uri='file://localhost%s/%s' % (mp, filename),
+                title='%s (old doppler)' %param.standard_name,
+                geographic_location = geom
             )
 
-            # Get DatasetParameter
-            dsp, created = DatasetParameter.objects.get_or_create(dataset=ds,
-                        parameter = param)
+        # Create VisualizationParameter
+        vp, created = VisualizationParameter.objects.get_or_create(
+                visualization=vv, ds_parameter=dsp
+            )
 
-            # Create Visualization
-            geom, created = GeographicLocation.objects.get_or_create(
-                        geometry=WKTReader().read(n.get_border_wkt()))
-            vv, created = Visualization.objects.get_or_create(
-                    uri='file://localhost%s/%s' % (mp, filename),
-                    title='%s (old doppler)' %param.standard_name,
-                    geographic_location = geom
-                )
-
-            # Create VisualizationParameter
-            vp, created = VisualizationParameter.objects.get_or_create(
-                    visualization=vv, ds_parameter=dsp
-                )
-
-            return ds, True
-        except:
-            return 0, False
+        return ds, True
+       # except:
+       #     return 0, False
