@@ -7,8 +7,8 @@
         </title>
         <!-- Styles -->
         {% block style_base %}
-            <link href="{% static "dist/css/bootstrap.css" %}" rel="stylesheet">
-            <link href="{% static "css/navbar.css" %}" rel="stylesheet">
+            <link href="{% static "viewer/dist/css/bootstrap.css" %}" rel="stylesheet">
+            <link href="{% static "viewer/css/navbar.css" %}" rel="stylesheet">
             {% leaflet_css plugins="forms" %}
             <style>
                 .leaflet-container {  /* all maps */
@@ -48,7 +48,7 @@
                                 padding-top to be adjusted after logo size
                             {% endcomment %}
                             <a class="brand" href="#">
-                                <img src="{% static "img/nersc_logo.png" %}" >
+                                <img src="{% static "viewer/img/nersc_logo.png" %}" >
                             </a>
                         {% endblock %}
                     </div>
@@ -105,15 +105,15 @@
 
 
         {% block script_base %}
-            <script src="{% block jquery_src %}{% static "js/jquery-1.11.1.min.js" %}{% endblock %}"></script>
+            <script src="{% block jquery_src %}{% static "viewer/js/jquery-1.11.1.min.js" %}{% endblock %}"></script>
             {% comment %}
             <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
             {% endcomment %}
             <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
             {% leaflet_js plugins="forms" %}
-            <script src="{% static "dist/js/bootstrap.min.js" %}"></script>
-            <script src="{% static "dist/js/theme.js" %}"></script>
-            <!-- <script type="text/javascript" src="{% static "js/index-slider.js" %}"></script> -->
+            <script src="{% static "viewer/dist/js/bootstrap.min.js" %}"></script>
+            <script src="{% static "viewer/dist/js/theme.js" %}"></script>
+            <!-- <script type="text/javascript" src="{% static "viewer/js/index-slider.js" %}"></script> -->
             <script>
                 $(document).ready(function() {
                     $('.datepicker').datepicker();
