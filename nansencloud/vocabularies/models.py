@@ -194,7 +194,7 @@ class Parameter(models.Model):
     objects = ParameterManager()
 
     def __str__(self):
-        return str('%s' %self.short_name)
+        return str('%s' %self.standard_name)
 
     def natural_key(self):
         return (self.standard_name)
