@@ -1,47 +1,30 @@
-#-------------------------------------------------------------------------------
-# Name:
-# Purpose:
-#
-# Author:       Morten Wergeland Hansen
-# Modified:
-#
-# Created:
-# Last modified:
-# Copyright:    (c) NERSC
-# License:
-#-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.gis.geos import GEOSGeometry
 
-import netCDF4
-from thredds_crawler.crawl import Crawl
-from nansencloud.noaa_ndbc.models import StandardMeteorologicalBuoy
+from nansencloud.noaa_ndbc.utils import crawl
 
 class Command(BaseCommand):
-    args = '<year>'
-    help = 'Add buoy metadata to archive'
+    args = '<url> <select>'
+    help = '''
+        Add buoy metadata to archive. 
+        
+        Args:
+            <url>: the url to the thredds server
+            <select>: You can select datasets based on their THREDDS ID using
+            the 'select' parameter.
+            
+        Example: 
+            (1) Find all NOAA NDBC standard meteorological buoys in 2009
+
+            url = http://dods.ndbc.noaa.gov/thredds/catalog/data/stdmet/catalog.xml
+            select = 2009
+
+            (2) Find a specific file
+
+            url = http://dods.ndbc.noaa.gov/thredds/catalog/data/stdmet/catalog.xml
+            select = 0y2w3h2012.nc
+        '''
 
     def handle(self, *args, **options):
-        if len(args)==0:
-            raise IOError('Please provide URL')
-        #url='http://dods.ndbc.noaa.gov/thredds/catalog/data/stdmet/catalog.xml'
-        url = args[0]
-        if len(args)==1:
-            select = None
-        else:
-            year = int(args[1])
-            select = ['(.*%s\.nc)' % year]
-        c = Crawl(url, select=select, skip=['.*ncml'], debug=True)
-        added = 0
-        for ds in c.datasets:
-            url = [s.get('url') for s in ds.services if
-                    s.get('service').lower()=='opendap'][0]
-
-            ndbc_stdmet, cr = StandardMeteorologicalBuoy.objects.get_or_create(url)
-            if cr:
-                print url
-                added += 1
-
+        added = crawl(*args, **options)
         self.stdout.write(
-                    'Successfully added meta data of %s stdmet buouy datasets'
-                    %added)
+            'Successfully added metadata of %s stdmet buouy datasets' %added)
