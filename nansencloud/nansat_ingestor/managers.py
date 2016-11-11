@@ -62,8 +62,13 @@ class DatasetManager(models.Manager):
             instrument = ii,
             specs=n.get_metadata().get('specs', ''))[0]
 
+        #import ipdb
+        #ipdb.set_trace()
+        # Find coverage to set number of points in the geolocation
+        #cov = n.get_border()
         geolocation = GeographicLocation.objects.get_or_create(
-                            geometry=WKTReader().read(n.get_border_wkt()))[0]
+                        geometry=WKTReader().read( n.get_border_wkt( nPoints =
+                            1000 )))[0]
 
         try:
             entrytitle = n.get_metadata('Entry Title')
