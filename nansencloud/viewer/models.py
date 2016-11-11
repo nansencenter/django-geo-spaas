@@ -44,7 +44,10 @@ class Dataset(CatalogDataset):
         if self.geographic_location.geometry.geom_type == 'Polygon':
             jscode = self.jsPolygonTemplate % (self.geom2str(), weight, fillOpacity, fillColor)
         elif self.geographic_location.geometry.geom_type == 'Point':
-            jscode = self.jsPointTemplate % (self.geom2str())
+            pstr = '[%f, %f]' % ( self.geographic_location.geometry.coords[1],
+                    self.geographic_location.geometry.coords[0] )
+            jscode = self.jsPointTemplate %pstr 
+            #jscode = self.jsPointTemplate % (self.geom2str())
         elif self.geographic_location.geometry.geom_type == 'LineString':
             jscode = self.jsLineStringTemplate % (self.geom2str())
         return jscode
@@ -56,11 +59,12 @@ class Dataset(CatalogDataset):
         return self.geo_js_generic(0.5, 0, '#b20000')
 
     def geom2str(self):
-        ''' String representation of geometry corrdinates '''
+        ''' String representation of geometry coordinates '''
         coords = np.array(self.geographic_location.geometry.coords)
         if len(coords.shape) == 3:
             coords = coords[0]
-        geomstr = '[%s]' % ','.join(['[%f, %f]' % (aa[0], aa[1]) for aa in coords[...,::-1]])
+        geomstr = '[%s]' % ','.join(['[%f, %f]' % (aa[0], aa[1]) for aa in
+            coords[...,::-1]])
         return geomstr
 
     def visualizations(self):
