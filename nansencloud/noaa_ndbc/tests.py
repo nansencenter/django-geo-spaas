@@ -1,5 +1,9 @@
+from django.utils.six import StringIO
 from django.test import TestCase
+from django.core.management import call_command
+
 from nansencloud.noaa_ndbc.models import StandardMeteorologicalBuoy
+from nansencloud.noaa_ndbc.utils import crawl
 
 class TestDataset(TestCase):
 
@@ -14,4 +18,18 @@ class TestDataset(TestCase):
         self.assertTrue(cr0)
         self.assertFalse(cr1)
 
-# Create your tests here.
+    ## The below tests are time consuming and therefore commented out
+    #def test_crawl(self):
+    #    url = 'http://dods.ndbc.noaa.gov/thredds/catalog/data/stdmet/catalog.xml'
+    #    select = '18ci3h2014.nc' # thredds ID
+    #    added = crawl(url, select)
+    #    self.assertEqual(added, 1)
+
+
+    #def test_command_crawl(self):
+    #    out = StringIO()
+    #    url = 'http://dods.ndbc.noaa.gov/thredds/catalog/data/stdmet/catalog.xml'
+    #    select = '18ci3h2014.nc' # thredds ID
+    #    call_command('crawl_ndbc_stdmet', url, select, stdout=out)
+    #    self.assertIn('Successfully added:', out.getvalue())
+
