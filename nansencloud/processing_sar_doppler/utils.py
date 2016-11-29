@@ -45,11 +45,12 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
             lon,lat=n.get_geolocation_grids()
             indmidaz = lat.shape[0]/2
             indmidra = lat.shape[1]/2
-            if lat[indmidaz,indmidra]>lat[0,indmidra]:
-                orbit_pass = 'ascending'
-                # Get rid of ascending pass now...
-                warnings.warn('Get rid of ascending pass now: %s' %fn)
-                dd.delete()
+            Fjernet det under - må analysere avhengighet av breddegrad
+            #if lat[indmidaz,indmidra]>lat[0,indmidra]:
+            #    orbit_pass = 'ascending'
+            #    # Get rid of ascending pass now...
+            #    warnings.warn('Get rid of ascending pass now: %s' %fn)
+            #    dd.delete()
             else:
                 swath_files.append(fn)
         except DatasetURI.DoesNotExist:

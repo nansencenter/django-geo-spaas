@@ -105,6 +105,8 @@ class DatasetManager(DM):
             geoloc.geometry = new_geometry
             geoloc.save()
 
+        ''' Create data products
+        '''
         mm = self.__module__.split('.')
         module = '%s.%s' %(mm[0],mm[1])
         mp = media_path(module, swath_data[i].fileName)
@@ -134,15 +136,16 @@ class DatasetManager(DM):
                     nansat_filename(wind.dataseturi_set.all()[0].uri),
                     pol
                 )
-            swath_data[i].add_band(array=fww, parameters={'wkv':
-            'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
+            swath_data[i].add_band(array=fww, parameters={
+                'wkv':
+                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
             })
 
             swath_data[i].add_band(array=swath_data[i].geophysical_doppler_shift(
-                    wind = nansat_filename(wind.dataseturi_set.all()[0].uri)
-                ),
-                    parameters={'wkv':
-                        'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'})
+                wind = nansat_filename(wind.dataseturi_set.all()[0].uri)),
+                parameters={'wkv':
+                    'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
+            )
 
             # Export data to netcdf
             print('Exporting %s (subswath %d)' %(swath_data[i].fileName, i))
