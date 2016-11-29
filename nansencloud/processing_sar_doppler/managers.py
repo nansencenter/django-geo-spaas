@@ -17,9 +17,6 @@ from nansencloud.viewer.models import Visualization
 from nansencloud.viewer.models import VisualizationParameter
 from nansencloud.nansat_ingestor.managers import DatasetManager as DM
 
-# This should probably be done differently..
-from nansencloud.processing_sar.tools import nansatFigure
-
 from nansat.nsr import NSR
 from nansat.domain import Domain
 from sardoppler.sardoppler import Doppler
