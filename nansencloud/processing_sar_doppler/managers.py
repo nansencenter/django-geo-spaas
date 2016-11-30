@@ -29,10 +29,14 @@ class DatasetManager(DM):
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
 
+        if ds.geographic_location.geometry.area>15 and not reprocess:
+            return ds, False
+
         ''' Update dataset border geometry
 
         This must be done every time a Doppler file is processed. It is time
-        consuming and would benefit from improvements...
+        consuming but apparently the only way to do it. Could be checked
+        though...
         '''
         n_subswaths = 5
         fn = nansat_filename(uri)
@@ -194,8 +198,13 @@ class DatasetManager(DM):
                     parameter = param)
 
                 # Create Visualization
-                geom, created = GeographicLocation.objects.get_or_create(
-                    geometry=WKTReader().read(swath_data[i].get_border_wkt()))
+                try:
+                    geom, created = GeographicLocation.objects.get_or_create(
+                        geometry=WKTReader().read(swath_data[i].get_border_wkt()))
+                except:
+                    import ipdb
+                    ipdb.set_trace()
+                    print('hei')
                 vv, created = Visualization.objects.get_or_create(
                     uri='file://localhost%s/%s' % (mp, filename),
                     title='%s (swath %d)' %(param.standard_name, i+1),
