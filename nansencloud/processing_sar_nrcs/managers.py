@@ -13,7 +13,7 @@ from nansencloud.viewer.models import VisualizationParameter
 from nansencloud.nansat_ingestor.managers import DatasetManager as DM
 
 # This should probably be done differently..
-from nansencloud.processing_sar_nrcs.tools import nansatFigure
+from nansencloud.processing_sar_nrcs.utils import nansatFigure
 
 from nansat.nsr import NSR
 from nansat.domain import Domain
