@@ -34,6 +34,11 @@ class DatasetManager(DM):
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
 
+        # set Dataset entry_title
+
+        # Unless reprocess==True, we may not need to do the following... (see
+        # managers.py in sar doppler processor)
+
         n = Nansat(nansat_filename(uri))
         lon, lat = n.get_corners()
         d = Domain(NSR(3857),

@@ -29,6 +29,8 @@ class DatasetManager(DM):
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
 
+        # set Dataset entry_title
+
         if ds.geographic_location.geometry.area>15 and not reprocess:
             return ds, False
 
