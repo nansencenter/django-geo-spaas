@@ -23,7 +23,7 @@ except IOError:
 
 install_requires = []
 
-setup(name='nansen-cloud',
+setup(name='django-geo-spaas',
       version=0.1,
       description='Nansen Center geospatial data management application',
       long_description=long_description,

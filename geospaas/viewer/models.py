@@ -7,10 +7,10 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models as geomodels
 
-from nansencloud.catalog.models import GeographicLocation
-from nansencloud.catalog.models import Source as CatalogSource
-from nansencloud.catalog.models import Dataset as CatalogDataset
-from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter
+from geospaas.catalog.models import GeographicLocation
+from geospaas.catalog.models import Source as CatalogSource
+from geospaas.catalog.models import Dataset as CatalogDataset
+from geospaas.catalog.models import DatasetParameter as CatalogDatasetParameter
 
 class Search(geomodels.Model):
     ''' Search parameters '''
