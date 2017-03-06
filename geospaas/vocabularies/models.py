@@ -1,16 +1,16 @@
 from django.db import models
 
-from nansencloud.vocabularies.managers import ParameterManager
-from nansencloud.vocabularies.managers import PlatformManager
-from nansencloud.vocabularies.managers import InstrumentManager
-from nansencloud.vocabularies.managers import DataCenterManager
-from nansencloud.vocabularies.managers import ScienceKeywordManager
-from nansencloud.vocabularies.managers import ProjectManager
-from nansencloud.vocabularies.managers import HorizontalDataResolutionManager
-from nansencloud.vocabularies.managers import VerticalDataResolutionManager
-from nansencloud.vocabularies.managers import TemporalDataResolutionManager
-from nansencloud.vocabularies.managers import ISOTopicCategoryManager
-from nansencloud.vocabularies.managers import LocationManager
+from geospaas.vocabularies.managers import ParameterManager
+from geospaas.vocabularies.managers import PlatformManager
+from geospaas.vocabularies.managers import InstrumentManager
+from geospaas.vocabularies.managers import DataCenterManager
+from geospaas.vocabularies.managers import ScienceKeywordManager
+from geospaas.vocabularies.managers import ProjectManager
+from geospaas.vocabularies.managers import HorizontalDataResolutionManager
+from geospaas.vocabularies.managers import VerticalDataResolutionManager
+from geospaas.vocabularies.managers import TemporalDataResolutionManager
+from geospaas.vocabularies.managers import ISOTopicCategoryManager
+from geospaas.vocabularies.managers import LocationManager
 
 # GCMD keywords loaded into the models in migrations/0001_initial.py using the
 # nersc-metadata package
