@@ -15,9 +15,9 @@ class Command(BaseCommand):
         display in Leaflet
     '''
 
-    #def add_arguments(self, parser):
-    #    parser.add_argument('--reprocess', action='store_true', 
-    #            help='Force reprocessing')
+    def add_arguments(self, parser):
+        parser.add_argument('--reprocess', action='store_true', 
+                help='Force reprocessing')
 
     def handle(self, *args, **options):
         #if not len(args)==1:

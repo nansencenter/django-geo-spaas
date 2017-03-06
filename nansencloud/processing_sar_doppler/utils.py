@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from scipy import optimize
 from scipy.interpolate import UnivariateSpline
 
+from nansat.tools import OptionError
 from nansat.nsr import NSR
 from nansat.domain import Domain
 from nansat.nansat import Nansat
@@ -18,14 +19,28 @@ from nansencloud.utils import nansat_filename, media_path, product_path
 from nansencloud.catalog.models import Dataset, DatasetURI
 
 # Start as script
-t0 = datetime.datetime(2010,1,2,0,0,0, tzinfo=timezone.utc)
-t1 = datetime.datetime(2010,1,3,0,0,0, tzinfo=timezone.utc)
+t0 = datetime.datetime(2010,1,4,0,0,0, tzinfo=timezone.utc)
+t1 = datetime.datetime(2010,1,5,0,0,0, tzinfo=timezone.utc)
 
 def rb_model_func(x, a, b, c, d, e, f):
     return a + b*x + c*x**2 + d*x**3 + e*np.sin(x) + f*np.cos(x)
 
-def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
+def update_geophysical_doppler(dopplerFile, t0, t1, swath, sensor='ASAR',
         platform='ENVISAT'):
+
+    dop2correct = Doppler(dopplerFile)
+    bandnum = dop2correct._get_band_number({
+        'standard_name':
+            'surface_backwards_doppler_centroid_frequency_shift_of_radar_wave'
+    })
+    polarization = dop2correct.get_metadata(bandID=bandnum, key='polarization')
+    lon,lat = dop2correct.get_geolocation_grids()
+    indmidaz = lat.shape[0]/2
+    indmidra = lat.shape[1]/2
+    if lat[indmidaz,indmidra]>lat[0,indmidra]:
+        use_pass = 'ascending'
+    else:
+        use_pass = 'descending'
 
     # Get datasets
     DS = Dataset.objects.filter(source__platform__short_name=platform,
@@ -41,20 +56,22 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
         try:
             fn = dd.dataseturi_set.get(
                     uri__endswith='subswath%s.nc' %swath).uri
-            n = Nansat(fn)
-            lon,lat=n.get_geolocation_grids()
-            indmidaz = lat.shape[0]/2
-            indmidra = lat.shape[1]/2
-            Fjernet det under - må analysere avhengighet av breddegrad
-            #if lat[indmidaz,indmidra]>lat[0,indmidra]:
-            #    orbit_pass = 'ascending'
-            #    # Get rid of ascending pass now...
-            #    warnings.warn('Get rid of ascending pass now: %s' %fn)
-            #    dd.delete()
-            else:
-                swath_files.append(fn)
         except DatasetURI.DoesNotExist:
             continue
+        n = Doppler(fn)
+        try:
+            dca = n.anomaly(pol=polarization)
+        except OptionError: # wrong polarization..
+            continue
+        lon,lat=n.get_geolocation_grids()
+        indmidaz = lat.shape[0]/2
+        indmidra = lat.shape[1]/2
+        if lat[indmidaz,indmidra]>lat[0,indmidra]:
+            orbit_pass = 'ascending'
+        else:
+            orbit_pass = 'descending'
+        if use_pass==orbit_pass:
+            swath_files.append(fn)
 
     valid_land = np.array([])
     valid = np.array([])
@@ -159,38 +176,36 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
     dca = dca[ind]
     std_dca = std_dca[ind]
 
-    freqLims = {
-            0: [-50,120],
-            1: [-20,120],
-            2: [0,170],
-            3: [40,180],
-            4: [60,180],
-        }
+    freqLims = [-200,200]
 
     # Show this in presentation:
-    plt.subplot(1,2,1)
+    plt.subplot(2,1,1)
     count, anglebins, dcabins, im = plt.hist2d(view_angle0, dca0, 100, cmin=1,
-            range=[[np.min(view_angle), np.max(view_angle)], freqLims[swath]])
+            range=[[np.min(view_angle), np.max(view_angle)], freqLims])
     plt.colorbar()
     plt.title('Wind Doppler subtracted')
-    plt.subplot(1,2,2)
+
+    plt.subplot(2,1,2)
     count, anglebins, dcabins, im = plt.hist2d(view_angle, dca, 100, cmin=1,
-            range=[[np.min(view_angle), np.max(view_angle)], freqLims[swath]])
+            range=[[np.min(view_angle), np.max(view_angle)], freqLims])
     plt.colorbar()
     plt.title('Doppler over land')
-    plt.show()
-    #plt.close()
-    countLims = {
-            0: 600,
-            1: 250,
-            2: 500,
-            3: 140,
-            4: 130,
-        }
+    #plt.show()
+    plt.close()
+    countLims = 200
+        #{
+        #    0: 600,
+        #    1: 250,
+        #    2: 500,
+        #    3: 140,
+        #    4: 130,
+        #}
 
     dcabins_grid, anglebins_grid = np.meshgrid(dcabins[:-1], anglebins[:-1])
-    anglebins_vec = anglebins_grid[count>countLims[swath]]
-    dcabins_vec = dcabins_grid[count>countLims[swath]]
+    anglebins_vec = anglebins_grid[count>countLims]
+    dcabins_vec = dcabins_grid[count>countLims]
+    #anglebins_vec = anglebins_grid[count>countLims[swath]]
+    #dcabins_vec = dcabins_grid[count>countLims[swath]]
 
 
     va4interp = []
@@ -209,7 +224,7 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
     rb4interp = np.array(rb4interp)
     std_rb4interp = np.array(std_rb4interp)
 
-    van = n['sensor_view']
+    van = dop2correct['sensor_view']
     rbfull = van.copy()
     rbfull[:,:] = np.nan
     # Is there a more efficient method than looping?
@@ -220,10 +235,11 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
         vaii1 = anglebins[ii+1]
         rbfull[(van>=vaii0) & (van<=vaii1)] = \
                 np.median(dca[(view_angle>=vaii0) & (view_angle<=vaii1)])
-    print("--- %s seconds ---" % (time.time() - start_time))
+    #print("--- %s seconds ---" % (time.time() - start_time))
     plt.plot(np.mean(van, axis=0), np.mean(rbfull, axis=0), '.')
     #plt.plot(anglebins_vec, dcabins_vec, '.')
-    plt.show()
+    #plt.show()
+    plt.close()
 
 
     #guess = [.1,.1,.1,.1,.1,.1]
@@ -232,7 +248,7 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
     #        #anglebins_vec, dcabins_vec, guess)
 
     #n = Doppler(swath_files[0])
-    #van = np.mean(n['sensor_view'], axis=0)
+    #van = np.mean(dop2correct['sensor_view'], axis=0)
     #plt.plot(van, rb_model_func(van,a,b,c,d,e,f), 'r--')
     #plt.plot(anglebins_vec, dcabins_vec, '.')
     #plt.show()
@@ -246,94 +262,85 @@ def update_geophysical_doppler(t0, t1, swath, sensor='ASAR',
     #        k = 5
     #    )
 
-    #van = n['sensor_view']
+    #van = dop2correct['sensor_view']
     #y = rbinterp(van.flatten())
     #rbfull = y.reshape(van.shape)
     #plt.plot(np.mean(van, axis=0), np.mean(rbfull, axis=0), 'r--')
     #plt.plot(anglebins_vec, dcabins_vec, '.')
     #plt.show()
 
+    band_name = 'fdg_corrected'
+    fdg = dop2correct.anomaly() - rbfull
+    #plt.imshow(fdg, vmin=-60, vmax=60)
+    #plt.colorbar()
+    #plt.show()
+    dop2correct.add_band(array=fdg,
+        parameters={
+            'wkv':'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity',
+            'name': band_name
+        }
+    )
+
+    current = -(np.pi*(fdg - dop2correct['fww']) / 112 /
+                np.sin(dop2correct['incidence_angle']*np.pi/180))
+    dop2correct.add_band(array=current,
+            parameters={'name': 'current', 'units': 'm/s', 'minmax': '-2 2'}
+        )
 
     land = np.array([])
-    for ff in swath_files:
-        start_time = time.time()
-        n = Doppler(ff)
-        van = n['sensor_view']
-        rbfull = van.copy()
-        rbfull[:,:] = np.nan
-        for ii in range(len(anglebins)-1):
-            vaii0 = anglebins[ii]
-            vaii1 = anglebins[ii+1]
-            rbfull[(van>=vaii0) & (van<=vaii1)] = \
-                    np.median(dca[(view_angle>=vaii0) & (view_angle<=vaii1)])
+    # add land data for accuracy calculation
+    if land.shape==(0,):
+        land = dop2correct['valid_land_doppler'][dop2correct['valid_land_doppler'].any(axis=1)]
+        land_fdg = fdg[dop2correct['valid_land_doppler'].any(axis=1)]
+    else:
+        landn = dop2correct['valid_land_doppler'][dop2correct['valid_land_doppler'].any(axis=1)]
+        land_fdgn = fdg[dop2correct['valid_land_doppler'].any(axis=1)]
+        if not landn.shape==land.shape:
+            if landn.shape[1] > land.shape[1]:
+                land = np.resize(land, (land.shape[0], landn.shape[1]))
+                land_fdg = np.resize(land_fdg, (land_fdg.shape[0],
+                    land_fdgn.shape[1]))
+            if landn.shape[1] < land.shape[1]:
+                landn = np.resize(landn, (landn.shape[0], land.shape[1]))
+                land_fdgn = np.resize(land_fdgn, (land_fdgn.shape[0],
+                    land.shape[1]))
+        land = np.concatenate((land, landn))
+        land_fdg = np.concatenate((land_fdg, land_fdgn))
 
-        fdg = n.anomaly() - rbfull
-        n.add_band(array=fdg,
-            parameters={'wkv':
-                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
-            )
-
-        current = -(np.pi*(fdg - n['fww']) / 112 /
-                np.sin(n['incidence_angle']*np.pi/180))
-        import ipdb
-        ipdb.set_trace()
-        n.add_band(array=current,
-                parameters={'name': 'current', 'units': 'm/s', 'minmax': '-2 2'}
-            )
-
-        # add land data for accuracy calculation
-        if land.shape==(0,):
-            land = n['valid_land_doppler'][n['valid_land_doppler'].any(axis=1)]
-            land_fdg = fdg[n['valid_land_doppler'].any(axis=1)]
-        else:
-            landn = n['valid_land_doppler'][n['valid_land_doppler'].any(axis=1)]
-            land_fdgn = fdg[n['valid_land_doppler'].any(axis=1)]
-            if not landn.shape==land.shape:
-                if landn.shape[1] > land.shape[1]:
-                    land = np.resize(land, (land.shape[0], landn.shape[1]))
-                    land_fdg = np.resize(land_fdg, (land_fdg.shape[0],
-                        land_fdgn.shape[1]))
-                if landn.shape[1] < land.shape[1]:
-                    landn = np.resize(landn, (landn.shape[0], land.shape[1]))
-                    land_fdgn = np.resize(land_fdgn, (land_fdgn.shape[0],
-                        land.shape[1]))
-            land = np.concatenate((land, landn))
-            land_fdg = np.concatenate((land_fdg, land_fdgn))
-
-        module = 'nansencloud.processing_sar_doppler'
-        DS = Dataset.objects.get(dataseturi__uri=n.fileName)
-        #fn = '/mnt/10.11.12.232/sat_downloads_asar/level-0/2010-01/gsar_rvl/' \
-        #        + n.fileName.split('/')[-2]+'.gsar'
-        mp = media_path(module, nansat_filename( DS.dataseturi_set.get(
+    module = 'nansencloud.processing_sar_doppler'
+    DS = Dataset.objects.get(dataseturi__uri__contains=dop2correct.fileName)
+    #fn = '/mnt/10.11.12.232/sat_downloads_asar/level-0/2010-01/gsar_rvl/' \
+    #        + dop2correct.fileName.split('/')[-2]+'.gsar'
+    mp = media_path(module, nansat_filename( DS.dataseturi_set.get(
             uri__endswith='gsar').uri))
-        ppath = product_path(module, nansat_filename( DS.dataseturi_set.get(
+    ppath = product_path(module, nansat_filename( DS.dataseturi_set.get(
             uri__endswith='gsar').uri))
-        band = 'fdg'
-        pngfilename = '%s_subswath_%d.png'%(band, swath)
-        ncfilename = '%s_subswath_%d.nc'%(band, swath)
+    # See managers.py -- this must be generalized!
+    pngfilename = '%s_subswath_%d.png'%(band_name, swath)
+    ncfilename = '%s_subswath_%d.nc'%(band_name, swath)
 
-        # Export to new netcdf with fdg as the only band
-        n.export(os.path.join(ppath, ncfilename),
-                bands=[n._get_band_number(band)])
-        ncuri = os.path.join('file://localhost', os.path.join(ppath,
-            ncfilename))
-        new_uri, created = DatasetURI.objects.get_or_create(uri=ncuri,
-                    dataset=DS)
+    # Export to new netcdf with fdg as the only band
+    expFile = os.path.join(ppath, ncfilename)
+    print 'Exporting file: %s\n\n' %expFile
+    dop2correct.export(expFile, bands=[dop2correct._get_band_number(band_name)])
+    ncuri = os.path.join('file://localhost', expFile)
+    new_uri, created = DatasetURI.objects.get_or_create(uri=ncuri,
+            dataset=DS)
 
-        # Reproject to leaflet projection
-        xlon, xlat = n.get_corners()
-        dom = Domain(NSR(3857),
-                '-lle %f %f %f %f -tr 1000 1000' % (
-                    xlon.min(), xlat.min(), xlon.max(), xlat.max()))
-        n.reproject(dom, eResampleAlg=1, tps=True)
+    # Reproject to leaflet projection
+    xlon, xlat = dop2correct.get_corners()
+    dom = Domain(NSR(3857),
+            '-lle %f %f %f %f -tr 1000 1000' % (
+                xlon.min(), xlat.min(), xlon.max(), xlat.max()))
+    dop2correct.reproject(dom, eResampleAlg=1, tps=True)
 
-        # Update figure
-        n.write_figure(os.path.join(mp, pngfilename),
-                clim = [-60,60],
-                bands=band+'_000',
-                mask_array=n['swathmask'],
-                mask_lut={0:[128,128,128]}, transparency=[128,128,128])
-        print("--- %s seconds ---" % (time.time() - start_time))
+    # Update figure
+    dop2correct.write_figure(os.path.join(mp, pngfilename),
+            clim = [-60,60],
+            bands=band_name,
+            mask_array=dop2correct['swathmask'],
+            mask_lut={0:[128,128,128]}, transparency=[128,128,128])
+    print("--- %s seconds ---" % (time.time() - start_time))
 
     land_fdg[land==0] = np.nan
     print('Standard deviation over land: %.2f' %np.nanstd(land_fdg))

@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import warnings
 
 from django.conf import settings
 from django.contrib.gis.geos import WKTReader
@@ -35,11 +36,18 @@ class DatasetManager(DM):
                 **kwargs)
 
         # set Dataset entry_title
+        ds.entry_title = 'SAR NRCS'
+        ds.save()
 
         # Unless reprocess==True, we may not need to do the following... (see
         # managers.py in sar doppler processor)
+        #visExists = ... # check if visualization(s) already created
+        #if visExists and not reprocess:
+        #    warnings.warn('NO VISUALISATIONS CREATED - update managers.py')
+        #    return ds, created
 
         n = Nansat(nansat_filename(uri))
+        n.resize(pixelsize=500)
         lon, lat = n.get_corners()
         d = Domain(NSR(3857),
                    '-lle %f %f %f %f -tr 1000 1000' % (

@@ -30,6 +30,8 @@ class DatasetManager(DM):
                 **kwargs)
 
         # set Dataset entry_title
+        ds.entry_title = 'SAR Doppler'
+        ds.save()
 
         if ds.geographic_location.geometry.area>15 and not reprocess:
             return ds, False
@@ -203,10 +205,11 @@ class DatasetManager(DM):
                 try:
                     geom, created = GeographicLocation.objects.get_or_create(
                         geometry=WKTReader().read(swath_data[i].get_border_wkt()))
-                except:
+                except Exception as inst:
+                    print(type(inst))
                     import ipdb
                     ipdb.set_trace()
-                    print('hei')
+                    raise
                 vv, created = Visualization.objects.get_or_create(
                     uri='file://localhost%s/%s' % (mp, filename),
                     title='%s (swath %d)' %(param.standard_name, i+1),
