@@ -6,9 +6,9 @@ from django.contrib.gis.geos import Polygon
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
 
-from nansencloud.vocabularies.models import Platform, Instrument, Parameter
-from nansencloud.vocabularies.models import ISOTopicCategory, DataCenter
-from nansencloud.catalog.models import *
+from geospaas.vocabularies.models import Platform, Instrument, Parameter
+from geospaas.vocabularies.models import ISOTopicCategory, DataCenter
+from geospaas.catalog.models import *
 
 class DatasetTests(TestCase):
 

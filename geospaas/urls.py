@@ -5,5 +5,5 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^', include('nansencloud.viewer.urls')),
+    url(r'^', include('geospaas.viewer.urls')),
 )

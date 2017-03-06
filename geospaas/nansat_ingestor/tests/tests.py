@@ -6,9 +6,9 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
-from nansencloud.vocabularies.models import Instrument, Platform
-from nansencloud.catalog.models import DatasetURI, GeographicLocation
-from nansencloud.nansat_ingestor.models import Dataset
+from geospaas.vocabularies.models import Instrument, Platform
+from geospaas.catalog.models import DatasetURI, GeographicLocation
+from geospaas.nansat_ingestor.models import Dataset
 
 
 #Move to catalog.tests or delete

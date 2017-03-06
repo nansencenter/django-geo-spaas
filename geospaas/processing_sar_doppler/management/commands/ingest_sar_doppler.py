@@ -5,9 +5,9 @@ from nansat.tools import GeolocationError
 
 from django.core.management.base import BaseCommand
 
-from nansencloud.utils import uris_from_args
-from nansencloud.catalog.models import DatasetURI
-from nansencloud.processing_sar_doppler.models import Dataset
+from geospaas.utils import uris_from_args
+from geospaas.catalog.models import DatasetURI
+from geospaas.processing_sar_doppler.models import Dataset
 
 class Command(BaseCommand):
     args = '<filename>'

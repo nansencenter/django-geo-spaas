@@ -3,17 +3,17 @@ from mock.mock import MagicMock, patch
 from django.test import TestCase
 from django.core.management import call_command
 
-from nansencloud.vocabularies.models import Parameter
-from nansencloud.vocabularies.models import DataCenter
-from nansencloud.vocabularies.models import HorizontalDataResolution
-from nansencloud.vocabularies.models import Instrument
-from nansencloud.vocabularies.models import ISOTopicCategory
-from nansencloud.vocabularies.models import Location
-from nansencloud.vocabularies.models import Platform
-from nansencloud.vocabularies.models import Project
-from nansencloud.vocabularies.models import ScienceKeyword
-from nansencloud.vocabularies.models import TemporalDataResolution
-from nansencloud.vocabularies.models import VerticalDataResolution
+from geospaas.vocabularies.models import Parameter
+from geospaas.vocabularies.models import DataCenter
+from geospaas.vocabularies.models import HorizontalDataResolution
+from geospaas.vocabularies.models import Instrument
+from geospaas.vocabularies.models import ISOTopicCategory
+from geospaas.vocabularies.models import Location
+from geospaas.vocabularies.models import Platform
+from geospaas.vocabularies.models import Project
+from geospaas.vocabularies.models import ScienceKeyword
+from geospaas.vocabularies.models import TemporalDataResolution
+from geospaas.vocabularies.models import VerticalDataResolution
 
 class ParameterTests(TestCase):
     ''' This is probably not needed as it should be covered by the

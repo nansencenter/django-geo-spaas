@@ -12,8 +12,8 @@
 #-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand
 
-from nansencloud.utils import uris_from_args
-from nansencloud.ingest_gnssr.models import GNSSR
+from geospaas.utils import uris_from_args
+from geospaas.ingest_gnssr.models import GNSSR
 
 class Command(BaseCommand):
     args = '<filename> <filename> ...'

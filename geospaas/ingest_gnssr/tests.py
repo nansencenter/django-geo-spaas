@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils.six import StringIO
 from django.core.management import call_command
 
-from nansencloud.ingest_gnssr.models import GNSSR
+from geospaas.ingest_gnssr.models import GNSSR
 
 class TestGNSSR(TestCase):
     fixtures = ['vocabularies', 'catalog']

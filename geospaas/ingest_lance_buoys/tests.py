@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils.six import StringIO
 from django.core.management import call_command
 
-from nansencloud.ingest_lance_buoys.models import LanceBuoy
+from geospaas.ingest_lance_buoys.models import LanceBuoy
 
 class TestLanceBuoy(TestCase):
     fixtures = ['vocabularies', 'catalog']

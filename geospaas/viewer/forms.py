@@ -1,7 +1,7 @@
 from django.contrib.gis import forms
 from django.utils import timezone
 
-from nansencloud.viewer.models import Search
+from geospaas.viewer.models import Search
 
 from leaflet.forms.widgets import LeafletWidget
 

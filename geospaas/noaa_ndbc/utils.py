@@ -2,7 +2,7 @@ from django.contrib.gis.geos import GEOSGeometry
 
 import netCDF4
 from thredds_crawler.crawl import Crawl
-from nansencloud.noaa_ndbc.models import StandardMeteorologicalBuoy
+from geospaas.noaa_ndbc.models import StandardMeteorologicalBuoy
 
 #def populate_stdmbuoys():
 

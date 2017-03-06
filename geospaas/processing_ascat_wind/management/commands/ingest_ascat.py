@@ -1,8 +1,8 @@
 ''' Processing of Metop ASCAT wind data '''
 from django.core.management.base import BaseCommand
 
-from nansencloud.utils import uris_from_args
-from nansencloud.processing_ascat_wind.models import Dataset
+from geospaas.utils import uris_from_args
+from geospaas.processing_ascat_wind.models import Dataset
 
 class Command(BaseCommand):
     args = '<filename>'

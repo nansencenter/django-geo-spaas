@@ -19,14 +19,14 @@ import pythesint as pti
 from django.db import models
 from django.contrib.gis.geos import GEOSGeometry
 
-from nansencloud.utils import validate_uri, nansat_filename
+from geospaas.utils import validate_uri, nansat_filename
 
-from nansencloud.vocabularies.models import Platform
-from nansencloud.vocabularies.models import Instrument
-from nansencloud.vocabularies.models import DataCenter
-from nansencloud.vocabularies.models import ISOTopicCategory
-from nansencloud.catalog.models import GeographicLocation
-from nansencloud.catalog.models import DatasetURI, Source, Dataset
+from geospaas.vocabularies.models import Platform
+from geospaas.vocabularies.models import Instrument
+from geospaas.vocabularies.models import DataCenter
+from geospaas.vocabularies.models import ISOTopicCategory
+from geospaas.catalog.models import GeographicLocation
+from geospaas.catalog.models import DatasetURI, Source, Dataset
 
 # test url
 # uri = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/stdmet/0y2w3/0y2w3h2014.nc'

@@ -3,9 +3,9 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
-from nansencloud.utils import uris_from_args
-from nansencloud.catalog.models import DatasetURI
-from nansencloud.processing_old_doppler.models import Dataset
+from geospaas.utils import uris_from_args
+from geospaas.catalog.models import DatasetURI
+from geospaas.processing_old_doppler.models import Dataset
 
 class Command(BaseCommand):
     args = '<filename>'

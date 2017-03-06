@@ -13,9 +13,9 @@
 import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
-from nansencloud.utils import uris_from_args
-from nansencloud.catalog.models import DatasetURI
-from nansencloud.nansat_ingestor.models import Dataset
+from geospaas.utils import uris_from_args
+from geospaas.catalog.models import DatasetURI
+from geospaas.nansat_ingestor.models import Dataset
 
 class Command(BaseCommand):
     args = '<filename filename ...>'

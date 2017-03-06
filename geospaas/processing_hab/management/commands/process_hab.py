@@ -10,8 +10,8 @@ from django.core.management import call_command
 
 from django.conf import settings
 
-from nansencloud.catalog.models import Dataset, DataLocation, Product
-from nansencloud.processing_hab.tools.modis_l2_image import ModisL2Image
+from geospaas.catalog.models import Dataset, DataLocation, Product
+from geospaas.processing_hab.tools.modis_l2_image import ModisL2Image
 
 class Command(BaseCommand):
     args = '<file_or_folder file_or_folder ...>'

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from nansencloud.nansat_ingestor.models import DataLocation
-from nansencloud.processing_ais.models import Dataset
+from geospaas.nansat_ingestor.models import DataLocation
+from geospaas.processing_ais.models import Dataset
 
 class Command(BaseCommand):
     args = '<ais file>'

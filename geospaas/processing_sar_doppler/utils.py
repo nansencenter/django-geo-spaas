@@ -15,8 +15,8 @@ from sardoppler.sardoppler import Doppler
 
 from django.utils import timezone
 
-from nansencloud.utils import nansat_filename, media_path, product_path
-from nansencloud.catalog.models import Dataset, DatasetURI
+from geospaas.utils import nansat_filename, media_path, product_path
+from geospaas.catalog.models import Dataset, DatasetURI
 
 # Start as script
 t0 = datetime.datetime(2010,1,4,0,0,0, tzinfo=timezone.utc)
@@ -307,7 +307,7 @@ def update_geophysical_doppler(dopplerFile, t0, t1, swath, sensor='ASAR',
         land = np.concatenate((land, landn))
         land_fdg = np.concatenate((land_fdg, land_fdgn))
 
-    module = 'nansencloud.processing_sar_doppler'
+    module = 'geospaas.processing_sar_doppler'
     DS = Dataset.objects.get(dataseturi__uri__contains=dop2correct.fileName)
     #fn = '/mnt/10.11.12.232/sat_downloads_asar/level-0/2010-01/gsar_rvl/' \
     #        + dop2correct.fileName.split('/')[-2]+'.gsar'

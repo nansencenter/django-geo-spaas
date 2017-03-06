@@ -2,8 +2,8 @@ from django.utils.six import StringIO
 from django.test import TestCase
 from django.core.management import call_command
 
-from nansencloud.noaa_ndbc.models import StandardMeteorologicalBuoy
-from nansencloud.noaa_ndbc.utils import crawl
+from geospaas.noaa_ndbc.models import StandardMeteorologicalBuoy
+from geospaas.noaa_ndbc.utils import crawl
 
 class TestDataset(TestCase):
 

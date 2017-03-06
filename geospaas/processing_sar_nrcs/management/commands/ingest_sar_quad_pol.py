@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from sarqp.sarqp import QuadPol
-from nansencloud.nansat_ingestor.models import DataLocation, Dataset
+from geospaas.nansat_ingestor.models import DataLocation, Dataset
 
 class Command(BaseCommand):
     args = '<filename filename ...>'

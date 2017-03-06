@@ -4,9 +4,9 @@ from nansat.tools import GeolocationError
 
 from django.core.management.base import BaseCommand
 
-from nansencloud.utils import uris_from_args
-from nansencloud.catalog.models import DatasetURI
-from nansencloud.processing_sar_nrcs.models import Dataset
+from geospaas.utils import uris_from_args
+from geospaas.catalog.models import DatasetURI
+from geospaas.processing_sar_nrcs.models import Dataset
 
 class Command(BaseCommand):
     args = '<filename>'
@@ -45,7 +45,7 @@ class Command(BaseCommand):
     #def process(self, ds):
     #    ''' Create quicklooks of all NRCS bands.
 
-    #    TODO: major cleanup + move code out of nansencloud into a general SAR
+    #    TODO: major cleanup + move code out of geospaas into a general SAR
     #    processing package
     #    '''
     #    clims = {

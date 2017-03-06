@@ -12,8 +12,8 @@
 #-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand
 
-from nansencloud.utils import uris_from_args
-from nansencloud.ingest_lance_buoys.models import LanceBuoy
+from geospaas.utils import uris_from_args
+from geospaas.ingest_lance_buoys.models import LanceBuoy
 
 class Command(BaseCommand):
     args = '<filename> <filename> ...'

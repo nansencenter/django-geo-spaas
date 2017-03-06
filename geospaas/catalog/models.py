@@ -27,7 +27,7 @@ class GeographicLocation(geomodels.Model):
     objects = geomodels.GeoManager()
 
     def __str__(self):
-        return str(self.geometry.geom_type) + str(self.geometry.NumPoints)
+        return str(self.geometry.geom_type)
 
 
 class Source(models.Model):

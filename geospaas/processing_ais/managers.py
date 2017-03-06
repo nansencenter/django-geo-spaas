@@ -4,11 +4,11 @@ import ais.stream
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
-from nansencloud.vocabularies.models import Platform, Instrument
-from nansencloud.catalog.models import Source as CatalogSource
-from nansencloud.catalog.models import GeographicLocation
-from nansencloud.catalog.models import Dataset
-from nansencloud.nansat_ingestor.models import DatasetURI, Source
+from geospaas.vocabularies.models import Platform, Instrument
+from geospaas.catalog.models import Source as CatalogSource
+from geospaas.catalog.models import GeographicLocation
+from geospaas.catalog.models import Dataset
+from geospaas.nansat_ingestor.models import DatasetURI, Source
 
 
 class DatasetManager(models.Manager):

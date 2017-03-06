@@ -4,9 +4,9 @@ from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
 
-#from nansencloud.catalog.models import Dataset
-from nansencloud.viewer.models import Dataset, Visualization
-from nansencloud.viewer.forms import SearchForm
+#from geospaas.catalog.models import Dataset
+from geospaas.viewer.models import Dataset, Visualization
+from geospaas.viewer.forms import SearchForm
 
 class IndexView(View):
     form_class = SearchForm

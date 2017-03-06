@@ -5,16 +5,16 @@ import warnings
 from django.conf import settings
 from django.contrib.gis.geos import WKTReader
 
-from nansencloud.utils import nansat_filename, media_path, product_path
-from nansencloud.vocabularies.models import Parameter
-from nansencloud.catalog.models import DatasetParameter, GeographicLocation
-from nansencloud.catalog.models import Dataset, DatasetURI
-from nansencloud.viewer.models import Visualization
-from nansencloud.viewer.models import VisualizationParameter
-from nansencloud.nansat_ingestor.managers import DatasetManager as DM
+from geospaas.utils import nansat_filename, media_path, product_path
+from geospaas.vocabularies.models import Parameter
+from geospaas.catalog.models import DatasetParameter, GeographicLocation
+from geospaas.catalog.models import Dataset, DatasetURI
+from geospaas.viewer.models import Visualization
+from geospaas.viewer.models import VisualizationParameter
+from geospaas.nansat_ingestor.managers import DatasetManager as DM
 
 # This should probably be done differently..
-from nansencloud.processing_sar_nrcs.utils import nansatFigure
+from geospaas.processing_sar_nrcs.utils import nansatFigure
 
 from nansat.nsr import NSR
 from nansat.domain import Domain

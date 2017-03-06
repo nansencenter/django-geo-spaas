@@ -28,9 +28,9 @@ from django.conf import settings
 
 def runtests(moduleName=None):
     if moduleName is None:
-        appPath = 'nansencloud'
+        appPath = 'geospaas'
     else:
-        appPath = 'nansencloud.%s' % moduleName
+        appPath = 'geospaas.%s' % moduleName
 
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True)

@@ -8,16 +8,16 @@ from django.core.urlresolvers import reverse
 from django.contrib.gis.db import models as geomodels
 from django.contrib.gis.geos import Polygon, LinearRing
 
-from nansencloud.vocabularies.models import Parameter
-from nansencloud.catalog.models import Source
-from nansencloud.catalog.models import DatasetParameter
-from nansencloud.catalog.models import GeographicLocation
-from nansencloud.viewer import forms
-from nansencloud.viewer.models import Search
-from nansencloud.viewer.models import Dataset
-from nansencloud.viewer.models import Visualization
-from nansencloud.viewer.models import VisualizationParameter
-from nansencloud.viewer import tools as vtools
+from geospaas.vocabularies.models import Parameter
+from geospaas.catalog.models import Source
+from geospaas.catalog.models import DatasetParameter
+from geospaas.catalog.models import GeographicLocation
+from geospaas.viewer import forms
+from geospaas.viewer.models import Search
+from geospaas.viewer.models import Dataset
+from geospaas.viewer.models import Visualization
+from geospaas.viewer.models import VisualizationParameter
+from geospaas.viewer import tools as vtools
 
 
 class TestGeneral(TestCase):
@@ -28,10 +28,10 @@ class TestGeneral(TestCase):
                 'ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         # should rather just check that media_path has been called by
         # get_or_create, using mock...
-        media_path = vtools.media_path('nansencloud.processing_sar', f)
+        media_path = vtools.media_path('geospaas.processing_sar', f)
         self.assertTrue(os.path.exists(media_path))
         self.assertEqual(media_path, os.path.join(settings.MEDIA_ROOT,
-            'nansencloud', 'processing_sar',
+            'geospaas', 'processing_sar',
             'ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844'))
 
 class ModelTests(TestCase):
