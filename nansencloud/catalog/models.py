@@ -27,7 +27,7 @@ class GeographicLocation(geomodels.Model):
     objects = geomodels.GeoManager()
 
     def __str__(self):
-        return str(self.geometry.geom_type) + str(self.geometry.num_points)
+        return str(self.geometry.geom_type) + str(self.geometry.NumPoints)
 
 
 class Source(models.Model):
@@ -79,7 +79,7 @@ class Role(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
 class Dataset(models.Model):
-    ''' 
+    '''
     The Dataset model contains fields from the GCMD DIF conventions that are
     used for indexing and search.
 
@@ -159,11 +159,13 @@ class DatasetParameter(models.Model):
 
 class DatasetURI(models.Model):
 
-    uri = models.URLField(max_length=200, unique=True,
+    uri = models.URLField(max_length=200,
             validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
     dataset = models.ForeignKey(Dataset)
 
     objects = DatasetURIManager()
+    class Meta:
+        unique_together = (('uri', 'dataset'),)
 
     def __str__(self):
         return '%s: %s'%(self.dataset, os.path.split(self.uri)[1])

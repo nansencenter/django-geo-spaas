@@ -30,6 +30,23 @@
             <a href="{% url 'index' %}">RELOAD</a>
             </div>
             <div class="col-md-5">
+                <table border=1>
+                    <tr>
+                        <th>Visualizations</th>
+                    </tr>
+                    {% if params %}
+                    <form>
+                        {% for pp in params %}
+                        <tr><td>
+                            <input type="checkbox" id='viz_{{ pp }}'
+                                class='vizButton'
+                                style="width: 0">
+                            <label for='viz_{{ pp }}'>{{ pp }}</label>
+                        </td></tr>
+                        {% endfor %}
+                    </form>
+                    {% endif %}
+                </table>
                 <div class="pagination">
                     <span class="step-links">
                         {% if images.has_previous %}
@@ -44,35 +61,36 @@
                             <a href="javascript:void(0)" onclick="window.document.forms[1].page.value={{ images.next_page_number }} ; window.document.forms[1].submit()">next</a>
                         {% endif %}
                     </span>
-                <table border=1>
-                    <!-- HEADER -->
-                    <tr>
-                    {% block headers %}
-                    <th>Filename</th>
-                    {% endblock headers %}
-                    <th>Show</th>
-                    </tr>
+                    <table border=1>
+                        <!-- HEADER -->
+                        <tr>
+                            {% block headers %}
+                            <th>Filename</th>
+                            {% endblock headers %}
+                            <th>Show</th>
+                        </tr>
 
-                {% if images %}
+                        {% if images %}
 
-                    {% for img in images %}
-                    <tr id={{ forloop.counter }}>
+                            {% for img in images %}
+                            <tr id={{ forloop.counter }}>
 
-                        {% block columns %}
-                            <td>
+                                {% block columns %}
+                                <td>
                                 <a href="{% url viewname  %}{{ img.filename.name }}"> {{ col.1 }} </a>
-                            </td>
-                        {% endblock columns %}
+                                </td>
+                                {% endblock columns %}
 
-                        <td><input class='dsOverlay' type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
-                    </tr>
-                    {% endfor %}
+                                <td><input class='dsOverlay' type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
+                                </td>
+                            </tr>
+                            {% endfor %}
 
-                {% else %}
-                    <tr><td colspan=10>No images are available.</td></tr>
-                {% endif %}
+                        {% else %}
+                            <tr><td colspan=10>No images are available.</td></tr>
+                        {% endif %}
 
-                </table>
+                    </table>
 
                 </div>
             </div>
@@ -88,13 +106,14 @@
         var mapPolygons = [];
         var mapConstPolygons = [];
         var mapImageOverlays = new Array();
-        var MapQuestOpen_Aerial = L.tileLayer(
-            'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
-                type: 'sat',
-                ext: 'jpg',
-                attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
-                subdomains: '1234'
-        });
+        var mapVizParamOverlays = new Array();
+        //var MapQuestOpen_Aerial = L.tileLayer(
+        //    'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+        //        type: 'sat',
+        //        ext: 'jpg',
+        //        attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+        //        subdomains: '1234'
+        //});
 
 
         function add_polygon(id){
@@ -120,7 +139,6 @@
             window.map.removeLayer(mapImageOverlays[ prodButton.id ]);
             prodButton.checked = false;
             $(prodButton).next("label").css( "color", 'black');
-
         }
 
         function toggle_image_overlay(prodButton) {
@@ -128,13 +146,32 @@
             else remove_image_overlay(prodButton);
         };
 
+        function add_vizParam_overlay(vizButton){
+            for ( var cnt in mapVizParamOverlays[ vizButton.id ]){
+                prodID = mapVizParamOverlays[ vizButton.id ][cnt];
+                mapImageOverlays[ prodID ].addTo(window.map);
+            }
+            vizButton.checked = true;
+            $(vizButton).next("label").css( "color", 'green');
+        }
+
+        function remove_vizParam_overlay(vizButton){
+            for ( var cnt in mapVizParamOverlays[ vizButton.id ]){
+                prodID = mapVizParamOverlays[ vizButton.id ][cnt];
+                window.map.removeLayer(mapImageOverlays[ prodID ]);
+            }
+            vizButton.checked = false;
+            $(vizButton).next("label").css( "color", 'black');
+        }
+
+        function toggle_vizParam_overlay(vizButton) {
+            if (vizButton.checked == true) add_vizParam_overlay(vizButton);
+            else remove_vizParam_overlay(vizButton);
+        };
+
         {% for img in images %}
             mapPolygons[ {{ forloop.counter }} ] = {{ img.geo_js|safe }}
             mapConstPolygons[ {{ forloop.counter }} ] = {{ img.const_geo_js|safe }}
-            {% comment %}
-            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 1, fillOpacity: 0.2, fillColor: '#f00'});
-            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 0.5, fillOpacity: 0.05, fillColor: '#b20000'});
-            {% endcomment %}
         {% endfor %}
 
         window.addEventListener("map:init", function (e) {
@@ -147,6 +184,8 @@
 
         }, false);
 
+        /*
+        // TODO: triggers add/remove polygon when hover any TR
         $( "tr" ).mouseover(function() {
             cbstr = ':checkbox[name=' + this.id + ']';
             if ($(cbstr).prop("checked") == false) add_polygon(this.id);
@@ -156,6 +195,7 @@
             cbstr = ':checkbox[name=' + this.id + ']';
             if ($(cbstr).prop("checked") == false) remove_polygon(this.id);
         });
+        */
 
         $('.dsOverlay').click(function() {
             toggle_polygon(this, this.id);
@@ -167,7 +207,7 @@
             {% for viz in img.visualizations %}
             mapImageOverlays["prod_{{ viz.id }}"] = L.imageOverlay('{{ viz.get_absolute_url }}',
                     [
-                        [{{ viz.geographic_location.geometry.extent.1 }}, 
+                        [{{ viz.geographic_location.geometry.extent.1 }},
                             {{ viz.geographic_location.geometry.extent.0 }}],
                         [{{ viz.geographic_location.geometry.extent.3 }},
                             {{ viz.geographic_location.geometry.extent.2 }}]
@@ -176,11 +216,32 @@
         {% endfor %}
 
 
+        {% for pp, vlist in visualizations.iteritems %}
+            mapVizParamOverlays["viz_{{ pp }}"] = [
+            {% for viz in vlist %}
+                'prod_{{ viz.id }}',
+            {% endfor %}
+            ];
+        {% endfor %}
+
+
         $(".prodButton").click(function() {
             toggle_image_overlay(this);
         });
 
+        $(".vizButton").click(function() {
+            toggle_vizParam_overlay(this);
+        });
+
     </script>
+
+
+    {% comment %}
+    {{ visualizations.anomaly_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave }}
+    {% endcomment %}
+    {% for pp, vlist in visualizations.iteritems %}
+    {{ pp }}
+    {% endfor %}
 
 {% endblock %}
 

@@ -22,7 +22,7 @@ class DatasetTests(TestCase):
         geolocation = GeographicLocation.objects.get(pk=1)
         et = 'Test dataset'
         ds = Dataset(
-                entry_title=et, 
+                entry_title=et,
                 ISO_topic_category = iso_category,
                 data_center = dc,
                 summary = 'This is a quite short summary about the test' \
@@ -35,12 +35,31 @@ class DatasetTests(TestCase):
                 geographic_location=geolocation)
         ds.save()
         self.assertEqual(ds.entry_title, et)
+
+        # Shall create new DatasetURI
+        ds_uri1, cr1 = DatasetURI.objects.get_or_create(uri='test_name1.nc',
+                                                      dataset=ds)
+        self.assertIsInstance(ds_uri1, DatasetURI)
+        self.assertEqual(cr1, True)
+
+        # Shall NOT create new DatasetURI
+        ds_uri2, cr2 = DatasetURI.objects.get_or_create(uri='test_name1.nc',
+                                                      dataset=ds)
+        self.assertEqual(ds_uri1, ds_uri2)
+        self.assertEqual(cr2, False)
+
+        # Shall create new DatasetURI
+        ds_uri3, cr3 = DatasetURI.objects.get_or_create(uri='test_name2.nc',
+                                                      dataset=ds)
+        self.assertIsInstance(ds_uri3, DatasetURI)
+        self.assertEqual(cr3, True)
+
         # Add parameter
         ## Dump data for use in fixture
         #with open('dataset.json', 'w') as out:
         #    call_command('dumpdata', '--natural-foreign', '--traceback',
         #            '--indent=4',
-        #            'catalog.Dataset', 
+        #            'catalog.Dataset',
         #            'catalog.GeographicLocation',
         #            stdout=out)
 
@@ -90,7 +109,7 @@ class DatasetRelationshipTests(TestCase):
     fixtures = ["vocabularies", "catalog"]
 
     def test_variable(self):
-        ''' Shall create DatasetRelationship instance 
+        ''' Shall create DatasetRelationship instance
         NOTE: this example dataset relationship doesn't seem very realistic. We
         should create a proper test that repeats the way we plan to use this...
         '''

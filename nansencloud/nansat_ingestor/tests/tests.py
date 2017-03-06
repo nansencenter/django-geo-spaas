@@ -31,7 +31,6 @@ from nansencloud.nansat_ingestor.models import Dataset
 #        src, cr = Source.objects.get_or_create(platform=pp, instrument=ii)
 #        self.assertTrue(cr)
 
-
 class TestDataset(TestCase):
 
     fixtures = ['vocabularies', 'catalog']
@@ -46,7 +45,7 @@ class TestDataset(TestCase):
         self.assertFalse(cr1)
 
     def test_getorcreate_from_opendap(self):
-        uri = 'http://www.ifremer.fr/opendap/cerdap1/globcurrent/v2.0/global_025_deg/geostrophic/2014/001/20140101000000-GLOBCURRENT-L4-CURgeo_0m-ALT_OI-v02.0-fv01.0.nc'
+        uri = 'http://www.ifremer.fr/opendap/cerdap1/globcurrent/v2.0/global_025_deg/geostrophic/2002/001/20020101000000-GLOBCURRENT-L4-CURgeo_0m-ALT_OI-v02.0-fv01.0.nc'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         self.assertTrue(cr0)
 
@@ -54,6 +53,7 @@ class TestDataset(TestCase):
         uri = '/this/is/some/file/but/not/an/uri'
         with self.assertRaises(ValueError):
             ds, created = Dataset.objects.get_or_create(uri)
+
 
 class TestDatasetURI(TestCase):
 
@@ -69,6 +69,7 @@ class TestDatasetURI(TestCase):
         uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
         self.assertEqual(uris, new_uris)
 
+
 class TestIngestNansatCommand(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
@@ -77,4 +78,10 @@ class TestIngestNansatCommand(TestCase):
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, stdout=out)
+        self.assertIn('Successfully added:', out.getvalue())
+
+    def test_add_asar_with_nansat_options(self):
+        out = StringIO()
+        f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
+        call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())

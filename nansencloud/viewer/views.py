@@ -5,7 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
 
 #from nansencloud.catalog.models import Dataset
-from nansencloud.viewer.models import Dataset
+from nansencloud.viewer.models import Dataset, Visualization
 from nansencloud.viewer.forms import SearchForm
 
 class IndexView(View):
@@ -19,7 +19,8 @@ class IndexView(View):
     def set_form_defaults(self, request):
         ''' Set default values for the form '''
         self.form = self.form_class(
-                    {'date0' : timezone.datetime(2000,1,1,tzinfo=timezone.utc).date(),
+                    {'date0' :
+                        timezone.datetime(2000,1,1,tzinfo=timezone.utc).date(),
                      'date1' : timezone.now().date()})
 
     def set_params(self):
@@ -68,8 +69,9 @@ class IndexView(View):
         # filter images
         images = self.image_class.objects.all()
         images = images.order_by('time_coverage_start')
+        t1 = self.form.cleaned_data['date1'] + timezone.timedelta(hours=24)
         images = images.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
-        images = images.filter(time_coverage_start__lte=self.form.cleaned_data['date1'])
+        images = images.filter(time_coverage_end__lte=t1)
         if self.form.cleaned_data['polygon'] is not None:
             images = images.filter(
                     geographic_location__geometry__intersects
@@ -85,7 +87,7 @@ class IndexView(View):
 
         # paginating
         page = request.POST.get('page', 1)
-        paginator = Paginator(images, 20)
+        paginator = Paginator(images, 40)
         try:
             images = paginator.page(page)
         except PageNotAnInteger:
@@ -95,6 +97,24 @@ class IndexView(View):
             # If page is out of range (e.g. 9999), deliver last page of results.
             images = paginator.page(paginator.num_pages)
 
+        params = []
+        for image in images:
+            visualizations = image.visualizations()
+            for viz in visualizations:
+                for ds_parameter in viz.ds_parameters.all():
+                    if not ds_parameter.parameter.standard_name in params:
+                        params.append(ds_parameter.parameter.standard_name)
+
+        visualizations = {}
+        for pp in params:
+            visualizations[pp] = []
+            for ds in images:
+                visualizations[pp].extend(Visualization.objects.filter(
+                    ds_parameters__parameter__standard_name=pp,
+                    ds_parameters__dataset=ds))
+
+        self.context['params'] = params
+        self.context['visualizations'] = visualizations
         self.context['images'] = images
         self.context['form'] = self.form
         self.context['greeting'] = greeting

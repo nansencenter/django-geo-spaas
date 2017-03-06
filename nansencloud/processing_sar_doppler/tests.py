@@ -13,7 +13,7 @@ class TestProcessingSARDoppler(TestCase):
         call_command('ingest', wf, stdout=out)
         f = 'file://localhost/mnt/10.11.12.232/sat_downloads_asar/level-0/' \
                 'gsar_rvl/RVL_ASA_WS_20091116195940116.gsar'
-        call_command('process_sar_doppler', f, stdout=out)
+        call_command('ingest_sar_doppler', f, stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
 

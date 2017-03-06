@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -8,7 +10,7 @@ from django.contrib.gis.db import models as geomodels
 from nansencloud.catalog.models import GeographicLocation
 from nansencloud.catalog.models import Source as CatalogSource
 from nansencloud.catalog.models import Dataset as CatalogDataset
-from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter 
+from nansencloud.catalog.models import DatasetParameter as CatalogDatasetParameter
 
 class Search(geomodels.Model):
     ''' Search parameters '''
@@ -34,20 +36,36 @@ class Dataset(CatalogDataset):
     class Meta:
         proxy = True
 
-    # TODO: return javascript string according to geometry type
+    jsPolygonTemplate = "L.polygon( %s, {color: '#fff', weight: %f, fillOpacity: %f, fillColor: '%s'});"
+    jsPointTemplate = "L.marker( %s );"
+    jsLineStringTemplate = "L.polyline( %s, {color: 'red'});"
+
+    def geo_js_generic(self, weight, fillOpacity, fillColor, **kwargs):
+        if self.geographic_location.geometry.geom_type == 'Polygon':
+            jscode = self.jsPolygonTemplate % (self.geom2str(), weight, fillOpacity, fillColor)
+        elif self.geographic_location.geometry.geom_type == 'Point':
+            pstr = '[%f, %f]' % ( self.geographic_location.geometry.coords[1],
+                    self.geographic_location.geometry.coords[0] )
+            jscode = self.jsPointTemplate %pstr 
+            #jscode = self.jsPointTemplate % (self.geom2str())
+        elif self.geographic_location.geometry.geom_type == 'LineString':
+            jscode = self.jsLineStringTemplate % (self.geom2str())
+        return jscode
+
     def geo_js(self):
-        return "L.polygon( %s, {color: '#fff', weight: 1, fillOpacity: 0.05, fillColor: '#f00'});" %self.border2str()
+        return self.geo_js_generic(1, 0.05, '#f00')
 
     def const_geo_js(self):
-        return "L.polygon( %s, {color: '#fff', weight: 0.5, fillOpacity: 0, fillColor: '#b20000'});" %self.border2str()
+        return self.geo_js_generic(0.5, 0, '#b20000')
 
-    def border2str(self):
-        ''' Generate Leaflet JavaScript defining the border polygon'''
-        borderStr = '['
-        for coord in self.geographic_location.geometry.coords[0]:
-            borderStr += '[%f, %f],' % coord[::-1]
-        borderStr += "]"
-        return borderStr
+    def geom2str(self):
+        ''' String representation of geometry coordinates '''
+        coords = np.array(self.geographic_location.geometry.coords)
+        if len(coords.shape) == 3:
+            coords = coords[0]
+        geomstr = '[%s]' % ','.join(['[%f, %f]' % (aa[0], aa[1]) for aa in
+            coords[...,::-1]])
+        return geomstr
 
     def visualizations(self):
         ''' Return list of all associated visualizations '''
@@ -62,7 +80,7 @@ class VisualizationParameter(models.Model):
         return self.ds_parameter.__str__()
 
 class Visualization(models.Model):
-    
+
     uri = models.URLField()
     # A visualization may contain more than one parameter, and the same
     # parameter can be visualized in many ways..
