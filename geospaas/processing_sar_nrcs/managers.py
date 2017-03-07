@@ -47,13 +47,11 @@ class DatasetManager(DM):
         #    return ds, created
 
         n = Nansat(nansat_filename(uri))
-        n.resize(pixelsize=500)
+        n.resize(pixelsize=1000)
         lon, lat = n.get_corners()
         d = Domain(NSR(3857),
-                   '-lle %f %f %f %f -tr 1000 1000' % (
+                   '-lle %f %f %f %f -tr 5000 5000' % (
                         lon.min(), lat.min(), lon.max(), lat.max()))
-        n.reproject(d, eResampleAlg=1, tps=True)
-
         # Get all NRCS bands
         s0bands = []
         pp = []
@@ -64,29 +62,34 @@ class DatasetManager(DM):
                     pp.append(value['polarization'])
             except KeyError:
                 continue
-
+        #s0bands = ['sigma0_HH', 'sigma0_HV']
         ''' Create data products
         '''
         mm = self.__module__.split('.')
         module = '%s.%s' %(mm[0],mm[1])
         mp = media_path(module, n.fileName)
-        ppath = product_path(module, n.fileName)
+        # ppath = product_path(module, n.fileName)
 
         # Create png's for each band
         num_products = 0
-        swathmask = n['swathmask']
-
         for band in s0bands:
-            meta = n.bands()[band]
+            print 'Visualize', band
+            s0_tmp = n[band]
+            n_tmp = Nansat(domain=n, array=s0_tmp)
+            n_tmp.reproject_GCPs()
+            n_tmp.reproject(d)#, eResampleAlg=1, tps=True)
 
+            #import ipdb; ipdb.set_trace()
+
+            s0 = n_tmp[1]
+            n_tmp = None
+            mask = np.ones(s0.shape, np.uint8)
+            mask[np.isnan(s0) + (s0 <= 0)] = 0
+            s0 = np.log10(s0)*10.
+
+            meta = n.bands()[band]
             product_filename = '%s_%s.png'%(meta['short_name'],
                     meta['polarization'])
-
-            s0 = n[band]
-            mask = np.copy(swathmask)
-            mask[s0 == np.nan] = 0
-            mask[s0 <= 0] = 0
-            s0 = np.log10(s0)*10.
 
             nansatFigure(s0, mask, polarization_clims[meta['polarization']][0],
                     polarization_clims[meta['polarization']][1], mp,
