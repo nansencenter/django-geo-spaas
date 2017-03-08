@@ -30,9 +30,16 @@ def product_path(module, filename):
     return path(module, filename, settings.PRODUCT_ROOT)
 
 def validate_uri(uri):
+    validation_result = False
     request = urllib2.Request(uri)
-    response = urllib2.urlopen(request)
-    response.close()
+    try:
+        response = urllib2.urlopen(request)
+        response.close()
+        validation_result = True
+    except IOError as e:
+        if e.args[1]==u'Is a directory':
+            validation_result = True
+    return validation_result
 
 def nansat_filename(uri):
     # Check if data should be read as stream or as file? Or just:
