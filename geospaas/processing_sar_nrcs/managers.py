@@ -47,11 +47,13 @@ class DatasetManager(DM):
         #    return ds, created
 
         n = Nansat(nansat_filename(uri))
-        n.resize(pixelsize=1000)
+        n.reproject_GCPs()
+        n.resize(pixelsize=500)
         lon, lat = n.get_corners()
+        lat_max = min(lat.max(), 85)
         d = Domain(NSR(3857),
-                   '-lle %f %f %f %f -tr 5000 5000' % (
-                        lon.min(), lat.min(), lon.max(), lat.max()))
+                   '-lle %f %f %f %f -ts %d %d' % (
+                        lon.min(), lat.min(), lon.max(), lat_max, n.shape()[1], n.shape()[0]))
         # Get all NRCS bands
         s0bands = []
         pp = []
@@ -62,7 +64,7 @@ class DatasetManager(DM):
                     pp.append(value['polarization'])
             except KeyError:
                 continue
-        #s0bands = ['sigma0_HH', 'sigma0_HV']
+
         ''' Create data products
         '''
         mm = self.__module__.split('.')
@@ -77,9 +79,7 @@ class DatasetManager(DM):
             s0_tmp = n[band]
             n_tmp = Nansat(domain=n, array=s0_tmp)
             n_tmp.reproject_GCPs()
-            n_tmp.reproject(d)#, eResampleAlg=1, tps=True)
-
-            #import ipdb; ipdb.set_trace()
+            n_tmp.reproject(d)
 
             s0 = n_tmp[1]
             n_tmp = None
