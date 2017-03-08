@@ -175,6 +175,7 @@
         {% endfor %}
 
         window.addEventListener("map:init", function (e) {
+            window.map = e.detail.map;
             {% for img in images %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}
