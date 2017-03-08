@@ -18,7 +18,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="col-md-7">
-            <form action="{% url viewname %}" method="post">
+            <form action="{% url 'geospaas:viewer:index' %}" method="post">
                 {% csrf_token %}
                     {{ form|as_bootstrap }}
                     {% comment %}
@@ -27,7 +27,7 @@
                 <input type=hidden id="page" name="page" value=1 />
                 <input type="submit" value="Search" />
             </form>
-            <a href="{% url 'index' %}">RELOAD</a>
+            <a href="{% url 'geospaas:viewer:index' %}">RELOAD</a>
             </div>
             <div class="col-md-5">
                 <table border=1>
