@@ -93,7 +93,7 @@ class Visualization(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return os.path.join(settings.STATIC_URL,
-                self.uri.split(settings.STATIC_URL)[1])
+        return os.path.join(settings.MEDIA_URL,
+                self.uri.split(settings.MEDIA_URL)[1])
 
 

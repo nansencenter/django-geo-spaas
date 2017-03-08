@@ -24,7 +24,7 @@ def path(module, filename, root):
     return dataset_path
 
 def media_path(module, filename):
-    return path(module, filename, os.path.join(settings.BASE_DIR, 'static'))
+    return path(module, filename, settings.MEDIA_ROOT)
 
 def product_path(module, filename):
     return path(module, filename, settings.PRODUCT_ROOT)

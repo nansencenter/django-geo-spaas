@@ -14,7 +14,12 @@ class SearchForm(forms.ModelForm):
         model = Search
         fields = ['polygon', 'date0', 'date1', 'source']
         labels = {'polygon':''}
-        widgets = {'polygon': LeafletWidget(),
+        widgets = {'polygon': LeafletWidget(
+                attrs={'settings_overrides':
+                        {'DEFAULT_CENTER': (60.0, 5.0),
+                        'DEFAULT_ZOOM': 5,
+                         }}
+                        ),
                    'date0': forms.DateInput(attrs={'class':'datepicker'}),
                    'date1': forms.DateInput(attrs={'class':'datepicker'}),}
 
