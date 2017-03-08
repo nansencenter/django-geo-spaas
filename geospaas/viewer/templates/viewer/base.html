@@ -102,7 +102,7 @@
 {% block extra_script %}
 
     <script type="text/javascript">
-        var map; //= map('map').SetView([100,60], 13);
+        var map;
         var mapPolygons = [];
         var mapConstPolygons = [];
         var mapImageOverlays = new Array();
@@ -176,8 +176,6 @@
 
         window.addEventListener("map:init", function (e) {
             window.map = e.detail.map;
-            window.map.setView([0,0], 2);
-            MapQuestOpen_Aerial.addTo(window.map);
             {% for img in images %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}
