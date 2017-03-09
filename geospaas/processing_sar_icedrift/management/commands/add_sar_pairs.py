@@ -5,6 +5,8 @@ from dateutil.parser import parse
 from django.core.management.base import BaseCommand
 from geospaas.catalog.models import Dataset
 
+from sea_ice_drift import *
+
 class Command(BaseCommand):
     args = '<filename filename ...>'
     help = 'Add file to catalog archive'
@@ -53,10 +55,12 @@ class Command(BaseCommand):
                     print '-> ', s1pg.intersection(s1dgeom).area / s1dgeom_area, s1pu
         
         
-        #for s1pair in s1pairs:
-        #    pairs += [(s1d, s1pair)]
 
-        #for p in pairs:
-        #    print p, p[0].geographic_location.geometry.intersection(p[1].geographic_location.geometry).area / p[0].geographic_location.geometry.area
-        
+def create_pair(uri1, uri2):
+    ''' Create file with image pair which contains:
+    x1,y1, x2,y2  from FT
+    BX, BY from x1,y1, x2,y2
+    Distance from x1,y1, x2,y2
+    '''
+    
         
