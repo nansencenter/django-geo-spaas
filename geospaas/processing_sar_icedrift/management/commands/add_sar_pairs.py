@@ -1,151 +1,62 @@
-from optparse import make_option
+import datetime as dt
 
-from nansat.tools import GeolocationError
+from dateutil.parser import parse
 
 from django.core.management.base import BaseCommand
-
-from geospaas.utils import uris_from_args
-from geospaas.catalog.models import DatasetURI
-from geospaas.processing_sar_nrcs.models import Dataset
+from geospaas.catalog.models import Dataset
 
 class Command(BaseCommand):
-    args = '<filename>'
-    help = '''
-        Add SAR data to catalog archive and make png images with NRCS for
-        display in Leaflet
-    '''
+    args = '<filename filename ...>'
+    help = 'Add file to catalog archive'
 
     def add_arguments(self, parser):
-        parser.add_argument('--reprocess', action='store_true', 
-                help='Force reprocessing')
+        parser.add_argument('--start',
+                            action='store',
+                            default='2014-01-01',
+                            help='''Start date''')
+
+        parser.add_argument('--days',
+                            action='store', 
+                            default='3',
+                            help='''Maximum difference between images in days''')
+
+        parser.add_argument('--overlap',
+                            action='store', 
+                            default='0.2',
+                            help='''Minimum overlap between images''')
 
     def handle(self, *args, **options):
-        #if not len(args)==1:
-        #    raise IOError('Please provide one filename only')
+        start_date = parse(options['start'])
+        max_timedelta = float(options['days']) * 60 * 60 * 24
+        min_overlap = float(options['overlap'])
+                
+        # find all matching datasets
+        s1datasets = Dataset.objects.filter(
+            source__platform__short_name__startswith='SENTINEL-1',
+            time_coverage_start__gte=start_date)
 
-        for non_ingested_uri in uris_from_args(*args):
-            self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
-            try:
-                ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **options)
-            except GeolocationError:
-                self.stdout.write('Geolocation error in: %s\n' % non_ingested_uri)
-                continue
-            if cr:
-                self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
-            else:
-                self.stdout.write('Was already added: %s\n' % non_ingested_uri)
+        # for each dataset, find pairs
+        pairs = []
+        for s1d in s1datasets:
+            print 'Search for pairs for ', s1d.time_coverage_start
+            s1dgeom = s1d.geographic_location.geometry
+            s1dgeom_area = s1dgeom.area
+            s1pairs = s1datasets.filter(
+                time_coverage_start__gt=s1d.time_coverage_start,
+                time_coverage_end__lte=s1d.time_coverage_start+dt.timedelta(seconds=max_timedelta),
+                geographic_location__geometry__intersects=s1dgeom)
+            
+            s1pairs_data = s1pairs.values_list('geographic_location__geometry', 'dataseturi__uri')
+            for s1pg, s1pu in s1pairs_data:
+                if s1pg.intersection(s1dgeom).area / s1dgeom_area > min_overlap:
+                    pairs += [(s1d.dataseturi_set.first().uri, s1pu)]
+                    print '-> ', s1pg.intersection(s1dgeom).area / s1dgeom_area, s1pu
+        
+        
+        #for s1pair in s1pairs:
+        #    pairs += [(s1d, s1pair)]
 
-
-
-
-
-
-
-    # The following is replaced in managers.py, except the quad-pol part
-    #def process(self, ds):
-    #    ''' Create quicklooks of all NRCS bands.
-
-    #    TODO: major cleanup + move code out of geospaas into a general SAR
-    #    processing package
-    #    '''
-    #    clims = {
-    #        'HH': [-20, 0],
-    #        'HV': [-30, -10],
-    #        'VV': [-20, 0],
-    #        'VH': [-20, 0],
-    #    }
-    #    dsURI = ds.datalocation_set.filter(
-    #            protocol=DataLocation.LOCALFILE)[0].uri
-
-    #    qp = False
-    #    try:
-    #        n = QuadPol(dsURI, wind_direction='ncep_wind_online')
-    #        qp = True
-    #    except:
-    #        n = Nansat(dsURI)
-
-    #    # Get all NRCS bands
-    #    s0bands = []
-    #    pp = []
-    #    for key, value in n.bands().iteritems():
-    #        try:
-    #            if value['standard_name']==standard_name:
-    #                s0bands.append(key)
-    #                pp.append(value['polarization'])
-    #        except KeyError:
-    #            continue
-
-    #    if qp:
-    #        for i, band in enumerate(s0bands):
-    #            s0bands[i] = band+'_reduced'
-
-    #    media_path = vtools.media_path(self.__module__,
-    #            os.path.split(n.fileName)[-1].split('.')[0])
-
-    #    if qp:
-    #        n.export(os.path.join(media_path, prodBaseName+'.nc'))
-
-    #    lon, lat = n.get_corners()
-    #    d = Domain(NSR(3857),
-    #               '-lle %f %f %f %f -tr 1000 1000' % (
-    #                    lon.min(), lat.min(), lon.max(), lat.max()))
-    #    n.reproject(d, eResampleAlg=1, tps=True)
-
-    #    # Create png's for each band
-    #    num_products = 0
-    #    swathmask = n['swathmask']
-    #    httpURIbase = os.path.join(settings.MEDIA_URL,
-    #                self.__module__.split('.')[0],
-    #                self.__module__.split('.')[1], prodBaseName)
-    #    for band in s0bands:
-    #        meta = n.bands()[band]
-    #        product_filename = '%s_%s.png'%(meta['short_name'],
-    #                meta['polarization'])
-
-    #        s0 = n[band]
-    #        mask = np.copy(swathmask)
-    #        mask[s0 == np.nan] = 0
-    #        mask[s0 <= 0] = 0
-    #        s0 = np.log10(s0)*10.
-
-    #        nansatFigure(s0, mask, min, max, media_path,
-    #                product_filename)
-
-    #        prodFileURI = os.path.join(media_path, product_filename)
-    #        prodHttpURI = os.path.join(httpURIbase, product_filename)
-    #        create_product(prodHttpURI, ds, meta, 'dB')
-    #        num_products += 1
-
-    #    if qp:
-    #        print('Make PR image...')
-    #        pname = make_PR_image(n, dir=media_path)
-    #        prodFileURI = os.path.join(media_path, pname)
-    #        prodHttpURI = os.path.join(httpURIbase, pname)
-    #        create_product(prodHttpURI, ds, n.bands()['PR'], 'm/m')
-    #        num_products += 1
-
-    #        print('Make PD image...')
-    #        pname = make_PD_image(n, dir=media_path)
-    #        prodFileURI = os.path.join(media_path, pname)
-    #        prodHttpURI = os.path.join(httpURIbase, pname)
-    #        create_product(prodHttpURI, ds, n.bands()['PD'], 'm/m')
-    #        num_products += 1
-
-    #        try:
-    #            print('Make NP image...')
-    #            pname = make_NP_image(n, dir=media_path)
-    #            prodFileURI = os.path.join(media_path, pname)
-    #            prodHttpURI = os.path.join(httpURIbase, pname)
-    #            create_product(prodHttpURI, ds, n.bands()['PD'], 'm/m')
-    #            num_products += 1
-    #        except Exception as e:
-    #            print e
-    #        print('Make CP image...')
-    #        pname = make_NRCS_image(n, 'CP', dir=media_path)
-    #        prodFileURI = os.path.join(media_path, pname)
-    #        prodHttpURI = os.path.join(httpURIbase, pname)
-    #        create_product(prodHttpURI, ds, n.bands()['PD'], 'm/m')
-    #        num_products += 1
-
-
-    #    return num_products
+        #for p in pairs:
+        #    print p, p[0].geographic_location.geometry.intersection(p[1].geographic_location.geometry).area / p[0].geographic_location.geometry.area
+        
+        
