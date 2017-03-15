@@ -40,8 +40,7 @@ class Command(BaseCommand):
         if options['nansat_option']:
             for opt in options['nansat_option']:
                 var, val = opt.split('=')
-                val = {'True': True, 'False': False}.get(val, val)
-                nansat_options[var] = val
+                nansat_options[var] = eval(val)
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
             ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **nansat_options)
