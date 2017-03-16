@@ -42,7 +42,10 @@ class Source(models.Model):
         unique_together = (("platform", "instrument"),)
 
     def __str__(self):
-        return '%s/%s' % (self.platform, self.instrument)
+        if not self.platform and not self.instrument:
+            return '%s' % self.specs
+        else:
+            return '%s/%s' % (self.platform, self.instrument)
 
     def natural_key(self):
         return (self.platform.short_name, self.instrument.short_name)
