@@ -1,15 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:
-# Purpose:
-#
-# Author:       Morten Wergeland Hansen
-# Modified:
-#
-# Created:
-# Last modified:
-# Copyright:    (c) NERSC
-# License:
-#-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand
 
 from geospaas.utils import uris_from_args
