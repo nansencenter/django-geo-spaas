@@ -37,7 +37,11 @@ class DatasetManager(models.Manager):
         if len(uris) > 0:
             return uris[0].dataset, False
 
-        n = Nansat(nansat_filename(uri), **kwargs)
+        try:
+            n = Nansat(nansat_filename(uri), **kwargs)
+        except:
+            return 0, False
+
         # get metadata
         platform = json.loads( unescape( n.get_metadata('platform'),
                 {'&quot;': '"'}))
