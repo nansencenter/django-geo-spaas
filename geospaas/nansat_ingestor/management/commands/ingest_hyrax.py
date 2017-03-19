@@ -51,8 +51,8 @@ def find_netcdf_uris(uri0, sleep=1.0):
     try:
         for uri in uris:
             nc_uris += find_netcdf_uris(uri)
-    except urllib2.HTTPError as e:
-        print 'Server HTTP error %s'%e.message
+    except (urllib2.HTTPError, urllib2.URLError) as e:
+        print 'Server error %s'%e.message
     # return all links to netCDF
     return nc_uris
 
