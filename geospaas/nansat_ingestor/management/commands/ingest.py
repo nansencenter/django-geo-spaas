@@ -1,15 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:
-# Purpose:
-#
-# Author:       Morten Wergeland Hansen
-# Modified:
-#
-# Created:
-# Last modified:
-# Copyright:    (c) NERSC
-# License:
-#-------------------------------------------------------------------------------
 import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
@@ -47,10 +35,10 @@ class Command(BaseCommand):
             ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **nansat_options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
+                count += 1
             elif type(ds)==Dataset:
                 self.stdout.write('%s has been added before.\n' % non_ingested_uri)
             else:
                 self.stdout.write('Could not add %s.\n' % non_ingested_uri)
-            count += 1
         return count
 
