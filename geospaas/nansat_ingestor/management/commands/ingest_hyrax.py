@@ -13,7 +13,7 @@ class Command(IngestCommand):
     help = 'Add file to catalog from HYRAX server'
 
     def handle(self, *args, **options):
-        print 'Searching netcdf files. May takes some time...\n\n\n'
+        print 'Searching netcdf files. May take some time...\n\n\n'
         nc_uris = find_netcdf_uris(args[0])
         num_nc_uris = len(nc_uris)
         print '\nTrying to ingest %d datasets\n'%num_nc_uris
@@ -24,28 +24,12 @@ class Command(IngestCommand):
         ind_failed = []
         ind_succeeded = []
         ind_pop = []
-        try:
-            cc = super(Command, self).handle(*nc_uris, **options)
-        except:
-            cc = 0
-        for i in range(cc+1): # elements added or failing
-            ind_pop.append(i)
-            if i==cc:
-                ind_failed.append(i)
-            else:
-                ind_succeeded.append(i)
-        for i in ind_pop:
-            nc_uris.pop(i) # avoid repetition
-        for i in ind_failed:
-            nc_uris_succeeded.pop(i) # log successes
-        for i in ind_succeeded:
-            nc_uris_failed.pop(i) # log fails
+        cc = super(Command, self).handle(*nc_uris, **options)
 
-        print 'Failed:'
+        print 'Tried:'
         for uri in nc_uris_failed:
             print uri
-        print 'Successfully added %d of %d new \
-                datasets'%(len(nc_uris_succeeded), num_nc_uris)
+        print 'Successfully added %d of %d new datasets'%(cc, len(nc_uris))
             
 
 def find_netcdf_uris(uri0, sleep=1.0):
