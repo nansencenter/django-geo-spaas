@@ -30,7 +30,10 @@ class DatasetManager(models.Manager):
         '''
 
         # Validate uri - this should fail if the data isn't available
-        valid_uri = validate_uri(uri)
+        try:
+            valid_uri = validate_uri(uri)
+        except:
+            return 0, False
 
         # check if dataset already exists
         uris = DatasetURI.objects.filter(uri=uri)
