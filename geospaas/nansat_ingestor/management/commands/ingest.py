@@ -1,15 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:
-# Purpose:
-#
-# Author:       Morten Wergeland Hansen
-# Modified:
-#
-# Created:
-# Last modified:
-# Copyright:    (c) NERSC
-# License:
-#-------------------------------------------------------------------------------
 import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
@@ -37,13 +25,20 @@ class Command(BaseCommand):
             )
 
         nansat_options = {}
+        count = 0
         if options['nansat_option']:
             for opt in options['nansat_option']:
                 var, val = opt.split('=')
-                val = {'True': True, 'False': False}.get(val, val)
-                nansat_options[var] = val
+                nansat_options[var] = eval(val)
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
             ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **nansat_options)
-            self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
+            if cr:
+                self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
+                count += 1
+            elif type(ds)==Dataset:
+                self.stdout.write('%s has been added before.\n' % non_ingested_uri)
+            else:
+                self.stdout.write('Could not add %s.\n' % non_ingested_uri)
+        return count
 

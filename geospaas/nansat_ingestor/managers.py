@@ -29,14 +29,21 @@ class DatasetManager(models.Manager):
         '''
 
         # Validate uri - this should fail if the data isn't available
-        valid_uri = validate_uri(uri)
+        try:
+            valid_uri = validate_uri(uri)
+        except:
+            return 0, False
 
         # check if dataset already exists
         uris = DatasetURI.objects.filter(uri=uri)
         if len(uris) > 0:
             return uris[0].dataset, False
 
-        n = Nansat(nansat_filename(uri), **kwargs)
+        try:
+            n = Nansat(nansat_filename(uri), **kwargs)
+        except:
+            return 0, False
+
         # get metadata
         platform = json.loads( unescape( n.get_metadata('platform'),
                 {'&quot;': '"'}))
@@ -56,10 +63,13 @@ class DatasetManager(models.Manager):
                 short_name = instrument['Short_Name'],
                 long_name = instrument['Long_Name']
             )
+        specs = n.get_metadata().get('specs', '')
+        if not specs:
+            specs = n.get_metadata().get('Entry Title', '')
         source = Source.objects.get_or_create(
             platform = pp,
             instrument = ii,
-            specs=n.get_metadata().get('specs', ''))[0]
+            specs=specs)[0]
 
         # Find coverage to set number of points in the geolocation
         geolocation = GeographicLocation.objects.get_or_create(
