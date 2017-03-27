@@ -16,9 +16,15 @@ class Command(BaseCommand):
                                     mapperName="sentinel1a_l1"
                                     (can be repated)''')
 
+        parser.add_argument('--nPoints',
+                            action='store',
+                            default='10',
+                            help='''Number of points in the border''')
+
     def handle(self, *args, **options):
         if len(args)==0:
             raise IOError('Please provide at least one filename')
+        nPoints = int(options['nPoints'])
 
         non_ingested_uris = DatasetURI.objects.all().get_non_ingested_uris(
                 uris_from_args(*args)
@@ -32,7 +38,7 @@ class Command(BaseCommand):
                 nansat_options[var] = eval(val)
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
-            ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **nansat_options)
+            ds, cr = Dataset.objects.get_or_create(non_ingested_uri, nPoints=nPoints, **nansat_options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
                 count += 1
@@ -40,5 +46,3 @@ class Command(BaseCommand):
                 self.stdout.write('%s has been added before.\n' % non_ingested_uri)
             else:
                 self.stdout.write('Could not add %s.\n' % non_ingested_uri)
-        return count
-
