@@ -17,20 +17,7 @@ class Command(IngestCommand):
         nc_uris = find_netcdf_uris(args[0])
         num_nc_uris = len(nc_uris)
         print '\nTrying to ingest %d datasets\n'%num_nc_uris
-        count = 0
-        faile = []
-        nc_uris_failed = list(nc_uris)
-        nc_uris_succeeded = list(nc_uris)
-        ind_failed = []
-        ind_succeeded = []
-        ind_pop = []
-        cc = super(Command, self).handle(*nc_uris, **options)
-
-        print 'Tried:'
-        for uri in nc_uris_failed:
-            print uri
-        print 'Successfully added %d of %d new datasets'%(cc, len(nc_uris))
-            
+        super(Command, self).handle(*nc_uris, **options)
 
 def find_netcdf_uris(uri0, sleep=1.0):
     uri0_base = os.path.split(uri0)[0]
