@@ -64,8 +64,8 @@ class DatasetManager(models.Manager):
                 long_name = instrument['Long_Name']
             )
         specs = n.get_metadata().get('specs', '')
-        if not specs:
-            specs = n.get_metadata().get('Entry Title', '')
+        # if not specs:
+        #     specs = n.get_metadata().get('Entry Title', '')
         source = Source.objects.get_or_create(
             platform = pp,
             instrument = ii,

@@ -8,6 +8,7 @@ from geospaas.nansat_ingestor.models import Dataset
 class Command(BaseCommand):
     args = '<filename filename ...>'
     help = 'Add file to catalog archive'
+    nPoints = 10
 
     def add_arguments(self, parser):
         parser.add_argument('--nansat-option',
@@ -18,13 +19,13 @@ class Command(BaseCommand):
 
         parser.add_argument('--nPoints',
                             action='store',
-                            default='10',
+                            default=self.nPoints,
                             help='''Number of points in the border''')
 
     def handle(self, *args, **options):
         if len(args)==0:
             raise IOError('Please provide at least one filename')
-        nPoints = int(options['nPoints'])
+        nPoints = int(options.get('nPoints', self.nPoints))
 
         non_ingested_uris = DatasetURI.objects.all().get_non_ingested_uris(
                 uris_from_args(*args)
