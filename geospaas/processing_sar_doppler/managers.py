@@ -146,11 +146,18 @@ class DatasetManager(DM):
                 'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
             })
 
-            swath_data[i].add_band(array=swath_data[i].geophysical_doppler_shift(
-                wind = nansat_filename(wind.dataseturi_set.all()[0].uri)),
+            fdg = swath_data[i].geophysical_doppler_shift(wind =
+                    nansat_filename(wind.dataseturi_set.all()[0].uri))
+            swath_data[i].add_band(array=fdg,
                 parameters={'wkv':
                     'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
             )
+
+            theta = swath_data[i]['incidence_angle']*np.pi/180.
+            vcurrent = -np.pi*(fdg - fww)/(112.*np.sin(theta))
+            swath_data[i].add_band(array=vcurrent,
+                    parameters={'wkv':
+                        'surface_radial_doppler_sea_water_velocity'}) 
 
             # Export data to netcdf
             print('Exporting %s (subswath %d)' %(swath_data[i].fileName, i))
@@ -183,7 +190,7 @@ class DatasetManager(DM):
             # when ingesting data:
             ingest_creates = [
                     'valid_doppler', 'valid_land_doppler', 'valid_sea_doppler',
-                    'dca', 'fww', 'fdg',
+                    'dca', 'fww', 'fdg', 'Ur',
                 ]
             # (the geophysical doppler shift must later be added in a separate
             # manager method in order to estimate the range bias after
