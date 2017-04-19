@@ -27,7 +27,7 @@ def media_path(module, filename):
     return path(module, filename, settings.MEDIA_ROOT)
 
 def product_path(module, filename):
-    return path(module, filename, settings.PRODUCT_ROOT)
+    return path(module, filename, settings.PRODUCTS_ROOT)
 
 def validate_uri(uri):
     validation_result = False
