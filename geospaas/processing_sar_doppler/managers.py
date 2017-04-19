@@ -1,4 +1,4 @@
-import os
+import os, warnings
 from math import sin, pi, cos, acos, copysign
 import numpy as np
 from scipy.ndimage.filters import median_filter
@@ -126,40 +126,43 @@ class DatasetManager(DM):
             })
             # search db for model wind field - simply take first item for
             # now...
+            warnings.warn('First wind field is used for CDOP - we should ' \
+                    'instead use the one nearest in time')
             wind = Dataset.objects.filter(
                     source__platform__short_name = 'NCEP-GFS', 
                     time_coverage_start__lte = \
                         parse(swath_data[i].get_metadata()['time_coverage_start']) + timedelta(3),
                     time_coverage_start__gte = \
                         parse(swath_data[i].get_metadata()['time_coverage_start']) - timedelta(3)
-                )[0]
+                )
             bandnum = swath_data[i]._get_band_number({
                 'standard_name': \
                     'surface_backwards_doppler_centroid_frequency_shift_of_radar_wave',
                 })
             pol = swath_data[i].get_metadata(bandID=bandnum, key='polarization')
-            fww = swath_data[i].wind_waves_doppler(
-                    nansat_filename(wind.dataseturi_set.all()[0].uri),
-                    pol
-                )
-            swath_data[i].add_band(array=fww, parameters={
-                'wkv':
-                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
-            })
+            if wind:
+                fww = swath_data[i].wind_waves_doppler(
+                        nansat_filename(wind[0].dataseturi_set.all()[0].uri),
+                        pol
+                    )
+                swath_data[i].add_band(array=fww, parameters={
+                    'wkv':
+                    'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
+                })
 
-            fdg = swath_data[i].geophysical_doppler_shift(wind =
-                    nansat_filename(wind.dataseturi_set.all()[0].uri))
-            swath_data[i].add_band(array=fdg,
-                parameters={'wkv':
-                    'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
-            )
-
-            theta = swath_data[i]['incidence_angle']*np.pi/180.
-            vcurrent = -np.pi*(fdg - fww)/(112.*np.sin(theta))
-            # Smooth...
-            vcurrent = median_filter(vcurrent, size=(3,3))
-            swath_data[i].add_band(array=vcurrent,
+                fdg = swath_data[i].geophysical_doppler_shift(wind =
+                    nansat_filename(wind[0].dataseturi_set.all()[0].uri))
+                swath_data[i].add_band(array=fdg,
                     parameters={'wkv':
+                    'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
+                )
+
+                theta = swath_data[i]['incidence_angle']*np.pi/180.
+                vcurrent = -np.pi*(fdg - fww)/(112.*np.sin(theta))
+                # Smooth...
+                vcurrent = median_filter(vcurrent, size=(3,3))
+                swath_data[i].add_band(array=vcurrent,
+                        parameters={'wkv':
                         'surface_radial_doppler_sea_water_velocity'}) 
 
             # Export data to netcdf
@@ -193,8 +196,9 @@ class DatasetManager(DM):
             # when ingesting data:
             ingest_creates = [
                     'valid_doppler', 'valid_land_doppler', 'valid_sea_doppler',
-                    'dca', 'fww', 'fdg', 'Ur',
-                ]
+                    'dca']
+            if wind:
+                ingest_creates.extend(['fww', 'fdg', 'Ur'])
             # (the geophysical doppler shift must later be added in a separate
             # manager method in order to estimate the range bias after
             # processing multiple files)
