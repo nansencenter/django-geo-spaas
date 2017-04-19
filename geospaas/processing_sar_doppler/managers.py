@@ -1,6 +1,7 @@
 import os
 from math import sin, pi, cos, acos, copysign
 import numpy as np
+from scipy.ndimage.filters import median_filter
 
 from dateutil.parser import parse
 from datetime import timedelta
@@ -155,6 +156,8 @@ class DatasetManager(DM):
 
             theta = swath_data[i]['incidence_angle']*np.pi/180.
             vcurrent = -np.pi*(fdg - fww)/(112.*np.sin(theta))
+            # Smooth...
+            vcurrent = median_filter(vcurrent, size=(3,3))
             swath_data[i].add_band(array=vcurrent,
                     parameters={'wkv':
                         'surface_radial_doppler_sea_water_velocity'}) 
