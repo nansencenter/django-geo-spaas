@@ -15,8 +15,8 @@ class Command(BaseCommand):
 
         non_ingested_uris = DataLocation.objects.all().get_non_ingested_uris(args)
         for non_ingested_uri in non_ingested_uris:
-            model_wind_path = os.path.join(settings.DOWNLOAD_ROOT, 'ncep')
-            wind_product_path = os.path.join(settings.PRODUCT_ROOT, 'sar_wind')
+            model_wind_path = os.path.join(settings.DOWNLOADS_ROOT, 'ncep')
+            wind_product_path = os.path.join(settings.PRODUCTS_ROOT, 'sar_wind')
             wind_product_basename = os.path.basename(non_ingested_uri
                         ).split('.')[0] + '_windfield.nc'
             qp = QuadPol(non_ingested_uri, wind_direction='ncep_wind_online',
@@ -26,10 +26,10 @@ class Command(BaseCommand):
 
             # Store processed SAR netCDF
             product_dir_name = 'sar_quad_pol'
-            if not os.path.exists(os.path.join(settings.PRODUCT_ROOT,
+            if not os.path.exists(os.path.join(settings.PRODUCTS_ROOT,
                     product_dir_name)):
-                os.mkdir(os.path.join(settings.PRODUCT_ROOT, product_dir_name))
-            ncFile = os.path.join(settings.PRODUCT_ROOT, product_dir_name,
+                os.mkdir(os.path.join(settings.PRODUCTS_ROOT, product_dir_name))
+            ncFile = os.path.join(settings.PRODUCTS_ROOT, product_dir_name,
                 os.path.basename(non_ingested_uri).split('.')[0] + '.nc')
             qp.export(ncFile)
 
