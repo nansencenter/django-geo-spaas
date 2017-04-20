@@ -24,11 +24,7 @@ class Command(BaseCommand):
 
         for non_ingested_uri in uris_from_args(*args):
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
-            try:
-                ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **options)
-            except GeolocationError:
-                self.stdout.write('Geolocation error in: %s\n' % non_ingested_uri)
-                continue
+            ds, cr = Dataset.objects.get_or_create(non_ingested_uri, **options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
             else:
