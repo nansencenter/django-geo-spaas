@@ -16,4 +16,3 @@ class TestProcessingSARDoppler(TestCase):
         call_command('ingest_sar_doppler', f, stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
-

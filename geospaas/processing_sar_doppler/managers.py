@@ -119,6 +119,13 @@ class DatasetManager(DM):
         ppath = product_path(module, swath_data[i].fileName)
 
         for i in range(n_subswaths):
+            is_corrupted = False
+            # Check if the file is corrupted
+            try:
+                inci = swath_data[i]['incidence_angle']
+            except:
+                is_corrupted = True
+                continue
             # Add Doppler anomaly
             swath_data[i].add_band(array=swath_data[i].anomaly(), parameters={
                 'wkv':
@@ -184,13 +191,20 @@ class DatasetManager(DM):
             #swath_data[i].write_figure(os.path.join(mp, filename),
             #        bands='fdg', clim=[-60,60], cmapName='jet')
             ## Add figure to db...
-
+            
             # Reproject to leaflet projection
             xlon, xlat = swath_data[i].get_corners()
             d = Domain(NSR(3857),
                    '-lle %f %f %f %f -tr 1000 1000' % (
                         xlon.min(), xlat.min(), xlon.max(), xlat.max()))
             swath_data[i].reproject(d, eResampleAlg=1, tps=True)
+
+            # Check if the reprojection failed
+            try:
+                inci = swath_data[i]['incidence_angle']
+            except:
+                is_corrupted = True
+                continue
 
             # Visualizations of the following bands (short_names) are created
             # when ingesting data:
@@ -235,4 +249,4 @@ class DatasetManager(DM):
                         visualization=vv, ds_parameter=dsp
                     )
 
-        return ds, True
+        return ds, not is_corrupted
