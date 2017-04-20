@@ -20,6 +20,7 @@ from geospaas.nansat_ingestor.managers import DatasetManager as DM
 
 from nansat.nsr import NSR
 from nansat.domain import Domain
+from nansat.figure import Figure
 from sardoppler.sardoppler import Doppler
 
 
@@ -29,6 +30,8 @@ class DatasetManager(DM):
         # ingest file to db
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
+        if not type(ds)==Dataset:
+            return ds, False
 
         # set Dataset entry_title
         ds.entry_title = 'SAR Doppler'
@@ -220,10 +223,14 @@ class DatasetManager(DM):
                 filename = '%s_subswath_%d.png'%(band, i)
                 # check uniqueness of parameter
                 param = Parameter.objects.get(short_name = band)
-                swath_data[i].write_figure(os.path.join(mp, filename),
+                fig = swath_data[i].write_figure(os.path.join(mp, filename),
                     bands=band,
                     mask_array=swath_data[i]['swathmask'],
                     mask_lut={0:[128,128,128]}, transparency=[128,128,128])
+                if type(fig)==Figure:
+                    print 'Created figure of subswath %d, band %s' %(i, band)
+                else:
+                    warnings.warn('Figure NOT CREATED')
 
                 # Get DatasetParameter
                 dsp, created = DatasetParameter.objects.get_or_create(dataset=ds,
