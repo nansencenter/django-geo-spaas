@@ -7,6 +7,7 @@ from dateutil.parser import parse
 from datetime import timedelta
 
 from django.conf import settings
+from django.utils import timezone
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
@@ -134,16 +135,15 @@ class DatasetManager(DM):
                 'wkv':
                 'anomaly_of_surface_backwards_doppler_centroid_frequency_shift_of_radar_wave'
             })
-            # search db for model wind field - simply take first item for
-            # now...
-            warnings.warn('First wind field is used for CDOP - we should ' \
-                    'instead use the one nearest in time')
+            # Find matching NCEP forecast wind field
             wind = Dataset.objects.filter(
                     source__platform__short_name = 'NCEP-GFS', 
-                    time_coverage_start__lte = \
-                        parse(swath_data[i].get_metadata()['time_coverage_start']) + timedelta(3),
-                    time_coverage_start__gte = \
-                        parse(swath_data[i].get_metadata()['time_coverage_start']) - timedelta(3)
+                    time_coverage_start__range = [
+                        parse(swath_data[i].get_metadata()['time_coverage_start'])
+                        - timedelta(hours=3),
+                        parse(swath_data[i].get_metadata()['time_coverage_start'])
+                        + timedelta(hours=3)
+                    ]
                 )
             bandnum = swath_data[i]._get_band_number({
                 'standard_name': \
@@ -151,29 +151,36 @@ class DatasetManager(DM):
                 })
             pol = swath_data[i].get_metadata(bandID=bandnum, key='polarization')
             if wind:
+                dates = [w.time_coverage_start for w in wind]
+                nearest_date = min(dates, key=lambda d:
+                        abs(d-parse(swath_data[i].get_metadata()['time_coverage_start']).replace(tzinfo=timezone.utc)))
                 fww = swath_data[i].wind_waves_doppler(
-                        nansat_filename(wind[0].dataseturi_set.all()[0].uri),
+                        nansat_filename(wind[dates.index(nearest_date)].dataseturi_set.all()[0].uri),
                         pol
                     )
                 swath_data[i].add_band(array=fww, parameters={
                     'wkv':
                     'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_wind_waves'
                 })
+                fdg, land_corr = swath_data[i].geophysical_doppler_shift(wind =
+                    nansat_filename(wind[dates.index(nearest_date)].dataseturi_set.all()[0].uri))
 
-                fdg = swath_data[i].geophysical_doppler_shift(wind =
-                    nansat_filename(wind[0].dataseturi_set.all()[0].uri))
-                swath_data[i].add_band(array=fdg,
-                    parameters={'wkv':
-                    'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
-                )
-
+                # Estimate current by subtracting wind-waves Doppler
                 theta = swath_data[i]['incidence_angle']*np.pi/180.
                 vcurrent = -np.pi*(fdg - fww)/(112.*np.sin(theta))
-                # Smooth...
-                vcurrent = median_filter(vcurrent, size=(3,3))
+                ## Smooth...
+                #vcurrent = median_filter(vcurrent, size=(3,3))
                 swath_data[i].add_band(array=vcurrent,
                         parameters={'wkv':
                         'surface_radial_doppler_sea_water_velocity'}) 
+            else:
+                fww=None
+                fdg, land_corr = swath_data[i].geophysical_doppler_shift()
+
+            swath_data[i].add_band(array=fdg,
+                parameters={'wkv':
+                'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'}
+            )
 
             # Export data to netcdf
             print('Exporting %s (subswath %d)' %(swath_data[i].fileName, i))
@@ -213,9 +220,9 @@ class DatasetManager(DM):
             # when ingesting data:
             ingest_creates = [
                     'valid_doppler', 'valid_land_doppler', 'valid_sea_doppler',
-                    'dca']
+                    'dca', 'fdg']
             if wind:
-                ingest_creates.extend(['fww', 'fdg', 'Ur'])
+                ingest_creates.extend(['fww', 'Ur'])
             # (the geophysical doppler shift must later be added in a separate
             # manager method in order to estimate the range bias after
             # processing multiple files)

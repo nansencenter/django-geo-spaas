@@ -11,9 +11,11 @@ from nansat.tools import OptionError
 from nansat.nsr import NSR
 from nansat.domain import Domain
 from nansat.nansat import Nansat
+from nansat.nansatmap import Nansatmap
 from sardoppler.sardoppler import Doppler
 
 from django.utils import timezone
+from django.contrib.gis.geos import WKTReader
 
 from geospaas.utils import nansat_filename, media_path, product_path
 from geospaas.catalog.models import Dataset, DatasetURI
@@ -373,3 +375,146 @@ def update_geophysical_doppler(dopplerFile, t0, t1, swath, sensor='ASAR',
 
 ## could check columns and set those with delta>3 Hz invalid:
 #delta = rb - rbinterp(va)
+
+def calc_mean_doppler(datetime_start=timezone.datetime(2010,1,1,
+    tzinfo=timezone.utc), datetime_end=timezone.datetime(2010,2,1,
+    tzinfo=timezone.utc), domain=Domain(NSR().wkt, 
+        '-te 10 -44 40 -30 -tr 0.05 0.05')):
+    geometry = WKTReader().read(domain.get_border_wkt(nPoints=1000))
+    ds = Dataset.objects.filter(entry_title__contains='Doppler',
+            time_coverage_start__range=[datetime_start, datetime_end],
+            geographic_location__geometry__intersects=geometry)
+    Va = np.zeros(domain.shape())
+    Vd = np.zeros(domain.shape())
+    ca = np.zeros(domain.shape())
+    cd = np.zeros(domain.shape())
+    sa = np.zeros(domain.shape())
+    sd = np.zeros(domain.shape())
+    sum_var_inv_a = np.zeros(domain.shape())
+    sum_var_inv_d = np.zeros(domain.shape())
+    for dd in ds:
+        uris = dd.dataseturi_set.filter(uri__endswith='nc')
+        for uri in uris:
+            dop = Doppler(uri.uri)
+            # Consider skipping swath 1 and possibly 2...
+            dop.reproject(domain)
+            # TODO: HARDCODING - MUST BE IMPROVED
+            satpass = dop.get_metadata(key='Originating file').split('/')[6]
+            if satpass=='ascending':
+                try:
+                    v_ai = dop['Ur']
+                    v_ai[np.abs(v_ai)>3] = np.nan
+                except:
+                    # subswath doesn't cover the given domain
+                    continue
+                # uncertainty:
+                # 5 Hz - TODO: estimate this correctly...
+                sigma_ai = -np.pi*np.ones(dop.shape())*5./(112*np.sin(dop['incidence_angle']*np.pi/180.)) 
+                alpha_i = -dop['sensor_azimuth']*np.pi/180.
+                Va = np.nansum(np.append(np.expand_dims(Va, 2),
+                    np.expand_dims(v_ai/np.square(sigma_ai), 2), axis=2),
+                    axis=2)
+                ca = np.nansum(np.append(np.expand_dims(ca, 2),
+                    np.expand_dims(np.cos(alpha_i)/np.square(sigma_ai), 2),
+                    axis=2), axis=2)
+                sa = np.nansum(np.append(np.expand_dims(sa, 2),
+                    np.expand_dims(np.sin(alpha_i)/np.square(sigma_ai), 2),
+                    axis=2), axis=2)
+                sum_var_inv_a =np.nansum(np.append(np.expand_dims(sum_var_inv_a, 2),
+                    np.expand_dims(1./np.square(sigma_ai), 2), axis=2),
+                    axis=2)
+            else:
+                try:
+                    v_dj = -dop['Ur']
+                    v_dj[np.abs(v_dj)>3] = np.nan
+                except:
+                    # subswath doesn't cover the given domain
+                    continue
+                # 5 Hz - TODO: estimate this correctly...
+                sigma_dj = -np.pi*np.ones(dop.shape())*5./(112*np.sin(dop['incidence_angle']*np.pi/180.)) 
+                delta_j = (dop['sensor_azimuth']-180.)*np.pi/180.
+                Vd = np.nansum(np.append(np.expand_dims(Vd, 2),
+                    np.expand_dims(v_dj/np.square(sigma_dj), 2), axis=2),
+                    axis=2)
+                cd = np.nansum(np.append(np.expand_dims(cd, 2),
+                    np.expand_dims(np.cos(delta_j)/np.square(sigma_dj), 2),
+                    axis=2), axis=2)
+                sd = np.nansum(np.append(np.expand_dims(sd, 2),
+                    np.expand_dims(np.sin(delta_j)/np.square(sigma_dj), 2),
+                    axis=2), axis=2)
+                sum_var_inv_d = np.nansum(np.append(
+                    np.expand_dims(sum_var_inv_d, 2), np.expand_dims(
+                        1./np.square(sigma_ai), 2), axis=2), axis=2)
+
+    u = (Va*sd + Vd*sa)/(sa*cd + sd*ca)
+    v = (Va*cd - Vd*ca)/(sa*cd + sd*ca)
+    sigma_u = np.sqrt(np.square(sd)*sum_var_inv_a +
+            np.square(sa)*sum_var_inv_d) / (sa*cd + sd*ca)
+    sigma_v = np.sqrt(np.square(cd)*sum_var_inv_a +
+            np.square(ca)*sum_var_inv_d) / (sa*cd + sd*ca)
+    nu = Nansat(array=u, domain=domain)
+    nmap=Nansatmap(nu, resolution='h')
+    nmap.pcolormesh(nu[1], vmin=-1.5, vmax=1.5, cmap='bwr')
+    nmap.add_colorbar()
+    nmap.draw_continents()
+    nmap.fig.savefig('/vagrant/shared/unwasc.png', bbox_inches='tight')
+    
+    #plt.subplot(1,2,1)
+    #plt.imshow(u, vmin=-2, vmax=2)
+    #plt.colorbar()
+    #plt.subplot(1,2,2)
+    #plt.imshow(sigma_u)
+    #plt.colorbar()
+    #plt.show()
+    #import ipdb
+    #ipdb.set_trace()
+    #return u
+
+def mean_gc_geostrophic(datetime_start=timezone.datetime(2010,1,1,
+    tzinfo=timezone.utc), datetime_end=timezone.datetime(2010,2,1,
+    tzinfo=timezone.utc), domain=Domain(NSR().wkt, 
+        '-te 10 -44 40 -30 -tr 0.05 0.05')):
+    #gc_datasets = Dataset.objects.filter(entry_title__contains='globcurrent',
+    #                time_coverage_start__range=[datetime_start,
+    #                datetime_end])
+    shapeD = domain.shape()
+    U = np.zeros((shapeD[0], shapeD[1], 1))
+    fn = 'http://tds0.ifremer.fr/thredds/dodsC/CLS-L4-CURGEO_0M-ALT_OI_025-V02.0_FULL_TIME_SERIE'
+    dt = datetime_start
+    while dt <= datetime_end:
+        expFn = '/vagrant/shared/test_data/globcurrent/eastward_geostrophic_current_velocity_%d-%02d-%02d.nc'%(dt.year, dt.month, dt.day)
+        #n = Nansat(
+        #    fn, date='%d-%02d-%02d'%(dt.year, dt.month, dt.day),
+        #    bands=['eastward_geostrophic_current_velocity'])
+        #n.export(expFn)
+        n = Nansat(expFn, mapperName='generic')
+        n.reproject(domain, addmask=False)
+        u = n['eastward_geostrophic_current_velocity']
+        # OK:
+        #plt.imshow(u)
+        #plt.colorbar()
+        #plt.show()
+        if np.sum(np.isnan(u))==u.size:
+            continue
+        else:
+            U = np.append(U, np.expand_dims(u, axis=2), axis=2)
+        dt = dt + timezone.timedelta(days=1)
+    meanU = np.nanmean(U, axis=2)
+    nu = Nansat(array=meanU, domain=domain)
+    nmap=Nansatmap(nu, resolution='h')
+    nmap.pcolormesh(nu[1], vmin=-1.5, vmax=1.5, cmap='jet') #bwr
+    nmap.add_colorbar()
+    nmap.draw_continents()
+    nmap.fig.savefig('/vagrant/shared/u_gc.png', bbox_inches='tight')
+    #stdU = np.nanstd(U, axis=2)
+    ##plt.figure(figsize=(15,10))
+    #plt.figure()
+    #plt.subplot(1,2,1)
+    #plt.imshow(meanU, vmin=-.5, vmax=.5, cmap='bwr')
+    #plt.colorbar()
+    #plt.subplot(1,2,2)
+    #plt.imshow(stdU)
+    #plt.colorbar()
+    #plt.show()
+    ##plt.savefig('/vagrant/shared/globcurrent_mean_geostrophic_u.png')
+    
