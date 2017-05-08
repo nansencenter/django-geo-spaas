@@ -30,6 +30,9 @@ class DatasetManager(DM):
         if not created and not reprocess:
             return ds, created
 
+        # set Dataset entry_title
+        ds.entry_title = 'old Envisat ASAR Doppler'
+        ds.save()
 
         fn = nansat_filename(uri)
         #try:
