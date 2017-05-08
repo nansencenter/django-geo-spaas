@@ -17,10 +17,10 @@
 
 <body>
 
-<h2>{{ image.sourcefile.name }}</h2>
+<h2>{{ dataset.sourcefile.name }}</h2>
 
 <ul>
-    {% for band in image.bands.all %}
+    {% for band in dataset.bands.all %}
         <li> <a href=./{{ band.id }} >{{ band.name }} </a>: {{ band.standard_name }} </li>
     {% endfor %}
 </ul>

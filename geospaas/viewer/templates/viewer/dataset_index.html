@@ -10,13 +10,13 @@
 
 {% block columns %}
 <td>
-    {{ img.source }}
+    {{ ds.source }}
 </td>
 <td>
-    {{ img.time_coverage_start }}
+    {{ ds.time_coverage_start }}
 </td>
 <td>
-    {% for viz in img.visualizations %}
+    {% for viz in ds.visualizations %}
         <input type="checkbox" id='prod_{{ viz.pk }}' class='prodButton' style="width: 0">
         <label for='prod_{{ viz.pk }}'>{{ viz.title }}</label>
     {% endfor %}

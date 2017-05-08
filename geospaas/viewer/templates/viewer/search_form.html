@@ -64,12 +64,12 @@
             else remove_image_overlay(prodButton);
         };
 
-        {% for img in object_list %}
-            mapPolygons[ {{ forloop.counter }} ] = {{ img.geo_js|safe }}
-            mapConstPolygons[ {{ forloop.counter }} ] = {{ img.const_geo_js|safe }}
+        {% for dataset in object_list %}
+            mapPolygons[ {{ forloop.counter }} ] = {{ dataset.geo_js|safe }}
+            mapConstPolygons[ {{ forloop.counter }} ] = {{ dataset.const_geo_js|safe }}
             {% comment %}
-            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 1, fillOpacity: 0.2, fillColor: '#f00'});
-            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ img.border2str }}, {color: '#b20000', weight: 0.5, fillOpacity: 0.05, fillColor: '#b20000'});
+            mapPolygons[ {{ forloop.counter }} ] = L.polygon({{ dataset.border2str }}, {color: '#b20000', weight: 1, fillOpacity: 0.2, fillColor: '#f00'});
+            mapConstPolygons[ {{ forloop.counter }} ] = L.polygon({{ dataset.border2str }}, {color: '#b20000', weight: 0.5, fillOpacity: 0.05, fillColor: '#b20000'});
             {% endcomment %}
         {% endfor %}
 
@@ -77,7 +77,7 @@
             window.map = e.detail.map;
             window.map.setView([0,0], 2);
             MapQuestOpen_Aerial.addTo(window.map);
-            {% for img in object_list %}
+            {% for dataset in object_list %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}
 
@@ -99,11 +99,11 @@
 
         var prodUrls = new Array();
         var prodExtents = new Array();
-        {% for img in object_list %}
-            {% for prod in img.products %}
+        {% for dataset in object_list %}
+            {% for prod in dataset.products %}
             mapImageOverlays["prod_{{ prod.id }}"] = L.imageOverlay('{% static prod.location.uri %}',
-                                                [[{{ img.geolocation.geometry.extent.1 }}, {{ img.geolocation.geometry.extent.0 }}],
-                                                 [{{ img.geolocation.geometry.extent.3 }}, {{ img.geolocation.geometry.extent.2 }}]]);
+                                                [[{{ dataset.geolocation.geometry.extent.1 }}, {{ dataset.geolocation.geometry.extent.0 }}],
+                                                 [{{ dataset.geolocation.geometry.extent.3 }}, {{ dataset.geolocation.geometry.extent.2 }}]]);
             {% endfor %}
         {% endfor %}
 

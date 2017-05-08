@@ -11,7 +11,7 @@ from geospaas.viewer.forms import SearchForm
 class IndexView(View):
     form_class = SearchForm
     image_class = Dataset
-    main_template = 'viewer/image_index.html'
+    main_template = 'viewer/dataset_index.html'
     viewname = 'index'
     form = None
     context = {}
@@ -66,19 +66,19 @@ class IndexView(View):
 
     def render(self, request):
         ''' Render page based on form data '''
-        # filter images
-        images = self.image_class.objects.all()
-        images = images.order_by('time_coverage_start')
+        # filter datasets
+        datasets = self.image_class.objects.all()
+        datasets = datasets.order_by('time_coverage_start')
         t1 = self.form.cleaned_data['date1'] + timezone.timedelta(hours=24)
-        images = images.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
-        images = images.filter(time_coverage_end__lte=t1)
+        datasets = datasets.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
+        datasets = datasets.filter(time_coverage_end__lte=t1)
         if self.form.cleaned_data['polygon'] is not None:
-            images = images.filter(
+            datasets = datasets.filter(
                     geographic_location__geometry__intersects
                     = self.form.cleaned_data['polygon']
                 )
         if self.form.cleaned_data['source'] is not None:
-            images = images.filter(source=self.form.cleaned_data['source'])
+            datasets = datasets.filter(source=self.form.cleaned_data['source'])
 
         # debuggin outuput
         greeting = ''
@@ -87,19 +87,19 @@ class IndexView(View):
 
         # paginating
         page = request.POST.get('page', 1)
-        paginator = Paginator(images, 10)
+        paginator = Paginator(datasets, 10)
         try:
-            images = paginator.page(page)
+            datasets = paginator.page(page)
         except PageNotAnInteger:
             # If page is not an integer, deliver first page.
-            images = paginator.page(1)
+            datasets = paginator.page(1)
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
-            images = paginator.page(paginator.num_pages)
+            datasets = paginator.page(paginator.num_pages)
 
         params = []
-        for image in images:
-            visualizations = image.visualizations()
+        for dataset in datasets:
+            visualizations = dataset.visualizations()
             for viz in visualizations:
                 for ds_parameter in viz.ds_parameters.all():
                     if not ds_parameter.parameter.standard_name in params:
@@ -108,21 +108,21 @@ class IndexView(View):
         visualizations = {}
         for pp in params:
             visualizations[pp] = []
-            for ds in images:
+            for ds in datasets:
                 visualizations[pp].extend(Visualization.objects.filter(
                     ds_parameters__parameter__standard_name=pp,
                     ds_parameters__dataset=ds))
 
         self.context['params'] = params
         self.context['visualizations'] = visualizations
-        self.context['images'] = images
+        self.context['datasets'] = datasets
         self.context['form'] = self.form
         self.context['greeting'] = greeting
         self.context['viewname'] = self.viewname
         return render(request, self.main_template, self.context)
 
-def image(request, image_id):
-    image = Dataset.objects.get(id=image_id)
-    context = {'image': image}#, 'info': image.info()}
+def dataset(request, dataset_id):
+    dataset = Dataset.objects.get(id=dataset_id)
+    context = {'dataset': dataset}#, 'info': dataset.info()}
 
-    return render(request, 'viewer/image.html', context)
+    return render(request, 'viewer/dataset.html', context)
