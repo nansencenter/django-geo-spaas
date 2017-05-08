@@ -178,6 +178,7 @@
 
         window.addEventListener("map:init", function (e) {
             window.map = e.detail.map;
+            window.map.setView([0,0], 2);
             {% for ds in datasets %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}

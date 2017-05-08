@@ -76,7 +76,7 @@
         window.addEventListener("map:init", function (e) {
             window.map = e.detail.map;
             window.map.setView([0,0], 2);
-            MapQuestOpen_Aerial.addTo(window.map);
+            //MapQuestOpen_Aerial.addTo(window.map);
             {% for dataset in object_list %}
                 window.mapConstPolygons[ {{ forloop.counter }} ].addTo(window.map);
             {% endfor %}
