@@ -92,7 +92,7 @@ class IndexView(View):
 
         # paginating
         page = request.POST.get('page', 1)
-        paginator = Paginator(datasets, 40)
+        paginator = Paginator(datasets, 10)
         try:
             datasets = paginator.page(page)
         except PageNotAnInteger:
