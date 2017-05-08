@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import View
+from django.db.models import Q
 
 #from geospaas.catalog.models import Dataset
 from geospaas.viewer.models import Dataset, Visualization
@@ -69,16 +70,20 @@ class IndexView(View):
         # filter datasets
         datasets = self.image_class.objects.all()
         datasets = datasets.order_by('time_coverage_start')
+        t0 = self.form.cleaned_data['date0']
         t1 = self.form.cleaned_data['date1'] + timezone.timedelta(hours=24)
-        datasets = datasets.filter(time_coverage_start__gte=self.form.cleaned_data['date0'])
-        datasets = datasets.filter(time_coverage_end__lte=t1)
+        datasets = datasets.filter(Q(time_coverage_start__range=[t0,t1]) |
+                Q(time_coverage_end__range=[t0,t1]) )
         if self.form.cleaned_data['polygon'] is not None:
             datasets = datasets.filter(
                     geographic_location__geometry__intersects
                     = self.form.cleaned_data['polygon']
                 )
         if self.form.cleaned_data['source'] is not None:
-            datasets = datasets.filter(source=self.form.cleaned_data['source'])
+            src = self.form.cleaned_data['source']
+            datasets = datasets.filter(source__in=src)
+        #if self.form.cleaned_data['collocate_with'] is not None:
+        #    src = self.form.cleaned_data['collocate_with']
 
         # debuggin outuput
         greeting = ''
@@ -87,7 +92,7 @@ class IndexView(View):
 
         # paginating
         page = request.POST.get('page', 1)
-        paginator = Paginator(datasets, 10)
+        paginator = Paginator(datasets, 40)
         try:
             datasets = paginator.page(page)
         except PageNotAnInteger:
