@@ -87,7 +87,7 @@ class IndexView(View):
 
         # paginating
         page = request.POST.get('page', 1)
-        paginator = Paginator(images, 40)
+        paginator = Paginator(images, 10)
         try:
             images = paginator.page(page)
         except PageNotAnInteger:
