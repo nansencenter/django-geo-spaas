@@ -14,8 +14,10 @@ from nansat.nansat import Nansat
 from nansat.nansatmap import Nansatmap
 from sardoppler.sardoppler import Doppler
 
+from django.utils.six import StringIO
 from django.utils import timezone
 from django.contrib.gis.geos import WKTReader
+from django.core.management import call_command
 
 from geospaas.utils import nansat_filename, media_path, product_path
 from geospaas.catalog.models import Dataset, DatasetURI
@@ -469,6 +471,15 @@ def calc_mean_doppler(datetime_start=timezone.datetime(2010,1,1,
     #import ipdb
     #ipdb.set_trace()
     #return u
+
+def reprocess_failed():
+    out = StringIO()
+    ds = Dataset.objects.filter(dataseturi__uri__contains='level-0')
+    for dd in ds:
+        if len(dd.dataseturi_set.all())<6:
+            uri = dd.dataseturi_set.get(uri__endswith='.gsar')
+            print 'Reprocessing %s'%uri.uri
+            call_command('ingest_sar_doppler', uri.uri, '--reprocess', stdout=out)
 
 def mean_gc_geostrophic(datetime_start=timezone.datetime(2010,1,1,
     tzinfo=timezone.utc), datetime_end=timezone.datetime(2010,2,1,

@@ -189,8 +189,13 @@ class DatasetManager(DM):
                     os.path.basename(swath_data[i].fileName).split('.')[0] 
                         + 'subswath%d.nc'%(i)
                 )
-            swath_data[i].set_metadata(key='Originating file',
-                    value=swath_data[i].fileName)
+            origFile = swath_data[i].fileName
+            try:
+                swath_data[i].set_metadata(key='Originating file',
+                    value=origFile)
+            except Exception as e:
+                # TODO:
+                warnings.warn('%s: BUG IN GDAL(?) - SHOULD BE CHECKED..'%e.message)
             swath_data[i].export(fileName=fn)
             ncuri = os.path.join('file://localhost', fn)
             new_uri, created = DatasetURI.objects.get_or_create(uri=ncuri,
