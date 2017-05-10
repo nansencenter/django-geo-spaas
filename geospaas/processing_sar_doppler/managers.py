@@ -219,6 +219,8 @@ class DatasetManager(DM):
                 inci = swath_data[i]['incidence_angle']
             except:
                 is_corrupted = True
+                warnings.warn('Could not read incidence angles - reprojection'\
+                        ' failed')
                 continue
 
             # Visualizations of the following bands (short_names) are created
