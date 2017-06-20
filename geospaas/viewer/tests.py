@@ -49,8 +49,10 @@ class ModelTests(TestCase):
         ext_coords = ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))
         polygon = Polygon(LinearRing(ext_coords))
 
-        search = Search(sdate=sdate, date0=date0, date1=date1, source=source,
+        search = Search(sdate=sdate, date0=date0, date1=date1,
                 polygon=polygon)
+        search.save()
+        search.source.add(source)
         search.save()
         self.assertEqual(search.date0, date0)
         self.assertIsInstance(search.__str__(), str)
