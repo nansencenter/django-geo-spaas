@@ -138,14 +138,14 @@ class FormAndViewTests(TestCase):
 
     def test_search_loads(self):
         # this also tests urls.py...
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('geospaas:viewer:index'))
         self.assertEqual(response.status_code, 200)
         # Check initial values of date0 and date1
 
     def test_search_loads_valid(self):
-        response = self.client.post(reverse('index'), self.valid_form)
+        response = self.client.post(reverse('geospaas:viewer:index'), self.valid_form)
         self.assertEqual(response.status_code, 200)
 
     def test_index_fails_invalid_search(self):
         with self.assertRaises(ValueError):
-            response = self.client.post(reverse('index'), self.invalid_form)
+            response = self.client.post(reverse('geospaas:viewer:index'), self.invalid_form)
