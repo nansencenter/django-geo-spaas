@@ -28,11 +28,9 @@ class DatasetManager(models.Manager):
             dataset and flag
         '''
 
-        # Validate uri - this should fail if the data isn't available
-        try:
-            valid_uri = validate_uri(uri)
-        except:
-            return 0, False
+        # Validate uri - this should fail if the uri doesn't point to a valid
+        # file or stream
+        valid_uri = validate_uri(uri)
 
         # check if dataset already exists
         uris = DatasetURI.objects.filter(uri=uri)
