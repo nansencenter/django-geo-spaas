@@ -121,13 +121,13 @@ class FormAndViewTests(TestCase):
                     0)))), #loc.geometry,
                 'date0': date0,
                 'date1': date1,
-                'source': source.id
+                'source': [source.id]
             }
         self.invalid_form = {
                 'polygon': 1,
                 'date0': date0,
                 'date1': date1,
-                'source': source.id
+                'source': [source.id]
             }
 
     def test_search_form(self):
