@@ -31,6 +31,8 @@ class DatasetManager(DM):
         # ingest file to db
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
+        import ipdb
+        ipdb.set_trace()
         if not type(ds)==Dataset:
             return ds, False
 
@@ -38,7 +40,10 @@ class DatasetManager(DM):
         ds.entry_title = 'SAR Doppler'
         ds.save()
 
-        if ds.geographic_location.geometry.area>15 and not reprocess:
+        fn = nansat_filename(uri)
+        n = Doppler(fn, subswath=0)
+        gg = WKTReader().read(n.get_border_wkt())
+        if ds.geographic_location.geometry.area>gg.area and not reprocess:
             return ds, False
 
         ''' Update dataset border geometry
@@ -48,7 +53,6 @@ class DatasetManager(DM):
         though...
         '''
         n_subswaths = 5
-        fn = nansat_filename(uri)
         swath_data = {}
         lon = {}
         lat = {}
