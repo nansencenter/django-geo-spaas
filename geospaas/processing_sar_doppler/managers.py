@@ -31,8 +31,6 @@ class DatasetManager(DM):
         # ingest file to db
         ds, created = super(DatasetManager, self).get_or_create(uri, *args,
                 **kwargs)
-        import ipdb
-        ipdb.set_trace()
         if not type(ds)==Dataset:
             return ds, False
 
