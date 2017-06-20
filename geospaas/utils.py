@@ -37,7 +37,7 @@ def validate_uri(uri):
         response.close()
         validation_result = True
     except IOError as e:
-        if e.args[1]==u'Is a directory':
+        if len(e.args)>1 and e.args[1]==u'Is a directory':
             validation_result = True
     return validation_result
 
