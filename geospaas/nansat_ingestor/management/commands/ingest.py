@@ -24,7 +24,7 @@ class Command(BaseCommand):
                             help='''Number of points in the border''')
 
     def handle(self, *args, **options):
-        if len(args)==0:
+        if len(options['files'])==0:
             raise IOError('Please provide at least one filename')
         nPoints = int(options.get('nPoints', self.nPoints))
 
