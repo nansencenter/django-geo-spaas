@@ -11,7 +11,7 @@ class Command(BaseCommand):
     nPoints = 10
 
     def add_arguments(self, parser):
-        parser.add_argument('files', nargs='*', type='str')
+        parser.add_argument('files', nargs='*', type=str)
         parser.add_argument('--nansat-option',
                             action='append',
                             help='''Option for Nansat() e.g.
