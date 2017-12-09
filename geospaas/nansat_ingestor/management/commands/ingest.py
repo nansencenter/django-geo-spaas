@@ -11,6 +11,7 @@ class Command(BaseCommand):
     nPoints = 10
 
     def add_arguments(self, parser):
+        parser.add_argument('files', nargs='*', type='str')
         parser.add_argument('--nansat-option',
                             action='append',
                             help='''Option for Nansat() e.g.
@@ -28,7 +29,7 @@ class Command(BaseCommand):
         nPoints = int(options.get('nPoints', self.nPoints))
 
         non_ingested_uris = DatasetURI.objects.all().get_non_ingested_uris(
-                uris_from_args(*args)
+                uris_from_args(options['files'])
             )
 
         nansat_options = {}

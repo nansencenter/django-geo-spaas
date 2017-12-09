@@ -52,10 +52,10 @@ def nansat_filename(uri):
     else:
         return uri
 
-def uris_from_args(*args):
-    if len(args[0].split(':'))==1:
-        uris = ['file://localhost' + fn for fn in args]
+def uris_from_args(fnames):
+    if len(fnames[0].split(':'))==1:
+        uris = ['file://localhost' + fn for fn in fnames]
     else:
-        uris = [uri for uri in args]
+        uris = [uri for uri in fnames]
     return uris
 
