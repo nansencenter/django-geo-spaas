@@ -31,8 +31,6 @@ class DatasetManager(models.Manager):
         # Validate uri - this should fail if the uri doesn't point to a valid
         # file or stream
         valid_uri = validate_uri(uri)
-        import ipdb
-        ipdb.set_trace()
 
         # check if dataset already exists
         uris = DatasetURI.objects.filter(uri=uri)
