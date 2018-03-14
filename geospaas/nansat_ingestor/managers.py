@@ -68,7 +68,7 @@ class DatasetManager(models.Manager):
 
         # Find coverage to set number of points in the geolocation
         geolocation = GeographicLocation.objects.get_or_create(
-                      geometry=WKTReader().read(n.get_border_wkt(**kwargs)))[0]
+                      geometry=WKTReader().read(n.get_border_wkt()))[0]
         try:
             entrytitle = n.get_metadata('Entry Title')
         except:
