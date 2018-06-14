@@ -13,7 +13,7 @@ env:
 
 install:
     - conda update -q conda --yes
-    - conda install -q --yes -c conda-forge gdal numpy scipy matplotlib pillow netcdf4 nose cfunits coveralls basemap django=$DJANGO_VERSION
+    - conda install -q --yes -c conda-forge gdal numpy scipy matplotlib pillow netcdf4 nose cfunits coveralls basemap nansat pythesint django=$DJANGO_VERSION
     - python setup.py install
     
 script:
