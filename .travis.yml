@@ -7,15 +7,21 @@ before_install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b -f -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
+    - wget https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz
+    - tar -xzvf 2.8.1.tar.gz
 
 env:
     - DJANGO_VERSION=1.11.7
 
 install:
     - conda update -q conda --yes
-    - conda install -q --yes -c conda-forge gdal numpy scipy matplotlib pillow netcdf4 nose cfunits coveralls basemap nansat pythesint django=$DJANGO_VERSION
+    - conda create -n test_env python=2 django=1.11.7 gdal mock nansat pythesint -c conda-forge
+    - source activate test_env
+    - cd pysqlite-2.8.1
     - python setup.py install
-    
+    - cd ..
+    - python setup.py install
+
 script:
     - $HOME/miniconda/bin/python runtests.py
 
