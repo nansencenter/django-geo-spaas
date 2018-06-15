@@ -26,9 +26,10 @@ def mock_get_metadata(*args, **kwargs):
         raise
     return predefined_metadata_dict[args[0]]
 
+# See also:
+# https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
 
 class TestDataset(TestCase):
-
     fixtures = ['vocabularies', 'catalog']
 
     @patch('geospaas.nansat_ingestor.managers.Nansat')
@@ -37,13 +38,11 @@ class TestDataset(TestCase):
         mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
 
         uri = 'file://localhost/some/folder/filename.ext'
-        ''' Shall open file, read metadata and save'''
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         ds1, cr1 = Dataset.objects.get_or_create(uri)
 
         self.assertTrue(cr0)
         self.assertFalse(cr1)
-
 
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
@@ -51,6 +50,7 @@ class TestDataset(TestCase):
             ds, created = Dataset.objects.get_or_create(uri)
 
 """
+
 class TestDatasetURI(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
