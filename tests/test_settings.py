@@ -1,6 +1,7 @@
 INSTALLED_APPS = [
     'geospaas.catalog',
     'geospaas.vocabularies',
+    'geospaas.nansat_ingestor',
 ]
 
 SECRET_KEY = 'kljhfek@=w^dnto^3hqqm)(3npeag6d2q3a@swxhj&)4qkv(#b'
