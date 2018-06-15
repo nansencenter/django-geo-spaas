@@ -11,13 +11,11 @@ before_install:
 env:
     - DJANGO_VERSION=1.11.7
 
-install:
+script:
     - conda update -q conda --yes
     - conda create -n test_env python=2 django=1.11.7 gdal mock nansat pythesint -c conda-forge --yes
     - source activate test_env
     - pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz
     - python setup.py install
-
-script:
-    - $HOME/miniconda/bin/python runtests.py
+    - python runtests.py
 
