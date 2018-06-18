@@ -5,26 +5,19 @@ sudo: false
 
 before_install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b -f -p $HOME/miniconda
+    - bash miniconda.sh -b -f -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
 
 env:
     - DJANGO_VERSION=1.11.7
 
-install:
-    - conda update -q --yes conda
-    - conda install -q --yes -c conda-forge gdal numpy scipy matplotlib pillow netcdf4 nose cfunits coveralls
-    - conda install -q --yes -c conda-forge basemap
-    - export GDAL_DATA=/home/vagrant/miniconda/share/gdal/
-    - export GEOS_DIR=/home/vagrant/miniconda/
-    - python -c 'import gdal; print gdal.__file__'
-    - python -c 'from mpl_toolkits.basemap import Basemap'
-    - pip install -q Django==$DJANGO_VERSION
-    - python setup.py install
-
 script:
-    - coverage run --source=geospaas setup.py test
+    - conda update -q conda --yes
+    - conda create -n test_env python=2 django=1.11.7 gdal mock nansat pythesint -c conda-forge --yes
+    - source activate test_env
+    - pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz
+    - pip install django-forms-bootstrap
+    - pip install django-leaflet
+    - python setup.py install
+    - python runtests.py
 
-after_success:
-    - coveralls

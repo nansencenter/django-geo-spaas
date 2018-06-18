@@ -1,46 +1,27 @@
 #!/usr/bin/env python
 #-------------------------------------------------------------------------------
-# Name:
-# Purpose:
+# Name: runtests.py
+# Purpose: test runner to test reusable applications. See:
+# https://docs.djangoproject.com/en/dev/topics/testing/advanced/#testing-reusable-applications
 #
-# Author:       Morten Wergeland Hansen
-# Modified:
+# Author:       Morten Wergeland Hansen, Anton Korosov
 #
-# Created:
-# Last modified:
 # Copyright:    (c) NERSC
 # License:
 #-------------------------------------------------------------------------------
-#This file mainly exists to allow the following commands to work:
-# python setup.py test
-# ./runtests <appName>
-import os, sys
-import argparse
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'project.settings'
-sys.path.insert(0, 'project')
+
+import os
+import sys
 
 import django
-django.setup()
-
-from django.test.utils import get_runner
 from django.conf import settings
+from django.test.utils import get_runner
 
-def runtests(moduleName=None):
-    if moduleName is None:
-        appPath = 'geospaas'
-    else:
-        appPath = 'geospaas.%s' % moduleName
-
+if __name__ == "__main__":
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
+    django.setup()
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True)
-    failures = test_runner.run_tests([appPath])
-    sys.exit(failures)
-
-if __name__ == '__main__':
-    # get name of a module to test
-    parser = argparse.ArgumentParser()
-    parser.add_argument('module', type=str, nargs='?', default=None)
-    args = parser.parse_args()
-
-    runtests(args.module)
+    failures = test_runner.run_tests(["geospaas"])
+    sys.exit(bool(failures))

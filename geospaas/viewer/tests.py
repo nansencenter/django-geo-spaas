@@ -20,20 +20,6 @@ from geospaas.viewer.models import VisualizationParameter
 from geospaas.viewer import tools as vtools
 
 
-class TestGeneral(TestCase):
-
-    def test_media_path(self):
-
-        f = '/vagrant/shared/test_data/asar/' \
-                'ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
-        # should rather just check that media_path has been called by
-        # get_or_create, using mock...
-        media_path = vtools.media_path('geospaas.processing_sar', f)
-        self.assertTrue(os.path.exists(media_path))
-        self.assertEqual(media_path, os.path.join(settings.MEDIA_ROOT,
-            'geospaas', 'processing_sar',
-            'ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844'))
-
 class ModelTests(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
