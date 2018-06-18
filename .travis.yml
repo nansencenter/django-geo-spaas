@@ -15,7 +15,7 @@ install:
     - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION gdal mock nansat pythesint -c conda-forge --yes
     - source activate test_env
     - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-          pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz
+          pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz;
       fi
     - pip install django-forms-bootstrap
     - pip install django-leaflet
