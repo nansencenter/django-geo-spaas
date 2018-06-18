@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from leaflet.admin import LeafletGeoAdmin
-from models import GeographicLocation, Source, Dataset, DatasetURI, \
+from geospaas.catalog.models import GeographicLocation, Source, Dataset, DatasetURI, \
         Parameter, DatasetRelationship
 
 admin.site.register(GeographicLocation, LeafletGeoAdmin)

@@ -1,8 +1,20 @@
 ''' Utility functions to perform common operations '''
 import os
-import urllib2
-from urlparse import urlparse
+
+try:
+    import urllib3 as urllibN
+    URLLIB_VERSION = 3
+except:
+    import urllib2 as urllibN
+    URLLIB_VERSION = 2
+
+try:
+    from urlparse import urlparse
+except ImportError:
+    import urllib.parse as urlparse
+
 from django.conf import settings
+
 
 def module_path(module, root):
     for m in module.split('.'):
@@ -33,8 +45,11 @@ def validate_uri(uri):
     validation_result = False
     request = urllib2.Request(uri)
     try:
-        response = urllib2.urlopen(request)
-        response.close()
+        if URLLIB_VERSION == 2:
+            request = urllibN.Request(uri)
+        else:
+            request = urllibN.PoolManager().request('GET', uri)
+            response.close()
         validation_result = True
     except IOError as e:
         if len(e.args)>1 and e.args[1]==u'Is a directory':
