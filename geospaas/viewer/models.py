@@ -23,7 +23,9 @@ class Search(geomodels.Model):
     # GeoDjango-specific: a geometry field (PolygonField), and
     # overriding the default manager with a GeoManager instance.
     polygon = geomodels.PolygonField(blank=True, null=True) # intersect this poly
-    objects = geomodels.GeoManager()
+
+    # NB: THis is disable in Django 2. But apparently this is not needed in Django 1.11 either.
+    #objects = geomodels.GeoManager()
 
     def __str__(self):
         poly = ''
@@ -47,7 +49,7 @@ class Dataset(CatalogDataset):
         elif self.geographic_location.geometry.geom_type == 'Point':
             pstr = '[%f, %f]' % ( self.geographic_location.geometry.coords[1],
                     self.geographic_location.geometry.coords[0] )
-            jscode = self.jsPointTemplate %pstr 
+            jscode = self.jsPointTemplate %pstr
             #jscode = self.jsPointTemplate % (self.geom2str())
         elif self.geographic_location.geometry.geom_type == 'LineString':
             jscode = self.jsLineStringTemplate % (self.geom2str())
@@ -88,7 +90,7 @@ class Visualization(models.Model):
     ds_parameters = models.ManyToManyField(CatalogDatasetParameter,
             through=VisualizationParameter)
     title = models.CharField(max_length=50, default='')
-    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True)
+    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

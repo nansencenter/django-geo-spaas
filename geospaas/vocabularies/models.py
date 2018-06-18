@@ -58,11 +58,11 @@ class ISOTopicCategory(models.Model):
     Directory Interchange Format (DIF) Writer's Guide, 2015.
     Global Change Master Directory.
     National Aeronautics and Space Administration.
-    [http://gcmd.nasa.gov/add/difguide/]. 
+    [http://gcmd.nasa.gov/add/difguide/].
     '''
     name = models.CharField(max_length=100)
     # see http://gcmd.gsfc.nasa.gov/add/difguide/iso_topics.html for
-    #description = models.TextField() 
+    #description = models.TextField()
 
     objects = ISOTopicCategoryManager()
 
@@ -179,7 +179,7 @@ class Parameter(models.Model):
 
     Short name is taken from wkv.xml
 
-    The table should also include the relevant GCMD science keyword 
+    The table should also include the relevant GCMD science keyword
     '''
     standard_name = models.CharField(max_length=300)
     short_name = models.CharField(max_length=30)
@@ -189,7 +189,7 @@ class Parameter(models.Model):
     # therefore one science keyword can be in many parameters, whereas the
     # CF/WKV standard names are unique
     gcmd_science_keyword = models.ForeignKey(ScienceKeyword, blank=True,
-            null=True)
+            null=True, on_delete=models.CASCADE)
 
     objects = ParameterManager()
 
