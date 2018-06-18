@@ -41,7 +41,7 @@ class BasetForTests(TestCase):
     def tearDown(self):
         self.patcher.stop()
 
-class TestDataset(BasetForTests):
+class TestDatasetManager(BasetForTests):
     def test_getorcreate_localfile(self):
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)

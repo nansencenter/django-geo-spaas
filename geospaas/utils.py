@@ -11,7 +11,7 @@ except:
 try:
     from urlparse import urlparse
 except ImportError:
-    import urllib.parse as urlparse
+    from urllib.parse import urlparse
 
 from django.conf import settings
 
@@ -42,19 +42,24 @@ def product_path(module, filename):
     return path(module, filename, settings.PRODUCTS_ROOT)
 
 def validate_uri(uri):
-    validation_result = False
-    request = urllib2.Request(uri)
-    try:
-        if URLLIB_VERSION == 2:
-            request = urllibN.Request(uri)
-        else:
-            request = urllibN.PoolManager().request('GET', uri)
-            response.close()
-        validation_result = True
-    except IOError as e:
-        if len(e.args)>1 and e.args[1]==u'Is a directory':
-            validation_result = True
-    return validation_result
+    """ Validation of URI:
+    URI should be either: file://localhost/some/path/filename.ext
+           or accessible: http://www.eee.rrr/some/path
+
+    If URI is not valid, the function rasies a ValueError or urrlib error
+    """
+    uri_parts = urlparse(uri)
+    if uri_parts.scheme == 'file' and uri_parts.netloc == 'localhost' and len(uri_parts.path) > 0:
+        return True
+    else:
+        raise ValueError('Invalid URI: %s' % uri)
+
+    if URLLIB_VERSION == 2:
+        request = urllibN.Request(uri)
+    else:
+        request = urllibN.PoolManager().request('GET', uri)
+
+    return True
 
 def nansat_filename(uri):
     # Check if data should be read as stream or as file? Or just:
