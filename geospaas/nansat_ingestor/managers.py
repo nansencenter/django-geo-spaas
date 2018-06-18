@@ -1,5 +1,5 @@
 import warnings
-import json, urllib2
+import json
 from xml.sax.saxutils import unescape
 
 from nansat.nansat import Nansat

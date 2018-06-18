@@ -23,16 +23,15 @@ from geospaas.catalog.managers import DatasetURIManager
 
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
-
-    objects = geomodels.GeoManager()
+    #objects = geomodels.GeoManager() # apparently this is not needed already in Django 1.11
 
     def __str__(self):
         return str(self.geometry.geom_type)
 
 
 class Source(models.Model):
-    platform = models.ForeignKey(Platform)
-    instrument = models.ForeignKey(Instrument)
+    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
     specs = models.CharField(max_length=50, default='',
         help_text=_('Further specifications of the source.'))
 
@@ -78,7 +77,7 @@ class Role(models.Model):
     DIF_AUTHOR = 'DIF Author'
     ROLE_CHOICES = ((INVESTIGATOR, INVESTIGATOR), (TECH_CONTACT, TECH_CONTACT),
             (DIF_AUTHOR, DIF_AUTHOR))
-    personnel = models.ForeignKey(Personnel)
+    personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
 class Dataset(models.Model):
@@ -124,16 +123,16 @@ class Dataset(models.Model):
     # DIF required fields
     entry_title = models.CharField(max_length=220)
     parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
-    ISO_topic_category = models.ForeignKey(ISOTopicCategory)
-    data_center = models.ForeignKey(DataCenter)
+    ISO_topic_category = models.ForeignKey(ISOTopicCategory, on_delete=models.CASCADE)
+    data_center = models.ForeignKey(DataCenter, on_delete=models.CASCADE)
     summary = models.TextField()
 
     # DIF highly recommended fields
-    source = models.ForeignKey(Source, blank=True, null=True)
+    source = models.ForeignKey(Source, blank=True, null=True, on_delete=models.CASCADE)
     time_coverage_start = models.DateTimeField(blank=True, null=True)
     time_coverage_end = models.DateTimeField(blank=True, null=True)
-    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True)
-    gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True)
+    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True, on_delete=models.CASCADE)
+    gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True, on_delete=models.CASCADE)
     access_constraints = models.CharField(max_length=50,
             choices=ACCESS_CHOICES, blank=True, null=True)
 
@@ -164,7 +163,7 @@ class DatasetURI(models.Model):
 
     uri = models.URLField(max_length=200,
             validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
-    dataset = models.ForeignKey(Dataset)
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
 
     objects = DatasetURIManager()
     class Meta:
@@ -190,6 +189,6 @@ class DatasetURI(models.Model):
         super(DatasetURI, self).save(*args, **kwargs)
 
 class DatasetRelationship(models.Model):
-    child = models.ForeignKey(Dataset, related_name='parents')
-    parent = models.ForeignKey(Dataset, related_name='children')
+    child = models.ForeignKey(Dataset, related_name='parents', on_delete=models.CASCADE)
+    parent = models.ForeignKey(Dataset, related_name='children', on_delete=models.CASCADE)
 

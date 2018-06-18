@@ -4,7 +4,7 @@ from mock.mock import MagicMock, patch, create_autospec
 from django.test import TestCase
 from django.conf import settings
 from django.utils import timezone
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.gis.db import models as geomodels
 from django.contrib.gis.geos import Polygon, LinearRing
 
