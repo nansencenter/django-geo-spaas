@@ -1,5 +1,7 @@
 Django-Geo-SPaaS - GeoDjango Apps for satellite data management
 ===========================================================
+[![Build Status](https://travis-ci.org/nansencenter/django-geo-spaas.svg?branch=master)](https://travis-ci.org/nansencenter/django-geo-spaas)
+[![Coverage Status](https://coveralls.io/repos/github/nansencenter/django-geo-spaas/badge.svg?branch=master)](https://coveralls.io/github/nansencenter/django-geo-spaas)
 
 How to add new data to Geo-SPaaS catalog
 ----------------------------------------
