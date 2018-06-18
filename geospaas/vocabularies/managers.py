@@ -20,8 +20,8 @@ class ParameterManager(models.Manager):
     ''' Fields:
     standard_name
     short_name
-    units 
-    gcmd_science_keyword 
+    units
+    gcmd_science_keyword
     '''
 
     def get_by_natural_key(self, stdname):
@@ -56,7 +56,7 @@ class PlatformManager(models.Manager):
         num = 0
         pti.update_gcmd_platform()
         for platform in pti.get_gcmd_platform_list():
-            if platform.keys()[0]=='Revision':
+            if 'Revision' in platform.keys():
                 continue
             pp, created = self.get_or_create(
                 category = platform['Category'],
@@ -76,7 +76,7 @@ class InstrumentManager(models.Manager):
         num = 0
         pti.update_gcmd_instrument()
         for instrument in pti.get_gcmd_instrument_list():
-            if instrument.keys()[0]=='Revision':
+            if 'Revision' in instrument.keys():
                 continue
             ii, created = self.get_or_create(
                 category = instrument['Category'],
@@ -102,7 +102,7 @@ class ScienceKeywordManager(models.Manager):
         num = 0
         pti.update_gcmd_science_keyword()
         for skw in pti.get_gcmd_science_keyword_list():
-            if skw.keys()[0]=='Revision':
+            if 'Revision' in skw.keys():
                 continue
             ii, created = self.get_or_create(
                 category = skw['Category'],
@@ -125,7 +125,7 @@ class DataCenterManager(models.Manager):
         num = 0
         pti.update_gcmd_provider()
         for dc in pti.get_gcmd_provider_list():
-            if dc.keys()[0]=='Revision':
+            if 'Revision' in dc.keys():
                 continue
             dd, created = self.get_or_create(
                 bucket_level0 = dc['Bucket_Level0'],
@@ -148,7 +148,7 @@ class HorizontalDataResolutionManager(models.Manager):
         num = 0
         pti.update_gcmd_horizontalresolutionrange()
         for hdr in pti.get_gcmd_horizontalresolutionrange_list():
-            if hdr.keys()[0]=='Revision':
+            if 'Revision' in hdr.keys():
                 continue
             hh, created = self.get_or_create(
                     range=hdr['Horizontal_Resolution_Range']
@@ -166,7 +166,7 @@ class VerticalDataResolutionManager(models.Manager):
         num = 0
         pti.update_gcmd_verticalresolutionrange()
         for vdr in pti.get_gcmd_verticalresolutionrange_list():
-            if vdr.keys()[0]=='Revision':
+            if 'Revision' in vdr.keys():
                 continue
             vv, created = self.get_or_create(
                     range=vdr['Vertical_Resolution_Range']
@@ -183,7 +183,7 @@ class TemporalDataResolutionManager(models.Manager):
         num = 0
         pti.update_gcmd_temporalresolutionrange()
         for tdr in pti.get_gcmd_temporalresolutionrange_list():
-            if tdr.keys()[0]=='Revision':
+            if 'Revision' in tdr.keys():
                 continue
             tt, created = self.get_or_create(
                     range=tdr['Temporal_Resolution_Range']
@@ -200,7 +200,7 @@ class ProjectManager(models.Manager):
         num = 0
         pti.update_gcmd_project()
         for p in pti.get_gcmd_project_list():
-            if p.keys()[0]=='Revision':
+            if 'Revision' in p.keys():
                 continue
             pp, created = self.get_or_create(
                 bucket = p['Bucket'],
@@ -236,7 +236,7 @@ class LocationManager(models.Manager):
         num = 0
         pti.update_gcmd_location()
         for loc in pti.get_gcmd_location_list():
-            if loc.keys()[0]=='Revision':
+            if 'Revision' in loc.keys():
                 continue
             ll, created = self.get_or_create(
                 category = loc['Location_Category'],
