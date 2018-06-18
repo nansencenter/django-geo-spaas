@@ -29,14 +29,20 @@ def mock_get_metadata(*args, **kwargs):
 # See also:
 # https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
 
-class TestDataset(TestCase):
+class BasetForTests(TestCase):
     fixtures = ['vocabularies', 'catalog']
 
-    @patch('geospaas.nansat_ingestor.managers.Nansat')
-    def test_getorcreate_localfile(self, mock_Nansat):
-        mock_Nansat.return_value.get_metadata.side_effect = mock_get_metadata
-        mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
+    def setUp(self):
+        self.patcher = patch('geospaas.nansat_ingestor.managers.Nansat')
+        self.mock_Nansat = self.patcher.start()
+        self.mock_Nansat.return_value.get_metadata.side_effect = mock_get_metadata
+        self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
 
+    def tearDown(self):
+        self.patcher.stop()
+
+class TestDataset(BasetForTests):
+    def test_getorcreate_localfile(self):
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         ds1, cr1 = Dataset.objects.get_or_create(uri)
@@ -49,12 +55,8 @@ class TestDataset(TestCase):
         with self.assertRaises(ValueError):
             ds, created = Dataset.objects.get_or_create(uri)
 
-"""
 
-class TestDatasetURI(TestCase):
-
-    fixtures = ["vocabularies", "catalog"]
-
+class TestDatasetURI(BasetForTests):
     def test_get_non_ingested_uris(self):
         ''' Shall return list with only  non existing files '''
         testfile = 'file://localhost/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
@@ -66,10 +68,7 @@ class TestDatasetURI(TestCase):
         self.assertEqual(uris, new_uris)
 
 
-class TestIngestNansatCommand(TestCase):
-
-    fixtures = ["vocabularies", "catalog"]
-
+class TestIngestNansatCommand(BasetForTests):
     def test_add_asar(self):
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
@@ -81,4 +80,3 @@ class TestIngestNansatCommand(TestCase):
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
-"""
