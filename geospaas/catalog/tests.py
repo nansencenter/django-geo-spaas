@@ -21,7 +21,9 @@ class DatasetTests(TestCase):
         source = Source.objects.get(pk=1)
         geolocation = GeographicLocation.objects.get(pk=1)
         et = 'Test dataset'
+        id = 'NERSC_test_dataset_1'
         ds = Dataset(
+                entry_id = id,
                 entry_title=et,
                 ISO_topic_category = iso_category,
                 data_center = dc,
@@ -34,6 +36,7 @@ class DatasetTests(TestCase):
                 source=source,
                 geographic_location=geolocation)
         ds.save()
+        self.assertEqual(ds.entry_id, id)
         self.assertEqual(ds.entry_title, et)
 
         # Shall create new DatasetURI

@@ -16,6 +16,7 @@
     "pk": 1,
     "model": "catalog.dataset",
     "fields": {
+        "entry_id": "NERSC_test_dataset_titusen",
         "entry_title": "Test dataset",
         "time_coverage_end": "2010-01-02T00:00:00Z",
         "time_coverage_start": "2010-01-01T00:00:00Z",
@@ -31,6 +32,7 @@
     "pk": 2,
     "model": "catalog.dataset",
     "fields": {
+        "entry_id": "NERSC_test_dataset_tjuetusen",
         "entry_title": "Test child dataset",
         "time_coverage_end": "2010-01-03T00:00:00Z",
         "time_coverage_start": "2010-01-02T00:00:00Z",
