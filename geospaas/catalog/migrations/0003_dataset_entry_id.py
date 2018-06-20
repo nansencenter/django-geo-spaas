@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='entry_id',
-            field=models.CharField(default=None, max_length=80, unique=True, validators=[django.core.validators.RegexValidator(b'^[0-9a-zA-Z_-.]*$', b'Only alphanumeric characters are allowed.')]),
+            field=models.CharField(default=None, max_length=80, null=True, validators=[django.core.validators.RegexValidator(b'^[0-9a-zA-Z_-.]*$', b'Only alphanumeric characters are allowed.')]),
         ),
     ]
