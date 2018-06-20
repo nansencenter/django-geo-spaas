@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import URLValidator
 from django.utils.translation import ugettext as _
+from django.core.validators import RegexValidator
 
 from geospaas.vocabularies.models import Parameter
 from geospaas.vocabularies.models import ScienceKeyword
@@ -121,6 +122,11 @@ class Dataset(models.Model):
         )
 
     # DIF required fields
+    entry_id = models.CharField(max_length=80, unique=True, default=None, 
+        validators=[
+            RegexValidator(r'^[0-9a-zA-Z_.-]*$', 'Only alphanumeric characters are allowed.')
+        ]
+    )
     entry_title = models.CharField(max_length=220)
     parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
     ISO_topic_category = models.ForeignKey(ISOTopicCategory, on_delete=models.CASCADE)

@@ -66,6 +66,52 @@ class DatasetTests(TestCase):
         #            'catalog.GeographicLocation',
         #            stdout=out)
 
+    def test_entry_id_is_wrong(self):
+        iso_category = ISOTopicCategory.objects.get(name='Oceans')
+        dc = DataCenter.objects.get(short_name='NERSC')
+        source = Source.objects.get(pk=1)
+        geolocation = GeographicLocation.objects.get(pk=1)
+        et = 'Test dataset'
+        id = 'NERSC/test/dataset/1'
+        ds = Dataset(
+                entry_id = id,
+                entry_title=et,
+                ISO_topic_category = iso_category,
+                data_center = dc,
+                summary = 'This is a quite short summary about the test' \
+                            ' dataset.',
+                time_coverage_start=timezone.datetime(2010,1,1,
+                    tzinfo=timezone.utc),
+                time_coverage_end=timezone.datetime(2010,1,2,
+                    tzinfo=timezone.utc),
+                source=source,
+                geographic_location=geolocation)
+        with self.assertRaises(ValidationError):
+            ds.full_clean()
+
+    def test_entry_id_is_correct(self):
+        iso_category = ISOTopicCategory.objects.get(name='Oceans')
+        dc = DataCenter.objects.get(short_name='NERSC')
+        source = Source.objects.get(pk=1)
+        geolocation = GeographicLocation.objects.get(pk=1)
+        et = 'Test dataset'
+        id = 'NERSC_test_dataset_1.2'
+        ds = Dataset(
+                entry_id = id,
+                entry_title=et,
+                ISO_topic_category = iso_category,
+                data_center = dc,
+                summary = 'This is a quite short summary about the test' \
+                            ' dataset.',
+                time_coverage_start=timezone.datetime(2010,1,1,
+                    tzinfo=timezone.utc),
+                time_coverage_end=timezone.datetime(2010,1,2,
+                    tzinfo=timezone.utc),
+                source=source,
+                geographic_location=geolocation)
+        ds.full_clean()
+        self.assertEqual(ds.entry_id, id)
+
     def test_search_datasets(self):
         ''' Shall add one parameter to the first dataset
             shall find one Dataset without sst '''
