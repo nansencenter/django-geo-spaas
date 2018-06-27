@@ -12,34 +12,35 @@ from geospaas.vocabularies.models import Instrument, Platform
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
 
-def mock_get_metadata(*args, **kwargs):
-    """ Mock behaviou of Nansat.get_metadata method """
-    predefined_metadata_dict = {
-        'platform': '{"Category": "Earth Observation Satellites", "Series_Entity": "", "Short_Name": "ENVISAT", "Long_Name": "Environmental Satellite"}',
-        'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
-        'time_coverage_start': '2011-05-03T10:56:38.995099',
-        'time_coverage_end': '2011-05-03T10:56:38.995099',
-        }
-    if len(args) == 0:
-        return dict()
-    if args[0] not in predefined_metadata_dict:
-        raise
-    return predefined_metadata_dict[args[0]]
-
 # See also:
 # https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
 
 class BasetForTests(TestCase):
     fixtures = ['vocabularies', 'catalog']
+    predefined_metadata_dict = {
+        'Entry ID': 'UNIQUE_ID_1000',
+        'platform': '{"Category": "Earth Observation Satellites", "Series_Entity": "", "Short_Name": "ENVISAT", "Long_Name": "Environmental Satellite"}',
+        'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
+        'time_coverage_start': '2011-05-03T10:56:38.995099',
+        'time_coverage_end': '2011-05-03T10:56:38.995099',
+        }
 
     def setUp(self):
         self.patcher = patch('geospaas.nansat_ingestor.managers.Nansat')
         self.mock_Nansat = self.patcher.start()
-        self.mock_Nansat.return_value.get_metadata.side_effect = mock_get_metadata
+        self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
         self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
 
     def tearDown(self):
         self.patcher.stop()
+
+    def mock_get_metadata(self, *args, **kwargs):
+        """ Mock behaviour of Nansat.get_metadata method """
+        if len(args) == 0:
+            return self.predefined_metadata_dict
+        if args[0] not in self.predefined_metadata_dict:
+            raise
+        return self.predefined_metadata_dict[args[0]]
 
 class TestDatasetManager(BasetForTests):
     def test_getorcreate_localfile(self):
@@ -49,6 +50,9 @@ class TestDatasetManager(BasetForTests):
 
         self.assertTrue(cr0)
         self.assertFalse(cr1)
+        self.assertEqual(ds0.entry_id, self.predefined_metadata_dict['Entry ID'])
+        self.assertEqual(ds0.entry_title, 'NONE')
+        self.assertEqual(ds0.summary, 'NONE')
 
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
