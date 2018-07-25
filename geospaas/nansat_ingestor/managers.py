@@ -55,8 +55,8 @@ class DatasetManager(models.Manager):
                 category=platform['Category'],
                 series_entity=platform['Series_Entity'],
                 short_name=platform['Short_Name'],
-                long_name=platform['Long_Name']
-            )
+                long_name=platform['Long_Name'])
+
         instrument = json.loads(n_metadata['instrument'])
         instrument = Instrument.objects.get(
                 category = instrument['Category'],
@@ -64,8 +64,7 @@ class DatasetManager(models.Manager):
                 type = instrument['Type'],
                 subtype = instrument['Subtype'],
                 short_name = instrument['Short_Name'],
-                long_name = instrument['Long_Name']
-            )
+                long_name = instrument['Long_Name'])
 
         specs = n_metadata.get('specs', '')
         source, _ = Source.objects.get_or_create(platform=platform,
@@ -74,18 +73,16 @@ class DatasetManager(models.Manager):
 
         data_center = json.loads(n_metadata['data_center'])
         data_center = DataCenter.objects.get(
-                Bucket_Level0=data_center['Bucket_Level0'],
-                Bucket_Level1=data_center['Bucket_Level1'],
-                Bucket_Level2=data_center['Bucket_Level2'],
-                Bucket_Level3=data_center['Bucket_Level3'],
-                Short_Name=data_center['Short_Name'],
-                Long_Name=data_center['Long_Name'],
-                Data_Center_URL=data_center['Data_Center_URL'])
-
+                bucket_level0=data_center['Bucket_Level0'],
+                bucket_level1=data_center['Bucket_Level1'],
+                bucket_level2=data_center['Bucket_Level2'],
+                bucket_level3=data_center['Bucket_Level3'],
+                short_name=data_center['Short_Name'],
+                long_name=data_center['Long_Name'],
+                data_center_url=data_center['Data_Center_URL'])
 
         iso_topic_category = json.loads(n_metadata['iso_topic_category'])
-        iso_topic_category = ISOTopicCategory.objects.get(name=iso_topic_category)
-
+        iso_topic_category = ISOTopicCategory.objects.get(name=iso_topic_category['iso_topic_category'])
 
         # Find coverage to set number of points in the geolocation
         geolocation = GeographicLocation.objects.get_or_create(
