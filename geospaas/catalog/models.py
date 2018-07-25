@@ -93,6 +93,8 @@ class Dataset(models.Model):
 
     Fields:
     -------
+    entry_id : CharField
+        A unique dataset ID. Only alpanumeric characters are allowed.
     entry_title : CharField
     parameters: ManyToManyField to Parameter through DatasetParameter
     ISO_topic_category : ForeignKey to ISOTopicCategory
