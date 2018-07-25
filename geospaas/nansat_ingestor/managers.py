@@ -18,13 +18,9 @@ from geospaas.catalog.models import DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
     optional_fields = {
-        'entry_id'           : {'nansat_key': 'Entry ID',           'default': uuid.uuid4},
-        'entry_title'        : {'nansat_key': 'Entry Title',        'default': lambda : 'NONE'},
-        'data_center'        : {'nansat_key': 'Data Center',
-                                'default': lambda : DataCenter.objects.get(short_name='NERSC')},
-        'summary'            : {'nansat_key': 'Summary',            'default': lambda : 'NONE'},
-        'ISO_topic_category' : {'nansat_key': 'ISO Topic Category',
-                                'default': lambda : ISOTopicCategory.objects.get(name='Oceans')},
+        'entry_id'           : {'nansat_key': 'entry_id',     'default': uuid.uuid4},
+        'entry_title'        : {'nansat_key': 'entry_title',  'default': lambda : 'NONE'},
+        'summary'            : {'nansat_key': 'summary',      'default': lambda : 'NONE'},
     }
 
     def get_or_create(self, uri, *args, **kwargs):
@@ -48,20 +44,21 @@ class DatasetManager(models.Manager):
         if len(uris) > 0:
             return uris[0].dataset, False
 
+        # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
 
-        # get metadata
-        platform = json.loads( unescape( n.get_metadata('platform'),
-                {'&quot;': '"'}))
-        instrument = json.loads( unescape( n.get_metadata('instrument'),
-                {'&quot;': '"'}))
-        pp = Platform.objects.get(
+        # get metadata from Nansat and get objects from vocabularies
+        n_metadata = n.get_metadata()
+
+        platform = json.loads(n_metadata['platform'])
+        platform = Platform.objects.get(
                 category=platform['Category'],
                 series_entity=platform['Series_Entity'],
                 short_name=platform['Short_Name'],
                 long_name=platform['Long_Name']
             )
-        ii = Instrument.objects.get(
+        instrument = json.loads(n_metadata['instrument'])
+        instrument = Instrument.objects.get(
                 category = instrument['Category'],
                 instrument_class = instrument['Class'],
                 type = instrument['Type'],
@@ -69,11 +66,26 @@ class DatasetManager(models.Manager):
                 short_name = instrument['Short_Name'],
                 long_name = instrument['Long_Name']
             )
-        specs = n.get_metadata().get('specs', '')
-        source = Source.objects.get_or_create(
-            platform = pp,
-            instrument = ii,
-            specs=specs)[0]
+
+        specs = n_metadata.get('specs', '')
+        source, _ = Source.objects.get_or_create(platform=platform,
+                                                 instrument=instrument,
+                                                 specs=specs)
+
+        data_center = json.loads(n_metadata['data_center'])
+        data_center = DataCenter.objects.get(
+                Bucket_Level0=data_center['Bucket_Level0'],
+                Bucket_Level1=data_center['Bucket_Level1'],
+                Bucket_Level2=data_center['Bucket_Level2'],
+                Bucket_Level3=data_center['Bucket_Level3'],
+                Short_Name=data_center['Short_Name'],
+                Long_Name=data_center['Long_Name'],
+                Data_Center_URL=data_center['Data_Center_URL'])
+
+
+        iso_topic_category = json.loads(n_metadata['iso_topic_category'])
+        iso_topic_category = ISOTopicCategory.objects.get(name=iso_topic_category)
+
 
         # Find coverage to set number of points in the geolocation
         geolocation = GeographicLocation.objects.get_or_create(
@@ -97,6 +109,8 @@ class DatasetManager(models.Manager):
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
                 geographic_location=geolocation,
+                data_center=data_center,
+                ISO_topic_category=iso_topic_category,
                 **kwargs)
         ds.save()
 
