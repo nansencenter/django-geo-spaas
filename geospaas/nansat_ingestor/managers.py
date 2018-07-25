@@ -2,6 +2,8 @@ import warnings
 import json
 from xml.sax.saxutils import unescape
 
+import pythesint as pti
+
 from nansat.nansat import Nansat
 
 from django.db import models
@@ -78,9 +80,9 @@ class DatasetManager(models.Manager):
                 be provided in the nansat metadata instead..
                 ''')
         try:
-            sname = n.get_metadata('Data Center')
+            sname = n.get_metadata('Data Center')['Short_Name']
         except:
-            sname = 'NERSC'
+            sname = pti.get_gcmd_provider('nersc')['Short_Name']
             warnings.warn('''
                 Data center is hardcoded to "NERSC" - this should
                 be provided in the nansat metadata instead..
@@ -89,7 +91,7 @@ class DatasetManager(models.Manager):
         try:
             isocatname = n.get_metadata('ISO Topic Category')
         except:
-            isocatname = 'Oceans'
+            isocatname = pti.get_iso19115_topic_category('oceans')['iso_topic_category']
             warnings.warn('''
                 ISO topic category is hardcoded to "Oceans" - this should
                 be provided in the nansat metadata instead..
@@ -103,6 +105,17 @@ class DatasetManager(models.Manager):
                 Summary is hardcoded to "NONE" - this should
                 be provided in the nansat metadata instead..
                 ''')
+        try:
+            gcmd_location = GCMDLocation.objects.get(type =
+                    n.get_metadata('gcmd_location')['Location_Type'])
+        except:
+            gcmd_location = GCMDLocation.objects.get(type = 
+                    pti.get_gcmd_location('sea surface')['Location_Type'])
+            warnings.warn('''
+                GCMD location is hardcoded to "Sea surface" - this should
+                be provided in the nansat metadata instead..
+                ''')
+
         ds = Dataset(
                 entry_title=entrytitle,
                 ISO_topic_category = iso_category,
@@ -111,6 +124,7 @@ class DatasetManager(models.Manager):
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
+                gcmd_location = gcmd_location,
                 geographic_location=geolocation)
         ds.save()
 
