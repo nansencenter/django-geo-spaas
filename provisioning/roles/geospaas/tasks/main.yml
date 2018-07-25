@@ -2,13 +2,6 @@
 - name: geospaas | Add PYTHONPATH to bashrc
   lineinfile: dest="/home/vagrant/.bashrc" line="export PYTHONPATH=/vagrant"
 
-- name: geospaas | Run makemigrations on django-geo-spaas project
-  django_manage: >
-      command=makemigrations
-      app_path='{{ geospaas_project_home }}/{{ geospaas_project_name }}'
-      settings='{{ geospaas_project_name }}.settings'
-      pythonpath='{{ geospaas_project_home }}/{{ geospaas_project_name }}'
-
 - name: geospaas | Run migrate on django-geo-spaas project
   django_manage: >
       command=migrate
