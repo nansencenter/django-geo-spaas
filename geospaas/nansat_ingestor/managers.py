@@ -1,3 +1,4 @@
+import uuid
 import warnings
 import json
 from xml.sax.saxutils import unescape
@@ -16,6 +17,16 @@ from geospaas.catalog.models import GeographicLocation
 from geospaas.catalog.models import DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
+    optional_fields = {
+        'entry_id'           : {'nansat_key': 'Entry ID',           'default': uuid.uuid4},
+        'entry_title'        : {'nansat_key': 'Entry Title',        'default': lambda : 'NONE'},
+        'data_center'        : {'nansat_key': 'Data Center',
+                                'default': lambda : DataCenter.objects.get(short_name='NERSC')},
+        'summary'            : {'nansat_key': 'Summary',            'default': lambda : 'NONE'},
+        'ISO_topic_category' : {'nansat_key': 'ISO Topic Category',
+                                'default': lambda : ISOTopicCategory.objects.get(name='Oceans')},
+    }
+
     def get_or_create(self, uri, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
@@ -59,8 +70,6 @@ class DatasetManager(models.Manager):
                 long_name = instrument['Long_Name']
             )
         specs = n.get_metadata().get('specs', '')
-        # if not specs:
-        #     specs = n.get_metadata().get('Entry Title', '')
         source = Source.objects.get_or_create(
             platform = pp,
             instrument = ii,
@@ -69,49 +78,26 @@ class DatasetManager(models.Manager):
         # Find coverage to set number of points in the geolocation
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt()))[0]
-        try:
-            entrytitle = n.get_metadata('Entry Title')
-        except:
-            entrytitle = 'NONE'
-            warnings.warn('''
-                Entry title is hardcoded to "NONE" - this should
-                be provided in the nansat metadata instead..
-                ''')
-        try:
-            sname = n.get_metadata('Data Center')
-        except:
-            sname = 'NERSC'
-            warnings.warn('''
-                Data center is hardcoded to "NERSC" - this should
-                be provided in the nansat metadata instead..
-                ''')
-        dc = DataCenter.objects.get(short_name=sname)
-        try:
-            isocatname = n.get_metadata('ISO Topic Category')
-        except:
-            isocatname = 'Oceans'
-            warnings.warn('''
-                ISO topic category is hardcoded to "Oceans" - this should
-                be provided in the nansat metadata instead..
-                ''')
-        iso_category = ISOTopicCategory.objects.get(name=isocatname)
-        try:
-            summary = n.get_metadata('Summary')
-        except:
-            summary = 'NONE'
-            warnings.warn('''
-                Summary is hardcoded to "NONE" - this should
-                be provided in the nansat metadata instead..
-                ''')
+
+        # get metadata for optional fields or take from self.optional_fields
+        metadata = n.get_metadata()
+        kwargs = {}
+        for field in self.optional_fields:
+            nansat_key = self.optional_fields[field]['nansat_key']
+            default_val = self.optional_fields[field]['default']()
+            kwargs[field] = metadata.get(nansat_key, default_val)
+            if nansat_key not in metadata:
+                warnings.warn('''
+                    %s is hardcoded to "%s" - this should
+                    be provided in the nansat metadata instead..
+                    '''%(nansat_key, default_val))
+
         ds = Dataset(
-                entry_title=entrytitle,
-                ISO_topic_category = iso_category,
-                data_center = dc,
-                summary = summary,
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
-                geographic_location=geolocation)
+                geographic_location=geolocation,
+                **kwargs)
         ds.save()
 
         ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]

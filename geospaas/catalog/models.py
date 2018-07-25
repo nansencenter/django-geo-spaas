@@ -1,4 +1,5 @@
-import os, uuid
+import os
+import uuid
 
 from django.db import models
 from django.contrib.gis.db import models as geomodels
@@ -124,7 +125,7 @@ class Dataset(models.Model):
         )
 
     # DIF required fields
-    entry_id = models.CharField(max_length=80, unique=True, default=uuid.uuid4, 
+    entry_id = models.CharField(max_length=80, unique=True, default=uuid.uuid4,
         validators=[
             RegexValidator(r'^[0-9a-zA-Z_.-]*$', 'Only alphanumeric characters are allowed.')
         ]
