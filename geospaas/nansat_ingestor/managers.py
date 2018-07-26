@@ -3,18 +3,20 @@ import warnings
 import json
 from xml.sax.saxutils import unescape
 
+import pythesint as pti
+
 from nansat.nansat import Nansat
 
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
 from geospaas.utils import validate_uri, nansat_filename
-from geospaas.vocabularies.models import Platform
-from geospaas.vocabularies.models import Instrument
-from geospaas.vocabularies.models import DataCenter
-from geospaas.vocabularies.models import ISOTopicCategory
-from geospaas.catalog.models import GeographicLocation
-from geospaas.catalog.models import DatasetURI, Source, Dataset
+from geospaas.vocabularies.models import (Platform,
+                                          Instrument,
+                                          DataCenter,
+                                          ISOTopicCategory,
+                                          Location)
+from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
     optional_fields = {
@@ -84,23 +86,35 @@ class DatasetManager(models.Manager):
         iso_topic_category = json.loads(n_metadata['iso_topic_category'])
         iso_topic_category = ISOTopicCategory.objects.get(name=iso_topic_category['iso_topic_category'])
 
+        if 'gcmd_location' in n_metadata:
+            gcmd_location = json.loads(n_metadata['gcmd_location'])
+        else:
+            gcmd_location = pti.get_gcmd_location('SEA SURFACE')
+        gcmd_location = Location.objects.get(
+                        category=gcmd_location['Location_Category'],
+                        type=gcmd_location['Location_Type'],
+                        subregion1=gcmd_location['Location_Subregion1'],
+                        subregion2=gcmd_location['Location_Subregion2'],
+                        subregion3=gcmd_location['Location_Subregion3'])
+
         # Find coverage to set number of points in the geolocation
+        n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt()))[0]
 
-        # get metadata for optional fields or take from self.optional_fields
-        metadata = n.get_metadata()
+        # get optional metadata from Nansat or from self.optional_fields
         kwargs = {}
         for field in self.optional_fields:
             nansat_key = self.optional_fields[field]['nansat_key']
             default_val = self.optional_fields[field]['default']()
-            kwargs[field] = metadata.get(nansat_key, default_val)
-            if nansat_key not in metadata:
+            kwargs[field] = n_metadata.get(nansat_key, default_val)
+            if nansat_key not in n_metadata:
                 warnings.warn('''
                     %s is hardcoded to "%s" - this should
                     be provided in the nansat metadata instead..
                     '''%(nansat_key, default_val))
 
+        # create dataset
         ds = Dataset(
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
@@ -108,9 +122,10 @@ class DatasetManager(models.Manager):
                 geographic_location=geolocation,
                 data_center=data_center,
                 ISO_topic_category=iso_topic_category,
+                gcmd_location=gcmd_location,
                 **kwargs)
         ds.save()
-
+        # create dataset URI
         ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
 
         return ds, True
