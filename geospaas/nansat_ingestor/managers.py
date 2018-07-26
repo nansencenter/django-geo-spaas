@@ -98,7 +98,8 @@ class DatasetManager(models.Manager):
                         subregion3=gcmd_location['Location_Subregion3'])
 
         # Find coverage to set number of points in the geolocation
-        n.reproject_gcps()
+        if len(n.vrt.dataset.GetGCPs()) > 0:
+            n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt()))[0]
 
