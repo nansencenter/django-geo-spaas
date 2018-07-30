@@ -25,7 +25,7 @@ class BasetForTests(TestCase):
         'time_coverage_end': '2011-05-03T10:56:38.995099',
         'data_center' : '{"Bucket_Level0": "MULTINATIONAL ORGANIZATIONS", "Bucket_Level1": "", "Bucket_Level2": "", "Bucket_Level3": "", "Short_Name": "ESA/EO", "Long_Name": "Observing the Earth, European Space Agency", "Data_Center_URL": "http://www.esa.int/esaEO/"}',
         'gcmd_location': '{"Location_Category": "VERTICAL LOCATION", "Location_Type": "SEA SURFACE", "Location_Subregion1": "", "Location_Subregion2": "", "Location_Subregion3": ""}',
-        'iso_topic_category' : '{"iso_topic_category": "Oceans"}',
+        'ISO_topic_category' : '{"iso_topic_category": "Oceans"}',
         }
 
     def setUp(self):
