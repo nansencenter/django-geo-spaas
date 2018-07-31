@@ -1,7 +1,8 @@
 import os
 import glob
-
 from datetime import datetime as dt
+
+from django.db.models import Q
 from django.core.management.base import BaseCommand
 
 from geospaas.catalog.models import Dataset
@@ -82,7 +83,7 @@ class ProcessingBaseCommand(BaseCommand):
                             help='Number of entries to process')
 
     def find_datasets(self, **options):
-        # get polygon from input or generate from input lonlim, latlim params
+        # get input polygon parameter or generate polygon from input lonlim, latlim parameters
         if options['polygon'] != '':
             polygon = options['polygon']
         else:
@@ -92,12 +93,11 @@ class ProcessingBaseCommand(BaseCommand):
                         options['lonlim'][1], options['latlim'][1],
                         options['lonlim'][0], options['latlim'][1],
                         options['lonlim'][0], options['latlim'][0])
-
-        print(polygon)
-        # find all input datasets
-        return Dataset.objects.filter(
+        # find all datasets matching the criteria
+        datasets = Dataset.objects.filter(
+                (Q(geographic_location__geometry__overlaps=polygon) |
+                 Q(geographic_location__geometry__within=polygon)),
                 time_coverage_start__gte=options['start'],
                 time_coverage_start__lte=options['stop'],
-                geographic_location__geometry__intersects=polygon,
                 dataseturi__uri__contains=options['mask']).order_by('time_coverage_start')
-
+        return datasets

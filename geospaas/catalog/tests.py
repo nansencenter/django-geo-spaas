@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.gis.geos import Polygon
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
+from django.utils.six import StringIO
 
 from geospaas.vocabularies.models import Platform, Instrument, Parameter
 from geospaas.vocabularies.models import ISOTopicCategory, DataCenter
@@ -196,3 +197,15 @@ class SourceTests(TestCase):
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
+
+class TestCountCommand(TestCase):
+    fixtures = ['vocabularies', 'catalog']
+    def test_count_command(self):
+        out = StringIO()
+        call_command('count', stdout=out)
+        self.assertEqual('Found 2 matching datasets\n', out.getvalue())
+
+        out = StringIO()
+        call_command('count', start='2010-01-02', stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+

@@ -44,5 +44,19 @@
         "ISO_topic_category": ["Oceans"],
         "access_constraints": null
     }
+},{
+    "model": "catalog.dataseturi",
+    "pk": 1,
+    "fields": {
+        "uri": "file://localhost/some/test/file1.ext",
+        "dataset": 1
+    }
+},{
+    "model": "catalog.dataseturi",
+    "pk": 2,
+    "fields": {
+        "uri": "file://localhost/some/test/file2.ext",
+        "dataset": 2
+    }
 }
 ]
