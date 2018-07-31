@@ -20,9 +20,19 @@ class BaseForVocabulariesTests(TestCase):
     def setUp(self):
         self.patcher = patch('geospaas.vocabularies.managers.pti')
         self.mock_pti = self.patcher.start()
+        self.mock_pti.get_gcmd_platform_list.return_value = [{'Category': 'Aircraft','Series_Entity': '','Short_Name': 'A340-600','Long_Name': 'Airbus A340-600'}]
+        self.mock_pti.get_gcmd_provider_list.return_value = [{'Bucket_Level0': 'ACADEMIC', 'Bucket_Level1': 'OR-STATE/EOARC', 'Bucket_Level2': '', 'Bucket_Level3': '', 'Short_Name': 'OR-STATE/EOARC', 'Long_Name': 'Eastern Oregon Agriculture Research Center, Oregon State University', 'Data_Center_URL': 'http://oregonstate.edu/dept/eoarcunion/'}]
+        self.mock_pti.get_wkv_variable_list.return_value = [{'standard_name': 'surface_radial_doppler_sea_water_velocity', 'long_name': 'Radial Doppler Current', 'short_name': 'Ur', 'units': 'm s-1', 'minmax': '-1 1', 'colormap': 'jet'}]
+        self.mock_pti.get_gcmd_instrument_list.return_value = [{'Category': 'Earth Remote Sensing Instruments', 'Class': 'Active Remote Sensing', 'Type': 'Altimeters', 'Subtype': 'Lidar/Laser Altimeters', 'Short_Name': 'AIRBORNE LASER SCANNER', 'Long_Name': ''}]
+        self.mock_pti.get_iso19115_topic_category_list.return_value = [{'iso_topic_category': 'Biota'}]
+        self.mock_pti.get_gcmd_location_list.return_value = [{'Location_Category': 'CONTINENT', 'Location_Type': 'AFRICA', 'Location_Subregion1': 'CENTRAL AFRICA', 'Location_Subregion2': 'ANGOLA', 'Location_Subregion3': ''}]
+
+        self.patcher2 = patch('geospaas.vocabularies.managers.print')
+        self.mock_print = self.patcher2.start()
 
     def tearDown(self):
         self.patcher.stop()
+        self.patcher2.stop()
 
 
 class ParameterTests(BaseForVocabulariesTests):
@@ -38,6 +48,11 @@ class ParameterTests(BaseForVocabulariesTests):
         self.assertEqual(p0, p2)
         self.assertFalse(cr)
 
+    def test_create_from_vocabularies(self):
+        Parameter.objects.create_from_vocabularies()
+        self.mock_pti.update_wkv_variable.assert_called_once()
+        self.mock_pti.get_wkv_variable_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 class DataCenterTests(BaseForVocabulariesTests):
     def test_get_datacenter(self):
@@ -50,6 +65,7 @@ class DataCenterTests(BaseForVocabulariesTests):
         DataCenter.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_provider.assert_called_once()
         self.mock_pti.get_gcmd_provider_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
         dc0 = DataCenter.objects.get(short_name='NERSC')
@@ -77,6 +93,12 @@ class InstrumentTests(BaseForVocabulariesTests):
         ii = Instrument.objects.get(short_name='ASAR')
         self.assertEqual(ii.long_name, 'Advanced Synthetic Aperature Radar')
 
+    def test_create_from_vocabularies(self):
+        Instrument.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_instrument.assert_called_once()
+        self.mock_pti.get_gcmd_instrument_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
+
     def test_get_or_create(self):
         i0 = Instrument.objects.get(short_name='ASAR')
         i1 = dict(
@@ -96,6 +118,12 @@ class ISOTopicCategoryTests(BaseForVocabulariesTests):
         cat = ISOTopicCategory.objects.get(name='Oceans')
         self.assertEqual(cat.name, 'Oceans')
 
+    def test_create_from_vocabularies(self):
+        ISOTopicCategory.objects.create_from_vocabularies()
+        self.mock_pti.update_iso19115_topic_category.assert_called_once()
+        self.mock_pti.get_iso19115_topic_category_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
+
     def test_get_or_create(self):
         iso0 = ISOTopicCategory.objects.get(name='Oceans')
         iso1 = dict(iso_topic_category=iso0.name)
@@ -108,6 +136,12 @@ class LocationTests(BaseForVocabulariesTests):
     def test_get_location(self):
         loc = Location.objects.get(subregion2='KENYA')
         self.assertEqual(loc.type, 'AFRICA')
+
+    def test_create_from_vocabularies(self):
+        Location.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_location.assert_called_once()
+        self.mock_pti.get_gcmd_location_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
         loc0 = Location.objects.get(subregion2='KENYA')
@@ -126,6 +160,12 @@ class PlatformTests(BaseForVocabulariesTests):
     def test_get_platform(self):
         p = Platform.objects.get(short_name='ENVISAT')
         self.assertEqual(p.category, 'Earth Observation Satellites')
+
+    def test_create_from_vocabularies(self):
+        Platform.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_platform.assert_called_once()
+        self.mock_pti.get_gcmd_platform_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
         p0 = Platform.objects.get(short_name='ENVISAT')

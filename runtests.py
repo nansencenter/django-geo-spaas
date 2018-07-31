@@ -23,5 +23,5 @@ if __name__ == "__main__":
     django.setup()
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True)
-    failures = test_runner.run_tests(["geospaas"])
+    failures = test_runner.run_tests(["geospaas.vocabularies.tests.LocationTests"])
     sys.exit(bool(failures))

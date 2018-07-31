@@ -40,7 +40,7 @@ class ParameterManager(models.Manager):
         for wkv in pti.get_wkv_variable_list():
             pp, created = self.get_or_create(wkv)
             if created: num+=1
-        print("Added %d new parameters" %num)
+        print("Successfully added %d new parameters" %num)
 
     def get_or_create(self, wkv, *args, **kwargs):
         """ Get or create parameter instance from input pythesint entry """
@@ -62,7 +62,7 @@ class PlatformManager(models.Manager):
         for platform in pti.get_gcmd_platform_list():
             if 'Revision' in platform.keys():
                 continue
-            pp, created = self.from_pti(platform)
+            pp, created = self.get_or_create(platform)
             if created: num+=1
         print("Successfully added %d new platforms" %num)
 
