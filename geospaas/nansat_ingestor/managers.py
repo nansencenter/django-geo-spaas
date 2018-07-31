@@ -20,7 +20,7 @@ from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Data
 
 class DatasetManager(models.Manager):
     default_char_fields = {
-        'entry_id'           : uuid.uuid4,
+        'entry_id'           : lambda : 'NERSC_' + uuid.uuid4,
         'entry_title'        : lambda : 'NONE',
         'summary'            : lambda : 'NONE',
     }
@@ -70,13 +70,13 @@ class DatasetManager(models.Manager):
                                                  specs=specs)
 
         # set optional CharField metadata from Nansat or from self.default_char_fields
-        kwargs = {}
+        options = {}
         for name in self.default_char_fields:
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
-                kwargs[name] = self.default_char_fields[name]()
+                options[name] = self.default_char_fields[name]()
             else:
-                kwargs[name] = n_metadata[name]
+                options[name] = n_metadata[name]
 
         # set optional ForeignKey metadata from Nansat or from self.default_foreign_keys
         for name in self.default_foreign_keys:
@@ -90,7 +90,7 @@ class DatasetManager(models.Manager):
                 except:
                     warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
                                     (n_metadata[name], name))
-            kwargs[name], _ = model.objects.get_or_create(value)
+            options[name], _ = model.objects.get_or_create(value)
 
         # Find coverage to set number of points in the geolocation
         if len(n.vrt.dataset.GetGCPs()) > 0:
@@ -105,7 +105,7 @@ class DatasetManager(models.Manager):
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
                 geographic_location=geolocation,
-                **kwargs)
+                **options)
         ds.save()
         # create dataset URI
         ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
