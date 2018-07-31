@@ -1,18 +1,18 @@
 import os
 import glob
 
-from dateutil.parser import parse
+from datetime import datetime as dt
 from django.core.management.base import BaseCommand
 
-from geospaas.catalog.models import Dataset, DatasetRelationship
+from geospaas.catalog.models import Dataset
 
 def valid_date(s):
     ''' Test input datestring '''
     try:
-        return dt.strptime(s, "%Y%m%d")
+        return dt.strptime(s, "%Y-%m-%d")
     except ValueError:
         msg = "Not a valid date: '{0}'.".format(s)
-        raise argparse.ArgumentTypeError(msg)
+        raise TypeError(msg)
 
 
 class ProcessingBaseCommand(BaseCommand):
@@ -32,6 +32,7 @@ class ProcessingBaseCommand(BaseCommand):
             # continue to filter inp_datasets
             # continue to process inp_datasets
     """
+    POLYGON_STR = 'POLYGON((%f %f, %f %f, %f %f, %f %f, %f %f))'
     def add_arguments(self, parser):
         parser.add_argument('--start',
                             action='store',
@@ -47,9 +48,23 @@ class ProcessingBaseCommand(BaseCommand):
 
         parser.add_argument('--polygon',
                             action='store',
-                            default='POLYGON((-360 -90, 360 -90, 360 90, -360 90, -360 -90))',
+                            default='',
                             help='Overlaping polygon',
                             type=str)
+
+        parser.add_argument('--lonlim',
+                            action='store',
+                            default=[-180, 180],
+                            help='Longitude limits',
+                            type=float,
+                            nargs=2)
+
+        parser.add_argument('--latlim',
+                            action='store',
+                            default=[-90, 90],
+                            help='Latitude limits',
+                            type=float,
+                            nargs=2)
 
         parser.add_argument('--mask',
                             action='store',
@@ -67,16 +82,22 @@ class ProcessingBaseCommand(BaseCommand):
                             help='Number of entries to process')
 
     def find_datasets(self, **options):
-        start_date = parse(options['start'])
-        stop_date = parse(options['stop'])
-        polygon = options['polygon']
-        mask = str(options['mask'])
-        #self.limit = {0: None}.get(options['limit'], options['limit'])
+        # get polygon from input or generate from input lonlim, latlim params
+        if options['polygon'] != '':
+            polygon = options['polygon']
+        else:
+            polygon = self.POLYGON_STR % (
+                        options['lonlim'][0], options['latlim'][0],
+                        options['lonlim'][1], options['latlim'][0],
+                        options['lonlim'][1], options['latlim'][1],
+                        options['lonlim'][0], options['latlim'][1],
+                        options['lonlim'][0], options['latlim'][0])
 
+        print(polygon)
         # find all input datasets
         return Dataset.objects.filter(
-                time_coverage_start__gte=start_date,
-                time_coverage_start__lte=stop_date,
+                time_coverage_start__gte=options['start'],
+                time_coverage_start__lte=options['stop'],
                 geographic_location__geometry__intersects=polygon,
-                dataseturi__uri__contains=mask).order_by('time_coverage_start')
+                dataseturi__uri__contains=options['mask']).order_by('time_coverage_start')
 
