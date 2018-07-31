@@ -6,4 +6,4 @@ class Command(ProcessingBaseCommand):
     def handle(self, *args, **options):
         # find input datasets
         inp_datasets = self.find_datasets(**options)
-        print('Found %d matching datasets' % inp_datasets.count())
+        self.stdout.write('Found %d matching datasets' % inp_datasets.count())
