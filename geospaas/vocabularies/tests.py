@@ -26,7 +26,11 @@ class BaseForVocabulariesTests(TestCase):
         self.mock_pti.get_gcmd_instrument_list.return_value = [{'Category': 'Earth Remote Sensing Instruments', 'Class': 'Active Remote Sensing', 'Type': 'Altimeters', 'Subtype': 'Lidar/Laser Altimeters', 'Short_Name': 'AIRBORNE LASER SCANNER', 'Long_Name': ''}]
         self.mock_pti.get_iso19115_topic_category_list.return_value = [{'iso_topic_category': 'Biota'}]
         self.mock_pti.get_gcmd_location_list.return_value = [{'Location_Category': 'CONTINENT', 'Location_Type': 'AFRICA', 'Location_Subregion1': 'CENTRAL AFRICA', 'Location_Subregion2': 'ANGOLA', 'Location_Subregion3': ''}]
-
+        self.mock_pti.get_gcmd_project_list.return_value = [{'Bucket': 'A - C', 'Short_Name': 'AAE', 'Long_Name': 'Australasian Antarctic Expedition of 1911-14'}]
+        self.mock_pti.get_gcmd_science_keyword_list.return_value = [{'Category': 'EARTH SCIENCE SERVICES', 'Topic': 'DATA ANALYSIS AND VISUALIZATION', 'Term': 'CALIBRATION/VALIDATION', 'Variable_Level_1': 'CALIBRATION', 'Variable_Level_2': '', 'Variable_Level_3': '', 'Detailed_Variable': ''}]
+        self.mock_pti.get_gcmd_temporalresolutionrange_list.return_value = [{'Temporal_Resolution_Range': '1 minute - < 1 hour'}]
+        self.mock_pti.get_gcmd_horizontalresolutionrange_list.return_value = [{'Horizontal_Resolution_Range': '1 km - < 10 km or approximately .01 degree - < .09 degree'}]
+        self.mock_pti.get_gcmd_verticalresolutionrange_list.return_value = [{'Vertical_Resolution_Range': '1 meter - < 10 meters'}]
         self.patcher2 = patch('geospaas.vocabularies.managers.print')
         self.mock_print = self.patcher2.start()
 
@@ -80,12 +84,6 @@ class DataCenterTests(BaseForVocabulariesTests):
         dc2, cr = DataCenter.objects.get_or_create(dc1)
         self.assertEqual(dc0, dc2)
         self.assertFalse(cr)
-
-
-class HorizontalDataResolutionTests(BaseForVocabulariesTests):
-    def test_get_horizontal_range(self):
-        rr = HorizontalDataResolution.objects.get(range='< 1 meter')
-        self.assertEqual(rr.range, '< 1 meter')
 
 
 class InstrumentTests(BaseForVocabulariesTests):
@@ -185,11 +183,23 @@ class ProjectTests(BaseForVocabulariesTests):
         self.assertEqual(p.long_name,
             'Atmospheric Chemistry Studies in the Oceanic Environment')
 
+    def test_create_from_vocabularies(self):
+        Project.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_project.assert_called_once()
+        self.mock_pti.get_gcmd_project_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
+
 
 class ScienceKeywordTests(BaseForVocabulariesTests):
     def test_get_science_keyword(self):
         kw = ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT')
         self.assertEqual(kw.topic, 'SPECTRAL/ENGINEERING')
+
+    def test_create_from_vocabularies(self):
+        ScienceKeyword.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_science_keyword.assert_called_once()
+        self.mock_pti.get_gcmd_science_keyword_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
 class TemporalDataResolutionTests(BaseForVocabulariesTests):
@@ -197,12 +207,36 @@ class TemporalDataResolutionTests(BaseForVocabulariesTests):
         tr = TemporalDataResolution.objects.get(range='1 minute - < 1 hour')
         self.assertEqual(tr.range, '1 minute - < 1 hour')
 
+    def test_create_from_vocabularies(self):
+        TemporalDataResolution.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_temporalresolutionrange.assert_called_once()
+        self.mock_pti.get_gcmd_temporalresolutionrange_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
+
+
+class HorizontalDataResolutionTests(BaseForVocabulariesTests):
+    def test_get_horizontal_range(self):
+        rr = HorizontalDataResolution.objects.get(range='< 1 meter')
+        self.assertEqual(rr.range, '< 1 meter')
+
+    def test_create_from_vocabularies(self):
+        HorizontalDataResolution.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_horizontalresolutionrange.assert_called_once()
+        self.mock_pti.get_gcmd_horizontalresolutionrange_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
+
 
 class VerticalDataResolutionTests(BaseForVocabulariesTests):
     def test_get_vertical_range(self):
         vr = VerticalDataResolution.objects.get(
                 range='10 meters - < 30 meters')
         self.assertEqual(vr.range, '10 meters - < 30 meters')
+
+    def test_create_from_vocabularies(self):
+        VerticalDataResolution.objects.create_from_vocabularies()
+        self.mock_pti.update_gcmd_verticalresolutionrange.assert_called_once()
+        self.mock_pti.get_gcmd_verticalresolutionrange_list.assert_called_once()
+        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
 class CommandsTests(TestCase):
