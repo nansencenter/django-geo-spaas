@@ -199,7 +199,7 @@ class VerticalDataResolutionManager(models.Manager):
     def get_or_create(self, vdr, *args, **kwargs):
         """ Get or create VerticalDataResolution instance from input pythesint entry """
         return super(VerticalDataResolutionManager, self).get_or_create(
-                    range=vdr['Horizontal_Resolution_Range'])
+                    range=vdr['Vertical_Resolution_Range'])
 
 
 class TemporalDataResolutionManager(models.Manager):
