@@ -20,7 +20,7 @@ from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Data
 
 class DatasetManager(models.Manager):
     default_char_fields = {
-        'entry_id'           : lambda : 'NERSC_' + uuid.uuid4,
+        'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
         'entry_title'        : lambda : 'NONE',
         'summary'            : lambda : 'NONE',
     }
