@@ -1,3 +1,4 @@
+import os
 import json
 
 from django.test import TestCase
@@ -6,10 +7,12 @@ from django.contrib.gis.geos import Polygon
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
 from django.utils.six import StringIO
+from django.conf import settings
 
 from geospaas.vocabularies.models import Platform, Instrument, Parameter
 from geospaas.vocabularies.models import ISOTopicCategory, DataCenter
 from geospaas.catalog.models import *
+
 
 class DatasetTests(TestCase):
 
@@ -207,5 +210,13 @@ class TestCountCommand(TestCase):
 
         out = StringIO()
         call_command('count', start='2010-01-02', stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+
+        out = StringIO()
+        call_command('count', extent=[0, 10, 0, 10], stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+
+        out = StringIO()
+        call_command('count', geojson=os.path.realpath(os.path.join('tests', 'testgeojson.json')), stdout=out)
         self.assertEqual('Found 1 matching datasets\n', out.getvalue())
 

@@ -4,6 +4,8 @@ from datetime import datetime as dt
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand
+from django.contrib.gis.geos import GEOSGeometry, Polygon, GEOSException
+from django.contrib.gis.gdal import GDALException
 
 from geospaas.catalog.models import Dataset
 
@@ -33,39 +35,35 @@ class ProcessingBaseCommand(BaseCommand):
             # continue to filter inp_datasets
             # continue to process inp_datasets
     """
-    POLYGON_STR = 'POLYGON((%f %f, %f %f, %f %f, %f %f, %f %f))'
     def add_arguments(self, parser):
         parser.add_argument('--start',
                             action='store',
+                            metavar='YYYY-MM-DD',
                             default='1900-01-01',
-                            help='Start date',
+                            help='Start of time range',
                             type=valid_date)
 
-        parser.add_argument('--stop',
+        parser.add_argument('--end',
                             action='store',
+                            metavar='YYYY-MM-DD',
                             default='2100-12-31',
-                            help='Stop date',
+                            help='End of time range',
                             type=valid_date)
 
-        parser.add_argument('--polygon',
+        parser.add_argument('--extent',
                             action='store',
-                            default='',
-                            help='Overlaping polygon',
+                            metavar=('MIN_LON', 'MAX_LON', 'MIN_LAT', 'MAX_LAT'),
+                            default=None,
+                            help='Spatial extent',
+                            type=float,
+                            nargs=4)
+
+        parser.add_argument('--geojson',
+                            action='store',
+                            metavar='GeoJSON',
+                            default=None,
+                            help='Filename of GeoJSON with polygon for spatial search',
                             type=str)
-
-        parser.add_argument('--lonlim',
-                            action='store',
-                            default=[-180, 180],
-                            help='Longitude limits',
-                            type=float,
-                            nargs=2)
-
-        parser.add_argument('--latlim',
-                            action='store',
-                            default=[-90, 90],
-                            help='Latitude limits',
-                            type=float,
-                            nargs=2)
 
         parser.add_argument('--mask',
                             action='store',
@@ -82,22 +80,74 @@ class ProcessingBaseCommand(BaseCommand):
                             type=int,
                             help='Number of entries to process')
 
+    def geometry_from_options(self, extent=None, geojson=None, **kwargs):
+        """ Generate geometry to use in spatial search
+
+        If extent is not None, return Polygon generated as POLYGON(()) with min/max lon/lat
+        If geojson is not None, return Polygon loaded from the GeoJSON file
+        Otherwise, return None
+
+        Parameters
+        ----------
+        extent : [float, float, float, float]
+            Values of min_lon, max_lon, min_lat, max_lat
+        geojson : str
+            Filename with Polygon GeoJSON
+        **kwargs : dict
+            other options from input arguments
+
+        Returns
+        -------
+        geometry : geos.Polygon or None
+        """
+        polygon = None
+
+        if extent is not None:
+            # generate polygon from input extent parameter
+            polygon = Polygon([ [extent[0], extent[2]],
+                                [extent[1], extent[2]],
+                                [extent[1], extent[3]],
+                                [extent[0], extent[3]],
+                                [extent[0], extent[2]]])
+        elif geojson is not None and os.path.exists(geojson):
+            # try to load GeoJSON and generate valid polygon
+            with open(geojson, 'rt') as f:
+                geojson = f.read().strip()
+            try:
+                polygon = GEOSGeometry(geojson)
+            except (ValueError, GDALException, GEOSException):
+                raise ValueError('Failed to read valid GeoJSON from %s'%options['geojson'])
+            if not isinstance(polygon, Polygon):
+                raise ValueError('Incorrect geometry type in GeoJSON %s'%options['geojson'])
+
+        return polygon
+
     def find_datasets(self, **options):
-        # get input polygon parameter or generate polygon from input lonlim, latlim parameters
-        if options['polygon'] != '':
-            polygon = options['polygon']
-        else:
-            polygon = self.POLYGON_STR % (
-                        options['lonlim'][0], options['latlim'][0],
-                        options['lonlim'][1], options['latlim'][0],
-                        options['lonlim'][1], options['latlim'][1],
-                        options['lonlim'][0], options['latlim'][1],
-                        options['lonlim'][0], options['latlim'][0])
-        # find all datasets matching the criteria
+        """ Find datasets that match input parameters
+
+        Parameters
+        ----------
+        options : dict
+            start : datetime
+            end : datetime
+            mask : str
+            force : bool
+            limit : int
+
+        Returns
+        -------
+            datasets : django.QuerySet
+        """
+
         datasets = Dataset.objects.filter(
-                (Q(geographic_location__geometry__overlaps=polygon) |
-                 Q(geographic_location__geometry__within=polygon)),
                 time_coverage_start__gte=options['start'],
-                time_coverage_start__lte=options['stop'],
+                time_coverage_start__lte=options['end'],
                 dataseturi__uri__contains=options['mask']).order_by('time_coverage_start')
+
+        geometry = self.geometry_from_options(**options)
+        if geometry is not None:
+            datasets = datasets.filter(
+                (Q(geographic_location__geometry__overlaps=geometry) |
+                 Q(geographic_location__geometry__within=geometry)))
+
         return datasets
