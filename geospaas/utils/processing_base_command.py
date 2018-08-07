@@ -121,7 +121,7 @@ class ProcessingBaseCommand(BaseCommand):
         return polygon
 
     def find_datasets(self, start='1900-01-01',
-                            end='2010-12-31',
+                            end='2100-12-31',
                             extent=None,
                             geojson=None,
                             mask='',
