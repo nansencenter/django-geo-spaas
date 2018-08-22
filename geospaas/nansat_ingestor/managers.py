@@ -1,6 +1,9 @@
+import uuid
 import warnings
 import json
 from xml.sax.saxutils import unescape
+
+import pythesint as pti
 
 from nansat.nansat import Nansat
 
@@ -8,14 +11,29 @@ from django.db import models
 from django.contrib.gis.geos import WKTReader
 
 from geospaas.utils import validate_uri, nansat_filename
-from geospaas.vocabularies.models import Platform
-from geospaas.vocabularies.models import Instrument
-from geospaas.vocabularies.models import DataCenter
-from geospaas.vocabularies.models import ISOTopicCategory
-from geospaas.catalog.models import GeographicLocation
-from geospaas.catalog.models import DatasetURI, Source, Dataset
+from geospaas.vocabularies.models import (Platform,
+                                          Instrument,
+                                          DataCenter,
+                                          ISOTopicCategory,
+                                          Location)
+from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
+    default_char_fields = {
+        'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
+        'entry_title'        : lambda : 'NONE',
+        'summary'            : lambda : 'NONE',
+    }
+
+    default_foreign_keys = {
+        'gcmd_location'      : {'model': Location,
+                                'value': pti.get_gcmd_location('SEA SURFACE')},
+        'data_center'        : {'model': DataCenter,
+                                'value': pti.get_gcmd_provider('NERSC')},
+        'ISO_topic_category' : {'model': ISOTopicCategory,
+                                'value': pti.get_iso19115_topic_category('Oceans')},
+    }
+
     def get_or_create(self, uri, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
@@ -37,83 +55,59 @@ class DatasetManager(models.Manager):
         if len(uris) > 0:
             return uris[0].dataset, False
 
+        # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
 
-        # get metadata
-        platform = json.loads( unescape( n.get_metadata('platform'),
-                {'&quot;': '"'}))
-        instrument = json.loads( unescape( n.get_metadata('instrument'),
-                {'&quot;': '"'}))
-        pp = Platform.objects.get(
-                category=platform['Category'],
-                series_entity=platform['Series_Entity'],
-                short_name=platform['Short_Name'],
-                long_name=platform['Long_Name']
-            )
-        ii = Instrument.objects.get(
-                category = instrument['Category'],
-                instrument_class = instrument['Class'],
-                type = instrument['Type'],
-                subtype = instrument['Subtype'],
-                short_name = instrument['Short_Name'],
-                long_name = instrument['Long_Name']
-            )
-        specs = n.get_metadata().get('specs', '')
-        # if not specs:
-        #     specs = n.get_metadata().get('Entry Title', '')
-        source = Source.objects.get_or_create(
-            platform = pp,
-            instrument = ii,
-            specs=specs)[0]
+        # get metadata from Nansat and get objects from vocabularies
+        n_metadata = n.get_metadata()
+
+        # set compulsory metadata (source)
+        platform, _ = Platform.objects.get_or_create(json.loads(n_metadata['platform']))
+        instrument, _ = Instrument.objects.get_or_create(json.loads(n_metadata['instrument']))
+        specs = n_metadata.get('specs', '')
+        source, _ = Source.objects.get_or_create(platform=platform,
+                                                 instrument=instrument,
+                                                 specs=specs)
+
+        # set optional CharField metadata from Nansat or from self.default_char_fields
+        options = {}
+        for name in self.default_char_fields:
+            if name not in n_metadata:
+                warnings.warn('%s is not provided in Nansat metadata!' % name)
+                options[name] = self.default_char_fields[name]()
+            else:
+                options[name] = n_metadata[name]
+
+        # set optional ForeignKey metadata from Nansat or from self.default_foreign_keys
+        for name in self.default_foreign_keys:
+            value = self.default_foreign_keys[name]['value']
+            model = self.default_foreign_keys[name]['model']
+            if name not in n_metadata:
+                warnings.warn('%s is not provided in Nansat metadata!' % name)
+            else:
+                try:
+                    value = json.loads(n_metadata[name])
+                except:
+                    warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
+                                    (n_metadata[name], name))
+            options[name], _ = model.objects.get_or_create(value)
 
         # Find coverage to set number of points in the geolocation
+        if len(n.vrt.dataset.GetGCPs()) > 0:
+            n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt()))[0]
-        try:
-            entrytitle = n.get_metadata('Entry Title')
-        except:
-            entrytitle = 'NONE'
-            warnings.warn('''
-                Entry title is hardcoded to "NONE" - this should
-                be provided in the nansat metadata instead..
-                ''')
-        try:
-            sname = n.get_metadata('Data Center')
-        except:
-            sname = 'NERSC'
-            warnings.warn('''
-                Data center is hardcoded to "NERSC" - this should
-                be provided in the nansat metadata instead..
-                ''')
-        dc = DataCenter.objects.get(short_name=sname)
-        try:
-            isocatname = n.get_metadata('ISO Topic Category')
-        except:
-            isocatname = 'Oceans'
-            warnings.warn('''
-                ISO topic category is hardcoded to "Oceans" - this should
-                be provided in the nansat metadata instead..
-                ''')
-        iso_category = ISOTopicCategory.objects.get(name=isocatname)
-        try:
-            summary = n.get_metadata('Summary')
-        except:
-            summary = 'NONE'
-            warnings.warn('''
-                Summary is hardcoded to "NONE" - this should
-                be provided in the nansat metadata instead..
-                ''')
+
+
+        # create dataset
         ds = Dataset(
-                entry_title=entrytitle,
-                ISO_topic_category = iso_category,
-                data_center = dc,
-                summary = summary,
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
-                geographic_location=geolocation)
+                geographic_location=geolocation,
+                **options)
         ds.save()
-
+        # create dataset URI
         ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
 
         return ds, True

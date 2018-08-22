@@ -13,6 +13,12 @@
         "geometry": "SRID=4326;POLYGON ((0.0000000000000000 0.0000000000000000, 0.0000000000000000 10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 0.0000000000000000, 0.0000000000000000 0.0000000000000000))"
     }
 },{
+    "pk": 2,
+    "model": "catalog.geographiclocation",
+    "fields": {
+        "geometry": "SRID=4326;POLYGON ((20.0000000000000000 20.0000000000000000, 20.0000000000000000 30.0000000000000000, 30.0000000000000000 30.0000000000000000, 30.0000000000000000 20.0000000000000000, 20.0000000000000000 20.0000000000000000))"
+    }
+},{
     "pk": 1,
     "model": "catalog.dataset",
     "fields": {
@@ -38,11 +44,25 @@
         "time_coverage_start": "2010-01-02T00:00:00Z",
         "summary": "This is a quite short summary about the test dataset.",
         "source": ["AQUA", "MODIS"],
-        "geographic_location": 1,
+        "geographic_location": 2,
         "data_center": ["NERSC"],
         "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
         "ISO_topic_category": ["Oceans"],
         "access_constraints": null
+    }
+},{
+    "model": "catalog.dataseturi",
+    "pk": 1,
+    "fields": {
+        "uri": "file://localhost/some/test/file1.ext",
+        "dataset": 1
+    }
+},{
+    "model": "catalog.dataseturi",
+    "pk": 2,
+    "fields": {
+        "uri": "file://localhost/some/test/file2.ext",
+        "dataset": 2
     }
 }
 ]

@@ -1,14 +1,20 @@
+import os
 import json
+from mock import patch, PropertyMock, Mock, MagicMock, DEFAULT
 
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.gis.geos import Polygon
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
+from django.utils.six import StringIO
+from django.conf import settings
+from django.core.management.base import CommandError
 
 from geospaas.vocabularies.models import Platform, Instrument, Parameter
 from geospaas.vocabularies.models import ISOTopicCategory, DataCenter
 from geospaas.catalog.models import *
+
 
 class DatasetTests(TestCase):
 
@@ -196,3 +202,51 @@ class SourceTests(TestCase):
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
+
+class TestCountCommand(TestCase):
+    fixtures = ['vocabularies', 'catalog']
+    def test_count_command(self):
+        out = StringIO()
+        call_command('count', stdout=out)
+        self.assertEqual('Found 2 matching datasets\n', out.getvalue())
+
+        out = StringIO()
+        call_command('count', start='2010-01-02', stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+
+        out = StringIO()
+        call_command('count', extent=[0, 10, 0, 10], stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+
+        out = StringIO()
+        with self.assertRaises(CommandError) as ce:
+            call_command('count', geojson='fake_filename', stdout=out)
+        self.assertIn('GeoJSON file', ce.exception.args[0])
+
+    def test_count_command_bad_start(self):
+        out = StringIO()
+        with self.assertRaises(CommandError) as ce:
+            call_command('count', start='abrakadabra', stdout=out)
+        self.assertIn('Not a valid date', ce.exception.args[0])
+
+    @patch('geospaas.utils.processing_base_command.open')
+    def test_count_command_good_geojson_polygon(self, mock_open):
+        mock_open.return_value.__enter__.return_value.read.return_value = '{ "type": "Polygon", "coordinates": [ [ [ -1, -1 ], [ -1, 11 ], [ 11, 11 ], [ 11, -1 ], [ -1, -1 ] ] ] }'
+        out = StringIO()
+        call_command('count', geojson=os.path.realpath(__file__), stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+
+    @patch('geospaas.utils.processing_base_command.open')
+    def test_count_command_good_geojson_point(self, mock_open):
+        mock_open.return_value.__enter__.return_value.read.return_value = '{ "type": "Point", "coordinates": [ 1, 1 ] }'
+        out = StringIO()
+        call_command('count', geojson=os.path.realpath(__file__), stdout=out)
+        self.assertEqual('Found 1 matching datasets\n', out.getvalue())
+
+    @patch('geospaas.utils.processing_base_command.open')
+    def test_count_command_wrong_geojson_content(self, mock_open):
+        mock_open.return_value.__enter__.return_value.read.return_value = 'wrong json'
+        out = StringIO()
+        with self.assertRaises(CommandError) as ce:
+            call_command('count', geojson=os.path.realpath(__file__), stdout=out)
+        self.assertIn('Failed to read valid GeoJSON from', ce.exception.args[0])
