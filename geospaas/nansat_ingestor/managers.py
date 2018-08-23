@@ -50,10 +50,12 @@ class DatasetManager(models.Manager):
         # file or stream
         valid_uri = validate_uri(uri)
 
-        # check if dataset already exists
-        uris = DatasetURI.objects.filter(uri=uri)
-        if len(uris) > 0:
-            return uris[0].dataset, False
+        # Some times we need to split a file into several datasets... (e.g., scatterometers and svp
+        # drifters) - also, this test is performed in the ingest command
+        ## check if dataset already exists
+        #uris = DatasetURI.objects.filter(uri=uri)
+        #if len(uris) > 0:
+        #    return uris[0].dataset, False
 
         # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
@@ -100,15 +102,14 @@ class DatasetManager(models.Manager):
 
 
         # create dataset
-        ds = Dataset(
+        ds, created = Dataset.objects.get_or_create(
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
                 geographic_location=geolocation,
                 **options)
-        ds.save()
         # create dataset URI
         ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
 
-        return ds, True
+        return ds, created
 
