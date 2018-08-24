@@ -34,7 +34,7 @@ class DatasetManager(models.Manager):
                                 'value': pti.get_iso19115_topic_category('Oceans')},
     }
 
-    def get_or_create(self, uri, *args, **kwargs):
+    def get_or_create(self, uri, n_points=10, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
@@ -98,7 +98,7 @@ class DatasetManager(models.Manager):
         if len(n.vrt.dataset.GetGCPs()) > 0:
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
-                      geometry=WKTReader().read(n.get_border_wkt()))[0]
+                      geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
 
         # create dataset
