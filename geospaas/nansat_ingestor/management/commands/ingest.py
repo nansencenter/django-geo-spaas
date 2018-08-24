@@ -8,7 +8,7 @@ from geospaas.nansat_ingestor.models import Dataset
 class Command(BaseCommand):
     args = '<filename filename ...>'
     help = 'Add file to catalog archive'
-    nPoints = 10
+    n_points = 10
 
     def add_arguments(self, parser):
         parser.add_argument('files', nargs='*', type=str)
@@ -18,9 +18,9 @@ class Command(BaseCommand):
                                     mapperName="sentinel1a_l1"
                                     (can be repated)''')
 
-        parser.add_argument('--nPoints',
+        parser.add_argument('--n_points',
                             action='store',
-                            default=self.nPoints,
+                            default=self.n_points,
                             help='''Number of points in the border''')
 
     def _get_args(self, *args, **options):
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         """
         if len(options['files'])==0:
             raise IOError('Please provide at least one filename')
-        nPoints = int(options.get('nPoints', self.nPoints))
+        n_points = int(options.get('n_points', self.n_points))
 
         non_ingested_uris = DatasetURI.objects.all().get_non_ingested_uris(
                 uris_from_args(options['files'])
@@ -40,16 +40,16 @@ class Command(BaseCommand):
                 var, val = opt.split('=')
                 nansat_options[var] = val
         
-        return non_ingested_uris, nPoints, nansat_options 
+        return non_ingested_uris, n_points, nansat_options 
 
     def handle(self, *args, **options):
         """ Ingest one Dataset per file that has not previously been ingested
         """
-        non_ingested_uris, nPoints, nansat_options = self._get_args(*args, **options)
+        non_ingested_uris, n_points, nansat_options = self._get_args(*args, **options)
 
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
-            ds, cr = Dataset.objects.get_or_create(non_ingested_uri, nPoints=nPoints, **nansat_options)
+            ds, cr = Dataset.objects.get_or_create(non_ingested_uri, n_points=n_points, **nansat_options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
             elif type(ds)==Dataset:
