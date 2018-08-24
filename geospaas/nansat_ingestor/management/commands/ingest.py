@@ -23,7 +23,9 @@ class Command(BaseCommand):
                             default=self.nPoints,
                             help='''Number of points in the border''')
 
-    def handle(self, *args, **options):
+    def _get_args(self, *args, **options):
+        """ Get arguments needed to create the Dataset
+        """
         if len(options['files'])==0:
             raise IOError('Please provide at least one filename')
         nPoints = int(options.get('nPoints', self.nPoints))
@@ -33,17 +35,23 @@ class Command(BaseCommand):
             )
 
         nansat_options = {}
-        count = 0
         if options['nansat_option']:
             for opt in options['nansat_option']:
                 var, val = opt.split('=')
                 nansat_options[var] = val
+        
+        return non_ingested_uris, nPoints, nansat_options 
+
+    def handle(self, *args, **options):
+        """ Ingest one Dataset per file that has not previously been ingested
+        """
+        non_ingested_uris, nPoints, nansat_options = self._get_args(*args, **options)
+
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
             ds, cr = Dataset.objects.get_or_create(non_ingested_uri, nPoints=nPoints, **nansat_options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
-                count += 1
             elif type(ds)==Dataset:
                 self.stdout.write('%s has been added before.\n' % non_ingested_uri)
             else:
