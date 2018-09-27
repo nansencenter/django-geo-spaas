@@ -109,7 +109,7 @@ class DatasetManager(models.Manager):
                 geographic_location=geolocation,
                 **options)
         # create dataset URI
-        ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
+        ds_uri, _ = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)
 
         return ds, created
 
