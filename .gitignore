@@ -4,3 +4,4 @@
 *.o
 databases_postgis.py
 project/*
+docs/_build/
