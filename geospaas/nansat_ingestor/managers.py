@@ -34,13 +34,18 @@ class DatasetManager(models.Manager):
                                 'value': pti.get_iso19115_topic_category('Oceans')},
     }
 
-    def get_or_create(self, uri, n_points=10, *args, **kwargs):
+    def get_or_create(self, uri, n_points=10, uri_filter_args={}, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
         ----------
             uri : str
                   URI to file or stream openable by Nansat
+            n_points : int
+                  Number of border points (default is 10)
+            uri_filter_args : dict
+                Extra DatasetURI filter arguments if several datasets can refer to the same URI
+
         Returns:
         -------
             dataset and flag
@@ -50,12 +55,11 @@ class DatasetManager(models.Manager):
         # file or stream
         valid_uri = validate_uri(uri)
 
-        # Some times we need to split a file into several datasets... (e.g., scatterometers and svp
-        # drifters) - also, this test is performed in the ingest command
-        ## check if dataset already exists
-        #uris = DatasetURI.objects.filter(uri=uri)
-        #if len(uris) > 0:
-        #    return uris[0].dataset, False
+        # Several datasets can refer to the same uri (e.g., scatterometers and svp drifters), so we
+        # need to pass uri_filter_args
+        uris = DatasetURI.objects.filter(uri=uri, **uri_filter_args)
+        if len(uris) > 0:
+            return uris[0].dataset, False
 
         # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
