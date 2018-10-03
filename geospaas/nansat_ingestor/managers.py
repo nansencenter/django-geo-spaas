@@ -19,20 +19,6 @@ from geospaas.vocabularies.models import (Platform,
 from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
-    default_char_fields = {
-        'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
-        'entry_title'        : lambda : 'NONE',
-        'summary'            : lambda : 'NONE',
-    }
-
-    default_foreign_keys = {
-        'gcmd_location'      : {'model': Location,
-                                'value': pti.get_gcmd_location('SEA SURFACE')},
-        'data_center'        : {'model': DataCenter,
-                                'value': pti.get_gcmd_provider('NERSC')},
-        'ISO_topic_category' : {'model': ISOTopicCategory,
-                                'value': pti.get_iso19115_topic_category('Oceans')},
-    }
 
     def get_or_create(self, uri, n_points=10, uri_filter_args={}, *args, **kwargs):
         ''' Create dataset and corresponding metadata
@@ -50,7 +36,6 @@ class DatasetManager(models.Manager):
         -------
             dataset and flag
         '''
-
         # Validate uri - this should fail if the uri doesn't point to a valid
         # file or stream
         valid_uri = validate_uri(uri)
@@ -75,19 +60,34 @@ class DatasetManager(models.Manager):
                                                  instrument=instrument,
                                                  specs=specs)
 
-        # set optional CharField metadata from Nansat or from self.default_char_fields
+        default_char_fields = {
+            'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
+            'entry_title'        : lambda : 'NONE',
+            'summary'            : lambda : 'NONE',
+        }
+
+        # set optional CharField metadata from Nansat or from default_char_fields
         options = {}
-        for name in self.default_char_fields:
+        for name in default_char_fields:
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
-                options[name] = self.default_char_fields[name]()
+                options[name] = default_char_fields[name]()
             else:
                 options[name] = n_metadata[name]
 
-        # set optional ForeignKey metadata from Nansat or from self.default_foreign_keys
-        for name in self.default_foreign_keys:
-            value = self.default_foreign_keys[name]['value']
-            model = self.default_foreign_keys[name]['model']
+        default_foreign_keys = {
+            'gcmd_location'      : {'model': Location,
+                                    'value': pti.get_gcmd_location('SEA SURFACE')},
+            'data_center'        : {'model': DataCenter,
+                                    'value': pti.get_gcmd_provider('NERSC')},
+            'ISO_topic_category' : {'model': ISOTopicCategory,
+                                    'value': pti.get_iso19115_topic_category('Oceans')},
+        }
+
+        # set optional ForeignKey metadata from Nansat or from default_foreign_keys
+        for name in default_foreign_keys:
+            value = default_foreign_keys[name]['value']
+            model = default_foreign_keys[name]['model']
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
             else:
