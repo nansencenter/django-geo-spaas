@@ -13,8 +13,12 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
+from thredds_crawler.crawl import Crawl
 from django.conf import settings
 
+import ipdb
+ipdb.set_trace()
+from geospaas.nansat_ingestor.models import Dataset as NansatDataset
 
 def module_path(module, root):
     for m in module.split('.'):
@@ -83,4 +87,27 @@ def uris_from_args(fnames):
     else:
         uris = [uri for uri in fnames]
     return uris
+
+def crawl(url, **options):
+    if not validate_uri(url):
+        raise ValueError('Invalid url: %s'%url)
+
+    if options['year']:
+        select = ['(.*%s\.nc)' %options['year']]
+    elif options['filename']:
+        select = ['(.*%s)' %options['filename']]
+    else:
+        select = None
+
+    c = Crawl(url, select=select, skip=['.*ncml'], debug=True)
+    added = 0
+    for ds in c.datasets:
+        url = [s.get('url') for s in ds.services if
+                s.get('service').lower()=='opendap'][0]
+        ds, cr = NansatDataset.objects.get_or_create(url)
+        if cr:
+            print 'Added %s, no. %d/%d'%(url, added, len(c.datasets))
+            added += 1
+    return added
+
 
