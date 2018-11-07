@@ -1,15 +1,19 @@
+import warnings
 from thredds_crawler.crawl import Crawl
 
 from django.core.management.base import BaseCommand, CommandError
 
 from geospaas.utils.utils import validate_uri
+from geospaas.nansat_ingestor.models import Dataset as NansatDataset
 
 def crawl(url, **options):
     if not validate_uri(url):
         raise ValueError('Invalid url: %s'%url)
 
     if options['date']:
-        select = ['(.*%s\.nc)' %options['date']]
+        select = ['(.*%s.*\.nc)' %options['date']]
+        import ipdb
+        ipdb.set_trace()
     elif options['filename']:
         select = ['(.*%s)' %options['filename']]
     else:
@@ -20,10 +24,15 @@ def crawl(url, **options):
     for ds in c.datasets:
         url = [s.get('url') for s in ds.services if
                 s.get('service').lower()=='opendap'][0]
-        ds, cr = NansatDataset.objects.get_or_create(url)
-        if cr:
-            print 'Added %s, no. %d/%d'%(url, added, len(c.datasets))
-            added += 1
+        try:
+            ds, cr = NansatDataset.objects.get_or_create(url)
+        except IOError as e:
+            warnings.warn(e.message)
+            continue
+        else:
+            if cr:
+                print 'Added %s, no. %d/%d'%(url, added, len(c.datasets))
+                added += 1
     return added
 
 class Command(BaseCommand):
