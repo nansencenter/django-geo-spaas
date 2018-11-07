@@ -1,6 +1,30 @@
+from thredds_crawler.crawl import Crawl
+
 from django.core.management.base import BaseCommand, CommandError
 
-from geospaas.utils import crawl
+from geospaas.utils.utils import validate_uri
+
+def crawl(url, **options):
+    if not validate_uri(url):
+        raise ValueError('Invalid url: %s'%url)
+
+    if options['date']:
+        select = ['(.*%s\.nc)' %options['date']]
+    elif options['filename']:
+        select = ['(.*%s)' %options['filename']]
+    else:
+        select = None
+
+    c = Crawl(url, select=select, skip=['.*ncml'], debug=True)
+    added = 0
+    for ds in c.datasets:
+        url = [s.get('url') for s in ds.services if
+                s.get('service').lower()=='opendap'][0]
+        ds, cr = NansatDataset.objects.get_or_create(url)
+        if cr:
+            print 'Added %s, no. %d/%d'%(url, added, len(c.datasets))
+            added += 1
+    return added
 
 class Command(BaseCommand):
     args = '<url> <select>'
@@ -25,10 +49,10 @@ class Command(BaseCommand):
         '''
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='*', type=str)
-        parser.add_argument('--year',
+        parser.add_argument('--date',
                             action='store',
                             default='',
-                            help='''Year of coverage''')
+                            help='''Date of coverage (yyyy/mm/dd)''')
         parser.add_argument('--filename',
                             action='store',
                             default='',
