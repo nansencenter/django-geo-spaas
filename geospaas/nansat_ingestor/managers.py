@@ -20,7 +20,7 @@ from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Data
 
 class DatasetManager(models.Manager):
 
-    def get_or_create(self, uri, n_points=10, uri_filter_args={}, *args, **kwargs):
+    def get_or_create(self, uri, n_points=10, uri_filter_args=None, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
@@ -36,6 +36,9 @@ class DatasetManager(models.Manager):
         -------
             dataset and flag
         '''
+        if not uri_filter_args:
+            uri_filter_args = {}
+
         # Validate uri - this should fail if the uri doesn't point to a valid
         # file or stream
         valid_uri = validate_uri(uri)
