@@ -31,7 +31,7 @@ def crawl(url, **options):
             continue
         else:
             if cr:
-                print 'Added %s, no. %d/%d'%(url, added, len(c.datasets))
+                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
                 added += 1
     return added
 
