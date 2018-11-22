@@ -26,8 +26,8 @@ def crawl(url, **options):
                 s.get('service').lower()=='opendap'][0]
         try:
             ds, cr = NansatDataset.objects.get_or_create(url)
-        except IOError as e:
-            warnings.warn(e.message)
+        except (IOError, AttributeError) as e:
+            #warnings.warn(e.message)
             continue
         else:
             if cr:
