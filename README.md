@@ -17,3 +17,7 @@ Connect to the virtual machine and use GeoSPaaS
   cd django-geo-spaas/project
   ./manage.py ingest name_of_your_file
 ```
+
+How to use Docker
+-----------------
+1. Install Docker
