@@ -23,6 +23,3 @@
   args:
     executable: /bin/bash
     chdir: /home/vagrant/project
-    #django_manage: >
-    #dj  command='update_vocabularies'
-    #dj  app_path='{{ geospaas_project_home }}/{{ geospaas_project_name }}'
