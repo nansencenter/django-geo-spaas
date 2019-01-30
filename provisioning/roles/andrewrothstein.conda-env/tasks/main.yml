@@ -1,0 +1,48 @@
+---
+- name: mkdir env-ymls
+  become: '{{conda_env_escalate}}'
+  become_user: root
+  file:
+    path: '{{conda_env_env_ymls}}'
+    state: directory
+    mode: 0755
+
+- name: injecting/templatizing environment.yml...
+  become: '{{conda_env_escalate}}'
+  become_user: root
+  template:
+    src: '{{conda_env_environment}}'
+    dest: '{{conda_env_fq_dest_environment}}'
+    mode: 0644
+
+- name: create the conda environment
+  become: '{{conda_env_escalate}}'
+  become_user: root
+  command: '{{conda_env_bin_dir}}/conda env create -f={{conda_env_fq_dest_environment}} -q -n {{conda_env_name}}'
+  args:
+    creates: '{{conda_env_conda_dir}}/envs/{{conda_env_name}}'
+
+- name: addl packages...
+  become: '{{conda_env_escalate}}'
+  become_user: root
+  when: conda_env_addl_pkgs is defined
+  with_items: '{{ conda_env_addl_pkgs | default([]) }}'
+  command: '{{conda_env_bin_dir}}/conda install -n {{conda_env_name}} -c {{ item.c | default("defaults") }} {{ item.p }}'
+
+- name: cleanup
+  become: '{{conda_env_escalate}}'
+  become_user: root
+  when: conda_env_cleanup
+  command: '{{conda_env_bin_dir}}/conda clean -tipsy'
+
+- name: setting up to activate in login shell...
+  become: '{{conda_env_escalate}}'
+  become_user: root
+  when: conda_env_escalate and conda_env_activate_for_login_shell
+  with_items:
+    - d: /etc/profile.d
+      f: conda-env-activate-{{conda_env_name}}.sh
+  template:
+    src: activate.sh.j2
+    dest: '{{item.d}}/{{item.f}}'
+    mode: '{{item.m|default("0644")}}'

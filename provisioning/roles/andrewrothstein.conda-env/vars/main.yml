@@ -1,0 +1,6 @@
+---
+conda_env_bin_dir: '{{conda_env_conda_dir}}/bin'
+conda_env_env_ymls: '{{conda_env_conda_dir}}/env-ymls'
+conda_env_fq_dest_environment: '{{conda_env_env_ymls}}/{{conda_env_name}}-{{conda_env_environment}}'
+
+conda_env_conda_bin: '{{conda_env_bin_dir}}/conda'

@@ -1,0 +1,17 @@
+---
+conda_env_conda_dir: /usr/local/anaconda
+conda_env_escalate: True
+conda_env_cleanup: False
+
+#conda_env_name: my-fancy-environment
+# the environment.yml file is found via the template module
+#conda_env_environment: environment.yml
+
+# Additional packages to be installed, that are not specifed in environment.yml
+#conda_env_addl_pkgs:
+#  - c: conda-forge
+#    p: nb_conda=2.2.0
+#  - p: jupyter
+
+# should the login shell activate this conda env by default?
+conda_env_activate_for_login_shell: False
