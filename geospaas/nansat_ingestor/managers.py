@@ -1,29 +1,26 @@
+import json
 import uuid
 import warnings
-import json
 from xml.sax.saxutils import unescape
+
+import pythesint as pti
+from django.contrib.gis.geos import WKTReader
+from django.db import models
+from geospaas.catalog.managers import (DAP_SERVICE_NAME, FILE_SERVICE_NAME,
+                                       LOCAL_FILE_SERVICE, OPENDAP_SERVICE)
+from geospaas.catalog.models import (Dataset, DatasetParameter, DatasetURI,
+                                     GeographicLocation, Source)
+from geospaas.utils.utils import nansat_filename, validate_uri
+from geospaas.vocabularies.models import (DataCenter, Instrument,
+                                          ISOTopicCategory, Location,
+                                          Parameter, Platform)
+from nansat.nansat import Nansat
 
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
 
-import pythesint as pti
-
-from nansat.nansat import Nansat
-
-from django.db import models
-from django.contrib.gis.geos import WKTReader
-
-from geospaas.utils.utils import validate_uri, nansat_filename
-from geospaas.vocabularies.models import (Platform,
-                                          Instrument,
-                                          DataCenter,
-                                          ISOTopicCategory,
-                                          Location)
-from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
-from geospaas.catalog.managers import DAP_SERVICE_NAME, OPENDAP_SERVICE 
-from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE 
 
 class DatasetManager(models.Manager):
 
@@ -114,6 +111,13 @@ class DatasetManager(models.Manager):
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
+        # create parameter
+        from geospaas.vocabularies.models import Parameter
+        nansat_bands = n.bands()
+        for band_number in range(1, len(nansat_bands)+1):
+            band_dict = nansat_bands[band_number]
+            if 'standard_name' in band_dict.keys():
+                parameter = Parameter.objects.get_or_create(nansat_bands[band_number])[0]
 
         # create dataset
         ds, created = Dataset.objects.get_or_create(
@@ -127,12 +131,42 @@ class DatasetManager(models.Manager):
         if 'http' in uri_scheme:
             service_name = DAP_SERVICE_NAME
             service = OPENDAP_SERVICE
-        else: 
+        else:
             service_name = FILE_SERVICE_NAME
             service = LOCAL_FILE_SERVICE
+        ds.save()
+
+
+        # create parameter
+        for band_id in range(1, len(n.bands())+1):
+            meta = n.get_metadata(band_id=band_id)
+            validity = all([key in meta.keys() for key in
+                            ['standard_name', 'short_name', 'units', 'gcmd_science_keyword']])
+            if validity:
+                pp = Parameter.objects.get(standard_name=meta['standard_name'],
+                                           short_name=meta['short_name'],
+                                           units=meta['units'],
+                                           gcmd_science_keyword=meta['gcmd_science_keyword'])
+                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
+
+
+        # GCMD keywords must be imported from Nansat object as is ...
+        # For now, the codes below will add all parameters except GCMD keywords.
+        # After fixing the issue in Nansat, the codes can be replaced by the one commented above.
+        # create parameter
+        for band_id in range(1, len(n.bands())+1):
+            meta = n.get_metadata(band_id=band_id)
+            validity = all([key in meta.keys() for key in
+                            ['standard_name', 'short_name', 'units']])
+            if validity:
+                pp = Parameter.objects.get(standard_name=meta['standard_name'],
+                                           short_name=meta['short_name'],
+                                           units=meta['units'])
+                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
+
+
         # create dataset URI
         ds_uri, _ = DatasetURI.objects.get_or_create(name=service_name, service=service, uri=uri,
                 dataset=ds)
 
         return ds, created
-
