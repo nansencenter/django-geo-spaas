@@ -19,7 +19,7 @@
         - geospaas.viewer
         - django_forms_bootstrap
       django_urlpatterns:
-        - "path(r'^', include('geospaas.urls')),"
+        - "path('', include('geospaas.urls')),"
 
     - role: geospaas
       geospaas_project_home: '{{ project_home }}'
