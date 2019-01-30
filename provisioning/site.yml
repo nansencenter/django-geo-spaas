@@ -18,6 +18,7 @@
         - geospaas.nansat_ingestor
         - geospaas.viewer
         - django_forms_bootstrap
+        - leaflet
       django_urlpatterns:
         - "path('', include('geospaas.urls')),"
 
