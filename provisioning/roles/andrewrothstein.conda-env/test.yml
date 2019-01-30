@@ -1,0 +1,12 @@
+---
+- hosts: all
+  roles:
+    - role: '{{playbook_dir}}'
+      conda_env_name: ansible-conda-env-test
+      conda_env_environment: ansible-conda-env-test-environment.yml
+      conda_env_cleanup: True
+      conda_env_activate_for_login_shell: True
+      conda_env_addl_pkgs:
+        - c: conda-forge
+          p: boto3
+        - p: jupyter
