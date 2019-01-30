@@ -1,0 +1,97 @@
+---
+- name: django | create new django project
+  shell: '{{ django_conda_dir }}/envs/{{ django_env_name }}/bin/django-admin startproject {{ django_project_name }}'
+  args:
+    chdir: '{{ django_project_home }}'
+    creates: '{{ django_project_home }}/{{ django_project_name }}'
+
+- name: django | replace DB backend
+  replace:
+    dest: '{{ django_settings }}'
+    regexp: 'django.db.backends.sqlite3'
+    replace: 'django.contrib.gis.db.backends.spatialite'
+
+- name: django | replace DB filename
+  replace:
+    dest: '{{ django_settings }}'
+    regexp: 'db.sqlite3'
+    replace: 'geodjango.db'
+
+- name: django | create media directories
+  file: path='{{ item.path }}'
+        state=directory
+  with_items:
+    - "{{ django_dirs }}"
+
+- name: django | add directories settings.py
+  lineinfile:
+    dest: "{{ django_settings }}"
+    insertafter: EOF
+    line: "{{ item.name }} = '{{ item.path }}'"
+  with_items:
+    - "{{ django_dirs }}"
+
+- name: django | add variables to settings.py
+  blockinfile:
+    dest: '{{ django_settings }}'
+    insertafter: EOF
+    marker: '# {mark} GEOSPAAS VARIABLES'
+    block: |
+        MEDIA_URL = '/site_media/media/'
+        STATICFILES_DIRS = [
+        "{{ django_project_home }}/{{ django_project_name }}/static",
+        ]
+        SERIALIZATION_MODULES = {"geojson": "django.contrib.gis.serializers.geojson",}
+        ALLOWED_HOSTS = ['*']
+        SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
+
+- name: django | add apps to settings.py
+  blockinfile:
+    dest: '{{ django_settings }}'
+    insertafter: "^INSTALLED_APPS*"
+    marker: "# {mark} DJANGO APP {{ item }}"
+    block: |
+      '{{ item }}',
+  with_items:
+    - "{{ django_apps }}"
+
+- name: django | Import include in urls.py
+  blockinfile:
+    dest: '{{ django_urls }}'
+    insertbefore: BOF
+    marker: '# {mark} GEOSPAAS IMPORTS'
+    block: |
+        from django.conf import settings
+        from django.conf.urls import include
+
+- name: django | Extend urlpatterns in urls.py
+  blockinfile:
+    dest: '{{ django_urls }}'
+    insertafter: EOF
+    marker: '# {mark} GEOSPAAS URLPATTERNS'
+    block: |
+        if settings.DEBUG:
+            from django.conf.urls.static import static
+            from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+            from django.views.generic import TemplateView
+            # Serve static and media files from development server
+            urlpatterns += staticfiles_urlpatterns()
+            urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+- name: django | add django.urls to urlpatterns in urls.py
+  lineinfile:
+    dest: '{{ django_urls }}'
+    insertafter: '^urlpatterns = \[*'
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - '{{ django_urlpatterns }}'
+
+- name: django | PIP Django 3rd party apps
+  pip:
+    executable: '{{ django_conda_dir }}/envs/{{ django_env_name }}/bin/pip'
+    name: '{{ item }}'
+  become: True
+  with_items:
+    - '{{ django_pip_pkgs }}'
+
