@@ -1,15 +1,28 @@
 ---
+- name: geospaas | Create link to django project folder in the home folder
+  file: path=/home/vagrant/project
+        src=/vagrant/project/
+        state=link
+        force=yes
+
+# Adding the shared folder to the pythonpath allows development work for the current repository
+# given that the actual python app is located on the root, e.g., django-geo-spaas/geospaas/.
+    # NOTE - may need to link from site-packages instead
 - name: geospaas | Add PYTHONPATH to bashrc
   lineinfile: dest="/home/vagrant/.bashrc" line="export PYTHONPATH=/vagrant"
 
+    # NOTE - may need to link geospaas from site-packages instead
 - name: geospaas | Run migrate on django-geo-spaas project
-  django_manage: >
-      command=migrate
-      app_path='{{ geospaas_project_home }}/{{ geospaas_project_name }}'
-      settings='{{ geospaas_project_name }}.settings'
-      pythonpath='{{ geospaas_project_home }}/{{ geospaas_project_name }}'
+  shell: source /home/vagrant/Miniconda3-4.5.1-Linux-x86_64/bin/activate py3django && ./manage.py migrate
+  args:
+    executable: /bin/bash
+    chdir: /home/vagrant/project
 
 - name: geospaas | Update vocabularies
-  django_manage: >
-      command='update_vocabularies'
-      app_path='{{ geospaas_project_home }}/{{ geospaas_project_name }}'
+  shell: source /home/vagrant/Miniconda3-4.5.1-Linux-x86_64/bin/activate py3django && ./manage.py update_vocabularies
+  args:
+    executable: /bin/bash
+    chdir: /home/vagrant/project
+    #django_manage: >
+    #dj  command='update_vocabularies'
+    #dj  app_path='{{ geospaas_project_home }}/{{ geospaas_project_name }}'

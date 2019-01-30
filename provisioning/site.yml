@@ -28,6 +28,10 @@
       geospaas_env_name: '{{ env_name }}'
       geospaas_conda_dir: '{{ conda_dir }}'
 
+    - role: localvm
+      geospaas_env_name: '{{ env_name }}'
+      geospaas_conda_dir: '{{ conda_dir }}'
+
   environment:
     PYTHONPATH: "/vagrant"
     PATH: "{{ conda_dir }}/envs/{{ env_name }}/bin:{{ ansible_env.PATH }}"
