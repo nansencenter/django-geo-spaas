@@ -64,6 +64,10 @@
       mode: 0755
   when: not bash_history.stat.exists
 
+- name: Local VM | Check if bash history file exists in default location
+  stat: path=/home/vagrant/.bash_history
+  register: bash_history
+
 - name: Local VM | Move bash history file if it exists in default location
   command: mv /home/vagrant/.bash_history /vagrant/lib/dot_bash_history
   when: bash_history.stat.exists and not bash_history.stat.islnk
