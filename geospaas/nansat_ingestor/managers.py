@@ -19,39 +19,33 @@ from geospaas.vocabularies.models import (Platform,
 from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
 
 class DatasetManager(models.Manager):
-    default_char_fields = {
-        'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
-        'entry_title'        : lambda : 'NONE',
-        'summary'            : lambda : 'NONE',
-    }
 
-    default_foreign_keys = {
-        'gcmd_location'      : {'model': Location,
-                                'value': pti.get_gcmd_location('SEA SURFACE')},
-        'data_center'        : {'model': DataCenter,
-                                'value': pti.get_gcmd_provider('NERSC')},
-        'ISO_topic_category' : {'model': ISOTopicCategory,
-                                'value': pti.get_iso19115_topic_category('Oceans')},
-    }
-
-    def get_or_create(self, uri, *args, **kwargs):
+    def get_or_create(self, uri, n_points=10, uri_filter_args=None, *args, **kwargs):
         ''' Create dataset and corresponding metadata
 
         Parameters:
         ----------
             uri : str
                   URI to file or stream openable by Nansat
+            n_points : int
+                  Number of border points (default is 10)
+            uri_filter_args : dict
+                Extra DatasetURI filter arguments if several datasets can refer to the same URI
+
         Returns:
         -------
             dataset and flag
         '''
+        if not uri_filter_args:
+            uri_filter_args = {}
 
         # Validate uri - this should fail if the uri doesn't point to a valid
         # file or stream
         valid_uri = validate_uri(uri)
 
-        # check if dataset already exists
-        uris = DatasetURI.objects.filter(uri=uri)
+        # Several datasets can refer to the same uri (e.g., scatterometers and svp drifters), so we
+        # need to pass uri_filter_args
+        uris = DatasetURI.objects.filter(uri=uri, **uri_filter_args)
         if len(uris) > 0:
             return uris[0].dataset, False
 
@@ -69,19 +63,34 @@ class DatasetManager(models.Manager):
                                                  instrument=instrument,
                                                  specs=specs)
 
-        # set optional CharField metadata from Nansat or from self.default_char_fields
+        default_char_fields = {
+            'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
+            'entry_title'        : lambda : 'NONE',
+            'summary'            : lambda : 'NONE',
+        }
+
+        # set optional CharField metadata from Nansat or from default_char_fields
         options = {}
-        for name in self.default_char_fields:
+        for name in default_char_fields:
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
-                options[name] = self.default_char_fields[name]()
+                options[name] = default_char_fields[name]()
             else:
                 options[name] = n_metadata[name]
 
-        # set optional ForeignKey metadata from Nansat or from self.default_foreign_keys
-        for name in self.default_foreign_keys:
-            value = self.default_foreign_keys[name]['value']
-            model = self.default_foreign_keys[name]['model']
+        default_foreign_keys = {
+            'gcmd_location'      : {'model': Location,
+                                    'value': pti.get_gcmd_location('SEA SURFACE')},
+            'data_center'        : {'model': DataCenter,
+                                    'value': pti.get_gcmd_provider('NERSC')},
+            'ISO_topic_category' : {'model': ISOTopicCategory,
+                                    'value': pti.get_iso19115_topic_category('Oceans')},
+        }
+
+        # set optional ForeignKey metadata from Nansat or from default_foreign_keys
+        for name in default_foreign_keys:
+            value = default_foreign_keys[name]['value']
+            model = default_foreign_keys[name]['model']
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
             else:
@@ -96,19 +105,18 @@ class DatasetManager(models.Manager):
         if len(n.vrt.dataset.GetGCPs()) > 0:
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
-                      geometry=WKTReader().read(n.get_border_wkt()))[0]
+                      geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
 
         # create dataset
-        ds = Dataset(
+        ds, created = Dataset.objects.get_or_create(
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
                 geographic_location=geolocation,
                 **options)
-        ds.save()
         # create dataset URI
-        ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
+        ds_uri, _ = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)
 
-        return ds, True
+        return ds, created
 

@@ -3,4 +3,11 @@
 *.so
 *.o
 databases_postgis.py
+.vagrant/*
 project/*
+docs/_build/
+lib/*
+provisioning/site.retry
+provisioning/roles/andrew*
+provisioning/roles/nansencenter.django/*
+provisioning/roles/localvm/defaults/*

@@ -195,6 +195,8 @@ class DatasetURI(models.Model):
         # (apparently) good... see the test..
         #self.full_clean()
         # Check that the uri exists?
+        # TODO: check in the get_or_create method - valid uri-schemes are provided at
+        # https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
         super(DatasetURI, self).save(*args, **kwargs)
 
 class DatasetRelationship(models.Model):

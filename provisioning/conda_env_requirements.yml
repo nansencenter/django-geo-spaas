@@ -8,3 +8,6 @@ dependencies:
   - libspatialite
   - pythesint
   - nansat
+  - mock
+  - ipython
+  - ipdb
