@@ -13,7 +13,9 @@ ARG DGID=1000
 RUN groupadd user -g $DGID \
 &&  useradd -m -s /bin/bash -N -u $DUID -g $DGID user \
 &&  echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/user/.bashrc \
-&&  echo "conda activate base" >> /home/user/.bashrc
+&&  echo "conda activate base" >> /home/user/.bashrc \
+&&  echo "export PYTHONPATH=/django-geo-spaas" >> /home/user/.bashrc \
+&&  echo "alias ll='ls -lh'" >> /home/user/.bashrc
 
 ENV PYTHONUNBUFFERED=1
 
@@ -25,7 +27,7 @@ RUN pip install \
 
 # Install Geo-SPaaS
 COPY . /django-geo-spaas
-WORKDIR /django-geo-spaas
-RUN python setup.py install
-WORKDIR /
+#WORKDIR /django-geo-spaas
+#RUN python setup.py install
+#WORKDIR /code
 USER user
