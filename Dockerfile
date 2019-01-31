@@ -1,6 +1,7 @@
 # Initialize from docker image with Python, libraries and Nansat
 FROM akorosov/nansat:latest
 
+# NB! Relevant for Linux users only
 # Default values of user and group IDs.
 # That should be changed to the IDs of the actual user and group on the host system in the script
 # for building the container. For example:
@@ -9,12 +10,12 @@ FROM akorosov/nansat:latest
 ARG DUID=1000
 ARG DGID=1000
 
-# update user with custom UID and GID
+# add user with custom UID and GID
 RUN groupadd user -g $DGID \
 &&  useradd -m -s /bin/bash -N -u $DUID -g $DGID user \
 &&  echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/user/.bashrc \
 &&  echo "conda activate base" >> /home/user/.bashrc \
-&&  echo "export PYTHONPATH=/django-geo-spaas" >> /home/user/.bashrc \
+&&  echo "export PYTHONPATH=$PYTHONPATH:/opt/django-geo-spaas/" >> /home/user/.bashrc \
 &&  echo "alias ll='ls -lh'" >> /home/user/.bashrc
 
 ENV PYTHONUNBUFFERED=1
@@ -26,8 +27,5 @@ RUN pip install \
     django-leaflet
 
 # Install Geo-SPaaS
-COPY . /django-geo-spaas
-#WORKDIR /django-geo-spaas
-#RUN python setup.py install
-#WORKDIR /code
+COPY geospaas /opt/django-geo-spaas/geospaas
 USER user
