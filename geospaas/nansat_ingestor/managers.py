@@ -15,8 +15,13 @@ from geospaas.vocabularies.models import (Platform,
                                           Instrument,
                                           DataCenter,
                                           ISOTopicCategory,
-                                          Location)
-from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
+                                          Location,
+                                          Parameter)
+from geospaas.catalog.models import (GeographicLocation,
+                                     DatasetURI,
+                                     Source,
+                                     Dataset,
+                                     DatasetParameter)
 
 class DatasetManager(models.Manager):
     default_char_fields = {
@@ -97,27 +102,45 @@ class DatasetManager(models.Manager):
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt()))[0]
-
-        # create parameter
-        from geospaas.vocabularies.models import Parameter
-        nansat_bands = n.bands()
-        for band_number in range(1, len(nansat_bands)+1):
-            band_dict = nansat_bands[band_number]
-            if 'standard_name' in band_dict.keys():
-                parameter = Parameter.objects.get_or_create(nansat_bands[band_number])[0]
-
-
-
-
-
+                      
         # create dataset
-        ds = Dataset(
+        ds, created = Dataset.objects.get_or_create(
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
                 source=source,
                 geographic_location=geolocation,
                 **options)
         ds.save()
+        
+        '''
+        # create parameter
+        for band_id in range(1, len(n.bands())+1):
+            meta = n.get_metadata(band_id=band_id)
+            validity = all([key in meta.keys() for key in
+                            ['standard_name', 'short_name', 'units', 'gcmd_science_keyword']])
+            if validity:
+                pp = Parameter.objects.get(standard_name=meta['standard_name'],
+                                           short_name=meta['short_name'],
+                                           units=meta['units'],
+                                           gcmd_science_keyword=meta['gcmd_science_keyword'])
+                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
+        '''
+        
+        # GCMD keywords must be imported from Nansat object as is ...
+        # For now, the codes below will add all parameters except GCMD keywords.
+        # After fixing the issue in Nansat, the codes can be replaced by the one commented above.
+        # create parameter
+        for band_id in range(1, len(n.bands())+1):
+            meta = n.get_metadata(band_id=band_id)
+            validity = all([key in meta.keys() for key in
+                            ['standard_name', 'short_name', 'units']])
+            if validity:
+                pp = Parameter.objects.get(standard_name=meta['standard_name'],
+                                           short_name=meta['short_name'],
+                                           units=meta['units'])
+                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
+
+        
         # create dataset URI
         ds_uri = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)[0]
 
