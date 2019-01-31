@@ -13,13 +13,13 @@
 
     # NOTE - may need to link geospaas from site-packages instead
 - name: geospaas | Run migrate on django-geo-spaas project
-  shell: source /home/vagrant/Miniconda3-4.5.1-Linux-x86_64/bin/activate py3django && ./manage.py migrate
+  shell: "source {{ conda_dir }}/bin/activate {{ env_name }} && ./manage.py migrate"
   args:
     executable: /bin/bash
     chdir: /home/vagrant/project
 
 - name: geospaas | Update vocabularies
-  shell: source /home/vagrant/Miniconda3-4.5.1-Linux-x86_64/bin/activate py3django && ./manage.py update_vocabularies
+  shell: "source {{ conda_dir }}/bin/activate {{ env_name }} && ./manage.py update_vocabularies"
   args:
     executable: /bin/bash
     chdir: /home/vagrant/project
