@@ -29,7 +29,7 @@ class ParameterManager(models.Manager):
     def get_by_natural_key(self, stdname):
         return self.get(standard_name=stdname)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         ''' Create parameter instances from the nersc wkv list.
         '''
         warnings.warn('''
@@ -38,7 +38,8 @@ class ParameterManager(models.Manager):
         parameter table
         ''')
         num = 0
-        pti.update_wkv_variable()
+        if fast==False:
+            pti.update_wkv_variable()
         for wkv in pti.get_wkv_variable_list():
             pp, created = self.get_or_create(wkv)
             if created: num+=1
@@ -57,10 +58,11 @@ class PlatformManager(models.Manager):
     def get_by_natural_key(self, short_name):
         return self.get(short_name=short_name)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
-        pti.update_gcmd_platform()
+        if fast==False:
+            pti.update_gcmd_platform()
         for platform in pti.get_gcmd_platform_list():
             if 'Revision' in platform.keys():
                 continue
@@ -82,9 +84,10 @@ class InstrumentManager(models.Manager):
     def get_by_natural_key(self, short_name):
         return self.get(short_name=short_name)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_instrument()
+        if fast==False:
+            pti.update_gcmd_instrument()
         for instrument in pti.get_gcmd_instrument_list():
             if 'Revision' in instrument.keys():
                 continue
@@ -112,9 +115,10 @@ class ScienceKeywordManager(models.Manager):
                 variable_level_2=variable_level_2,
                 variable_level_3=variable_level_3)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_science_keyword()
+        if fast==False:
+            pti.update_gcmd_science_keyword()
         for skw in pti.get_gcmd_science_keyword_list():
             if 'Revision' in skw.keys():
                 continue
@@ -139,9 +143,10 @@ class DataCenterManager(models.Manager):
     def get_by_natural_key(self, sname):
         return self.get(short_name=sname)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_provider()
+        if fast==False:
+            pti.update_gcmd_provider()
         for dc in pti.get_gcmd_provider_list():
             if 'Revision' in dc.keys():
                 continue
@@ -166,9 +171,10 @@ class HorizontalDataResolutionManager(models.Manager):
     def get_by_natural_key(self, hrr):
         return self.get(range=hrr)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_horizontalresolutionrange()
+        if fast==False:
+            pti.update_gcmd_horizontalresolutionrange()
         for hdr in pti.get_gcmd_horizontalresolutionrange_list():
             if 'Revision' in hdr.keys():
                 continue
@@ -188,9 +194,10 @@ class VerticalDataResolutionManager(models.Manager):
     def get_by_natural_key(self, vrr):
         return self.get(range=vrr)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_verticalresolutionrange()
+        if fast==False:
+            pti.update_gcmd_verticalresolutionrange()
         for vdr in pti.get_gcmd_verticalresolutionrange_list():
             if 'Revision' in vdr.keys():
                 continue
@@ -209,9 +216,10 @@ class TemporalDataResolutionManager(models.Manager):
     def get_by_natural_key(self, trr):
         return self.get(range=trr)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_temporalresolutionrange()
+        if fast==False:
+            pti.update_gcmd_temporalresolutionrange()
         for tdr in pti.get_gcmd_temporalresolutionrange_list():
             if 'Revision' in tdr.keys():
                 continue
@@ -230,9 +238,10 @@ class ProjectManager(models.Manager):
     def get_by_natural_key(self, bucket, short_name):
         return self.get(bucket=bucket, short_name=short_name)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_project()
+        if fast==False:
+            pti.update_gcmd_project()
         for p in pti.get_gcmd_project_list():
             if 'Revision' in p.keys():
                 continue
@@ -253,9 +262,10 @@ class ISOTopicCategoryManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_iso19115_topic_category()
+        if fast==False:
+            pti.update_iso19115_topic_category()
         for iso in pti.get_iso19115_topic_category_list():
             ii, created = self.get_or_create(iso)
             if created: num+=1
@@ -274,9 +284,10 @@ class LocationManager(models.Manager):
         return self.get(category=category, type=type, subregion1=subregion1,
                 subregion2=subregion2, subregion3=subregion3)
 
-    def create_from_vocabularies(self):
+    def create_from_vocabularies(self, fast=True):
         num = 0
-        pti.update_gcmd_location()
+        if fast==False:
+            pti.update_gcmd_location()
         for loc in pti.get_gcmd_location_list():
             if 'Revision' in loc.keys():
                 continue
