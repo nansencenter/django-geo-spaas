@@ -4,3 +4,4 @@
 *.o
 databases_postgis.py
 project/*
+.DS_Store
