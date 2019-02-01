@@ -23,10 +23,10 @@ RUN groupadd user -g $DGID \
 &&  useradd -m -s /bin/bash -N -u $DUID -g $DGID user \
 &&  echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/user/.bashrc \
 &&  echo "conda activate base" >> /home/user/.bashrc \
-&&  ln -s /opt/django-geo-spaas/geospaas /opt/conda/lib/python3.7/site-packages/geospaas \
+&&  ln -s /opt/geospaas /opt/conda/lib/python3.7/site-packages/geospaas \
 &&  echo "alias ll='ls -lh'" >> /home/user/.bashrc
 
 # install Geo-SPaaS into /opt/django-geo-spaas
-COPY geospaas /opt/django-geo-spaas/geospaas
+COPY geospaas /opt/geospaas
 USER user
 WORKDIR /src

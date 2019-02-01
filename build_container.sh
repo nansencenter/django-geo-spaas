@@ -32,5 +32,5 @@ docker rm geospaas 2> /dev/null
 # build container geospaas (mount the current directory and geospass)
 docker create -it --name=geospaas \
     -v `pwd`:/src \
-    -v `pwd`/geospaas:/opt/django-geo-spaas/geospaas \
+    -v `pwd`/geospaas:/opt/geospaas \
     geospaas
