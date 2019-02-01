@@ -25,10 +25,12 @@ class Platform(models.Model):
     objects = PlatformManager()
 
     def __str__(self):
-        return str(self.short_name)
+        return 'Category: %s, Series Entity: %s, Short Name: %s, Long Name: %s' \
+                %(str(self.category), str(self.series_entity), str(self.short_name),
+                        str(self.long_name))
 
     def natural_key(self):
-        return (self.short_name)
+        return (self.category, self.series_entity, self.short_name, self.long_name)
 
 class Instrument(models.Model):
 
@@ -42,10 +44,13 @@ class Instrument(models.Model):
     objects = InstrumentManager()
 
     def __str__(self):
-        return str(self.short_name)
+        return 'Category: %s, Instrument Class: %s, Type: %s, Subtype: %s, Short Name: %s, ' \
+                'Long Name: %s' %(str(self.category), str(self.instrument_class), str(self.type), str(self.subtype),
+                        str(self.short_name), str(self.long_name))
 
     def natural_key(self):
-        return (self.short_name)
+        return (self.category, self.instrument_class, self.type, self.subtype, self.short_name,
+                self.long_name)
 
 class ISOTopicCategory(models.Model):
     '''
@@ -87,10 +92,14 @@ class DataCenter(models.Model):
     objects = DataCenterManager()
 
     def __str__(self):
-        return str(self.short_name)
+        return 'Bucket Level 0: %s, Bucket Level 1: %s, Bucket Level 2: %s, ' \
+                'Bucket Level 3: %s, Short Name: %s, Long Name: %s' \
+                %(str(self.bucket_level0), str(self.bucket_level1), str(self.bucket_level2),
+                        str(self.bucket_level3), str(self.short_name), str(self.long_name))
 
     def natural_key(self):
-        return (self.short_name)
+        return (self.bucket_level0, self.bucket_level1, self.bucket_level2, self.bucket_level3,
+                self.short_name, self.long_name)
 
 class Location(models.Model):
     category = models.CharField(max_length=50)
@@ -102,11 +111,12 @@ class Location(models.Model):
     objects = LocationManager()
 
     def __str__(self):
-        return str('%s %s' %(self.subregion2, self.subregion3))
+        return 'Category: %s, Type: %s, Sub Region 1: %s, Sub Region 2: %s, Sub Region 3: %s' \
+                %(str(self.category), str(self.type), str(self.subregion1), str(self.subregion2),
+                    str(self.subregion3))
 
     def natural_key(self):
-        return (category, type, subregion1, subregion2,
-            subregion3)
+        return (self.category, self.type, self.subregion1, self.subregion2, self.subregion3)
 
 class ScienceKeyword(models.Model):
     category = models.CharField(max_length=30)
@@ -120,11 +130,15 @@ class ScienceKeyword(models.Model):
     objects = ScienceKeywordManager()
 
     def __str__(self):
-        return str('%s' %self.detailed_variable)
+        return 'Category: %s, Topic: %s, Term: %s, Variable Level 1: %s, ' \
+                'Variable Level 2: %s, Variable Level 3: %s, Detailed Variable: %s' \
+                %(str(self.category), str(self.topic), str(self.term), str(self.variable_level_1),
+                    str(self.variable_level_2), str(self.variable_level_3),
+                    str(self.detailed_variable))
 
     def natural_key(self):
         return (self.category, self.topic, self.term, self.variable_level_1,
-                self.variable_level_2, self.variable_level_3)
+                self.variable_level_2, self.variable_level_3, self.detailed_variable)
 
 class Project(models.Model):
     bucket = models.CharField(max_length=6)
@@ -134,10 +148,11 @@ class Project(models.Model):
     objects = ProjectManager()
 
     def __str__(self):
-        return str(self.short_name)
+        return 'Bucket: %s, Short Name: %s, Long Name: %s' %(str(self.bucket),
+            str(self.short_name), str(self.long_name))
 
     def natural_key(self):
-        return (self.bucket, self.short_name)
+        return (self.bucket, self.short_name, self.long_name)
 
 class HorizontalDataResolution(models.Model):
     range = models.CharField(max_length=220)
