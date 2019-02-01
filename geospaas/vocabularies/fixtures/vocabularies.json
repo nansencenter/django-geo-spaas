@@ -104,5 +104,68 @@
   },
   "model": "vocabularies.datacenter",
   "pk": 1391
+},
+{
+  "fields": {
+    "category": "Earth Observation Satellites",
+    "long_name": "Earth Observing System, AQUA",
+    "series_entity": "",
+    "short_name": "AQUA"
+  },
+  "model": "vocabularies.platform",
+  "pk": 102
+},
+{
+  "fields": {
+    "category": "Earth Remote Sensing Instruments",
+    "short_name": "MODIS",
+    "long_name": "Moderate-Resolution Imaging Spectroradiometer",
+    "subtype": "Imaging Spectrometers/Radiometers",
+    "type": "Spectrometers/Radiometers",
+    "instrument_class": "Passive Remote Sensing"
+  },
+  "model": "vocabularies.instrument",
+  "pk": 526
+},
+{
+    "model": "vocabularies.location",
+    "pk": 503,
+    "fields": {
+        "category": "VERTICAL LOCATION",
+        "type": "SEA SURFACE",
+        "subregion1": "",
+        "subregion2": "",
+        "subregion3": ""
+    }
+},
+{
+    "fields": {
+        "units": "celsius",
+        "standard_name": "sea_surface_temperature",
+        "gcmd_science_keyword": null,
+        "short_name": "SST"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 19
+},
+{
+    "fields": {
+        "units": "m s-1",
+        "standard_name": "wind_speed",
+        "gcmd_science_keyword": null,
+        "short_name": "W"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 12
+},
+{
+    "fields": {
+        "units": "m/m",
+        "standard_name": "surface_backwards_scattering_coefficient_of_radar_wave",
+        "gcmd_science_keyword": null,
+        "short_name": "sigma0"
+    },
+    "model": "vocabularies.parameter",
+    "pk": 6
 }
 ]
