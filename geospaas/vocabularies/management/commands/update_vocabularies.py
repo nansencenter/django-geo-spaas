@@ -27,15 +27,20 @@ from geospaas.vocabularies.models import VerticalDataResolution
 class Command(BaseCommand):
     help = 'Get latest vocabularies'
 
+    def add_arguments(self, parser):
+        parser.add_argument('-f', '--force', action='store_true',
+                            help='''Option to force update vocabularies using remote repository''')
+
     def handle(self, *args, **options):
-        Parameter.objects.create_from_vocabularies()
-        DataCenter.objects.create_from_vocabularies()
-        HorizontalDataResolution.objects.create_from_vocabularies()
-        Instrument.objects.create_from_vocabularies()
-        ISOTopicCategory.objects.create_from_vocabularies()
-        Location.objects.create_from_vocabularies()
-        Platform.objects.create_from_vocabularies()
-        Project.objects.create_from_vocabularies()
-        ScienceKeyword.objects.create_from_vocabularies()
-        TemporalDataResolution.objects.create_from_vocabularies()
-        VerticalDataResolution.objects.create_from_vocabularies()
+        
+        Parameter.objects.create_from_vocabularies(**options)
+        DataCenter.objects.create_from_vocabularies(**options)
+        HorizontalDataResolution.objects.create_from_vocabularies(**options)
+        Instrument.objects.create_from_vocabularies(**options)
+        ISOTopicCategory.objects.create_from_vocabularies(**options)
+        Location.objects.create_from_vocabularies(**options)
+        Platform.objects.create_from_vocabularies(**options)
+        Project.objects.create_from_vocabularies(**options)
+        ScienceKeyword.objects.create_from_vocabularies(**options)
+        TemporalDataResolution.objects.create_from_vocabularies(**options)
+        VerticalDataResolution.objects.create_from_vocabularies(**options)
