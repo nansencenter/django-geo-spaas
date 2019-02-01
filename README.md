@@ -32,8 +32,9 @@ From bash you can launch: `python project/manage.py shell`.
 5. If you want to mount more directories, you can run the following command:
 ```
 docker create -it --name=geospaas \
-    -v `pwd`:/code geospaas \
+    -v `pwd`:/src \
+    -v `pwd`/geospaas:/opt/geospaas \
     -v /input/dir/on/host:/path/to/dir/in/container \
     geospaas
 ```
-And then `docker start -i geospaas`
+And then run `docker start -i geospaas`

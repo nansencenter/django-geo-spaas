@@ -29,5 +29,5 @@ fi
 
 # remove container geospaaas (if it exists)
 docker rm geospaas 2> /dev/null
-# build container geospaas (with link to the current directory)
-docker create -it --name=geospaas -v `pwd`:/src geospaas
+# build container geospaas (mount the current directory and geospass)
+docker create -it --name=geospaas -v `pwd`:/src -v `pwd`/geospaas:/opt/geospaas  geospaas
