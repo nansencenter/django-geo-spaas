@@ -7,12 +7,13 @@ before_install:
     - export PATH=$HOME/miniconda/bin:$PATH
 
 env:
-    - PYTHON_VERSION=2.7 DJANGO_VERSION=1.11.7
-    - PYTHON_VERSION=3.6 DJANGO_VERSION=2.0.6
+    #- PYTHON_VERSION=2.7 DJANGO_VERSION=1.11.7 SQLITE_VERSION=3.13
+    #- PYTHON_VERSION=3.6 DJANGO_VERSION=2.0.6 SQLITE_VERSION=3.16
+    - PYTHON_VERSION=3.6 DJANGO_VERSION=2.1.5
 
 install:
     - conda update -q conda --yes
-    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION gdal mock nansat pythesint coveralls -c conda-forge --yes
+    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock nansat pythesint coveralls -c conda-forge --yes
     - source activate test_env
     - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
           pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz;
