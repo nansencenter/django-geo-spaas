@@ -110,14 +110,14 @@ class FormAndViewTests(TestCase):
                 'date0': date0,
                 'date1': date1,
                 'platform': [source.platform.id],
-                'instrument': [source.instrument.id]
+                'instrument': [source.instrument.id],
             }
         self.invalid_form = {
                 'polygon': 1,
                 'date0': date0,
                 'date1': date1,
-                'platform': source.platform.id,
-                'instrument': source.instrument.id
+                'platform': [source.platform.id],
+                'instrument': [source.instrument.id],
             }
 
     def test_search_form(self):

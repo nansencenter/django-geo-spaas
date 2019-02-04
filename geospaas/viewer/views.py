@@ -69,16 +69,17 @@ class IndexView(View):
         ''' Render page based on form data '''
         # filter datasets
         datasets = self.image_class.objects.all()
-        import ipdb
-        ipdb.set_trace()
         datasets = datasets.order_by('time_coverage_start')
-        if self.form.cleaned_data['platform'] is not None:
+        if self.form.cleaned_data['platform'] is not None and \
+                len(self.form.cleaned_data['platform'])>0:
             src = self.form.cleaned_data['platform']
             datasets = datasets.filter(sources__platform__in=src)
-        if self.form.cleaned_data['instrument'] is not None:
+        if self.form.cleaned_data['instrument'] is not None and \
+                len(self.form.cleaned_data['instrument'])>0:
             src = self.form.cleaned_data['instrument']
             datasets = datasets.filter(sources__instrument__in=src)
-        if self.form.cleaned_data['parameter'] is not None:
+        if self.form.cleaned_data['parameter'] is not None and \
+                len(self.form.cleaned_data['parameter'])>0:
             src = self.form.cleaned_data['parameter']
             datasets = datasets.filter(parameters__in=src)
         t0 = self.form.cleaned_data['date0']
