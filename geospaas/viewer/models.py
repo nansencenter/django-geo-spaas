@@ -22,7 +22,6 @@ class Search(geomodels.Model):
     platform = models.ManyToManyField(Platform, blank=True)
     instrument = models.ManyToManyField(Instrument, blank=True)
     parameter = models.ManyToManyField(Parameter, blank=True)
-    #collocate_with = models.ManyToManyField(CatalogSource, blank=True)
 
     # GeoDjango-specific: a geometry field (PolygonField), and
     # overriding the default manager with a GeoManager instance.
