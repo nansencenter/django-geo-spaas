@@ -127,7 +127,8 @@ class Dataset(models.Model):
         ]
     )
     entry_title = models.CharField(max_length=220)
-    parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
+    #parameters = models.ManyToManyField(Parameter, through='DatasetParameter')
+    parameters = models.ManyToManyField(Parameter)
     ISO_topic_category = models.ForeignKey(ISOTopicCategory, on_delete=models.CASCADE)
     data_center = models.ForeignKey(DataCenter, on_delete=models.CASCADE)
     summary = models.TextField()
