@@ -8,6 +8,7 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
+from geospaas.utils.utils import nansat_filename
 from geospaas.vocabularies.models import Instrument, Platform
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
