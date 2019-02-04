@@ -40,12 +40,33 @@ class BasetForTests(TestCase):
         'gcmd_location': '{"Location_Category": "VERTICAL LOCATION", "Location_Type": "SEA SURFACE", "Location_Subregion1": "", "Location_Subregion2": "", "Location_Subregion3": ""}',
         'ISO_topic_category' : '{"iso_topic_category": "Oceans"}',
         }
+    predefined_band_metadata_dict = {
+        1:{'dataType': '2',
+           'name': 'DN_HH',
+           'SourceBand': '1',
+           'SourceFilename': '/some/folder/filename.ext'},
+        2:{'colormap': 'gray',
+           'dataType': '6',
+           'long_name': 'Normalized Radar Cross Section',
+           'minmax': '0 0.1',
+           'name': 'sigma0_HH',
+           'PixelFunctionType': 'Sentinel1Calibration',
+           'polarization': 'HH',
+           'short_name': 'sigma0',
+           'SourceBand': '1',
+           'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
+           'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
+           'suffix': 'HH',
+           'units': 'm/m',
+           'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'}
+        }
 
     def setUp(self):
         self.patcher = patch('geospaas.nansat_ingestor.managers.Nansat')
         self.mock_Nansat = self.patcher.start()
         self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
         self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
+        self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
 
     def tearDown(self):
         self.patcher.stop()
@@ -57,6 +78,9 @@ class BasetForTests(TestCase):
         if args[0] not in self.predefined_metadata_dict:
             raise
         return self.predefined_metadata_dict[args[0]]
+
+    def mock_bands(self):
+        return self.predefined_band_metadata_dict
 
 class TestDatasetManager(BasetForTests):
 
@@ -72,6 +96,7 @@ class TestDatasetManager(BasetForTests):
         self.assertEqual(ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
         self.assertEqual(ds0.summary, 'NONE')
+        self.assertEqual(ds0.parameters.values()[0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
 
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
