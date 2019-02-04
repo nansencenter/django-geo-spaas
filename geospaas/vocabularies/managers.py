@@ -54,8 +54,9 @@ class ParameterManager(models.Manager):
 
 class PlatformManager(models.Manager):
 
-    def get_by_natural_key(self, short_name):
-        return self.get(short_name=short_name)
+    def get_by_natural_key(self, category, series_entity, short_name, long_name):
+        return self.get(category=category, series_entity=series_entity, short_name=short_name,
+                long_name=long_name)
 
     def create_from_vocabularies(self):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
@@ -79,8 +80,9 @@ class PlatformManager(models.Manager):
 
 class InstrumentManager(models.Manager):
 
-    def get_by_natural_key(self, short_name):
-        return self.get(short_name=short_name)
+    def get_by_natural_key(self, category, instrument_class, type, subtype, short_name, long_name):
+        return self.get(category=category, instrument_class=instrument_class, type=type, subtype=subtype,
+                short_name=short_name, long_name=long_name)
 
     def create_from_vocabularies(self):
         num = 0
@@ -106,11 +108,12 @@ class InstrumentManager(models.Manager):
 class ScienceKeywordManager(models.Manager):
 
     def get_by_natural_key(self, category, topic, term, variable_level_1,
-            variable_level_2, variable_level_3):
+            variable_level_2, variable_level_3, detailed_variable):
         return self.get(category=category, topic=topic, term=term,
                 variable_level_1=variable_level_1,
                 variable_level_2=variable_level_2,
-                variable_level_3=variable_level_3)
+                variable_level_3=variable_level_3,
+                detailed_variable=detailed_variable)
 
     def create_from_vocabularies(self):
         num = 0
@@ -136,8 +139,8 @@ class ScienceKeywordManager(models.Manager):
 
 class DataCenterManager(models.Manager):
 
-    def get_by_natural_key(self, sname):
-        return self.get(short_name=sname)
+    def get_by_natural_key(self, short_name):
+        return self.get(short_name=short_name)
 
     def create_from_vocabularies(self):
         num = 0
@@ -227,8 +230,8 @@ class TemporalDataResolutionManager(models.Manager):
 
 class ProjectManager(models.Manager):
 
-    def get_by_natural_key(self, bucket, short_name):
-        return self.get(bucket=bucket, short_name=short_name)
+    def get_by_natural_key(self, bucket, short_name, long_name):
+        return self.get(bucket=bucket, short_name=short_name, long_name=long_name)
 
     def create_from_vocabularies(self):
         num = 0
