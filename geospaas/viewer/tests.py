@@ -104,22 +104,28 @@ class FormAndViewTests(TestCase):
         date0 = timezone.datetime(2010,1,1, tzinfo=timezone.utc).date()
         date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
         source = Source.objects.get(pk=1)
+        import ipdb
+        ipdb.set_trace()
         self.valid_form = {
                 'polygon': str(Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0,
                     0)))), #loc.geometry,
                 'date0': date0,
                 'date1': date1,
-                'source': [source.id]
+                'platform': source.platform,
+                'instrument': source.instrument
             }
         self.invalid_form = {
                 'polygon': 1,
                 'date0': date0,
                 'date1': date1,
-                'source': [source.id]
+                'platform': source.platform,
+                'instrument': source.instrument
             }
 
     def test_search_form(self):
         form = forms.SearchForm(data=self.valid_form)
+        import ipdb
+        ipdb.set_trace()
         self.failUnless(form.is_valid())
 
     def test_search_loads(self):

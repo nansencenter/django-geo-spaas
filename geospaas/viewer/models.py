@@ -7,6 +7,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models as geomodels
 
+from geospaas.vocabularies.models import Platform, Instrument, Parameter
+
 from geospaas.catalog.models import GeographicLocation
 from geospaas.catalog.models import Source as CatalogSource
 from geospaas.catalog.models import Dataset as CatalogDataset
@@ -17,7 +19,9 @@ class Search(geomodels.Model):
     sdate = models.DateTimeField() # when was search
     date0 = models.DateField()
     date1 = models.DateField()
-    source = models.ManyToManyField(CatalogSource, blank=True)#, null=True)
+    platform = models.ManyToManyField(Platform, blank=True)
+    instrument = models.ManyToManyField(Instrument, blank=True)
+    parameter = models.ManyToManyField(Parameter, blank=True)
     #collocate_with = models.ManyToManyField(CatalogSource, blank=True)
 
     # GeoDjango-specific: a geometry field (PolygonField), and

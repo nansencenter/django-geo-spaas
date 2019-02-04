@@ -12,7 +12,7 @@ class SearchForm(forms.ModelForm):
         #model = TestSearch
         #fields = ['date0', 'date1', 'source']
         model = Search
-        fields = ['polygon', 'date0', 'date1', 'source']
+        fields = ['polygon', 'date0', 'date1', 'platform', 'instrument', 'parameter']
         labels = {'polygon':''}
         widgets = {'polygon': LeafletWidget(
                 attrs={'settings_overrides':
