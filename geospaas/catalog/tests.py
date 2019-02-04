@@ -39,9 +39,9 @@ class DatasetTests(TestCase):
                     tzinfo=timezone.utc),
                 time_coverage_end=timezone.datetime(2010,1,2,
                     tzinfo=timezone.utc),
-                source=source,
                 geographic_location=geolocation)
         ds.save()
+        ds.sources.add(source)
         self.assertEqual(ds.entry_id, id)
         self.assertEqual(ds.entry_title, et)
 
@@ -90,8 +90,9 @@ class DatasetTests(TestCase):
                     tzinfo=timezone.utc),
                 time_coverage_end=timezone.datetime(2010,1,2,
                     tzinfo=timezone.utc),
-                source=source,
                 geographic_location=geolocation)
+        ds.save()
+        ds.sources.add(source)
         with self.assertRaises(ValidationError):
             ds.full_clean()
 
@@ -113,9 +114,10 @@ class DatasetTests(TestCase):
                     tzinfo=timezone.utc),
                 time_coverage_end=timezone.datetime(2010,1,2,
                     tzinfo=timezone.utc),
-                source=source,
                 geographic_location=geolocation)
         ds.full_clean()
+        ds.save()
+        ds.sources.add(source)
         self.assertEqual(ds.entry_id, id)
 
     def test_search_datasets(self):
@@ -123,13 +125,11 @@ class DatasetTests(TestCase):
             shall find one Dataset without sst '''
         dataset1 = Dataset.objects.get(pk=1)
         p = Parameter.objects.get(
-                standard_name='sea_surface_temperature')
-        dp = DatasetParameter(dataset=dataset1, parameter=p)
-        dp.save()
-        dsearch = Dataset.objects.filter( source__instrument__short_name =
+                standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
+        dataset1.parameters.add(p)
+        dsearch = Dataset.objects.filter( sources__instrument__short_name =
                 'MODIS')
-        dsearch = dsearch.exclude(datasetparameter__parameter__short_name =
-                'SST' )
+        dsearch = dsearch.exclude(parameters__standard_name = 'surface_backwards_scattering_coefficient_of_radar_wave' )
         self.assertEqual(dsearch.count(), 1)
 
 class DatasetURITests(TestCase):
@@ -172,7 +172,7 @@ class DatasetRelationshipTests(TestCase):
         parent = Dataset.objects.get(pk=2)
         dr = DatasetRelationship(child=child, parent=parent)
         dr.save()
-        self.assertEqual(dr.child.source, dr.parent.source)
+        self.assertEqual(dr.child.sources.all()[0], dr.parent.sources.all()[0])
 
 class GeographicLocationTests(TestCase):
     def test_geographiclocation(self):
