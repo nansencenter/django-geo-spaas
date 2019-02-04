@@ -32,10 +32,9 @@ class GeographicLocation(geomodels.Model):
 
 
 class Source(models.Model):
+    # Consider updating to follow https://gcmd.nasa.gov/DocumentBuilder/defaultDif10/guide/platform.html
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
-    specs = models.CharField(max_length=50, default='',
-        help_text=_('Further specifications of the source.'))
 
     objects = SourceManager()
 
@@ -43,10 +42,7 @@ class Source(models.Model):
         unique_together = (("platform", "instrument"),)
 
     def __str__(self):
-        if not self.platform and not self.instrument:
-            return '%s' % self.specs
-        else:
-            return '%s/%s' % (self.platform, self.instrument)
+        return '%s/%s' % (self.platform, self.instrument)
 
     def natural_key(self):
         return (self.platform.short_name, self.instrument.short_name)
@@ -103,8 +99,8 @@ class Dataset(models.Model):
             In addition to some general information, the summary should also
             contain information about the project from/for which the data was
             collected/created
-    source : ForeignKey to Source
-            Contains information about the instrument and platform by which the
+    sources : ManyToMany relation to Source
+            Contains information about the instruments and platforms by which the
             data was collected
     time_coverage_start : DateTimeField
     time_coverage_end : DateTimeField
@@ -137,7 +133,7 @@ class Dataset(models.Model):
     summary = models.TextField()
 
     # DIF highly recommended fields
-    source = models.ForeignKey(Source, blank=True, null=True, on_delete=models.CASCADE)
+    sources = models.ManyToManyField(Source)
     time_coverage_start = models.DateTimeField(blank=True, null=True)
     time_coverage_end = models.DateTimeField(blank=True, null=True)
     geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True, on_delete=models.CASCADE)
@@ -146,8 +142,7 @@ class Dataset(models.Model):
             choices=ACCESS_CHOICES, blank=True, null=True)
 
     def __str__(self):
-        return '%s/%s/%s' % (self.source.platform, self.source.instrument,
-                self.time_coverage_start.isoformat())
+        return self.entry_title
 
 # Keep this for reference if we want to add it
 #class DataResolution(models.Model):
