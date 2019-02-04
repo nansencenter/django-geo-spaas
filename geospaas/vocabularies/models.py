@@ -92,10 +92,7 @@ class DataCenter(models.Model):
     objects = DataCenterManager()
 
     def __str__(self):
-        return 'Bucket Level 0: %s, Bucket Level 1: %s, Bucket Level 2: %s, ' \
-                'Bucket Level 3: %s, Short Name: %s, Long Name: %s' \
-                %(str(self.bucket_level0), str(self.bucket_level1), str(self.bucket_level2),
-                        str(self.bucket_level3), str(self.short_name), str(self.long_name))
+        return 'Short Name: %s' %str(self.short_name)
 
     def natural_key(self):
         return (self.bucket_level0, self.bucket_level1, self.bucket_level2, self.bucket_level3,
