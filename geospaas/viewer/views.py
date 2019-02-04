@@ -69,26 +69,28 @@ class IndexView(View):
         ''' Render page based on form data '''
         # filter datasets
         datasets = self.image_class.objects.all()
+        import ipdb
+        ipdb.set_trace()
         datasets = datasets.order_by('time_coverage_start')
-        if self.form.cleaned_data['source'] is not None:
-            src = self.form.cleaned_data['source']
-            datasets = datasets.filter(source__in=src)
+        if self.form.cleaned_data['platform'] is not None:
+            src = self.form.cleaned_data['platform']
+            datasets = datasets.filter(sources__platform__in=src)
+        if self.form.cleaned_data['instrument'] is not None:
+            src = self.form.cleaned_data['instrument']
+            datasets = datasets.filter(sources__instrument__in=src)
+        if self.form.cleaned_data['parameter'] is not None:
+            src = self.form.cleaned_data['parameter']
+            datasets = datasets.filter(parameters__in=src)
         t0 = self.form.cleaned_data['date0']
         t1 = self.form.cleaned_data['date1'] + timezone.timedelta(hours=24)
         datasets = datasets.filter(
-                #Q(time_coverage_start__range=[t0,t1]) |
-                #Q(time_coverage_end__range=[t0,t1]) |
-                #(
                 Q(time_coverage_start__lt=t1) & Q(time_coverage_end__gt=t0)
-                #)
             )
         if self.form.cleaned_data['polygon'] is not None:
             datasets = datasets.filter(
                     geographic_location__geometry__intersects
                     = self.form.cleaned_data['polygon']
                 )
-        #if self.form.cleaned_data['collocate_with'] is not None:
-        #    src = self.form.cleaned_data['collocate_with']
 
         # debuggin outuput
         greeting = ''
