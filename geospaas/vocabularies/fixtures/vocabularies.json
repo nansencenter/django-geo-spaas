@@ -108,9 +108,9 @@
 {
   "fields": {
     "category": "Earth Observation Satellites",
-    "long_name": "Earth Observing System, AQUA",
+    "long_name": "Earth Observing System, Aqua",
     "series_entity": "",
-    "short_name": "AQUA"
+    "short_name": "Aqua"
   },
   "model": "vocabularies.platform",
   "pk": 102
