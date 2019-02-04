@@ -138,15 +138,16 @@ class DatasetManager(models.Manager):
 
 
         # create parameter
-        for band_id in range(1, len(n.bands())+1):
-            meta = n.get_metadata(band_id=band_id)
-            validity = all([key in meta.keys() for key in
+        all_band_meta = n.bands()
+        for band_id in range(1, len(all_band_meta)+1):
+            band_meta = all_band_meta[band_id]
+            validity = all([key in band_meta.keys() for key in
                             ['standard_name', 'short_name', 'units', 'gcmd_science_keyword']])
             if validity:
-                pp = Parameter.objects.get(standard_name=meta['standard_name'],
-                                           short_name=meta['short_name'],
-                                           units=meta['units'],
-                                           gcmd_science_keyword=meta['gcmd_science_keyword'])
+                pp = Parameter.objects.get(standard_name=band_meta['standard_name'],
+                                           short_name=band_meta['short_name'],
+                                           units=band_meta['units'],
+                                           gcmd_science_keyword=band_meta['gcmd_science_keyword'])
                 dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
 
 
@@ -154,14 +155,15 @@ class DatasetManager(models.Manager):
         # For now, the codes below will add all parameters except GCMD keywords.
         # After fixing the issue in Nansat, the codes can be replaced by the one commented above.
         # create parameter
-        for band_id in range(1, len(n.bands())+1):
-            meta = n.get_metadata(band_id=band_id)
-            validity = all([key in meta.keys() for key in
+        all_band_meta = n.bands()
+        for band_id in range(1, len(all_band_meta)+1):
+            band_meta = all_band_meta[band_id]
+            validity = all([key in band_meta.keys() for key in
                             ['standard_name', 'short_name', 'units']])
             if validity:
-                pp = Parameter.objects.get(standard_name=meta['standard_name'],
-                                           short_name=meta['short_name'],
-                                           units=meta['units'])
+                pp = Parameter.objects.get(standard_name=band_meta['standard_name'],
+                                           short_name=band_meta['short_name'],
+                                           units=band_meta['units'])
                 dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
 
 
