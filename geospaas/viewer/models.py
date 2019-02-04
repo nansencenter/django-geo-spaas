@@ -12,7 +12,7 @@ from geospaas.vocabularies.models import Platform, Instrument, Parameter
 from geospaas.catalog.models import GeographicLocation
 from geospaas.catalog.models import Source as CatalogSource
 from geospaas.catalog.models import Dataset as CatalogDataset
-from geospaas.catalog.models import DatasetParameter as CatalogDatasetParameter
+#from geospaas.catalog.models import DatasetParameter as CatalogDatasetParameter
 
 class Search(geomodels.Model):
     ''' Search parameters '''
@@ -79,20 +79,21 @@ class Dataset(CatalogDataset):
         return Visualization.objects.filter(
             ds_parameters__dataset=self).distinct()
 
-class VisualizationParameter(models.Model):
-    visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
-    ds_parameter = models.ForeignKey(CatalogDatasetParameter, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.ds_parameter.__str__()
+#class VisualizationParameter(models.Model):
+#    visualization = models.ForeignKey('Visualization', on_delete=models.CASCADE)
+#    ds_parameter = models.ForeignKey(CatalogDatasetParameter, on_delete=models.CASCADE)
+#
+#    def __str__(self):
+#        return self.ds_parameter.__str__()
 
 class Visualization(models.Model):
 
     uri = models.URLField()
     # A visualization may contain more than one parameter, and the same
     # parameter can be visualized in many ways..
-    ds_parameters = models.ManyToManyField(CatalogDatasetParameter,
-            through=VisualizationParameter)
+    parameters = models.ManyToManyField(Parameter)
+    #ds_parameters = models.ManyToManyField(CatalogDatasetParameter,
+    #        through=VisualizationParameter)
     title = models.CharField(max_length=50, default='')
     geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True, on_delete=models.CASCADE)
 
