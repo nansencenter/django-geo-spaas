@@ -198,7 +198,7 @@ class SourceTests(TestCase):
 
     def test_source(self):
         ''' Shall create Source instance '''
-        p = Platform.objects.get(short_name='AQUA')
+        p = Platform.objects.get(short_name='Aqua')
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
