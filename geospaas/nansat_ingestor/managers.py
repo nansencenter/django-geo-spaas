@@ -55,17 +55,10 @@ class DatasetManager(models.Manager):
         # get metadata from Nansat and get objects from vocabularies
         n_metadata = n.get_metadata()
 
-        # set compulsory metadata (source)
-        platform, _ = Platform.objects.get_or_create(json.loads(n_metadata['platform']))
-        instrument, _ = Instrument.objects.get_or_create(json.loads(n_metadata['instrument']))
-        specs = n_metadata.get('specs', '')
-        source, _ = Source.objects.get_or_create(platform=platform,
-                                                 instrument=instrument,
-                                                 specs=specs)
 
         default_char_fields = {
             'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
-            'entry_title'        : lambda : 'NONE',
+            'entry_title'        : lambda : nansat_filename(uri),
             'summary'            : lambda : 'NONE',
         }
 
@@ -112,11 +105,23 @@ class DatasetManager(models.Manager):
         ds, created = Dataset.objects.get_or_create(
                 time_coverage_start=n.get_metadata('time_coverage_start'),
                 time_coverage_end=n.get_metadata('time_coverage_end'),
-                source=source,
                 geographic_location=geolocation,
                 **options)
         # create dataset URI
         ds_uri, _ = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)
+
+        # set compulsory metadata (source)
+        try:
+            platform_and_instrument = [[json.loads(n_metadata['platform']),
+                json.loads(n_metadata['instrument'])]]
+        except KeyError:
+            platform_and_instrument = json.loads(n_metadata['platform/instrument'])
+            
+        for pi in platform_and_instrument:
+            platform, _ = Platform.objects.get_or_create(pi[0])
+            instrument, _ = Instrument.objects.get_or_create(pi[1])
+            source, _ = Source.objects.get_or_create(platform=platform, instrument=instrument)
+            ds.sources.add(source)
 
         return ds, created
 
