@@ -10,6 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "https://atlas.hashicorp.com/ubuntu/trusty64"
 
   config.vm.define "geospaas", primary: true do |geospaas|
+    geospaas.vm.network :private_network, ip: "192.168.33.10"
   end
 
   config.vm.provider "virtualbox" do |v|

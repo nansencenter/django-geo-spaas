@@ -35,3 +35,4 @@
   environment:
     PYTHONPATH: "/vagrant"
     PATH: "{{ conda_dir }}/envs/{{ env_name }}/bin:{{ ansible_env.PATH }}"
+    LC_ALL: "en_US.UTF-8"
