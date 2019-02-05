@@ -1,12 +1,12 @@
 from django.db import migrations
 
 def copy_source(apps, schema_editor):
-    Dataset = apps.get_model('geospaas.catalog', 'Dataset')
+    Dataset = apps.get_model('catalog', 'Dataset')
     for ds in Dataset.objects.all():
         ds.sources.add(ds.source)
 
 def copy_source_backwards(apps, schema_editor):
-    Dataset = apps.get_model('geospaas.catalog', 'Dataset')
+    Dataset = apps.get_model('catalog', 'Dataset')
     for ds in Dataset.objects.all():
         ds.source = ds.sources.all()[0]
 
