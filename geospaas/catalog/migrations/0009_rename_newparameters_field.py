@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalog', '0008_auto_20190204_1801'),
+        ('catalog', '0008c_remove_parameters_field'),
     ]
 
     operations = [
