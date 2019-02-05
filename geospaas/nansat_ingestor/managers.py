@@ -130,10 +130,7 @@ class DatasetManager(models.Manager):
             validity = all([key in band_meta.keys() for key in
                             ['standard_name', 'short_name', 'units', 'gcmd_science_keyword']])
             if validity:
-                pp = Parameter.objects.get(standard_name=band_meta['standard_name'],
-                                           short_name=band_meta['short_name'],
-                                           units=band_meta['units'],
-                                           gcmd_science_keyword=band_meta['gcmd_science_keyword'])
+                pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
                 dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
         '''
 
@@ -147,9 +144,7 @@ class DatasetManager(models.Manager):
             validity = all([key in band_meta.keys() for key in
                             ['standard_name', 'short_name', 'units']])
             if validity:
-                pp = Parameter.objects.get(standard_name=band_meta['standard_name'],
-                                           short_name=band_meta['short_name'],
-                                           units=band_meta['units'])
+                pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
                 dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
 
 
