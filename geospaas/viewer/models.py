@@ -19,9 +19,9 @@ class Search(geomodels.Model):
     sdate = models.DateTimeField() # when was search
     date0 = models.DateField()
     date1 = models.DateField()
-    platform = models.ManyToManyField(Platform, blank=True)
-    instrument = models.ManyToManyField(Instrument, blank=True)
-    parameter = models.ManyToManyField(Parameter, blank=True)
+    platform = models.ManyToManyField(Platform, blank=True, default=None)
+    instrument = models.ManyToManyField(Instrument, blank=True, default=None)
+    parameter = models.ManyToManyField(Parameter, blank=True, default=None)
 
     # GeoDjango-specific: a geometry field (PolygonField), and
     # overriding the default manager with a GeoManager instance.

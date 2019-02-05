@@ -72,16 +72,16 @@ class IndexView(View):
         datasets = datasets.order_by('time_coverage_start')
         if self.form.cleaned_data['platform'] is not None and \
                 len(self.form.cleaned_data['platform'])>0:
-            src = self.form.cleaned_data['platform']
-            datasets = datasets.filter(sources__platform__in=src)
+            platform = self.form.cleaned_data['platform'][0]
+            datasets = datasets.filter(sources__platform=platform)
         if self.form.cleaned_data['instrument'] is not None and \
                 len(self.form.cleaned_data['instrument'])>0:
-            src = self.form.cleaned_data['instrument']
-            datasets = datasets.filter(sources__instrument__in=src)
+            instr = self.form.cleaned_data['instrument'][0]
+            datasets = datasets.filter(sources__instrument=instr)
         if self.form.cleaned_data['parameter'] is not None and \
                 len(self.form.cleaned_data['parameter'])>0:
-            src = self.form.cleaned_data['parameter']
-            datasets = datasets.filter(parameters__in=src)
+            par = self.form.cleaned_data['parameter'][0]
+            datasets = datasets.filter(parameters=par)
         t0 = self.form.cleaned_data['date0']
         t1 = self.form.cleaned_data['date1'] + timezone.timedelta(hours=24)
         datasets = datasets.filter(
