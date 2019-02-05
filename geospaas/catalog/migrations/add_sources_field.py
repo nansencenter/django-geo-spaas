@@ -10,14 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='dataset',
-            name='source',
-        ),
-        migrations.RemoveField(
-            model_name='source',
-            name='specs',
-        ),
         migrations.AddField(
             model_name='dataset',
             name='sources',
