@@ -5,8 +5,15 @@ from django.db import migrations
 def forward(apps, schema_editor):
     Dataset = apps.get_model('catalog', 'Dataset')
     for ds in Dataset.objects.all():
-        ds.newparameters.add(ds.parameters.parameter)
+        for pp in ds.parameters.all():
+            ds.newparameters.add(pp)
 
+def backward(apps, schema_editor):
+    Dataset = apps.get_model('catalog', 'Dataset')
+    DatasetParameter = apps.get_model('catalog', 'DatasetParameter')
+    for ds in Dataset.objects.all():
+        for pp in ds.newparameters.all():
+            dp, created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
 
 class Migration(migrations.Migration):
 

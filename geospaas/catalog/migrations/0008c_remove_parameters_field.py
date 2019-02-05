@@ -7,17 +7,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('vocabularies', '0001_initial'),
-        ('catalog', '0007c_remove_source_and_specs_fields'),
+        ('catalog', '0008b_migrate_parameters_data'),
     ]
 
     operations = [
         migrations.RemoveField(
             model_name='dataset',
             name='parameters',
-        ),
-        migrations.AddField(
-            model_name='dataset',
-            name='newparameters',
-            field=models.ManyToManyField(to='vocabularies.Parameter'),
         ),
     ]
