@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('vocabularies', '0001_initial'),
-        ('catalog', '0007_auto_20190204_1025'),
+        ('catalog', '0007c_remove_source_and_specs_fields'),
     ]
 
     operations = [
