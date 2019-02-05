@@ -4,9 +4,11 @@ from django.db import migrations
 
 def forward(apps, schema_editor):
     Dataset = apps.get_model('catalog', 'Dataset')
+    DatasetParameter = apps.get_model('catalog', 'DatasetParameter')
     for ds in Dataset.objects.all():
-        for pp in ds.parameters.all():
-            ds.newparameters.add(pp)
+        dataset_params = DatasetParameter.objects.filter(dataset=ds)
+        for dp in dataset_params:
+            ds.newparameters.add(dp.parameter)
 
 def backward(apps, schema_editor):
     Dataset = apps.get_model('catalog', 'Dataset')

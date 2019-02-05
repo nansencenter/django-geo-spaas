@@ -8,7 +8,9 @@ def copy_source(apps, schema_editor):
 def copy_source_backwards(apps, schema_editor):
     Dataset = apps.get_model('catalog', 'Dataset')
     for ds in Dataset.objects.all():
-        ds.source = ds.sources.all()[0]
+        src = ds.sources.all()[0]
+        ds.source = src
+        ds.save()
 
 class Migration(migrations.Migration):
 
