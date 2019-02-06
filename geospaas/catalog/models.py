@@ -42,10 +42,11 @@ class Source(models.Model):
         unique_together = (("platform", "instrument"),)
 
     def __str__(self):
-        return '%s/%s' % (self.platform, self.instrument)
+        return 'Platform: (%s) / Instrument: (%s)' % (self.platform.__str__(),
+                self.instrument.__str__())
 
     def natural_key(self):
-        return (self.platform.short_name, self.instrument.short_name)
+        return (self.platform.natural_key(), self.instrument.natural_key())
 
 class Personnel(models.Model):
     '''
@@ -175,7 +176,7 @@ class DatasetURI(models.Model):
         unique_together = (('uri', 'dataset'),)
 
     def __str__(self):
-        return '%s: %s'%(self.dataset, os.path.split(self.uri)[1])
+        return str(self.uri)
 
     def protocol(self):
         return self.uri.split(':')[0]
