@@ -75,7 +75,7 @@ class ISOTopicCategory(models.Model):
         return str(self.name)
 
     def natural_key(self):
-        return (self.name)
+        return (self.name,)
 
 class DataCenter(models.Model):
     ''' The data center is needed to control data access and also for indexing
@@ -160,7 +160,7 @@ class HorizontalDataResolution(models.Model):
         return str(self.range)
 
     def natural_key(self):
-        return (self.range)
+        return (self.range,)
 
 class VerticalDataResolution(models.Model):
     range = models.CharField(max_length=220)
@@ -171,7 +171,7 @@ class VerticalDataResolution(models.Model):
         return str(self.range)
 
     def natural_key(self):
-        return (self.range)
+        return (self.range,)
 
 class TemporalDataResolution(models.Model):
     range = models.CharField(max_length=220)
@@ -182,7 +182,7 @@ class TemporalDataResolution(models.Model):
         return str(self.range)
 
     def natural_key(self):
-        return (self.range)
+        return (self.range,)
 
 class Parameter(models.Model):
     ''' Standard name (and unit) is taken from the CF variables but in case a
@@ -209,6 +209,6 @@ class Parameter(models.Model):
         return str('%s' %self.standard_name)
 
     def natural_key(self):
-        return (self.standard_name)
+        return (self.standard_name,)
 
 
