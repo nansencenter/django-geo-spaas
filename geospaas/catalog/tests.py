@@ -134,7 +134,7 @@ class DatasetTests(TestCase):
 
 class DatasetURITests(TestCase):
 
-    fixtures = ["vocabularies"]
+    fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
         self.dataset = Dataset.objects.get(pk=1)
