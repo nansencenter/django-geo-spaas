@@ -101,21 +101,21 @@ class FormAndViewTests(TestCase):
 
     def setUp(self):
         loc = GeographicLocation.objects.get(pk=1)
-        date0 = timezone.datetime(2010,1,1, tzinfo=timezone.utc).date()
-        date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
+        self.date0 = timezone.datetime(2010,1,1, tzinfo=timezone.utc).date()
+        self.date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
         source = Source.objects.get(pk=1)
         self.valid_form = {
                 'polygon': str(Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0,
                     0)))), #loc.geometry,
-                'date0': date0,
-                'date1': date1,
+                'date0': self.date0,
+                'date1': self.date1,
                 'platform': [source.platform.id],
                 'instrument': [source.instrument.id],
             }
         self.invalid_form = {
                 'polygon': 1,
-                'date0': date0,
-                'date1': date1,
+                'date0': self.date0,
+                'date1': self.date1,
                 'platform': [source.platform.id],
                 'instrument': [source.instrument.id],
             }
@@ -125,18 +125,28 @@ class FormAndViewTests(TestCase):
         self.failUnless(form.is_valid())
 
     def test_search_by_parameter(self):
-        date0 = timezone.datetime(2010,1,1, tzinfo=timezone.utc).date()
-        date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
         par = Parameter.objects.get(standard_name='sea_surface_temperature')
         formvalid = {
                 'polygon': str(Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0,
                     0)))),
-                'date0': date0,
-                'date1': date1,
+                'date0': self.date0,
+                'date1': self.date1,
                 'parameter': [par.id],
             }
         result = forms.SearchForm(data=formvalid)
         self.failUnless(result.is_valid())
+
+    def test_search_loads_valid_parameter_search(self):
+        par = Parameter.objects.get(standard_name='sea_surface_temperature')
+        formvalid = {
+                'polygon': str(Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0,
+                    0)))),
+                'date0': self.date0,
+                'date1': self.date1,
+                'parameter': [par.id],
+            }
+        response = self.client.post(reverse('geospaas:viewer:index'), formvalid)
+        self.assertEqual(response.status_code, 200)
 
     def test_search_loads(self):
         # this also tests urls.py...
