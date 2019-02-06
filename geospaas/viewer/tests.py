@@ -125,7 +125,18 @@ class FormAndViewTests(TestCase):
         self.failUnless(form.is_valid())
 
     def test_search_by_parameter(self):
-        pass
+        date0 = timezone.datetime(2010,1,1, tzinfo=timezone.utc).date()
+        date1 = timezone.datetime(2011,1,1, tzinfo=timezone.utc).date()
+        par = Parameter.objects.get(standard_name='sea_surface_temperature')
+        formvalid = {
+                'polygon': str(Polygon(((0, 0), (0, 10), (10, 10), (10, 0), (0,
+                    0)))),
+                'date0': date0,
+                'date1': date1,
+                'parameter': [par.id],
+            }
+        result = forms.SearchForm(data=formvalid)
+        self.failUnless(result.is_valid())
 
     def test_search_loads(self):
         # this also tests urls.py...
