@@ -194,8 +194,14 @@ class ProjectTests(BaseForVocabulariesTests):
         self.mock_pti.get_gcmd_project_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
+    def test__get_by_natural_key__method(self):
+        project = Project.objects.get(long_name = 
+                'Atmospheric Chemistry Studies in the Oceanic Environment')
+        self.assertEqual(project, Project.objects.get_by_natural_key('A - C', 'ACSOE', 
+            'Atmospheric Chemistry Studies in the Oceanic Environment'))
 
 class ScienceKeywordTests(BaseForVocabulariesTests):
+
     def test_get_science_keyword(self):
         kw = ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT')
         self.assertEqual(kw.topic, 'SPECTRAL/ENGINEERING')
@@ -206,6 +212,10 @@ class ScienceKeywordTests(BaseForVocabulariesTests):
         self.mock_pti.get_gcmd_science_keyword_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
+    def test__get_by_natural_key__method(self):
+        sk = ScienceKeyword.objects.get_by_natural_key('EARTH SCIENCE', 'SPECTRAL/ENGINEERING',
+            'RADAR', 'SIGMA NAUGHT', '', '', '')
+        self.assertEqual(sk, ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT'))
 
 class TemporalDataResolutionTests(BaseForVocabulariesTests):
     def test_get_temporal_range(self):
@@ -220,6 +230,7 @@ class TemporalDataResolutionTests(BaseForVocabulariesTests):
 
 
 class HorizontalDataResolutionTests(BaseForVocabulariesTests):
+
     def test_get_horizontal_range(self):
         rr = HorizontalDataResolution.objects.get(range='< 1 meter')
         self.assertEqual(rr.range, '< 1 meter')
@@ -230,6 +241,10 @@ class HorizontalDataResolutionTests(BaseForVocabulariesTests):
         self.mock_pti.get_gcmd_horizontalresolutionrange_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
+    def test__get_by_natural_key__method(self):
+        rr = '10 meters - < 30 meters'
+        hdr=HorizontalDataResolution.objects.get(range=rr)
+        self.assertEqual(hdr, HorizontalDataResolution.objects.get_by_natural_key(rr))
 
 class VerticalDataResolutionTests(BaseForVocabulariesTests):
     def test_get_vertical_range(self):
@@ -243,6 +258,17 @@ class VerticalDataResolutionTests(BaseForVocabulariesTests):
         self.mock_pti.get_gcmd_verticalresolutionrange_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
+    def test__get_by_natural_key__method(self):
+        rr = '10 meters - < 30 meters'
+        vdr=VerticalDataResolution.objects.get(range=rr)
+        self.assertEqual(vdr, VerticalDataResolution.objects.get_by_natural_key(rr))
+
+class TemporalDataResolutionTests(BaseForVocabulariesTests):
+
+    def test__get_by_natural_key__method(self):
+        rr = '1 minute - < 1 hour'
+        tdr=TemporalDataResolution.objects.get(range=rr)
+        self.assertEqual(tdr, TemporalDataResolution.objects.get_by_natural_key(rr))
 
 class CommandsTests(TestCase):
 

@@ -3,6 +3,13 @@
   "fields": {
     "range": "10 meters - < 30 meters"
   },
+  "model": "vocabularies.horizontaldataresolution",
+  "pk": 1
+},
+{
+  "fields": {
+    "range": "10 meters - < 30 meters"
+  },
   "model": "vocabularies.verticaldataresolution",
   "pk": 2
 },
