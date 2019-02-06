@@ -134,17 +134,25 @@ class DatasetTests(TestCase):
 
 class DatasetURITests(TestCase):
 
-    fixtures = ["vocabularies", "catalog"]
+    fixtures = ["vocabularies"]
 
     def setUp(self):
         self.dataset = Dataset.objects.get(pk=1)
+        uri = 'file://localhost/this/is/some/file'
+        self.dsuri0 = DatasetURI(uri=uri, dataset=self.dataset)
+        self.dsuri0.save()
 
     def test_DatasetURI_created(self):
         uri = 'file://localhost/this/is/some/file'
-        dsuri = DatasetURI(uri=uri, dataset=self.dataset)
-        dsuri.save()
-        self.assertEqual(dsuri.uri, uri)
+        self.assertEqual(self.dsuri0.uri, uri)
 
+    def test__str__method(self):
+       expected_str = 'file://localhost/this/is/some/file'
+       self.assertEqual(self.dsuri0.__str__(), expected_str)
+
+    def test__protocol__method(self):
+        pp = 'file'
+        self.assertEqual(self.dsuri0.protocol(), pp)
 
 
 class DatasetParameterTests(TestCase):
@@ -175,11 +183,16 @@ class DatasetRelationshipTests(TestCase):
         self.assertEqual(dr.child.sources.all()[0], dr.parent.sources.all()[0])
 
 class GeographicLocationTests(TestCase):
-    def test_geographiclocation(self):
+
+    def setUp(self):
         ''' Shall create GeographicLocation instance '''
-        geolocation = GeographicLocation(
+        self.geolocation = GeographicLocation(
             geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
-        geolocation.save()
+        self.geolocation.save()
+
+    def test_geographiclocation__str__method(self):
+        gtype = 'Polygon'
+        self.assertEqual(self.geolocation.__str__(), gtype)
 
 class PersonnelTests(TestCase):
 
@@ -194,14 +207,32 @@ class RoleTests(TestCase):
 
 class SourceTests(TestCase):
 
-    fixtures = ["vocabularies"]
+    fixtures = ["vocabularies", "catalog"]
 
-    def test_source(self):
+    def setUp(self):
         ''' Shall create Source instance '''
         p = Platform.objects.get(short_name='Aqua')
         i = Instrument.objects.get(short_name='MODIS')
-        source = Source(platform=p, instrument=i)
-        source.save()
+        self.source0, cr = Source.objects.get_or_create(platform=p, instrument=i)
+
+    def test_source__str__method(self):
+        # Assure __str__ method returns correct string
+        expected_str = 'Platform: (Category: Earth Observation Satellites, Series Entity: , Short Name: ' \
+                'Aqua, Long Name: Earth Observing System, Aqua) / Instrument: (Category: Earth ' \
+                'Remote Sensing Instruments, Instrument Class: Passive Remote Sensing, Type: ' \
+                'Spectrometers/Radiometers, Subtype: Imaging Spectrometers/Radiometers, ' \
+                'Short Name: MODIS, Long Name: Moderate-Resolution Imaging Spectroradiometer)'
+        self.assertEqual(self.source0.__str__(), expected_str)
+
+    def test_source__natural_key__method(self):
+        # Assure natural_key method returns correct tuple
+        tup = (
+                ('Earth Observation Satellites', '', 'Aqua', 'Earth Observing System, Aqua'),
+                ('Earth Remote Sensing Instruments', 'Passive Remote Sensing',
+                    'Spectrometers/Radiometers', 'Imaging Spectrometers/Radiometers', 'MODIS',
+                    'Moderate-Resolution Imaging Spectroradiometer')
+            )
+        self.assertEqual(self.source0.natural_key(), tup)
 
 class TestCountCommand(TestCase):
     fixtures = ['vocabularies', 'catalog']
@@ -250,3 +281,4 @@ class TestCountCommand(TestCase):
         with self.assertRaises(CommandError) as ce:
             call_command('count', geojson=os.path.realpath(__file__), stdout=out)
         self.assertIn('Failed to read valid GeoJSON from', ce.exception.args[0])
+
