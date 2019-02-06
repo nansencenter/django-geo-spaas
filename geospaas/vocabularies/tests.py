@@ -63,6 +63,11 @@ class ParameterTests(BaseForVocabulariesTests):
         self.mock_pti.get_wkv_variable_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
+    def test__natural_key__method(self):
+        p = Parameter.objects.get(short_name='sigma0')
+        tup = ('surface_backwards_scattering_coefficient_of_radar_wave',)
+        self.assertEqual(p.natural_key(), tup)
+
 class DataCenterTests(BaseForVocabulariesTests):
     def test_get_datacenter(self):
         dc = DataCenter.objects.get(short_name='NERSC')
@@ -90,6 +95,16 @@ class DataCenterTests(BaseForVocabulariesTests):
         self.assertEqual(dc0, dc2)
         self.assertFalse(cr)
 
+    def test__str__method(self):
+        dc = DataCenter.objects.get(short_name='NERSC')
+        self.assertEqual(dc.__str__(), str('Short Name: NERSC'))
+
+    def test__natural_key__method(self):
+        dc = DataCenter.objects.get(short_name='NERSC')
+        tup = ('CONSORTIA/INSTITUTIONS', '', '', '', 'NERSC', 
+                'Nansen Environmental and Remote Sensing Centre')
+        self.assertEqual(dc.natural_key(), tup)
+
 
 class InstrumentTests(BaseForVocabulariesTests):
     def test_get_instrument(self):
@@ -115,6 +130,11 @@ class InstrumentTests(BaseForVocabulariesTests):
         self.assertEqual(i0, i2)
         self.assertFalse(cr)
 
+    def test__natural_key__method(self):
+        ii = Instrument.objects.get(short_name='ASAR')
+        tup = ('Earth Remote Sensing Instruments', 'Active Remote Sensing', 'Imaging Radars', '',
+                'ASAR', 'Advanced Synthetic Aperature Radar')
+        self.assertEqual(ii.natural_key(), tup)
 
 class ISOTopicCategoryTests(BaseForVocabulariesTests):
     def test_get_iso_category(self):
@@ -133,6 +153,15 @@ class ISOTopicCategoryTests(BaseForVocabulariesTests):
         iso2, cr = ISOTopicCategory.objects.get_or_create(iso1)
         self.assertEqual(iso0, iso2)
         self.assertFalse(cr)
+
+    def test__natural_key__method(self):
+        isocat = ISOTopicCategory.objects.get(name='Oceans')
+        tup = ('Oceans',)
+        self.assertEqual(isocat.natural_key(), tup)
+
+    def test__str__method(self):
+        isocat = ISOTopicCategory.objects.get(name='Oceans')
+        self.assertEqual(isocat.__str__(), str('Oceans'))
 
 
 class LocationTests(BaseForVocabulariesTests):
@@ -158,6 +187,16 @@ class LocationTests(BaseForVocabulariesTests):
         self.assertEqual(loc0, loc2)
         self.assertFalse(cr)
 
+    def test__str__method(self):
+        loc = Location.objects.get(subregion2='KENYA')
+        expected_str = 'Category: CONTINENT, Type: AFRICA, Sub Region 1: EASTERN AFRICA, Sub Region 2: KENYA, Sub Region 3: '
+        self.assertEqual(loc.__str__(), expected_str)
+
+    def test__natural_key__method(self):
+        loc = Location.objects.get(subregion2='KENYA')
+        tup = ('CONTINENT', 'AFRICA', 'EASTERN AFRICA', 'KENYA', '')
+        self.assertEqual(loc.natural_key(), tup)
+
 
 class PlatformTests(BaseForVocabulariesTests):
     def test_get_platform(self):
@@ -181,6 +220,11 @@ class PlatformTests(BaseForVocabulariesTests):
         self.assertEqual(p0, p2)
         self.assertFalse(cr)
 
+    def test__natural_key__method(self):
+        pp = Platform.objects.get(short_name='ENVISAT')
+        tup = ('Earth Observation Satellites', '', 'ENVISAT', 'Environmental Satellite')
+        self.assertEqual(pp.natural_key(), tup)
+
 
 class ProjectTests(BaseForVocabulariesTests):
     def test_get_project(self):
@@ -200,6 +244,17 @@ class ProjectTests(BaseForVocabulariesTests):
         self.assertEqual(project, Project.objects.get_by_natural_key('A - C', 'ACSOE', 
             'Atmospheric Chemistry Studies in the Oceanic Environment'))
 
+    def test__str__method(self):
+        p = Project.objects.get(short_name='ACSOE')
+        exp_str = 'Bucket: A - C, Short Name: ACSOE, Long Name: Atmospheric Chemistry Studies in the Oceanic Environment'
+        self.assertEqual(p.__str__(), exp_str)
+
+    def test__natural_key__method(self):
+        p = Project.objects.get(short_name='ACSOE')
+        tup = ('A - C', 'ACSOE', 'Atmospheric Chemistry Studies in the Oceanic Environment')
+        self.assertEqual(p.natural_key(), tup)
+
+
 class ScienceKeywordTests(BaseForVocabulariesTests):
 
     def test_get_science_keyword(self):
@@ -216,6 +271,17 @@ class ScienceKeywordTests(BaseForVocabulariesTests):
         sk = ScienceKeyword.objects.get_by_natural_key('EARTH SCIENCE', 'SPECTRAL/ENGINEERING',
             'RADAR', 'SIGMA NAUGHT', '', '', '')
         self.assertEqual(sk, ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT'))
+
+    def test__str__method(self):
+        expected_str = 'Category: EARTH SCIENCE, Topic: SPECTRAL/ENGINEERING, Term: RADAR, Variable Level 1: SIGMA NAUGHT, Variable Level 2: , Variable Level 3: , Detailed Variable: '
+        kw = ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT')
+        self.assertEqual(kw.__str__(), expected_str)
+
+    def test__natural_key__method(self):
+        kw = ScienceKeyword.objects.get(variable_level_1='SIGMA NAUGHT')
+        tup = ('EARTH SCIENCE', 'SPECTRAL/ENGINEERING', 'RADAR', 'SIGMA NAUGHT', '', '', '')
+        self.assertEqual(kw.natural_key(), tup)
+
 
 class TemporalDataResolutionTests(BaseForVocabulariesTests):
     def test_get_temporal_range(self):
@@ -242,9 +308,22 @@ class HorizontalDataResolutionTests(BaseForVocabulariesTests):
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test__get_by_natural_key__method(self):
-        rr = '10 meters - < 30 meters'
+        rr = '< 1 meter'
         hdr=HorizontalDataResolution.objects.get(range=rr)
         self.assertEqual(hdr, HorizontalDataResolution.objects.get_by_natural_key(rr))
+
+    def test__str__method(self):
+        rr = '< 1 meter'
+        hdr=HorizontalDataResolution.objects.get(range=rr)
+        exp_str = '< 1 meter'
+        self.assertEqual(hdr.__str__(), exp_str)
+
+    def test__natural_key__method(self):
+        rr = '< 1 meter'
+        hdr=HorizontalDataResolution.objects.get(range=rr)
+        tup = ('< 1 meter',)
+        self.assertEqual(hdr.natural_key(), tup)
+
 
 class VerticalDataResolutionTests(BaseForVocabulariesTests):
     def test_get_vertical_range(self):
@@ -263,6 +342,19 @@ class VerticalDataResolutionTests(BaseForVocabulariesTests):
         vdr=VerticalDataResolution.objects.get(range=rr)
         self.assertEqual(vdr, VerticalDataResolution.objects.get_by_natural_key(rr))
 
+    def test__str__method(self):
+        rr = '10 meters - < 30 meters'
+        vdr=VerticalDataResolution.objects.get(range=rr)
+        exp_str = '10 meters - < 30 meters'
+        self.assertEqual(vdr.__str__(), exp_str)
+
+    def test__natural_key__method(self):
+        tup = ('10 meters - < 30 meters',)
+        rr = '10 meters - < 30 meters'
+        vdr=VerticalDataResolution.objects.get(range=rr)
+        self.assertEqual(vdr.natural_key(), tup)
+
+
 class TemporalDataResolutionTests(BaseForVocabulariesTests):
 
     def test__get_by_natural_key__method(self):
@@ -270,6 +362,18 @@ class TemporalDataResolutionTests(BaseForVocabulariesTests):
         tdr=TemporalDataResolution.objects.get(range=rr)
         self.assertEqual(tdr, TemporalDataResolution.objects.get_by_natural_key(rr))
 
+    def test__str__method(self):
+        rr = '1 minute - < 1 hour'
+        tdr=TemporalDataResolution.objects.get(range=rr)
+        exp_str = '1 minute - < 1 hour'
+        self.assertEqual(tdr.__str__(), exp_str)
+
+    def test__natural_key__(self):
+        rr = '1 minute - < 1 hour'
+        tdr=TemporalDataResolution.objects.get(range=rr)
+        tup = ('1 minute - < 1 hour',)
+        self.assertEqual(tdr.natural_key(), tup)
+        
 class CommandsTests(TestCase):
 
     @patch.object(Parameter.objects, 'create_from_vocabularies',
