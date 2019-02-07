@@ -38,8 +38,10 @@ class ParameterManager(models.Manager):
         parameter table
         ''')
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_wkv_variable_list())==0:
-            pti.update_wkv_variable()
+                pti.update_wkv_variable()
         for wkv in pti.get_wkv_variable_list():
             pp, created = self.get_or_create(wkv)
             if created: num+=1
@@ -61,6 +63,8 @@ class PlatformManager(models.Manager):
     def create_from_vocabularies(self, **kwargs):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_platform_list())==0:
             pti.update_gcmd_platform()
         for platform in pti.get_gcmd_platform_list():
@@ -86,6 +90,8 @@ class InstrumentManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_instrument_list())==0:
             pti.update_gcmd_instrument()
         for instrument in pti.get_gcmd_instrument_list():
@@ -117,6 +123,8 @@ class ScienceKeywordManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_science_keyword_list())==0:
             pti.update_gcmd_science_keyword()
         for skw in pti.get_gcmd_science_keyword_list():
@@ -145,6 +153,8 @@ class DataCenterManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_provider_list())==0:
             pti.update_gcmd_provider()
         for dc in pti.get_gcmd_provider_list():
@@ -173,6 +183,8 @@ class HorizontalDataResolutionManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_horizontalresolutionrange_list())==0:
             pti.update_gcmd_horizontalresolutionrange()
         for hdr in pti.get_gcmd_horizontalresolutionrange_list():
@@ -196,6 +208,8 @@ class VerticalDataResolutionManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_verticalresolutionrange_list())==0:
             pti.update_gcmd_verticalresolutionrange()
         for vdr in pti.get_gcmd_verticalresolutionrange_list():
@@ -218,6 +232,8 @@ class TemporalDataResolutionManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_temporalresolutionrange_list())==0:
             pti.update_gcmd_temporalresolutionrange()
         for tdr in pti.get_gcmd_temporalresolutionrange_list():
@@ -240,6 +256,8 @@ class ProjectManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_project_list())==0:
             pti.update_gcmd_project()
         for p in pti.get_gcmd_project_list():
@@ -264,6 +282,8 @@ class ISOTopicCategoryManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_iso19115_topic_category_list())==0:
             pti.update_iso19115_topic_category()
         for iso in pti.get_iso19115_topic_category_list():
@@ -286,6 +306,8 @@ class LocationManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
+        if 'force' not in kwargs:
+            kwargs['force'] = False
         if kwargs['force']==True or len(pti.get_gcmd_location_list())==0:
             pti.update_gcmd_location()
         for loc in pti.get_gcmd_location_list():

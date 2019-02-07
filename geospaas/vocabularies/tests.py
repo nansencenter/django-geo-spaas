@@ -53,7 +53,7 @@ class ParameterTests(BaseForVocabulariesTests):
         self.assertFalse(cr)
 
     def test_create_from_vocabularies(self):
-        Parameter.objects.create_from_vocabularies()
+        Parameter.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_wkv_variable.assert_called_once()
         self.mock_pti.get_wkv_variable_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -66,7 +66,7 @@ class DataCenterTests(BaseForVocabulariesTests):
         self.assertEqual(dc.long_name, 'Nansen Environmental and Remote Sensing Centre')
 
     def test_create_from_vocabularies(self):
-        DataCenter.objects.create_from_vocabularies()
+        DataCenter.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_provider.assert_called_once()
         self.mock_pti.get_gcmd_provider_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -92,7 +92,7 @@ class InstrumentTests(BaseForVocabulariesTests):
         self.assertEqual(ii.long_name, 'Advanced Synthetic Aperature Radar')
 
     def test_create_from_vocabularies(self):
-        Instrument.objects.create_from_vocabularies()
+        Instrument.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_instrument.assert_called_once()
         self.mock_pti.get_gcmd_instrument_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -117,7 +117,7 @@ class ISOTopicCategoryTests(BaseForVocabulariesTests):
         self.assertEqual(cat.name, 'Oceans')
 
     def test_create_from_vocabularies(self):
-        ISOTopicCategory.objects.create_from_vocabularies()
+        ISOTopicCategory.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_iso19115_topic_category.assert_called_once()
         self.mock_pti.get_iso19115_topic_category_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -136,7 +136,7 @@ class LocationTests(BaseForVocabulariesTests):
         self.assertEqual(loc.type, 'AFRICA')
 
     def test_create_from_vocabularies(self):
-        Location.objects.create_from_vocabularies()
+        Location.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_location.assert_called_once()
         self.mock_pti.get_gcmd_location_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -160,7 +160,7 @@ class PlatformTests(BaseForVocabulariesTests):
         self.assertEqual(p.category, 'Earth Observation Satellites')
 
     def test_create_from_vocabularies(self):
-        Platform.objects.create_from_vocabularies()
+        Platform.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_platform.assert_called_once()
         self.mock_pti.get_gcmd_platform_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -184,7 +184,7 @@ class ProjectTests(BaseForVocabulariesTests):
             'Atmospheric Chemistry Studies in the Oceanic Environment')
 
     def test_create_from_vocabularies(self):
-        Project.objects.create_from_vocabularies()
+        Project.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_project.assert_called_once()
         self.mock_pti.get_gcmd_project_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -196,7 +196,7 @@ class ScienceKeywordTests(BaseForVocabulariesTests):
         self.assertEqual(kw.topic, 'SPECTRAL/ENGINEERING')
 
     def test_create_from_vocabularies(self):
-        ScienceKeyword.objects.create_from_vocabularies()
+        ScienceKeyword.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_science_keyword.assert_called_once()
         self.mock_pti.get_gcmd_science_keyword_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -208,7 +208,7 @@ class TemporalDataResolutionTests(BaseForVocabulariesTests):
         self.assertEqual(tr.range, '1 minute - < 1 hour')
 
     def test_create_from_vocabularies(self):
-        TemporalDataResolution.objects.create_from_vocabularies()
+        TemporalDataResolution.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_temporalresolutionrange.assert_called_once()
         self.mock_pti.get_gcmd_temporalresolutionrange_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -220,7 +220,7 @@ class HorizontalDataResolutionTests(BaseForVocabulariesTests):
         self.assertEqual(rr.range, '< 1 meter')
 
     def test_create_from_vocabularies(self):
-        HorizontalDataResolution.objects.create_from_vocabularies()
+        HorizontalDataResolution.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_horizontalresolutionrange.assert_called_once()
         self.mock_pti.get_gcmd_horizontalresolutionrange_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -233,7 +233,7 @@ class VerticalDataResolutionTests(BaseForVocabulariesTests):
         self.assertEqual(vr.range, '10 meters - < 30 meters')
 
     def test_create_from_vocabularies(self):
-        VerticalDataResolution.objects.create_from_vocabularies()
+        VerticalDataResolution.objects.create_from_vocabularies(force=True)
         self.mock_pti.update_gcmd_verticalresolutionrange.assert_called_once()
         self.mock_pti.get_gcmd_verticalresolutionrange_list.assert_called_once()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
@@ -263,16 +263,18 @@ class CommandsTests(TestCase):
     def test_commands(self, instrument_mock, vdr_mock, tdr_mock, sck_mock,
             project_mock, platform_mock, location_mock, iso_mock, hdr_mock,
             datacenter_mock, parameter_mock):
+        default_options = {'force':False, 'no_color':False, 'pythonpath':None, 'settings':None,
+                           'skip_checks':True, 'traceback':False, 'verbosity':1}
         call_command('update_vocabularies')
-        instrument_mock.assert_called_once_with()
-        vdr_mock.assert_called_once_with()
-        tdr_mock.assert_called_once_with()
-        sck_mock.assert_called_once_with()
-        project_mock.assert_called_once_with()
-        platform_mock.assert_called_once_with()
-        location_mock.assert_called_once_with()
-        iso_mock.assert_called_once_with()
-        hdr_mock.assert_called_once_with()
-        datacenter_mock.assert_called_once_with()
-        parameter_mock.assert_called_once_with()
+        instrument_mock.assert_called_once_with(**default_options)
+        vdr_mock.assert_called_once_with(**default_options)
+        tdr_mock.assert_called_once_with(**default_options)
+        sck_mock.assert_called_once_with(**default_options)
+        project_mock.assert_called_once_with(**default_options)
+        platform_mock.assert_called_once_with(**default_options)
+        location_mock.assert_called_once_with(**default_options)
+        iso_mock.assert_called_once_with(**default_options)
+        hdr_mock.assert_called_once_with(**default_options)
+        datacenter_mock.assert_called_once_with(**default_options)
+        parameter_mock.assert_called_once_with(**default_options)
 
