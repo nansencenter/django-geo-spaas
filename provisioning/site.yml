@@ -18,12 +18,17 @@
         - geospaas.nansat_ingestor
         - geospaas.viewer
         - django_forms_bootstrap
+        - leaflet
       django_urlpatterns:
-        - "path(r'^', include('geospaas.urls')),"
+        - "path('', include('geospaas.urls')),"
 
     - role: geospaas
       geospaas_project_home: '{{ project_home }}'
       geospaas_project_name: '{{ project_name }}'
+      geospaas_env_name: '{{ env_name }}'
+      geospaas_conda_dir: '{{ conda_dir }}'
+
+    - role: localvm
       geospaas_env_name: '{{ env_name }}'
       geospaas_conda_dir: '{{ conda_dir }}'
 
