@@ -54,8 +54,9 @@ class ParameterTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         Parameter.objects.create_from_vocabularies(force=True)
+        Parameter.objects.create_from_vocabularies()
         self.mock_pti.update_wkv_variable.assert_called_once()
-        self.mock_pti.get_wkv_variable_list.assert_called_once()
+        self.mock_pti.get_wkv_variable_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 class DataCenterTests(BaseForVocabulariesTests):
@@ -67,8 +68,9 @@ class DataCenterTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         DataCenter.objects.create_from_vocabularies(force=True)
+        DataCenter.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_provider.assert_called_once()
-        self.mock_pti.get_gcmd_provider_list.assert_called_once()
+        self.mock_pti.get_gcmd_provider_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
@@ -93,8 +95,9 @@ class InstrumentTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         Instrument.objects.create_from_vocabularies(force=True)
+        Instrument.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_instrument.assert_called_once()
-        self.mock_pti.get_gcmd_instrument_list.assert_called_once()
+        self.mock_pti.get_gcmd_instrument_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
@@ -118,8 +121,9 @@ class ISOTopicCategoryTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         ISOTopicCategory.objects.create_from_vocabularies(force=True)
+        ISOTopicCategory.objects.create_from_vocabularies()
         self.mock_pti.update_iso19115_topic_category.assert_called_once()
-        self.mock_pti.get_iso19115_topic_category_list.assert_called_once()
+        self.mock_pti.get_iso19115_topic_category_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
@@ -137,8 +141,9 @@ class LocationTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         Location.objects.create_from_vocabularies(force=True)
+        Location.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_location.assert_called_once()
-        self.mock_pti.get_gcmd_location_list.assert_called_once()
+        self.mock_pti.get_gcmd_location_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
@@ -161,8 +166,9 @@ class PlatformTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         Platform.objects.create_from_vocabularies(force=True)
+        Platform.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_platform.assert_called_once()
-        self.mock_pti.get_gcmd_platform_list.assert_called_once()
+        self.mock_pti.get_gcmd_platform_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def test_get_or_create(self):
@@ -185,8 +191,9 @@ class ProjectTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         Project.objects.create_from_vocabularies(force=True)
+        Project.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_project.assert_called_once()
-        self.mock_pti.get_gcmd_project_list.assert_called_once()
+        self.mock_pti.get_gcmd_project_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
@@ -197,8 +204,9 @@ class ScienceKeywordTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         ScienceKeyword.objects.create_from_vocabularies(force=True)
+        ScienceKeyword.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_science_keyword.assert_called_once()
-        self.mock_pti.get_gcmd_science_keyword_list.assert_called_once()
+        self.mock_pti.get_gcmd_science_keyword_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
@@ -209,8 +217,9 @@ class TemporalDataResolutionTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         TemporalDataResolution.objects.create_from_vocabularies(force=True)
+        TemporalDataResolution.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_temporalresolutionrange.assert_called_once()
-        self.mock_pti.get_gcmd_temporalresolutionrange_list.assert_called_once()
+        self.mock_pti.get_gcmd_temporalresolutionrange_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
@@ -221,8 +230,9 @@ class HorizontalDataResolutionTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         HorizontalDataResolution.objects.create_from_vocabularies(force=True)
+        HorizontalDataResolution.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_horizontalresolutionrange.assert_called_once()
-        self.mock_pti.get_gcmd_horizontalresolutionrange_list.assert_called_once()
+        self.mock_pti.get_gcmd_horizontalresolutionrange_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
@@ -234,8 +244,9 @@ class VerticalDataResolutionTests(BaseForVocabulariesTests):
 
     def test_create_from_vocabularies(self):
         VerticalDataResolution.objects.create_from_vocabularies(force=True)
+        VerticalDataResolution.objects.create_from_vocabularies()
         self.mock_pti.update_gcmd_verticalresolutionrange.assert_called_once()
-        self.mock_pti.get_gcmd_verticalresolutionrange_list.assert_called_once()
+        self.mock_pti.get_gcmd_verticalresolutionrange_list.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
 
