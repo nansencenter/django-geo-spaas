@@ -185,6 +185,7 @@ class DatasetURI(models.Model):
         return self.uri.split(':')[0]
 
     def save(self, *args, **kwargs):
+        validate_uri(uri)
         # Validation is not usually done in the models but rather via form
         # validation. We should discuss if we want it or not. Presently, we
         # check only that the uri is valid but we may also check if it exists
