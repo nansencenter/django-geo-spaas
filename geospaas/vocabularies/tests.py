@@ -274,18 +274,16 @@ class CommandsTests(TestCase):
     def test_commands(self, instrument_mock, vdr_mock, tdr_mock, sck_mock,
             project_mock, platform_mock, location_mock, iso_mock, hdr_mock,
             datacenter_mock, parameter_mock):
-        default_options = {'force':False, 'no_color':False, 'pythonpath':None, 'settings':None,
-                           'skip_checks':True, 'traceback':False, 'verbosity':1}
         call_command('update_vocabularies')
-        instrument_mock.assert_called_once_with(**default_options)
-        vdr_mock.assert_called_once_with(**default_options)
-        tdr_mock.assert_called_once_with(**default_options)
-        sck_mock.assert_called_once_with(**default_options)
-        project_mock.assert_called_once_with(**default_options)
-        platform_mock.assert_called_once_with(**default_options)
-        location_mock.assert_called_once_with(**default_options)
-        iso_mock.assert_called_once_with(**default_options)
-        hdr_mock.assert_called_once_with(**default_options)
-        datacenter_mock.assert_called_once_with(**default_options)
-        parameter_mock.assert_called_once_with(**default_options)
+        instrument_mock.assert_called_once_with(**instrument_mock.call_args[1])
+        vdr_mock.assert_called_once_with(**vdr_mock.call_args[1])
+        tdr_mock.assert_called_once_with(**tdr_mock.call_args[1])
+        sck_mock.assert_called_once_with(**sck_mock.call_args[1])
+        project_mock.assert_called_once_with(**project_mock.call_args[1])
+        platform_mock.assert_called_once_with(**platform_mock.call_args[1])
+        location_mock.assert_called_once_with(**location_mock.call_args[1])
+        iso_mock.assert_called_once_with(**iso_mock.call_args[1])
+        hdr_mock.assert_called_once_with(**hdr_mock.call_args[1])
+        datacenter_mock.assert_called_once_with(**datacenter_mock.call_args[1])
+        parameter_mock.assert_called_once_with(**parameter_mock.call_args[1])
 

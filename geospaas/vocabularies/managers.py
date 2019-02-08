@@ -17,6 +17,16 @@ import pythesint as pti
 
 from django.db import models
 
+
+
+def check_force_option(**kwargs):
+    if 'force' not in kwargs:
+        force = False
+    else:
+        force = kwargs['force']
+    return force
+
+
 class ParameterManager(models.Manager):
 
     ''' Fields:
@@ -38,9 +48,8 @@ class ParameterManager(models.Manager):
         parameter table
         ''')
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_wkv_variable_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_wkv_variable_list())==0:
                 pti.update_wkv_variable()
         for wkv in pti.get_wkv_variable_list():
             pp, created = self.get_or_create(wkv)
@@ -63,9 +72,8 @@ class PlatformManager(models.Manager):
     def create_from_vocabularies(self, **kwargs):
         # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_platform_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_platform_list())==0:
             pti.update_gcmd_platform()
         for platform in pti.get_gcmd_platform_list():
             if 'Revision' in platform.keys():
@@ -90,9 +98,8 @@ class InstrumentManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_instrument_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_instrument_list())==0:
             pti.update_gcmd_instrument()
         for instrument in pti.get_gcmd_instrument_list():
             if 'Revision' in instrument.keys():
@@ -123,9 +130,8 @@ class ScienceKeywordManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_science_keyword_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_science_keyword_list())==0:
             pti.update_gcmd_science_keyword()
         for skw in pti.get_gcmd_science_keyword_list():
             if 'Revision' in skw.keys():
@@ -153,9 +159,8 @@ class DataCenterManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_provider_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_provider_list())==0:
             pti.update_gcmd_provider()
         for dc in pti.get_gcmd_provider_list():
             if 'Revision' in dc.keys():
@@ -183,9 +188,8 @@ class HorizontalDataResolutionManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_horizontalresolutionrange_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_horizontalresolutionrange_list())==0:
             pti.update_gcmd_horizontalresolutionrange()
         for hdr in pti.get_gcmd_horizontalresolutionrange_list():
             if 'Revision' in hdr.keys():
@@ -208,9 +212,8 @@ class VerticalDataResolutionManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_verticalresolutionrange_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_verticalresolutionrange_list())==0:
             pti.update_gcmd_verticalresolutionrange()
         for vdr in pti.get_gcmd_verticalresolutionrange_list():
             if 'Revision' in vdr.keys():
@@ -232,9 +235,8 @@ class TemporalDataResolutionManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_temporalresolutionrange_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_temporalresolutionrange_list())==0:
             pti.update_gcmd_temporalresolutionrange()
         for tdr in pti.get_gcmd_temporalresolutionrange_list():
             if 'Revision' in tdr.keys():
@@ -256,9 +258,8 @@ class ProjectManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_project_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_project_list())==0:
             pti.update_gcmd_project()
         for p in pti.get_gcmd_project_list():
             if 'Revision' in p.keys():
@@ -282,9 +283,8 @@ class ISOTopicCategoryManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_iso19115_topic_category_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_iso19115_topic_category_list())==0:
             pti.update_iso19115_topic_category()
         for iso in pti.get_iso19115_topic_category_list():
             ii, created = self.get_or_create(iso)
@@ -306,9 +306,8 @@ class LocationManager(models.Manager):
 
     def create_from_vocabularies(self, **kwargs):
         num = 0
-        if 'force' not in kwargs:
-            kwargs['force'] = False
-        if kwargs['force']==True or len(pti.get_gcmd_location_list())==0:
+        force = check_force_option(**kwargs)
+        if force==True or len(pti.get_gcmd_location_list())==0:
             pti.update_gcmd_location()
         for loc in pti.get_gcmd_location_list():
             if 'Revision' in loc.keys():
