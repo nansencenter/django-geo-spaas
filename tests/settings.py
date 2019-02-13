@@ -25,30 +25,15 @@ SECRET_KEY = 'chu2p96if%&^09w6okqjwc-%+hmpc1t3@b&i8*+3nvdk!xpdb0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
-# BEGIN ANSIBLE MANAGED BLOCK leaflet
-'leaflet',
-# END ANSIBLE MANAGED BLOCK leaflet
-# BEGIN ANSIBLE MANAGED BLOCK django_forms_bootstrap
-'django_forms_bootstrap',
-# END ANSIBLE MANAGED BLOCK django_forms_bootstrap
-# BEGIN ANSIBLE MANAGED BLOCK geospaas.viewer
-'geospaas.viewer',
-# END ANSIBLE MANAGED BLOCK geospaas.viewer
-# BEGIN ANSIBLE MANAGED BLOCK geospaas.nansat_ingestor
-'geospaas.nansat_ingestor',
-# END ANSIBLE MANAGED BLOCK geospaas.nansat_ingestor
-# BEGIN ANSIBLE MANAGED BLOCK geospaas.catalog
-'geospaas.catalog',
-# END ANSIBLE MANAGED BLOCK geospaas.catalog
-# BEGIN ANSIBLE MANAGED BLOCK geospaas.vocabularies
-'geospaas.vocabularies',
-# END ANSIBLE MANAGED BLOCK geospaas.vocabularies
+    'leaflet',
+    'django_forms_bootstrap',
+    'geospaas.viewer',
+    'geospaas.nansat_ingestor',
+    'geospaas.catalog',
+    'geospaas.vocabularies',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -136,14 +121,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-# BEGIN ANSIBLE MANAGED BLOCK
 MEDIA_URL = '/site_media/media/'
-STATIC_ROOT = "/vagrant/shared/icetype_vm/site_media/static"
-MEDIA_ROOT =  "/vagrant/shared/icetype_vm/site_media/media/"
-DOWNLOADS_ROOT = "/vagrant/shared/icetype_vm/site_media/downloads"
-PRODUCTS_ROOT = "/vagrant/shared/icetype_vm/site_media/products"
+STATIC_ROOT = "/site_media/static"
+MEDIA_ROOT =  "/site_media/media/"
+DOWNLOADS_ROOT = "/site_media/downloads"
+PRODUCTS_ROOT = "/site_media/products"
 STATICFILES_DIRS = [
-"/vagrant/shared/icetype_vm/geospaas_project/static",
+"/project/static",
 ]
 SERIALIZATION_MODULES = {"geojson": "django.contrib.gis.serializers.geojson",}
 ALLOWED_HOSTS = ['*']
