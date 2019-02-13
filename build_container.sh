@@ -1,11 +1,6 @@
 #!/bin/bash
-
-# get UID and GID from input (for linux users only)
-DUID=${1-"1000"}
-DGID=${2-"1000"}
-
-# build image geospaas (with Nansat, Django, Geo-SpaaS)
-docker build . -t geospaas --build-arg DUID=$DUID --build-arg DGID=$DGID
+# build image for running geospaas (with Python Nansat, Django, Geo-SpaaS)
+docker build . -t geospaas
 
 # set project name
 PROJECT_NAME=project
