@@ -12,8 +12,6 @@ def crawl(url, **options):
 
     if options['date']:
         select = ['(.*%s.*\.nc)' %options['date']]
-        import ipdb
-        ipdb.set_trace()
     elif options['filename']:
         select = ['(.*%s)' %options['filename']]
     else:
