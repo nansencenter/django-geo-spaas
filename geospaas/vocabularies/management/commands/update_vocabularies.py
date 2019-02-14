@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
 # Modified:
@@ -8,7 +8,7 @@
 # Created:
 # Last modified:
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand, CommandError
 
@@ -32,15 +32,18 @@ class Command(BaseCommand):
                             help='''Option to force update vocabularies using remote repository''')
 
     def handle(self, *args, **options):
-        
-        Parameter.objects.create_from_vocabularies(**options)
-        DataCenter.objects.create_from_vocabularies(**options)
-        HorizontalDataResolution.objects.create_from_vocabularies(**options)
-        Instrument.objects.create_from_vocabularies(**options)
-        ISOTopicCategory.objects.create_from_vocabularies(**options)
-        Location.objects.create_from_vocabularies(**options)
-        Platform.objects.create_from_vocabularies(**options)
-        Project.objects.create_from_vocabularies(**options)
-        ScienceKeyword.objects.create_from_vocabularies(**options)
-        TemporalDataResolution.objects.create_from_vocabularies(**options)
-        VerticalDataResolution.objects.create_from_vocabularies(**options)
+        models = [
+            Parameter,
+            DataCenter,
+            HorizontalDataResolution,
+            Instrument,
+            ISOTopicCategory,
+            Location,
+            Platform,
+            Project,
+            ScienceKeyword,
+            TemporalDataResolution,
+            VerticalDataResolution]
+
+        for model in models:
+            model.objects.create_from_vocabularies(**options)
