@@ -1,4 +1,4 @@
-from geospaas.utils import ProcessingBaseCommand
+from geospaas.utils.processing_base_command import ProcessingBaseCommand
 
 class Command(ProcessingBaseCommand):
     help = 'Dataset statistics'
