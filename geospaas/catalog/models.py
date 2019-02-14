@@ -188,17 +188,7 @@ class DatasetURI(models.Model):
     def save(self, *args, **kwargs):
         validate_uri(self.uri)
         # Validation is not usually done in the models but rather via form
-        # validation. We should discuss if we want it or not. Presently, we
-        # check only that the uri is valid but we may also check if it exists
-        # (although this isn't normally done either - see
-        # https://docs.djangoproject.com/en/dev/internals/deprecation/ and
-        # search "verify_exists")
-        # Force field validation - but it fails although the uri is
-        # (apparently) good... see the test..
-        #self.full_clean()
-        # Check that the uri exists?
-        # TODO: check in the get_or_create method - valid uri-schemes are provided at
-        # https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+        # validation. We should discuss if we want it here or not. 
         super(DatasetURI, self).save(*args, **kwargs)
 
 class DatasetRelationship(models.Model):
