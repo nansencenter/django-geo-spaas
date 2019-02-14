@@ -35,25 +35,26 @@ def crawl(url, **options):
 
 class Command(BaseCommand):
     args = '<url> <select>'
-    help = '''
+    help = """
         Add metadata of datasets available on thredds/opendap to archive. 
-        
+
         Args:
             <url>: the url to the thredds server
-            <select>: You can select datasets based on their THREDDS ID using
-            the 'select' parameter.
-            
+            <date>: Select datasets by date (yyyy/mm/dd)
+            <filename>: Select datasets by filename
+
         Example: 
             (1) Find all Sentinel-2A datasets in 2017
 
-            url = http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html
-            select = 2017
+            url = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html'
+            date = '2017/01/10'
 
             (2) Find a specific file
 
-            url = http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html
-            select = S2A_MSIL1C_20170201T111301_N0204_R137_T32WNS_20170201T111255.nc
-        '''
+            url = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html'
+            filename = 'S2A_MSIL1C_20170201T111301_N0204_R137_T32WNS_20170201T111255.nc'
+        """
+
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='*', type=str)
         parser.add_argument('--date',
