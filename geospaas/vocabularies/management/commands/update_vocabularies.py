@@ -25,11 +25,11 @@ from geospaas.vocabularies.models import TemporalDataResolution
 from geospaas.vocabularies.models import VerticalDataResolution
 
 class Command(BaseCommand):
-    help = 'Get latest vocabularies'
+    help = 'Put vocabularies into the database'
 
     def add_arguments(self, parser):
         parser.add_argument('-f', '--force', action='store_true',
-                            help='''Option to force update vocabularies using remote repository''')
+                            help='''Force update of vocabularies from remote repositories''')
 
     def handle(self, *args, **options):
         models = [
