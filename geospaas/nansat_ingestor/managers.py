@@ -10,7 +10,7 @@ from nansat.nansat import Nansat
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
-from geospaas.utils import validate_uri, nansat_filename
+from geospaas.utils.utils import validate_uri, nansat_filename
 from geospaas.vocabularies.models import (Platform,
                                           Instrument,
                                           DataCenter,
