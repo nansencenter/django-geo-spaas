@@ -8,9 +8,12 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
+from geospaas.utils.utils import validate_uri
 from geospaas.vocabularies.models import Instrument, Platform
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
+
+from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
 
 # See also:
 # https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
@@ -98,3 +101,48 @@ class TestIngestNansatCommand(BasetForTests):
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
+
+class TestIngestThreddsCrawl(TestCase):
+
+    #def setUp(self):
+    #    self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
+    #    with patch('urllib3.PoolManager') as self.mock_PoolManager:
+    #        self.mock_PoolManager.return_value.request.return_value = PropertyMock(status=200)
+    #    with patch('thredds_crawler.crawl.Crawl') as self.mock_Crawl:
+    #        self.mock_Crawl.return_value.c.return_value.datasets.services.return_value = [{
+    #            'name': 'odap', 
+    #            'service': 'OPENDAP', 
+    #            'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
+    #                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+    #        }]
+
+    def test__crawl__function(self):
+        pass
+        #uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
+        #with patch('geospaas.utils.utils.validate_uri') as mock_validate_uri:
+        #    mock_validate_uri.return_value = True
+        #    with patch('thredds_crawler.crawl.Crawl') as mock_Crawl:
+        #        mock_Crawl.return_value.c.return_value.datasets.services.return_value = [{
+        #            'name': 'odap', 
+        #            'service': 'OPENDAP', 
+        #            'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
+        #                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+        #        }]
+        #        crawl(uri)
+        #mock_validate_uri.assert_called_once_with(uri)
+        #mock_Crawl.assert_called_once_with(uri)
+
+
+    #@patch('urllib3.PoolManager')
+    #def test_ingest_without_args(self, mock_PoolManager):
+    #    mock_PoolManager.return_value.request.return_value = PropertyMock(status=200)
+    #    uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/test_catalog.html'
+    #    call_command('ingest_thredds_crawl', uri)
+
+    #def test_ingest_with_year_arg(self):
+    #    uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/2019/01/24/catalog.html'
+    #    call_command('ingest_thredds_crawl', uri, date=['2019/01/31'])
+
+    def test_ingest_with_filename_arg(self):
+        pass
+
