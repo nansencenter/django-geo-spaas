@@ -1,4 +1,7 @@
 import datetime
+import sys
+from contextlib import contextmanager
+from io import StringIO
 
 from mock import patch, PropertyMock, Mock, MagicMock, DEFAULT
 
@@ -12,6 +15,15 @@ from geospaas.vocabularies.models import Instrument, Platform
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
 
+@contextmanager
+def captured_output():
+    new_out, new_err = StringIO(), StringIO()
+    old_out, old_err = sys.stdout, sys.stderr
+    try:
+        sys.stdout, sys.stderr = new_out, new_err
+        yield sys.stdout, sys.stderr
+    finally:
+        sys.stdout, sys.stderr = old_out, old_err
 
 # See also:
 # https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
@@ -89,6 +101,36 @@ class TestIngestNansatCommand(BasetForTests):
         call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
+class TestIngestThreddsCrawl(TestCase):
+
+    def setUp(self):
+        self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
+        self.patch_crawl = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.crawl')
+        self.mock_crawl = self.patch_crawl.start()
+        self.mock_crawl.return_value = 10
+
+    def tearDown(self):
+        self.patch_crawl.stop()
+
+    def test_ingest_no_args(self):
+        with captured_output() as (out, err):
+            call_command('ingest_thredds_crawl', self.uri)
+        output = out.getvalue().strip()
+        self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+
+    def test_ingest_with_year_arg(self):
+        with captured_output() as (out, err):
+            call_command('ingest_thredds_crawl', self.uri, date=['2019/01/24'])
+        output = out.getvalue().strip()
+        self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+
+    def test_ingest_with_filename_arg(self):
+        with captured_output() as (out, err):
+            call_command('ingest_thredds_crawl', self.uri,
+                filename='S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc')
+        output = out.getvalue().strip()
+        self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+
 class TestIngestThreddsCrawl__crawl__function(TestCase):
 
     def setUp(self):
@@ -162,19 +204,4 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         # the S2 data access from the Norwegian ground segment was failing)
         pass
 
-
-class TestIngestThreddsCrawl(TestCase):
-
-    #@patch('urllib3.PoolManager')
-    #def test_ingest_without_args(self, mock_PoolManager):
-    #    mock_PoolManager.return_value.request.return_value = PropertyMock(status=200)
-    #    uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/test_catalog.html'
-    #    call_command('ingest_thredds_crawl', uri)
-
-    def test_ingest_with_year_arg(self):
-        uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2B/2019/01/24/catalog.html'
-        call_command('ingest_thredds_crawl', uri, date=['2019/01/24'])
-
-    def test_ingest_with_filename_arg(self):
-        pass
 
