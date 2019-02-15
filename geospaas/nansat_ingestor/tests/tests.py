@@ -8,12 +8,10 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 from django.test import TestCase
 
-from geospaas.utils.utils import validate_uri
 from geospaas.vocabularies.models import Instrument, Platform
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
 
-from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
 
 # See also:
 # https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
@@ -102,36 +100,81 @@ class TestIngestNansatCommand(BasetForTests):
         call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
-class TestIngestThreddsCrawl(TestCase):
+class TestIngestThreddsCrawl__crawl__function(TestCase):
 
-    #def setUp(self):
-    #    self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
-    #    with patch('urllib3.PoolManager') as self.mock_PoolManager:
-    #        self.mock_PoolManager.return_value.request.return_value = PropertyMock(status=200)
-    #    with patch('thredds_crawler.crawl.Crawl') as self.mock_Crawl:
-    #        self.mock_Crawl.return_value.c.return_value.datasets.services.return_value = [{
-    #            'name': 'odap', 
-    #            'service': 'OPENDAP', 
-    #            'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
-    #                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-    #        }]
+    def setUp(self):
+        self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
 
-    def test__crawl__function(self):
+        self.patch_LeafDataset = patch('thredds_crawler.crawl.LeafDataset')
+        self.mock_LeafDataset = self.patch_LeafDataset.start()
+
+        self.patch_validate_uri = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.validate_uri')
+        self.mock_validate_uri = self.patch_validate_uri.start()
+        self.mock_validate_uri.return_value = True
+
+        self.patch_Crawl = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.Crawl')
+        self.mock_Crawl = self.patch_Crawl.start() 
+
+        self.patch_Dataset = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
+        self.mock_ds = self.patch_Dataset.start()
+
+        from geospaas.nansat_ingestor.models import Dataset
+        from thredds_crawler.crawl import Crawl, LeafDataset
+        test_LeafDataset = LeafDataset()
+        test_LeafDataset.services = [{
+            'name': 'odap', 
+            'service': 'OPENDAP', 
+            'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
+                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+        }]
+        self.mock_Crawl.return_value = PropertyMock(datasets = [test_LeafDataset])
+
+    def tearDown(self):
+        self.patch_LeafDataset.stop()
+        self.patch_validate_uri.stop()
+        self.patch_Crawl.stop()
+        self.patch_Dataset.stop()
+
+    def test_ds_created(self):
+        self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
+        added = crawl(self.uri)
+        self.mock_validate_uri.assert_called_once_with(self.uri)
+        self.mock_Crawl.assert_called_once_with(self.uri, debug=True, select=None, skip=['.*ncml'])
+        self.assertEqual(added, 1)
+
+    def test_ds_created_with_date_arg(self):
+        self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
+        added = crawl(self.uri, date='2019/01/01')
+        self.mock_validate_uri.assert_called_once_with(self.uri)
+        self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
+                select=['(.*2019/01/01.*\\.nc)'], skip=['.*ncml'])
+        self.assertEqual(added, 1)
+
+    def test_ds_created_with_filename_arg(self):
+        self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
+        fn = 'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+        added = crawl(self.uri, filename=fn)
+        self.mock_validate_uri.assert_called_once_with(self.uri)
+        self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
+                select=['(.*S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc)'],
+                skip=['.*ncml'])
+        self.assertEqual(added, 1)
+
+    def test_get_or_create_raises_IOError(self):
+        # I am not sure which situations caused IOError, so this is not tested now (on 2019-02-15,
+        # the S2 data access from the Norwegian ground segment was failing)
         pass
-        #uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
-        #with patch('geospaas.utils.utils.validate_uri') as mock_validate_uri:
-        #    mock_validate_uri.return_value = True
-        #    with patch('thredds_crawler.crawl.Crawl') as mock_Crawl:
-        #        mock_Crawl.return_value.c.return_value.datasets.services.return_value = [{
-        #            'name': 'odap', 
-        #            'service': 'OPENDAP', 
-        #            'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
-        #                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-        #        }]
-        #        crawl(uri)
-        #mock_validate_uri.assert_called_once_with(uri)
-        #mock_Crawl.assert_called_once_with(uri)
 
+    def test_get_or_create_raises_AttributeError(self):
+        # I am not sure which situations caused AttributeError, so this is not tested now (on 2019-02-15,
+        # the S2 data access from the Norwegian ground segment was failing)
+        pass
+
+
+class TestIngestThreddsCrawl(TestCase):
 
     #@patch('urllib3.PoolManager')
     #def test_ingest_without_args(self, mock_PoolManager):
@@ -139,9 +182,9 @@ class TestIngestThreddsCrawl(TestCase):
     #    uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/test_catalog.html'
     #    call_command('ingest_thredds_crawl', uri)
 
-    #def test_ingest_with_year_arg(self):
-    #    uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/2019/01/24/catalog.html'
-    #    call_command('ingest_thredds_crawl', uri, date=['2019/01/31'])
+    def test_ingest_with_year_arg(self):
+        uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2B/2019/01/24/catalog.html'
+        call_command('ingest_thredds_crawl', uri, date=['2019/01/24'])
 
     def test_ingest_with_filename_arg(self):
         pass

@@ -1,3 +1,6 @@
+"""Note: This is tested on Sentinel-1 and Sentinel-2 data from the Norwegian ground segment. Other
+repositories may require slight changes in the code. This must be developed gradually..
+"""
 import warnings
 from thredds_crawler.crawl import Crawl
 
@@ -10,10 +13,12 @@ def crawl(url, **options):
     if not validate_uri(url):
         raise ValueError('Invalid url: %s'%url)
 
-    if options['date']:
-        select = ['(.*%s.*\.nc)' %options['date']]
-    elif options['filename']:
-        select = ['(.*%s)' %options['filename']]
+    date = options.get('date', None)
+    filename = options.get('filename', None)
+    if date:
+        select = ['(.*%s.*\.nc)' %date]
+    elif filename:
+        select = ['(.*%s)' %filename]
     else:
         select = None
 
@@ -29,8 +34,8 @@ def crawl(url, **options):
             continue
         else:
             if cr:
-                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
                 added += 1
+                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
     return added
 
 class Command(BaseCommand):
