@@ -10,8 +10,7 @@ from geospaas.utils.utils import validate_uri
 from geospaas.nansat_ingestor.models import Dataset as NansatDataset
 
 def crawl(url, **options):
-    if not validate_uri(url):
-        raise ValueError('Invalid url: %s'%url)
+    validate_uri(url)
 
     date = options.get('date', None)
     filename = options.get('filename', None)
