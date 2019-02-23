@@ -1,3 +1,6 @@
+"""Note: This is tested on Sentinel-1 and Sentinel-2 data from the Norwegian ground segment. Other
+repositories may require slight changes in the code. This must be developed gradually..
+"""
 import warnings
 from thredds_crawler.crawl import Crawl
 
@@ -10,12 +13,12 @@ def crawl(url, **options):
     if not validate_uri(url):
         raise ValueError('Invalid url: %s'%url)
 
-    if options['date']:
-        select = ['(.*%s.*\.nc)' %options['date']]
-        import ipdb
-        ipdb.set_trace()
-    elif options['filename']:
-        select = ['(.*%s)' %options['filename']]
+    date = options.get('date', None)
+    filename = options.get('filename', None)
+    if date:
+        select = ['(.*%s.*\.nc)' %date]
+    elif filename:
+        select = ['(.*%s)' %filename]
     else:
         select = None
 
@@ -31,31 +34,32 @@ def crawl(url, **options):
             continue
         else:
             if cr:
-                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
                 added += 1
+                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
     return added
 
 class Command(BaseCommand):
     args = '<url> <select>'
-    help = '''
+    help = """
         Add metadata of datasets available on thredds/opendap to archive. 
-        
+
         Args:
             <url>: the url to the thredds server
-            <select>: You can select datasets based on their THREDDS ID using
-            the 'select' parameter.
-            
+            <date>: Select datasets by date (yyyy/mm/dd)
+            <filename>: Select datasets by filename
+
         Example: 
             (1) Find all Sentinel-2A datasets in 2017
 
-            url = http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html
-            select = 2017
+            url = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html'
+            date = '2017/01/10'
 
             (2) Find a specific file
 
-            url = http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html
-            select = S2A_MSIL1C_20170201T111301_N0204_R137_T32WNS_20170201T111255.nc
-        '''
+            url = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html'
+            filename = 'S2A_MSIL1C_20170201T111301_N0204_R137_T32WNS_20170201T111255.nc'
+        """
+
     def add_arguments(self, parser):
         parser.add_argument('url', nargs='*', type=str)
         parser.add_argument('--date',
