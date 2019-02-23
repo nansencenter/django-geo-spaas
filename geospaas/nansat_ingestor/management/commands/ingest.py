@@ -1,7 +1,7 @@
 import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
-from geospaas.utils import uris_from_args
+from geospaas.utils.utils import uris_from_args
 from geospaas.catalog.models import DatasetURI
 from geospaas.nansat_ingestor.models import Dataset
 

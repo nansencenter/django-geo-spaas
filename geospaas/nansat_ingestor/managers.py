@@ -10,7 +10,7 @@ from nansat.nansat import Nansat
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
-from geospaas.utils import validate_uri, nansat_filename
+from geospaas.utils.utils import validate_uri, nansat_filename
 from geospaas.vocabularies.models import (Platform,
                                           Instrument,
                                           DataCenter,
@@ -39,9 +39,9 @@ class DatasetManager(models.Manager):
         if not uri_filter_args:
             uri_filter_args = {}
 
-        # Validate uri - this should fail if the uri doesn't point to a valid
+        # Validate uri - this should raise an exception if the uri doesn't point to a valid
         # file or stream
-        valid_uri = validate_uri(uri)
+        validate_uri(uri)
 
         # Several datasets can refer to the same uri (e.g., scatterometers and svp drifters), so we
         # need to pass uri_filter_args

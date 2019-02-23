@@ -20,7 +20,9 @@ class DatasetTests(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
 
-    def test_dataset(self):
+    @patch('os.path.isfile')
+    def test_dataset(self, mock_isfile):
+        mock_isfile.return_value = True
         ''' Shall create Dataset instance '''
         iso_category = ISOTopicCategory.objects.get(name='Oceans')
         dc = DataCenter.objects.get(short_name='NERSC')
@@ -46,19 +48,19 @@ class DatasetTests(TestCase):
         self.assertEqual(ds.entry_title, et)
 
         # Shall create new DatasetURI
-        ds_uri1, cr1 = DatasetURI.objects.get_or_create(uri='test_name1.nc',
+        ds_uri1, cr1 = DatasetURI.objects.get_or_create(uri='file://localhost/test_name1.nc',
                                                       dataset=ds)
         self.assertIsInstance(ds_uri1, DatasetURI)
         self.assertEqual(cr1, True)
 
         # Shall NOT create new DatasetURI
-        ds_uri2, cr2 = DatasetURI.objects.get_or_create(uri='test_name1.nc',
+        ds_uri2, cr2 = DatasetURI.objects.get_or_create(uri='file://localhost/test_name1.nc',
                                                       dataset=ds)
         self.assertEqual(ds_uri1, ds_uri2)
         self.assertEqual(cr2, False)
 
         # Shall create new DatasetURI
-        ds_uri3, cr3 = DatasetURI.objects.get_or_create(uri='test_name2.nc',
+        ds_uri3, cr3 = DatasetURI.objects.get_or_create(uri='file://localhost/test_name2.nc',
                                                       dataset=ds)
         self.assertIsInstance(ds_uri3, DatasetURI)
         self.assertEqual(cr3, True)
@@ -139,7 +141,9 @@ class DatasetURITests(TestCase):
     def setUp(self):
         self.dataset = Dataset.objects.get(pk=1)
 
-    def test_DatasetURI_created(self):
+    @patch('os.path.isfile')
+    def test_DatasetURI_created(self, mock_isfile):
+        mock_isfile.return_value = True
         uri = 'file://localhost/this/is/some/file'
         dsuri = DatasetURI(uri=uri, dataset=self.dataset)
         dsuri.save()
