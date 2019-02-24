@@ -1,5 +1,6 @@
 ''' Utility functions to perform common operations '''
 import os
+from netCDF4 import Dataset
 
 try:
     import urllib3 as urllibN
@@ -63,7 +64,8 @@ def validate_uri(uri):
         else:
             request = urllibN.PoolManager().request('GET', uri)
         if not request.status==200:
-            raise ConnectionError(uri)
+            ds = Dataset(uri)
+            #raise ConnectionError(uri)
 
 def nansat_filename(uri):
     # Check if data should be read as stream or as file? Or just:
