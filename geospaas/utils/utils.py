@@ -65,7 +65,6 @@ def validate_uri(uri):
             request = urllibN.PoolManager().request('GET', uri)
         if not request.status==200:
             ds = Dataset(uri)
-            #raise ConnectionError(uri)
 
 def nansat_filename(uri):
     # Check if data should be read as stream or as file? Or just:
