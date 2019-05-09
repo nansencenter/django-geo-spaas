@@ -46,7 +46,10 @@ class BasetForTests(TestCase):
         return self.predefined_metadata_dict[args[0]]
 
 class TestDatasetManager(BasetForTests):
-    def test_getorcreate_localfile(self):
+
+    @patch('os.path.isfile')
+    def test_getorcreate_localfile(self, mock_isfile):
+        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         ds1, cr1 = Dataset.objects.get_or_create(uri)
@@ -64,7 +67,10 @@ class TestDatasetManager(BasetForTests):
 
 
 class TestDatasetURI(BasetForTests):
-    def test_get_non_ingested_uris(self):
+
+    @patch('os.path.isfile')
+    def test_get_non_ingested_uris(self, mock_isfile):
+        mock_isfile.return_value = True
         ''' Shall return list with only  non existing files '''
         testfile = 'file://localhost/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
         ds = Dataset.objects.get_or_create(testfile)[0]
@@ -76,13 +82,18 @@ class TestDatasetURI(BasetForTests):
 
 
 class TestIngestNansatCommand(BasetForTests):
-    def test_add_asar(self):
+
+    @patch('os.path.isfile')
+    def test_add_asar(self, mock_isfile):
+        mock_isfile.return_value = True
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
-    def test_add_asar_with_nansat_options(self):
+    @patch('os.path.isfile')
+    def test_add_asar_with_nansat_options(self, mock_isfile):
+        mock_isfile.return_value = True
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)

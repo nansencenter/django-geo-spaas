@@ -44,25 +44,27 @@ def product_path(module, filename):
 def validate_uri(uri):
     """ Validation of URI and its existence
 
-    URI should be either: file://localhost/some/path/filename.ext
-           or accessible: http://www.eee.rrr/some/path
+    URI conventions: URI = scheme:[//authority]path[?query][#fragment]
+    
+    Examples:
+        file://localhost/some/path/filename.ext
+        http://www.eee.rrr/some/path
 
-    If URI is not valid, the function rasies a ValueError or urrlib error
+    If URI is not valid, the function raises a ValueError or urrlib error
 
     """
     validation_result = False
     uri_parts = urlparse(uri)
     if uri_parts.scheme=='file' and uri_parts.netloc=='localhost':
-        if os.path.isfile(uri_parts.path):
-            validation_result = True
+        if not os.path.isfile(uri_parts.path):
+            raise FileNotFoundError(uri_parts.path)
     else:
         if URLLIB_VERSION == 2:
             request = urllibN.Request(uri)
         else:
             request = urllibN.PoolManager().request('GET', uri)
-        if request.status==200:
-            validation_result = True
-    return validation_result
+        if not request.status==200:
+            raise ConnectionError(uri)
 
 def nansat_filename(uri):
     # Check if data should be read as stream or as file? Or just:
