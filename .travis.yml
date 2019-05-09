@@ -23,7 +23,7 @@ install:
     - pip install django-leaflet
     - pip install thredds_crawler
     - python setup.py install
-    - conda update --all
+    - conda update --all --yes
 
 script:
     - coverage run runtests.py
