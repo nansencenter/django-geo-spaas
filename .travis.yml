@@ -13,7 +13,7 @@ env:
 
 install:
     - conda update -q conda --yes
-    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock coveralls --yes
+    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite libspatialite gdal mock coveralls --yes
     - source activate test_env
     - conda install -c conda-forge nansat pythesint --yes
     - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
