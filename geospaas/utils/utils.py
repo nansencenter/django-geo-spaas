@@ -64,7 +64,11 @@ def validate_uri(uri):
         else:
             request = urllibN.PoolManager().request('GET', uri)
         if not request.status==200:
-            ds = Dataset(uri)
+            try:
+                ds = Dataset(uri)
+            except OSError:
+                ds = Dataset(uri+'#fillmismatch')
+
 
 def nansat_filename(uri):
     # Check if data should be read as stream or as file? Or just:
