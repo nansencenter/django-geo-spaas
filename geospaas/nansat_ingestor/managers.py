@@ -3,6 +3,11 @@ import warnings
 import json
 from xml.sax.saxutils import unescape
 
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
 import pythesint as pti
 
 from nansat.nansat import Nansat
@@ -17,6 +22,8 @@ from geospaas.vocabularies.models import (Platform,
                                           ISOTopicCategory,
                                           Location)
 from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
+from geospaas.catalog.managers import DAP_SERVICE_NAME, OPENDAP_SERVICE 
+from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE 
 
 class DatasetManager(models.Manager):
 
@@ -115,8 +122,17 @@ class DatasetManager(models.Manager):
                 source=source,
                 geographic_location=geolocation,
                 **options)
+
+        uri_scheme = urlparse(uri).scheme
+        if 'http' in uri_scheme:
+            service_name = DAP_SERVICE_NAME
+            service = OPENDAP_SERVICE
+        else: 
+            service_name = FILE_SERVICE_NAME
+            service = LOCAL_FILE_SERVICE
         # create dataset URI
-        ds_uri, _ = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)
+        ds_uri, _ = DatasetURI.objects.get_or_create(name=service_name, service=service, uri=uri,
+                dataset=ds)
 
         return ds, created
 
