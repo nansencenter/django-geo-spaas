@@ -7,6 +7,7 @@ from thredds_crawler.crawl import Crawl
 from django.core.management.base import BaseCommand, CommandError
 
 from geospaas.utils.utils import validate_uri
+from geospaas.catalog.models import DatasetURI
 from geospaas.nansat_ingestor.models import Dataset as NansatDataset
 
 def crawl(url, **options):
@@ -27,7 +28,7 @@ def crawl(url, **options):
         url = [s.get('url') for s in ds.services if
                 s.get('service').lower()=='opendap'][0]
         try:
-            ds, cr = NansatDataset.objects.get_or_create(url)
+            gds, cr = NansatDataset.objects.get_or_create(url)
         except (IOError, AttributeError) as e:
             #warnings.warn(e.message)
             continue
@@ -35,6 +36,10 @@ def crawl(url, **options):
             if cr:
                 added += 1
                 print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
+        # Connect all service uris to the dataset
+        for s in ds.services:
+            ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
+                    service=s.get('service'), uri=s.get('url'), dataset=gds)
     return added
 
 class Command(BaseCommand):
@@ -43,7 +48,7 @@ class Command(BaseCommand):
         Add metadata of datasets available on thredds/opendap to archive. 
 
         Args:
-            <url>: the url to the thredds server
+            <url>: the url to the thredds catalog
             <date>: Select datasets by date (yyyy/mm/dd)
             <filename>: Select datasets by filename
 

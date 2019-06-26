@@ -160,15 +160,36 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.patch_Dataset = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
         self.mock_ds = self.patch_Dataset.start()
 
+        pmod = 'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.DatasetURI'
+        self.patch_DatasetURI = patch(pmod)
+        self.mock_dsuri = self.patch_DatasetURI.start()
+
         from geospaas.nansat_ingestor.models import Dataset
         from thredds_crawler.crawl import Crawl, LeafDataset
         test_LeafDataset = LeafDataset()
-        test_LeafDataset.services = [{
-            'name': 'odap', 
-            'service': 'OPENDAP', 
-            'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
-                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-        }]
+        test_LeafDataset.services = [
+            {
+                'name': 'odap', 
+                'service': 'OPENDAP', 
+                'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            },{
+                'name': 'httpService', 
+                'service': 'HTTPServer', 
+                'url': 'http://nbstds.met.no/TEST/fileServer/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            },{
+                'name': 'wms', 
+                'service': 'WMS', 
+                'url': 'http://nbstds.met.no/TEST/wms/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            },{
+                'name': 'wcs', 
+                'service': 'WCS', 
+                'url': 'http://nbstds.met.no/TEST/wcs/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            }
+        ]
         self.mock_Crawl.return_value = PropertyMock(datasets = [test_LeafDataset])
 
     def tearDown(self):
@@ -176,9 +197,11 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.patch_validate_uri.stop()
         self.patch_Crawl.stop()
         self.patch_Dataset.stop()
+        self.patch_DatasetURI.stop()
 
     def test_ds_created(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
         added = crawl(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
@@ -187,6 +210,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
 
     def test_ds_created_with_date_arg(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
         added = crawl(self.uri, date='2019/01/01')
         self.mock_validate_uri.assert_called_once_with(self.uri)
@@ -196,6 +220,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
 
     def test_ds_created_with_filename_arg(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
         fn = 'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
         added = crawl(self.uri, filename=fn)
