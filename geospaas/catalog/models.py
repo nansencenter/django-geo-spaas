@@ -23,6 +23,8 @@ from geospaas.vocabularies.models import TemporalDataResolution
 
 from geospaas.catalog.managers import SourceManager
 from geospaas.catalog.managers import DatasetURIManager
+from geospaas.catalog.managers import FILE_SERVICE_NAME
+from geospaas.catalog.managers import LOCAL_FILE_SERVICE
 
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
@@ -171,6 +173,8 @@ class DatasetParameter(models.Model):
 
 class DatasetURI(models.Model):
 
+    name = models.CharField(max_length=20, default=FILE_SERVICE_NAME)
+    service = models.CharField(max_length=20, default=LOCAL_FILE_SERVICE)
     uri = models.URLField(max_length=200,
             validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
