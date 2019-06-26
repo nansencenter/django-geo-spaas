@@ -3,6 +3,11 @@ import pythesint as pti
 
 from django.db import models
 
+DAP_SERVICE_NAME = 'dapService'
+OPENDAP_SERVICE = 'OPENDAP'
+FILE_SERVICE_NAME = 'fileService'
+LOCAL_FILE_SERVICE = 'local'
+
 class SourceManager(models.Manager):
 
     def get_by_natural_key(self, p, i):
