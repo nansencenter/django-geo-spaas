@@ -190,7 +190,7 @@ class DatasetURI(models.Model):
         return self.uri.split(':')[0]
 
     def save(self, *args, **kwargs):
-        validate_uri(self.uri)
+        #validate_uri(self.uri) -- this will often fail because of server failures..
         # Validation is not usually done in the models but rather via form
         # validation. We should discuss if we want it here or not. 
         super(DatasetURI, self).save(*args, **kwargs)

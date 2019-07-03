@@ -5,6 +5,7 @@ import warnings
 from thredds_crawler.crawl import Crawl
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import IntegrityError
 
 from geospaas.utils.utils import validate_uri
 from geospaas.catalog.models import DatasetURI
@@ -22,7 +23,8 @@ def crawl(url, **options):
     else:
         select = None
 
-    c = Crawl(url, select=select, skip=['.*ncml'], debug=True)
+    skips = Crawl.SKIPS + ['.*ncml']
+    c = Crawl(url, select=select, skip=skips, debug=True)
     added = 0
     for ds in c.datasets:
         url = [s.get('url') for s in ds.services if
@@ -38,8 +40,16 @@ def crawl(url, **options):
                 print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
         # Connect all service uris to the dataset
         for s in ds.services:
-            ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
+            try:
+                ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
                     service=s.get('service'), uri=s.get('url'), dataset=gds)
+            except IntegrityError:
+                # There is no standard for the name (and possibly the service). This means that the
+                # naming defined by geospaas.catalog.managers.DAP_SERVICE_NAME (and assigned to the
+                # DatasetURI in geospaas.nansat_ingestor.managers.DatasetManager.get_or_create) may
+                # be different from s.get('name').
+                # Solution: ignore the error and continue the loop
+                continue
     return added
 
 class Command(BaseCommand):
