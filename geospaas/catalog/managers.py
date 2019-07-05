@@ -7,6 +7,10 @@ DAP_SERVICE_NAME = 'dapService'
 OPENDAP_SERVICE = 'OPENDAP'
 FILE_SERVICE_NAME = 'fileService'
 LOCAL_FILE_SERVICE = 'local'
+HTTP_SERVICE_NAME = 'http'
+HTTP_SERVICE = 'HTTPServer'
+WMS_SERVICE_NAME = 'wms'
+WMS_SERVICE = 'WMS'
 
 class SourceManager(models.Manager):
 
