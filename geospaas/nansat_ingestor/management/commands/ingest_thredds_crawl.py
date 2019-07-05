@@ -1,5 +1,6 @@
-"""Note: This is tested on Sentinel-1 and Sentinel-2 data from the Norwegian ground segment. Other
-repositories may require slight changes in the code. This must be developed gradually..
+"""Note: This is tested on Sentinel-1 and Sentinel-2 data from the Norwegian ground segment, and
+Arome forecasts from thredds.met.no. Other repositories may require slight changes in the code. This
+must be developed gradually..
 """
 import warnings
 from thredds_crawler.crawl import Crawl
