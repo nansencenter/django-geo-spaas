@@ -17,7 +17,9 @@ install:
     - conda info -a
       #- conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock nansat pythesint coveralls -c conda-forge
     - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock basemap coveralls
+      #- conda uninstall numpy
     - conda install -n test_env -c conda-forge nansat pythesint 
+    - conda update -n test_env --all
     - source activate test_env
     - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
           pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz;
