@@ -12,8 +12,10 @@ env:
     - PYTHON_VERSION=3.6 DJANGO_VERSION=2.1.5
 
 install:
-    - conda update -q conda --yes
-    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock nansat pythesint coveralls -c conda-forge --yes
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda info -a
+    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock nansat pythesint coveralls -c conda-forge
     - source activate test_env
     - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
           pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz;
@@ -22,6 +24,8 @@ install:
     - pip install django-leaflet
     - pip install thredds_crawler
     - python setup.py install
+    - echo $PROJ_LIB
+    - ls $PROJ_LIB
 
 script:
     - coverage run runtests.py
