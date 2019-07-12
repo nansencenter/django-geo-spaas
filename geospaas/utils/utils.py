@@ -17,8 +17,9 @@ except ImportError:
 from django.conf import settings
 
 def module_path(module, root):
+    media_path = root
     for m in module.split('.'):
-        media_path = os.path.join(root, m)
+        media_path = os.path.join(media_path, m)
         if not os.path.exists(media_path):
             os.mkdir(media_path)
     return media_path
