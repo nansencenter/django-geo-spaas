@@ -156,6 +156,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
 
         self.patch_Crawl = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.Crawl')
         self.mock_Crawl = self.patch_Crawl.start() 
+        self.mock_Crawl.SKIPS = []
 
         self.patch_Dataset = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
         self.mock_ds = self.patch_Dataset.start()
@@ -164,8 +165,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.patch_DatasetURI = patch(pmod)
         self.mock_dsuri = self.patch_DatasetURI.start()
 
-        from geospaas.nansat_ingestor.models import Dataset
-        from thredds_crawler.crawl import Crawl, LeafDataset
+        from thredds_crawler.crawl import LeafDataset
         test_LeafDataset = LeafDataset()
         test_LeafDataset.services = [
             {
