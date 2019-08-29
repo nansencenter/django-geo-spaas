@@ -38,10 +38,22 @@ class ParameterManager(models.Manager):
         parameter table
         ''')
         num = 0
-        pti.update_wkv_variable()
+        pti.update_wkv_variable() 
         for wkv in pti.get_wkv_variable_list():
             pp, created = self.get_or_create(wkv)
             if created: num+=1
+
+        pti.update_cf_standard_name()
+        for cfv in pti.get_cf_standard_name_list():
+            pseudo_wkv = {
+                    'standard_name': cfv['standard_name'],
+                    'short_name': '',
+                    'units': cfv['canonical_units']
+                }
+            # Need to check that it is not added already as wkv with short_name..
+            if not self.filter(standard_name=cfv['standard_name']):
+                pp, created = self.get_or_create(pseudo_wkv)
+                if created: num+=1
         print("Successfully added %d new parameters" %num)
 
     def get_or_create(self, wkv, *args, **kwargs):
