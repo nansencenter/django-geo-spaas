@@ -63,7 +63,7 @@ def validate_uri(uri):
         if URLLIB_VERSION == 2:
             request = urllibN.Request(uri)
         else:
-            request = urllibN.PoolManager().request('GET', uri)
+            request = urllibN.PoolManager(cert_reqs='CERT_NONE').request('GET', uri)
         if not request.status==200:
             try:
                 ds = Dataset(uri)
