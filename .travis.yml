@@ -7,29 +7,18 @@ before_install:
     - export PATH=$HOME/miniconda/bin:$PATH
 
 env:
-    #- PYTHON_VERSION=2.7 DJANGO_VERSION=1.11.7 SQLITE_VERSION=3.13
-    #- PYTHON_VERSION=3.6 DJANGO_VERSION=2.0.6 SQLITE_VERSION=3.16
     - PYTHON_VERSION=3.6 DJANGO_VERSION=2.1.5
 
 install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda info -a
-      #- conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock nansat pythesint coveralls -c conda-forge
-    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock basemap coveralls
-      #- conda uninstall numpy
+    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock coveralls
     - conda install -n test_env -c conda-forge nansat pythesint 
     - conda update -n test_env --all
     - source activate test_env
-    - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-          pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz;
-      fi
-    - pip install django-forms-bootstrap
-    - pip install django-leaflet
-    - pip install thredds_crawler
+    - pip install django-forms-bootstrap django-leaflet thredds_crawler
     - python setup.py install
-    - echo $PROJ_LIB
-    - ls $PROJ_LIB
 
 script:
     - coverage run runtests.py
