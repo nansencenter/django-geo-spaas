@@ -1,27 +1,13 @@
 language: python
-sudo: false
 
-before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -f -p $HOME/miniconda
-    - export PATH=$HOME/miniconda/bin:$PATH
-
-env:
-    - PYTHON_VERSION=3.6 DJANGO_VERSION=2.1.5
+services:
+  - docker
 
 install:
-    - conda config --set always_yes yes --set changeps1 no
-    - conda update -q conda
-    - conda info -a
-    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock coveralls
-    - conda install -n test_env -c conda-forge nansat pythesint 
-    - conda update -n test_env --all
-    - source activate test_env
-    - pip install django-forms-bootstrap django-leaflet thredds_crawler
-    - python setup.py install
+  - docker build . -t geospaas
 
 script:
-    - coverage run runtests.py
+  - docker run --rm -it -v `pwd`:/src geospaas python runtests.py
 
-after_success:
-  - coveralls
+#after_success:
+#  - coveralls
