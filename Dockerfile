@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Install Django
 RUN pip install \
-    coveralls \
+    coverage \
     django \
     django-forms-bootstrap \
     django-leaflet \

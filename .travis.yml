@@ -8,7 +8,7 @@ install:
   - pip install coveralls
 
 script:
-  - docker run --rm -it -v `pwd`:/src geospaas coverage run runtests.py
+  - docker run --rm -it -v `pwd`:/`pwd` geospaas bash -c "cd `pwd`; coverage run runtests.py"
 
 after_success:
   - coveralls
