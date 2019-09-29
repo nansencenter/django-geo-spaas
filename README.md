@@ -36,7 +36,6 @@ From bash you can launch: `python project/manage.py shell`.
 ```
 docker create -it --name=geospaas \
     -v `pwd`:/src \
-    -v `pwd`/geospaas:/opt/geospaas \
     -v /input/dir/on/host:/path/to/dir/in/container \
     geospaas
 ```
@@ -44,7 +43,7 @@ And then run `docker start -i geospaas` to go into the container and have access
 6. Alretrnatively you can start the container in background:
 `docker start geospaas`
 and then execute commands in the runnning container:
-`docker exec geospaas project/manage.py shell`
+`docker exec -i geospaas project/manage.py shell`
 
 How to use Docker for running Django-Geo-SPaaS
 -----------------
@@ -67,7 +66,7 @@ docker start myapp
 docker exec myapp django-admin startproject myproject
 
 # update settings.py and urls.py to use Geo-Django (see tests/settings.py for example)
-# don;t forget to set correct name of the project and add your app to the settings.py
+# don't forget to set correct name of the project and add your app to the settings.py
 
 # migrate database schema
 docker exec myapp /src/myproject/manage.py migrate
