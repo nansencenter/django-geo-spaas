@@ -48,7 +48,8 @@ and then execute commands in the runnning container:
 How to use Docker for running Django-Geo-SPaaS
 -----------------
 If you already have a project directory or if you are working on another app you can use the
-existing Docker image with Django-Geo-SPaaS. The workflow can be the following:
+existing Docker image with Django-Geo-SPaaS. The image is already uploaded to Docker Hub,
+so no above steps are necessary. The workflow can be the following:
 1. Create a containter with necessary directories mounted
 2. Start container in background
 3. Run Django commands from your host:
@@ -57,7 +58,7 @@ existing Docker image with Django-Geo-SPaaS. The workflow can be the following:
 docker create -it --name=myapp \
     -v /host/dir/myapp:/src \
     -v /data/dir:/data \
-    geospaas
+    akorosov/django-geo-spaas
 
 # start container in background
 docker start myapp
