@@ -5,9 +5,10 @@ services:
 
 install:
   - docker build . -t geospaas
+  - pip install coveralls
 
 script:
-  - docker run --rm -it -v `pwd`:/src geospaas python runtests.py
+  - docker run --rm -it -v `pwd`:/src geospaas coverage run runtests.py
 
-#after_success:
-#  - coveralls
+after_success:
+  - coveralls
