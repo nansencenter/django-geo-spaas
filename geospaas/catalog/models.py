@@ -9,6 +9,7 @@ from django.core.validators import URLValidator
 from django.utils.translation import ugettext as _
 from django.core.validators import RegexValidator
 
+from geospaas.utils.utils import validate_uri
 from geospaas.vocabularies.models import Parameter
 from geospaas.vocabularies.models import ScienceKeyword
 from geospaas.vocabularies.models import Platform
@@ -22,6 +23,8 @@ from geospaas.vocabularies.models import TemporalDataResolution
 
 from geospaas.catalog.managers import SourceManager
 from geospaas.catalog.managers import DatasetURIManager
+from geospaas.catalog.managers import FILE_SERVICE_NAME
+from geospaas.catalog.managers import LOCAL_FILE_SERVICE
 
 class GeographicLocation(geomodels.Model):
     geometry = geomodels.GeometryField()
@@ -170,6 +173,8 @@ class DatasetParameter(models.Model):
 
 class DatasetURI(models.Model):
 
+    name = models.CharField(max_length=20, default=FILE_SERVICE_NAME)
+    service = models.CharField(max_length=20, default=LOCAL_FILE_SERVICE)
     uri = models.URLField(max_length=200,
             validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
@@ -185,18 +190,9 @@ class DatasetURI(models.Model):
         return self.uri.split(':')[0]
 
     def save(self, *args, **kwargs):
+        #validate_uri(self.uri) -- this will often fail because of server failures..
         # Validation is not usually done in the models but rather via form
-        # validation. We should discuss if we want it or not. Presently, we
-        # check only that the uri is valid but we may also check if it exists
-        # (although this isn't normally done either - see
-        # https://docs.djangoproject.com/en/dev/internals/deprecation/ and
-        # search "verify_exists")
-        # Force field validation - but it fails although the uri is
-        # (apparently) good... see the test..
-        #self.full_clean()
-        # Check that the uri exists?
-        # TODO: check in the get_or_create method - valid uri-schemes are provided at
-        # https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+        # validation. We should discuss if we want it here or not. 
         super(DatasetURI, self).save(*args, **kwargs)
 
 class DatasetRelationship(models.Model):

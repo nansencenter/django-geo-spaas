@@ -3,6 +3,11 @@ import warnings
 import json
 from xml.sax.saxutils import unescape
 
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
 import pythesint as pti
 
 from nansat.nansat import Nansat
@@ -10,18 +15,20 @@ from nansat.nansat import Nansat
 from django.db import models
 from django.contrib.gis.geos import WKTReader
 
-from geospaas.utils import validate_uri, nansat_filename
+from geospaas.utils.utils import validate_uri, nansat_filename
 from geospaas.vocabularies.models import (Platform,
                                           Instrument,
                                           DataCenter,
                                           ISOTopicCategory,
                                           Location)
 from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
+from geospaas.catalog.managers import DAP_SERVICE_NAME, OPENDAP_SERVICE 
+from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE 
 
 class DatasetManager(models.Manager):
 
     def get_or_create(self, uri, n_points=10, uri_filter_args=None, *args, **kwargs):
-        ''' Create dataset and corresponding metadata
+        """ Create dataset and corresponding metadata
 
         Parameters:
         ----------
@@ -35,13 +42,13 @@ class DatasetManager(models.Manager):
         Returns:
         -------
             dataset and flag
-        '''
+        """
         if not uri_filter_args:
             uri_filter_args = {}
 
-        # Validate uri - this should fail if the uri doesn't point to a valid
+        # Validate uri - this should raise an exception if the uri doesn't point to a valid
         # file or stream
-        valid_uri = validate_uri(uri)
+        validate_uri(uri)
 
         # Several datasets can refer to the same uri (e.g., scatterometers and svp drifters), so we
         # need to pass uri_filter_args
@@ -115,8 +122,17 @@ class DatasetManager(models.Manager):
                 source=source,
                 geographic_location=geolocation,
                 **options)
+
+        uri_scheme = urlparse(uri).scheme
+        if 'http' in uri_scheme:
+            service_name = DAP_SERVICE_NAME
+            service = OPENDAP_SERVICE
+        else: 
+            service_name = FILE_SERVICE_NAME
+            service = LOCAL_FILE_SERVICE
         # create dataset URI
-        ds_uri, _ = DatasetURI.objects.get_or_create(uri=uri, dataset=ds)
+        ds_uri, _ = DatasetURI.objects.get_or_create(name=service_name, service=service, uri=uri,
+                dataset=ds)
 
         return ds, created
 

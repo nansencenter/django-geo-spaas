@@ -13,25 +13,16 @@
 from setuptools import setup, find_packages
 import sys
 
-readme_file = 'README.md'
-try:
-    long_description = open(readme_file).read()
-except IOError:
-    sys.stderr.write("[ERROR] Cannot find file specified as "
-        "``long_description`` (%s)\n" % readme_file)
-    sys.exit(1)
-
 install_requires = []
 
 setup(name='django-geo-spaas',
       version=0.1,
-      description='Nansen Center geospatial data management application',
-      long_description=long_description,
+      description='Geo-Scientific Platform as a Service',
       zip_safe=False,
       author='Morten W. Hansen, Anton Korosov',
       author_email='mortenh@nersc.no, antonk@nersc.no',
-      url='#',
-      download_url='#',
+      url='https://github.com/nansencenter/django-geo-spaas',
+      download_url='https://github.com/nansencenter/django-geo-spaas/archive/master.zip',
       packages = find_packages(),
       include_package_data=True,
       install_requires = install_requires,

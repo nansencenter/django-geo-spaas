@@ -36,7 +36,6 @@ From bash you can launch: `python project/manage.py shell`.
 ```
 docker create -it --name=geospaas \
     -v `pwd`:/src \
-    -v `pwd`/geospaas:/opt/geospaas \
     -v /input/dir/on/host:/path/to/dir/in/container \
     geospaas
 ```
@@ -44,12 +43,13 @@ And then run `docker start -i geospaas` to go into the container and have access
 6. Alretrnatively you can start the container in background:
 `docker start geospaas`
 and then execute commands in the runnning container:
-`docker exec geospaas project/manage.py shell`
+`docker exec -i geospaas project/manage.py shell`
 
 How to use Docker for running Django-Geo-SPaaS
 -----------------
 If you already have a project directory or if you are working on another app you can use the
-existing Docker image with Django-Geo-SPaaS. The workflow can be the following:
+existing Docker image with Django-Geo-SPaaS. The image is already uploaded to Docker Hub,
+so no above steps are necessary. The workflow can be the following:
 1. Create a containter with necessary directories mounted
 2. Start container in background
 3. Run Django commands from your host:
@@ -58,7 +58,7 @@ existing Docker image with Django-Geo-SPaaS. The workflow can be the following:
 docker create -it --name=myapp \
     -v /host/dir/myapp:/src \
     -v /data/dir:/data \
-    geospaas
+    akorosov/django-geo-spaas
 
 # start container in background
 docker start myapp
@@ -67,7 +67,7 @@ docker start myapp
 docker exec myapp django-admin startproject myproject
 
 # update settings.py and urls.py to use Geo-Django (see tests/settings.py for example)
-# don;t forget to set correct name of the project and add your app to the settings.py
+# don't forget to set correct name of the project and add your app to the settings.py
 
 # migrate database schema
 docker exec myapp /src/myproject/manage.py migrate

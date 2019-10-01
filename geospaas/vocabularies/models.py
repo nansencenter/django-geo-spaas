@@ -19,8 +19,8 @@ class Platform(models.Model):
 
     category = models.CharField(max_length=100)
     series_entity = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=50)
-    long_name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=100)
+    long_name = models.CharField(max_length=250)
 
     objects = PlatformManager()
 
@@ -36,8 +36,8 @@ class Instrument(models.Model):
     instrument_class = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     subtype = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=20)
-    long_name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=60)
+    long_name = models.CharField(max_length=200)
 
     objects = InstrumentManager()
 
@@ -81,7 +81,7 @@ class DataCenter(models.Model):
     bucket_level2 = models.CharField(max_length=200)
     bucket_level3 = models.CharField(max_length=200)
     short_name = models.CharField(max_length=50)
-    long_name = models.CharField(max_length=200)
+    long_name = models.CharField(max_length=250)
     data_center_url = models.URLField()
 
     objects = DataCenterManager()
@@ -109,12 +109,12 @@ class Location(models.Model):
             subregion3)
 
 class ScienceKeyword(models.Model):
-    category = models.CharField(max_length=30)
-    topic = models.CharField(max_length=30)
-    term = models.CharField(max_length=30)
-    variable_level_1 = models.CharField(max_length=30)
-    variable_level_2 = models.CharField(max_length=30)
-    variable_level_3 = models.CharField(max_length=30)
+    category = models.CharField(max_length=50)
+    topic = models.CharField(max_length=50)
+    term = models.CharField(max_length=80)
+    variable_level_1 = models.CharField(max_length=80)
+    variable_level_2 = models.CharField(max_length=80)
+    variable_level_3 = models.CharField(max_length=80)
     detailed_variable = models.CharField(max_length=80)
 
     objects = ScienceKeywordManager()
@@ -182,8 +182,8 @@ class Parameter(models.Model):
     The table should also include the relevant GCMD science keyword
     '''
     standard_name = models.CharField(max_length=300)
-    short_name = models.CharField(max_length=30)
-    units = models.CharField(max_length=10)
+    short_name = models.CharField(max_length=30, default='')
+    units = models.CharField(max_length=20)
 
     # The science keywords are less specific than the CF standard names -
     # therefore one science keyword can be in many parameters, whereas the

@@ -1,29 +1,14 @@
 language: python
-sudo: false
 
-before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -f -p $HOME/miniconda
-    - export PATH=$HOME/miniconda/bin:$PATH
-
-env:
-    #- PYTHON_VERSION=2.7 DJANGO_VERSION=1.11.7 SQLITE_VERSION=3.13
-    #- PYTHON_VERSION=3.6 DJANGO_VERSION=2.0.6 SQLITE_VERSION=3.16
-    - PYTHON_VERSION=3.6 DJANGO_VERSION=2.1.5
+services:
+  - docker
 
 install:
-    - conda update -q conda --yes
-    - conda create -n test_env python=$PYTHON_VERSION django=$DJANGO_VERSION sqlite gdal mock nansat pythesint coveralls -c conda-forge --yes
-    - source activate test_env
-    - if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-          pip install https://github.com/ghaering/pysqlite/archive/2.8.1.tar.gz;
-      fi
-    - pip install django-forms-bootstrap
-    - pip install django-leaflet
-    - python setup.py install
+  - docker build . -t geospaas
+  - pip install coveralls
 
 script:
-    - coverage run runtests.py
+  - docker run --rm -it -v `pwd`:/`pwd` geospaas bash -c "cd `pwd`; coverage run runtests.py"
 
 after_success:
   - coveralls

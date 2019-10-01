@@ -17,6 +17,45 @@ import pythesint as pti
 
 from django.db import models
 
+class ParameterManager(models.Manager):
+
+    ''' Fields:
+    standard_name
+    short_name
+    units
+    gcmd_science_keyword
+    '''
+
+    def get_by_natural_key(self, stdname):
+        return self.get(standard_name=stdname)
+
+    def create_from_vocabularies(self):
+        ''' Create parameter instances from the nersc wkv list.
+        '''
+        warnings.warn('''
+        Because we do not yet have the mapping between the different
+        vocabularies, the GCMD science keywords are not linked to the catalog
+        parameter table
+        ''')
+        num = 0
+        pti.update_wkv_variable() 
+        for wkv in pti.get_wkv_variable_list():
+            pp, created = self.get_or_create(wkv)
+            if created: num+=1
+
+        pti.update_cf_standard_name()
+        for cfv in pti.get_cf_standard_name_list():
+            pseudo_wkv = {
+                    'standard_name': cfv['standard_name'],
+                    'short_name': '',
+                    'units': cfv['canonical_units']
+                }
+            # Need to check that it is not added already as wkv with short_name..
+            if not self.filter(standard_name=cfv['standard_name']):
+                pp, created = self.get_or_create(pseudo_wkv)
+                if created: num+=1
+        print("Successfully added %d new parameters" %num)
+
 
 class VocabularyManager(models.Manager):
     """ Base abstract class for all Managers here """
@@ -45,6 +84,7 @@ class VocabularyManager(models.Manager):
         """ Get or create database instance from input pythesint entry """
         params = {key : entry[self.mapping[key]] for key in self.mapping}
         return super(VocabularyManager, self).get_or_create(**params)
+
 
 class ParameterManager(VocabularyManager):
     get_list = pti.get_wkv_variable_list
