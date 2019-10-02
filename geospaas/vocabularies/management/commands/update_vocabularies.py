@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:
-# Purpose:      
+# Purpose:
 #
 # Author:       Morten Wergeland Hansen
 # Modified:
@@ -8,7 +8,7 @@
 # Created:
 # Last modified:
 # Copyright:    (c) NERSC
-# License:      
+# License:
 #-------------------------------------------------------------------------------
 from django.core.management.base import BaseCommand, CommandError
 
@@ -25,17 +25,25 @@ from geospaas.vocabularies.models import TemporalDataResolution
 from geospaas.vocabularies.models import VerticalDataResolution
 
 class Command(BaseCommand):
-    help = 'Get latest vocabularies'
+    help = 'Put vocabularies into the database'
+
+    def add_arguments(self, parser):
+        parser.add_argument('-f', '--force', action='store_true',
+                            help='''Force update of vocabularies from remote repositories''')
 
     def handle(self, *args, **options):
-        Parameter.objects.create_from_vocabularies()
-        DataCenter.objects.create_from_vocabularies()
-        HorizontalDataResolution.objects.create_from_vocabularies()
-        Instrument.objects.create_from_vocabularies()
-        ISOTopicCategory.objects.create_from_vocabularies()
-        Location.objects.create_from_vocabularies()
-        Platform.objects.create_from_vocabularies()
-        Project.objects.create_from_vocabularies()
-        ScienceKeyword.objects.create_from_vocabularies()
-        TemporalDataResolution.objects.create_from_vocabularies()
-        VerticalDataResolution.objects.create_from_vocabularies()
+        models = [
+            Parameter,
+            DataCenter,
+            HorizontalDataResolution,
+            Instrument,
+            ISOTopicCategory,
+            Location,
+            Platform,
+            Project,
+            ScienceKeyword,
+            TemporalDataResolution,
+            VerticalDataResolution]
+
+        for model in models:
+            model.objects.create_from_vocabularies(**options)

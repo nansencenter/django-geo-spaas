@@ -17,105 +17,136 @@ import pythesint as pti
 
 from django.db import models
 
-class ParameterManager(models.Manager):
+class VocabularyManager(models.Manager):
+    """ Base abstract class for all Managers here """
 
-    ''' Fields:
-    standard_name
-    short_name
-    units
-    gcmd_science_keyword
-    '''
+    def update_and_get_list(self, get_list, update, force):
+        """ Get list of Pythesint entires after an update if needed
 
-    def get_by_natural_key(self, stdname):
-        return self.get(standard_name=stdname)
+        Parameters
+        ----------
+        get_lilst : func
+            function to get lilst of Pythesint entries
+        update : func
+            function to update Pythesint
 
-    def create_from_vocabularies(self):
-        ''' Create parameter instances from the nersc wkv list.
-        '''
-        warnings.warn('''
-        Because we do not yet have the mapping between the different
+        Returns
+        -------
+        pti_list : list
+            lilst of Pythesin entries
+
+        """
+        pti_list = get_list()
+        if force==True or len(pti_list)==0:
+            update()
+        pti_list = [e for e in get_list() if not 'Revision' in e.keys()]
+        return pti_list
+
+    def create_instances(self, pti_list):
+        """ Create instances in database
+
+        Parameters
+        ----------
+        pti_list : list with Pythesint entries
+
+        """
+        num = 0
+        for entry in pti_list:
+            pp, created = self.get_or_create(entry)
+            if created: num+=1
+        print("Successfully added %d new entries" % num)
+
+    def get_or_create(self, entry, *args, **kwargs):
+        """ Get or create database instance from input pythesint entry """
+
+        params = {key : entry[self.mapping[key]] for key in self.mapping}
+        return super(VocabularyManager, self).get_or_create(**params)
+
+    def create_from_vocabularies(self, force=False, **kwargs):
+        """ Get instances Pythesint and create instances in database.
+
+        Parameters
+        ----------
+        force : bool
+            Force update of Vocabulary from Internet ?
+
+        """
+        pti_list = self.update_and_get_list(self.get_list, self.update, force)
+        self.create_instances(pti_list)
+
+class ParameterManager(VocabularyManager):
+    get_list = pti.get_wkv_variable_list
+    get_list2 = pti.get_cf_standard_name_list
+    update = pti.update_wkv_variable
+    update2 = pti.update_cf_standard_name
+    mapping = dict(standard_name='standard_name',
+                   short_name='short_name',
+                   units='units')
+
+    def create_from_vocabularies(self, force=False, **kwargs):
+        """ Create parameter instances from the NERSC WKV list and CF-standard names.
+
+        Have to override VocabularyManager.create_from_vocabularies in order to allow
+        merge of CF-variable names and WKVs.
+
+        """
+        warnings.warn(''' Since we do not yet have the mapping between the different
         vocabularies, the GCMD science keywords are not linked to the catalog
-        parameter table
-        ''')
-        num = 0
-        pti.update_wkv_variable() 
-        for wkv in pti.get_wkv_variable_list():
-            pp, created = self.get_or_create(wkv)
-            if created: num+=1
+        parameter table ''')
+        pti_list1 = self.update_and_get_list(self.get_list, self.update, force)
+        pti_list2 = self.update_and_get_list(self.get_list2, self.update2, force)
+        # merge two lists
+        l1_std = [l['standard_name'] for l in pti_list1]
+        for l in pti_list2:
+            if 'standard_name' in l and l['standard_name'] not in pti_list1:
+                pti_list1.append(
+                    dict(
+                        standard_name=l['standard_name'],
+                        short_name='',
+                        units=l['canonical_units']))
 
-        pti.update_cf_standard_name()
-        for cfv in pti.get_cf_standard_name_list():
-            pseudo_wkv = {
-                    'standard_name': cfv['standard_name'],
-                    'short_name': '',
-                    'units': cfv['canonical_units']
-                }
-            # Need to check that it is not added already as wkv with short_name..
-            if not self.filter(standard_name=cfv['standard_name']):
-                pp, created = self.get_or_create(pseudo_wkv)
-                if created: num+=1
-        print("Successfully added %d new parameters" %num)
+        self.create_instances(pti_list1)
 
-    def get_or_create(self, wkv, *args, **kwargs):
-        """ Get or create parameter instance from input pythesint entry """
-        return super(ParameterManager, self).get_or_create(
-                standard_name = wkv['standard_name'],
-                short_name = wkv['short_name'],
-                units = wkv['units'])
+    def get_by_natural_key(self, standard_name):
+        return self.get(standard_name=standard_name)
 
 
-class PlatformManager(models.Manager):
+class PlatformManager(VocabularyManager):
+    get_list = pti.get_gcmd_platform_list
+    update = pti.update_gcmd_platform
+    mapping = dict(category='Category',
+                    series_entity='Series_Entity',
+                    short_name='Short_Name',
+                    long_name='Long_Name')
 
     def get_by_natural_key(self, short_name):
         return self.get(short_name=short_name)
 
-    def create_from_vocabularies(self):
-        # 'Category', 'Series_Entity', 'Short_Name', 'Long_Name'
-        num = 0
-        pti.update_gcmd_platform()
-        for platform in pti.get_gcmd_platform_list():
-            if 'Revision' in platform.keys():
-                continue
-            pp, created = self.get_or_create(platform)
-            if created: num+=1
-        print("Successfully added %d new platforms" %num)
 
-    def get_or_create(self, platform, *args, **kwargs):
-        """ Get or create platform instance from input pythesint entry """
-        return super(PlatformManager, self).get_or_create(
-                category = platform['Category'],
-                series_entity = platform['Series_Entity'],
-                short_name = platform['Short_Name'],
-                long_name = platform['Long_Name'])
-
-
-class InstrumentManager(models.Manager):
+class InstrumentManager(VocabularyManager):
+    get_list = pti.get_gcmd_instrument_list
+    update = pti.update_gcmd_instrument
+    mapping = dict(category='Category',
+                    instrument_class='Class',
+                    type='Type',
+                    subtype='Subtype',
+                    short_name='Short_Name',
+                    long_name='Long_Name')
 
     def get_by_natural_key(self, short_name):
         return self.get(short_name=short_name)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_instrument()
-        for instrument in pti.get_gcmd_instrument_list():
-            if 'Revision' in instrument.keys():
-                continue
-            ii, created = self.get_or_create(instrument)
-            if created: num+=1
-        print("Successfully added %d new instruments" %num)
 
-    def get_or_create(self, instrument, *args, **kwargs):
-        """ Get or create instrument instance from input pythesint entry """
-        return super(InstrumentManager, self).get_or_create(
-            category = instrument['Category'],
-            instrument_class = instrument['Class'],
-            type = instrument['Type'],
-            subtype = instrument['Subtype'],
-            short_name = instrument['Short_Name'],
-            long_name = instrument['Long_Name'])
-
-
-class ScienceKeywordManager(models.Manager):
+class ScienceKeywordManager(VocabularyManager):
+    get_list = pti.get_gcmd_science_keyword_list
+    update = pti.update_gcmd_science_keyword
+    mapping = dict(category='Category',
+                topic='Topic',
+                term='Term',
+                variable_level_1='Variable_Level_1',
+                variable_level_2='Variable_Level_2',
+                variable_level_3='Variable_Level_3',
+                detailed_variable='Detailed_Variable')
 
     def get_by_natural_key(self, category, topic, term, variable_level_1,
             variable_level_2, variable_level_3):
@@ -124,185 +155,78 @@ class ScienceKeywordManager(models.Manager):
                 variable_level_2=variable_level_2,
                 variable_level_3=variable_level_3)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_science_keyword()
-        for skw in pti.get_gcmd_science_keyword_list():
-            if 'Revision' in skw.keys():
-                continue
-            ii, created = self.get_or_create(skw)
-            if created: num+=1
-        print("Successfully added %d new science keywords" %num)
 
-    def get_or_create(self, skw, *args, **kwargs):
-        """ Get or create ScienceKeyword instance from input pythesint entry """
-        return super(ScienceKeywordManager, self).get_or_create(
-                category = skw['Category'],
-                topic = skw['Topic'],
-                term = skw['Term'],
-                variable_level_1 = skw['Variable_Level_1'],
-                variable_level_2 = skw['Variable_Level_2'],
-                variable_level_3 = skw['Variable_Level_3'],
-                detailed_variable = skw['Detailed_Variable'])
-
-
-class DataCenterManager(models.Manager):
+class DataCenterManager(VocabularyManager):
+    get_list = pti.get_gcmd_provider_list
+    update = pti.update_gcmd_provider
+    mapping = dict(bucket_level0='Bucket_Level0',
+                bucket_level1='Bucket_Level1',
+                bucket_level2='Bucket_Level2',
+                bucket_level3='Bucket_Level3',
+                short_name='Short_Name',
+                long_name='Long_Name',
+                data_center_url='Data_Center_URL')
 
     def get_by_natural_key(self, sname):
         return self.get(short_name=sname)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_provider()
-        for dc in pti.get_gcmd_provider_list():
-            if 'Revision' in dc.keys():
-                continue
-            dd, created = self.get_or_create(dc)
-            if created: num+=1
-        print("Successfully added %d new data centers" %num)
 
-    def get_or_create(self, dc, *args, **kwargs):
-        """ Get or create DataCenter instance from input pythesint entry """
-        return super(DataCenterManager, self).get_or_create(
-                bucket_level0 = dc['Bucket_Level0'],
-                bucket_level1 = dc['Bucket_Level1'],
-                bucket_level2 = dc['Bucket_Level2'],
-                bucket_level3 = dc['Bucket_Level3'],
-                short_name = dc['Short_Name'],
-                long_name = dc['Long_Name'],
-                data_center_url = dc['Data_Center_URL'])
-
-
-class HorizontalDataResolutionManager(models.Manager):
+class HorizontalDataResolutionManager(VocabularyManager):
+    get_list = pti.get_gcmd_horizontalresolutionrange_list
+    update = pti.update_gcmd_horizontalresolutionrange
+    mapping = dict(range='Horizontal_Resolution_Range')
 
     def get_by_natural_key(self, hrr):
         return self.get(range=hrr)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_horizontalresolutionrange()
-        for hdr in pti.get_gcmd_horizontalresolutionrange_list():
-            if 'Revision' in hdr.keys():
-                continue
-            hh, created = self.get_or_create(hdr)
-            if created: num+=1
-        print('Successfully added %d new horizontal data resolution ranges'
-                %num)
 
-    def get_or_create(self, hdr, *args, **kwargs):
-        """ Get or create HorizontalDataResolution instance from input pythesint entry """
-        return super(HorizontalDataResolutionManager, self).get_or_create(
-                    range=hdr['Horizontal_Resolution_Range'])
-
-
-class VerticalDataResolutionManager(models.Manager):
+class VerticalDataResolutionManager(VocabularyManager):
+    get_list = pti.get_gcmd_verticalresolutionrange_list
+    update = pti.update_gcmd_verticalresolutionrange
+    mapping = dict(range='Vertical_Resolution_Range')
 
     def get_by_natural_key(self, vrr):
         return self.get(range=vrr)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_verticalresolutionrange()
-        for vdr in pti.get_gcmd_verticalresolutionrange_list():
-            if 'Revision' in vdr.keys():
-                continue
-            vv, created = self.get_or_create(vdr)
-            if created: num+=1
-        print('Successfully added %d new vertical data resolution ranges' %num)
 
-    def get_or_create(self, vdr, *args, **kwargs):
-        """ Get or create VerticalDataResolution instance from input pythesint entry """
-        return super(VerticalDataResolutionManager, self).get_or_create(
-                    range=vdr['Vertical_Resolution_Range'])
-
-
-class TemporalDataResolutionManager(models.Manager):
+class TemporalDataResolutionManager(VocabularyManager):
+    get_list = pti.get_gcmd_temporalresolutionrange_list
+    update = pti.update_gcmd_temporalresolutionrange
+    mapping = dict(range='Temporal_Resolution_Range')
 
     def get_by_natural_key(self, trr):
         return self.get(range=trr)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_temporalresolutionrange()
-        for tdr in pti.get_gcmd_temporalresolutionrange_list():
-            if 'Revision' in tdr.keys():
-                continue
-            tt, created = self.get_or_create(tdr)
-            if created: num+=1
-        print('Successfully added %d new temporal data resolution ranges' %num)
 
-    def get_or_create(self, tdr, *args, **kwargs):
-        """ Get or create TemporalDataResolution instance from input pythesint entry """
-        return super(TemporalDataResolutionManager, self).get_or_create(
-                    range=tdr['Temporal_Resolution_Range'])
-
-
-class ProjectManager(models.Manager):
+class ProjectManager(VocabularyManager):
+    get_list = pti.get_gcmd_project_list
+    update = pti.update_gcmd_project
+    mapping = dict(bucket='Bucket',
+                short_name='Short_Name',
+                long_name='Long_Name')
 
     def get_by_natural_key(self, bucket, short_name):
         return self.get(bucket=bucket, short_name=short_name)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_project()
-        for p in pti.get_gcmd_project_list():
-            if 'Revision' in p.keys():
-                continue
-            pp, created = self.get_or_create(p)
-            if created: num+=1
-        print('Successfully added %d new projects' %num)
 
-    def get_or_create(self, p, *args, **kwargs):
-        """ Get or create Project instance from input pythesint entry """
-        return super(ProjectManager, self).get_or_create(
-                bucket = p['Bucket'],
-                short_name = p['Short_Name'],
-                long_name = p['Long_Name'])
-
-
-class ISOTopicCategoryManager(models.Manager):
+class ISOTopicCategoryManager(VocabularyManager):
+    get_list = pti.get_iso19115_topic_category_list
+    update = pti.update_iso19115_topic_category
+    mapping = dict(name='iso_topic_category')
 
     def get_by_natural_key(self, name):
         return self.get(name=name)
 
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_iso19115_topic_category()
-        for iso in pti.get_iso19115_topic_category_list():
-            ii, created = self.get_or_create(iso)
-            if created: num+=1
-        print('Successfully added %d new ISO 19115 topic categories' %num)
 
-    def get_or_create(self, iso, *args, **kwargs):
-        """ Get or create ISOTopicCategory instance from input pythesint entry """
-        return super(ISOTopicCategoryManager, self).get_or_create(
-                    name = iso['iso_topic_category'])
+class LocationManager(VocabularyManager):
+    get_list = pti.get_gcmd_location_list
+    update = pti.update_gcmd_location
+    mapping = dict(category='Location_Category',
+                type='Location_Type',
+                subregion1='Location_Subregion1',
+                subregion2='Location_Subregion2',
+                subregion3='Location_Subregion3')
 
-
-class LocationManager(models.Manager):
-
-    def get_by_natural_key(self, category, type, subregion1, subregion2,
-            subregion3):
+    def get_by_natural_key(self, category, type, subregion1, subregion2, subregion3):
         return self.get(category=category, type=type, subregion1=subregion1,
                 subregion2=subregion2, subregion3=subregion3)
-
-    def create_from_vocabularies(self):
-        num = 0
-        pti.update_gcmd_location()
-        for loc in pti.get_gcmd_location_list():
-            if 'Revision' in loc.keys():
-                continue
-            ll, created = self.get_or_create(loc)
-            if created: num+=1
-        print('Successfully added %d new locations' %num)
-
-    def get_or_create(self, loc, *args, **kwargs):
-        """ Get or create Location instance from input pythesint entry """
-        return super(LocationManager, self).get_or_create(
-                category = loc['Location_Category'],
-                type = loc['Location_Type'],
-                subregion1 = loc['Location_Subregion1'],
-                subregion2 = loc['Location_Subregion2'],
-                subregion3 = loc['Location_Subregion3'])
-
-
