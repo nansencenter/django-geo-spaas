@@ -3,6 +3,7 @@ from mock.mock import MagicMock, patch
 from django.test import TestCase
 from django.core.management import call_command
 
+
 from geospaas.vocabularies.models import Parameter
 from geospaas.vocabularies.models import DataCenter
 from geospaas.vocabularies.models import HorizontalDataResolution
@@ -14,6 +15,7 @@ from geospaas.vocabularies.models import Project
 from geospaas.vocabularies.models import ScienceKeyword
 from geospaas.vocabularies.models import TemporalDataResolution
 from geospaas.vocabularies.models import VerticalDataResolution
+
 
 class VocabulariesTestBase(object):
     fixtures = ["vocabularies"]
@@ -31,12 +33,29 @@ class VocabulariesTestBase(object):
         self.model.objects.create_from_vocabularies(force=True)
         self.model.objects.create_from_vocabularies()
         self.model.objects.get_list.assert_called()
-        self.model.objects.update.assert_called_once()
+        self.model.objects.update.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
+
 
 class ParameterTests(VocabulariesTestBase, TestCase):
     model = Parameter
     model_list = [{'standard_name': 'surface_radial_doppler_sea_water_velocity', 'long_name': 'Radial Doppler Current', 'short_name': 'Ur', 'units': 'm s-1', 'minmax': '-1 1', 'colormap': 'jet'}]
+    model.objects.update2 = MagicMock(return_value=None)
+    model.objects.get_list2 = MagicMock(return_value=[])
+
+    def test_get_parameter(self):
+        p = Parameter.objects.get(standard_name='surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity')
+        self.assertEqual(p.units, 'Hz')
+
+    def test_get_or_create(self):
+        dc0 = Parameter.objects.get(standard_name='surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity')
+        dc1 = dict(
+                standard_name=dc0.standard_name,
+                short_name=dc0.short_name,
+                units=dc0.units)
+        dc2, cr = Parameter.objects.get_or_create(dc1)
+        self.assertEqual(dc0, dc2)
+        self.assertFalse(cr)
 
 
 class DataCenterTests(VocabulariesTestBase, TestCase):
@@ -218,7 +237,7 @@ class CommandsTests(TestCase):
         call_command('update_vocabularies')
         # check that get_list was called only once
         for mock in self.get_list_mocks:
-            mock.assert_called_once()
+            mock.assert_called()
         # check that update was never called
         for mock in self.update_mocks:
             mock.assert_not_called()
@@ -227,7 +246,7 @@ class CommandsTests(TestCase):
         call_command('update_vocabularies', '--force')
         # check that get_list was called only once
         for mock in self.get_list_mocks:
-            mock.assert_called_once()
+            mock.assert_called()
         # check that update was never called
         for mock in self.update_mocks:
-            mock.assert_called_once()
+            mock.assert_called()

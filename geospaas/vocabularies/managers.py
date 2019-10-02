@@ -17,50 +17,53 @@ import pythesint as pti
 
 from django.db import models
 
-class ParameterManager(models.Manager):
-
-    ''' Fields:
-    standard_name
-    short_name
-    units
-    gcmd_science_keyword
-    '''
-
-    def get_by_natural_key(self, stdname):
-        return self.get(standard_name=stdname)
-
-    def create_from_vocabularies(self):
-        ''' Create parameter instances from the nersc wkv list.
-        '''
-        warnings.warn('''
-        Because we do not yet have the mapping between the different
-        vocabularies, the GCMD science keywords are not linked to the catalog
-        parameter table
-        ''')
-        num = 0
-        pti.update_wkv_variable() 
-        for wkv in pti.get_wkv_variable_list():
-            pp, created = self.get_or_create(wkv)
-            if created: num+=1
-
-        pti.update_cf_standard_name()
-        for cfv in pti.get_cf_standard_name_list():
-            pseudo_wkv = {
-                    'standard_name': cfv['standard_name'],
-                    'short_name': '',
-                    'units': cfv['canonical_units']
-                }
-            # Need to check that it is not added already as wkv with short_name..
-            if not self.filter(standard_name=cfv['standard_name']):
-                pp, created = self.get_or_create(pseudo_wkv)
-                if created: num+=1
-        print("Successfully added %d new parameters" %num)
-
-
 class VocabularyManager(models.Manager):
     """ Base abstract class for all Managers here """
+
+    def update_and_get_list(self, get_list, update, force):
+        """ Get list of Pythesint entires after an update if needed
+
+        Parameters
+        ----------
+        get_lilst : func
+            function to get lilst of Pythesint entries
+        update : func
+            function to update Pythesint
+
+        Returns
+        -------
+        pti_list : list
+            lilst of Pythesin entries
+
+        """
+        pti_list = get_list()
+        if force==True or len(pti_list)==0:
+            update()
+        pti_list = [e for e in get_list() if not 'Revision' in e.keys()]
+        return pti_list
+
+    def create_instances(self, pti_list):
+        """ Create instances in database
+
+        Parameters
+        ----------
+        pti_list : list with Pythesint entries
+
+        """
+        num = 0
+        for entry in pti_list:
+            pp, created = self.get_or_create(entry)
+            if created: num+=1
+        print("Successfully added %d new entries" % num)
+
+    def get_or_create(self, entry, *args, **kwargs):
+        """ Get or create database instance from input pythesint entry """
+
+        params = {key : entry[self.mapping[key]] for key in self.mapping}
+        return super(VocabularyManager, self).get_or_create(**params)
+
     def create_from_vocabularies(self, force=False, **kwargs):
-        """ Create instances in database from the pythesint list.
+        """ Get instances Pythesint and create instances in database.
 
         Parameters
         ----------
@@ -68,31 +71,41 @@ class VocabularyManager(models.Manager):
             Force update of Vocabulary from Internet ?
 
         """
-
-        num = 0
-        pti_list = self.get_list()
-        if force==True or len(pti_list)==0:
-            self.update()
-        for entry in pti_list:
-            if 'Revision' in entry.keys():
-                continue
-            pp, created = self.get_or_create(entry)
-            if created: num+=1
-        print("Successfully added %d new entries" % num)
-
-    def get_or_create(self, entry, *args, **kwargs):
-        """ Get or create database instance from input pythesint entry """
-        params = {key : entry[self.mapping[key]] for key in self.mapping}
-        return super(VocabularyManager, self).get_or_create(**params)
-
+        pti_list = self.update_and_get_list(self.get_list, self.update, force)
+        self.create_instances(pti_list)
 
 class ParameterManager(VocabularyManager):
     get_list = pti.get_wkv_variable_list
+    get_list2 = pti.get_cf_standard_name_list
     update = pti.update_wkv_variable
+    update2 = pti.update_cf_standard_name
     mapping = dict(standard_name='standard_name',
                    short_name='short_name',
                    units='units')
-    natural_keys = ['standard_name']
+
+    def create_from_vocabularies(self, force=False, **kwargs):
+        """ Create parameter instances from the NERSC WKV list and CF-standard names.
+
+        Have to override VocabularyManager.create_from_vocabularies in order to allow
+        merge of CF-variable names and WKVs.
+
+        """
+        warnings.warn(''' Since we do not yet have the mapping between the different
+        vocabularies, the GCMD science keywords are not linked to the catalog
+        parameter table ''')
+        pti_list1 = self.update_and_get_list(self.get_list, self.update, force)
+        pti_list2 = self.update_and_get_list(self.get_list2, self.update2, force)
+        # merge two lists
+        l1_std = [l['standard_name'] for l in pti_list1]
+        for l in pti_list2:
+            if 'standard_name' in l and l['standard_name'] not in pti_list1:
+                pti_list1.append(
+                    dict(
+                        standard_name=l['standard_name'],
+                        short_name='',
+                        units=l['canonical_units']))
+
+        self.create_instances(pti_list1)
 
     def get_by_natural_key(self, standard_name):
         return self.get(standard_name=standard_name)
