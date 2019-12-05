@@ -206,6 +206,11 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         added = crawl(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(self.uri, debug=True, select=None, skip=['.*ncml'])
+        self.mock_ds.objects.get_or_create.assert_called_once_with(
+                'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc', 
+                name='odap',
+                service='OPENDAP')
         self.assertEqual(added, 1)
 
     def test_ds_created_with_date_arg(self):

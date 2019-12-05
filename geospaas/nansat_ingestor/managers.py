@@ -56,6 +56,10 @@ class DatasetManager(models.Manager):
         if len(uris) > 0:
             return uris[0].dataset, False
 
+        # Get name and sevice of data protocol
+        service_name = kwargs.pop('name', FILE_SERVICE_NAME)
+        service = kwargs.pop('service', LOCAL_FILE_SERVICE)
+
         # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
 
@@ -123,13 +127,6 @@ class DatasetManager(models.Manager):
                 geographic_location=geolocation,
                 **options)
 
-        uri_scheme = urlparse(uri).scheme
-        if 'http' in uri_scheme:
-            service_name = DAP_SERVICE_NAME
-            service = OPENDAP_SERVICE
-        else: 
-            service_name = FILE_SERVICE_NAME
-            service = LOCAL_FILE_SERVICE
         # create dataset URI
         ds_uri, _ = DatasetURI.objects.get_or_create(name=service_name, service=service, uri=uri,
                 dataset=ds)

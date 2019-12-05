@@ -28,29 +28,26 @@ def crawl(url, **options):
     c = Crawl(url, select=select, skip=skips, debug=True)
     added = 0
     for ds in c.datasets:
-        url = [s.get('url') for s in ds.services if
-                s.get('service').lower()=='opendap'][0]
+        for s in ds.services:
+            if s.get('service').lower()=='opendap':
+                url = s.get('url') 
+                name = s.get('name')
+                service = s.get('service')
         try:
-            gds, cr = NansatDataset.objects.get_or_create(url)
+            # Create Dataset from OPeNDAP url - this is necessary to get all metadata
+            gds, cr = NansatDataset.objects.get_or_create(url, name=name,
+                    service=service)
         except (IOError, AttributeError) as e:
             #warnings.warn(e.message)
             continue
-        else:
-            if cr:
-                added += 1
-                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
+        if cr:
+            added += 1
+            print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
         # Connect all service uris to the dataset
         for s in ds.services:
-            try:
-                ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
+            ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
                     service=s.get('service'), uri=s.get('url'), dataset=gds)
-            except IntegrityError:
-                # There is no standard for the name (and possibly the service). This means that the
-                # naming defined by geospaas.catalog.managers.DAP_SERVICE_NAME (and assigned to the
-                # DatasetURI in geospaas.nansat_ingestor.managers.DatasetManager.get_or_create) may
-                # be different from s.get('name').
-                # Solution: ignore the error and continue the loop
-                continue
+        print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
     return added
 
 class Command(BaseCommand):
