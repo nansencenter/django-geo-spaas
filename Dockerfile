@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1
 # Install Django
 RUN pip install \
     coverage \
-    django \
+    django==2.2 \
     django-forms-bootstrap \
     django-leaflet \
     thredds_crawler \
