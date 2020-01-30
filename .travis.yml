@@ -6,19 +6,20 @@ env:
 services:
   - docker
 
-before_install:
-    - sudo apt-get -y install libsqlite3*
-
 install:
-  #- docker build . -t $IMAGE_NAME
-  - sqlite3 --version
-  #- pip install coveralls
+  - docker build . -t $IMAGE_NAME
 
 script:
-  - docker run --rm -it -v `pwd`:/`pwd` $IMAGE_NAME bash -c "cd `pwd`; coverage run runtests.py"
-
-after_success:
-  - coveralls
+  - >
+    docker run --rm
+    -e COVERALLS_REPO_TOKEN
+    -e "TRAVIS=true"
+    -e TRAVIS_JOB_ID
+    -e TRAVIS_BRANCH
+    -e TRAVIS_PULL_REQUEST
+    -v "$(pwd):/src"
+    $IMAGE_NAME
+    bash -c "source /opt/conda/bin/activate && coverage run runtests.py && coveralls"
 
 before_deploy:
   - docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
