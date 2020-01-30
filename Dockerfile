@@ -1,5 +1,5 @@
 # Initialize from docker image with Python, libraries and Nansat
-FROM akorosov/nansat:latest
+FROM nansencenter/nansat:latest
 LABEL purpose="Running and developing Django-Geo-SpaaS"
 ENV PYTHONUNBUFFERED=1
 
