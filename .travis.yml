@@ -1,14 +1,32 @@
 language: python
 
+env:
+  - IMAGE_NAME="${DOCKER_ORG}/geospaas"
+
 services:
   - docker
 
 install:
-  - docker build . -t geospaas
+  - docker build . -t $IMAGE_NAME
   - pip install coveralls
 
 script:
-  - docker run --rm -it -v `pwd`:/`pwd` geospaas bash -c "cd `pwd`; coverage run runtests.py"
+  - docker run --rm -it -v `pwd`:/`pwd` $IMAGE_NAME bash -c "cd `pwd`; coverage run runtests.py"
 
 after_success:
   - coveralls
+
+#before_deploy:
+#  - docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
+
+#deploy:
+#  provider: script
+#  on:
+#    tags: true
+#  script: /bin/bash scripts/docker_push.sh "${TRAVIS_TAG}" latest
+
+#docker_push.sh:
+#for tag in $*;do
+#    docker tag "${IMAGE_NAME}" "${IMAGE_NAME}:${tag}"
+#    docker push "${IMAGE_NAME}:${tag}"
+#done
