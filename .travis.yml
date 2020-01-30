@@ -6,10 +6,13 @@ env:
 services:
   - docker
 
+before_install:
+    - sudo apt-get -y install libsqlite3*
+
 install:
-  - docker build . -t $IMAGE_NAME
+  #- docker build . -t $IMAGE_NAME
   - sqlite3 --version
-  - pip install coveralls
+  #- pip install coveralls
 
 script:
   - docker run --rm -it -v `pwd`:/`pwd` $IMAGE_NAME bash -c "cd `pwd`; coverage run runtests.py"
