@@ -1,0 +1,2 @@
+recursive-include geospaas/viewer/templates *
+recursive-include geospaas/viewer/static *
