@@ -1,4 +1,4 @@
-language: python
+language: shell
 
 env:
   - IMAGE_NAME="${DOCKER_ORG}/geospaas"
@@ -29,9 +29,3 @@ deploy:
   on:
     tags: true
   script: /bin/bash scripts/docker_push.sh "${TRAVIS_TAG}" latest
-
-#docker_push.sh:
-#for tag in $*;do
-#    docker tag "${IMAGE_NAME}" "${IMAGE_NAME}:${tag}"
-#    docker push "${IMAGE_NAME}:${tag}"
-#done
