@@ -1,5 +1,5 @@
 # Initialize from docker image with Python, libraries and Nansat
-FROM akorosov/nansat:latest
+FROM nansencenter/nansat:latest
 LABEL purpose="Running and developing Django-Geo-SpaaS"
 ENV PYTHONUNBUFFERED=1
 
@@ -15,7 +15,9 @@ RUN pip install \
 # install Geo-SPaaS
 COPY geospaas /tmp/geospaas
 COPY setup.py /tmp/
+COPY MANIFEST.in /tmp/
 WORKDIR /tmp
-RUN python setup.py install
+RUN python setup.py install \
+&&  rm -r geospaas setup.py MANIFEST.in
 
 WORKDIR /src
