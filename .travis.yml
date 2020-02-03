@@ -6,6 +6,8 @@ env:
 services:
   - docker
 
+if: type != pull_request
+
 install:
   - docker build . -t $IMAGE_NAME
 
