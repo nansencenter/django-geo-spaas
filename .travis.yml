@@ -9,7 +9,8 @@ services:
 if: type != pull_request
 
 install:
-  - docker build . -t $IMAGE_NAME
+  - docker pull $IMAGE_NAME || true
+  - docker build --cache-from $IMAGE_NAME . -t $IMAGE_NAME
 
 script:
   - >
@@ -24,10 +25,10 @@ script:
     bash -c "source /opt/conda/bin/activate && coverage run runtests.py && coveralls"
 
 before_deploy:
-  - docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 deploy:
   provider: script
   on:
     tags: true
-  script: /bin/bash scripts/docker_push.sh "${TRAVIS_TAG}" latest
+  script: /bin/bash scripts/docker_push.sh $TRAVIS_TAG latest
