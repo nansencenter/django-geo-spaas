@@ -4,32 +4,16 @@ Django-Geo-SPaaS - GeoDjango Apps for satellite data management
 [![Coverage Status](https://coveralls.io/repos/github/nansencenter/django-geo-spaas/badge.svg?branch=master)](https://coveralls.io/github/nansencenter/django-geo-spaas)
 [![DOI](https://zenodo.org/badge/84077597.svg)](https://zenodo.org/badge/latestdoi/84077597)
 
-How to add new data to Geo-SPaaS catalog
-----------------------------------------
-Install geo-spaas-vagrant:
-```
-  git clone https://github.com/nansencenter/geo-spaas-vagrant
-  cd geo-spaas-vagrant
-  vagrant up geospaas_core
-```
-Connect to the virtual machine and use GeoSPaaS
-```
-  vagrant ssh geospaas_core
-  cd django-geo-spaas/project
-  ./manage.py ingest name_of_your_file
-```
 
 How to use Docker for development of Django-Geo-SPaaS
 -----------------
 1. [Install Docker](https://docs.docker.com/install/)
 2. Clone `django-geo-spaas` and change into that directory
 3. Run `./build_container.sh`. That will do the following:
-  * build a Docker image with Nansat and Django installed
-  * Dockerfile also installs geospaas into /opt/geospaas and links from site-pakages
+  * build a Docker image with Nansat, Django and Django-Geo-SPaaS installed
   * create a project directory `project` in the current dir
   * create the database and update vocabularies
-  * create a container with name `geospaas` with the current dir mounted to `/src` and
-  `geospaas` in the current dir mounted to `/opt/geospaas`. Thus the container sees all changes you
+  * create a container with name `geospaas` with the current dir mounted to `/src`. Thus the container sees all changes you
   do to the geospaas code.
 4. Run `docker start -i geospaas`. That will launch `bash` inside the `geospaas` containter.
 From bash you can launch: `python project/manage.py shell`.
@@ -59,7 +43,7 @@ so no above steps are necessary. The workflow can be the following:
 docker create -it --name=myapp \
     -v /host/dir/myapp:/src \
     -v /data/dir:/data \
-    akorosov/django-geo-spaas
+    nansencenter/geospaas
 
 # start container in background
 docker start myapp
@@ -78,4 +62,21 @@ docker exec myapp /src/myproject/manage.py update_vocabularies
 
 # ingest metadata
 docker exec -w /src/myproject myapp ./manage.py ingest /data/myfiles*.nc
+```
+
+How to add new data to Geo-SPaaS catalog
+----------------------------------------
+Previsouly Vagrant/VirtualBox was used as a main provisionng mechanism. This is no longer supported.
+
+Install geo-spaas-vagrant:
+```
+  git clone https://github.com/nansencenter/geo-spaas-vagrant
+  cd geo-spaas-vagrant
+  vagrant up geospaas_core
+```
+Connect to the virtual machine and use GeoSPaaS
+```
+  vagrant ssh geospaas_core
+  cd django-geo-spaas/project
+  ./manage.py ingest name_of_your_file
 ```
