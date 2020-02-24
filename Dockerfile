@@ -9,6 +9,7 @@ RUN pip install \
     django==2.2 \
     django-forms-bootstrap \
     django-leaflet \
+    psycopg2 \
     thredds_crawler \
 &&  echo "alias ll='ls -lh'" >> /root/.bashrc
 
