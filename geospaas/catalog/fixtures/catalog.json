@@ -2,8 +2,8 @@
     "pk": 1,
     "model": "catalog.source",
     "fields": {
-        "platform": ["AQUA"],
-        "instrument": ["MODIS"],
+        "platform": 102,
+        "instrument": 526,
         "specs": "Nothing special"
     }
 },{
