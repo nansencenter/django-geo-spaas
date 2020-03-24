@@ -206,6 +206,37 @@ class SourceTests(TestCase):
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
+        
+    def test_source_without_short_names(self):
+        p = Platform.objects.get(pk=796)
+        i = Instrument.objects.get(pk=1458)
+        source = Source(platform=p, instrument=i)
+        source.save()
+        self.assertEqual(source.platform.long_name, "")
+        self.assertEqual(source.platform.series_entity, "series_entity_without_short_name")
+        self.assertEqual(source.instrument.long_name, "")
+        self.assertEqual(source.instrument.category, "category_without_short_name")
+    
+    def test_source_empty_without_short_names(self):
+        Platform2=Platform(category = '',
+        series_entity = '',
+        short_name = '',
+        long_name = '')
+        Instrument2=Instrument(
+                category ='',
+        instrument_class = '',
+        type = '',
+        subtype = '',
+        short_name = '',
+        long_name = '')
+        Platform2.save()
+        Instrument2.save()
+        source2 = Source(platform=Platform2, instrument=Instrument2)
+        source2.save()
+        self.assertEqual(source2.platform.long_name, "")
+        self.assertEqual(source2.platform.series_entity, "")
+        self.assertEqual(source2.instrument.long_name, "")
+        self.assertEqual(source2.instrument.category, "")
 
 class TestCountCommand(TestCase):
     fixtures = ['vocabularies', 'catalog']

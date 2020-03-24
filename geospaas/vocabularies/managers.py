@@ -119,8 +119,8 @@ class PlatformManager(VocabularyManager):
                     short_name='Short_Name',
                     long_name='Long_Name')
 
-    def get_by_natural_key(self, short_name):
-        return self.get(short_name=short_name)
+    #def get_by_natural_key(self, short_name):
+    #    return self.get(short_name=short_name)
 
 
 class InstrumentManager(VocabularyManager):
@@ -133,8 +133,8 @@ class InstrumentManager(VocabularyManager):
                     short_name='Short_Name',
                     long_name='Long_Name')
 
-    def get_by_natural_key(self, short_name):
-        return self.get(short_name=short_name)
+    #def get_by_natural_key(self, short_name):
+    #    return self.get(short_name=short_name)
 
 
 class ScienceKeywordManager(VocabularyManager):
