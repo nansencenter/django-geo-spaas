@@ -207,17 +207,21 @@ class SourceTests(TestCase):
         source = Source(platform=p, instrument=i)
         source.save()
         
-    def test_source_without_short_names(self):
-        p = Platform.objects.get(pk=796)
-        i = Instrument.objects.get(pk=1458)
+    def test_without_short_names(self):
+        ''' retrieving objects without short_name from the database and creating source 
+        based on them'''
+        p = Platform.objects.get(pk=168)
+        i = Instrument.objects.get(pk=140)
         source = Source(platform=p, instrument=i)
         source.save()
-        self.assertEqual(source.platform.long_name, "")
-        self.assertEqual(source.platform.series_entity, "series_entity_without_short_name")
-        self.assertEqual(source.instrument.long_name, "")
-        self.assertEqual(source.instrument.category, "category_without_short_name")
+        self.assertEqual(source.platform.short_name, "")
+        self.assertEqual(source.platform.series_entity, "Earth Explorers")
+        self.assertEqual(source.instrument.short_name, "")
+        self.assertEqual(source.instrument.subtype, "Lidar/Laser Spectrometers")
     
-    def test_source_empty_without_short_names(self):
+    def test_empty_short_names(self):
+        ''' creating objects without short_name and creating source 
+        based on them'''
         Platform2=Platform(category = '',
         series_entity = '',
         short_name = '',
@@ -237,6 +241,20 @@ class SourceTests(TestCase):
         self.assertEqual(source2.platform.series_entity, "")
         self.assertEqual(source2.instrument.long_name, "")
         self.assertEqual(source2.instrument.category, "")
+
+    def test_source_uniqueness(self):
+
+        p = Platform.objects.get(pk=661) # "short_name": ""
+        i = Instrument.objects.get(pk=139)# "short_name": ""
+        source,_ = Source.objects.get_or_create(platform=p, instrument=i)
+        source2, created = Source.objects.get_or_create(platform=p, instrument=i)
+        self.assertEqual(created, 0)
+        self.assertEqual(source2, source)
+        i2 = Instrument.objects.get(pk=136)# "short_name": "SCATTEROMETERS"
+        source3,_ = Source.objects.get_or_create(platform=p, instrument=i2)
+        self.assertNotEqual(source3, source2)
+
+
 
 class TestCountCommand(TestCase):
     fixtures = ['vocabularies', 'catalog']
