@@ -27,8 +27,7 @@ class Platform(models.Model):
     def __str__(self):
         return str(self.short_name)
 
-    #def natural_key(self):
-    #    return (self.short_name)
+
 
 class Instrument(models.Model):
 
@@ -44,8 +43,7 @@ class Instrument(models.Model):
     def __str__(self):
         return str(self.short_name)
 
-    #def natural_key(self):
-    #    return (self.short_name)
+
 
 class ISOTopicCategory(models.Model):
     '''

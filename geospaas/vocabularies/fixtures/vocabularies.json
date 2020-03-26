@@ -17485,18 +17485,6 @@
 },
 {
   "fields": {
-    "category": "category_without_short_name",
-    "short_name": "",
-    "long_name": "",
-    "subtype": "",
-    "type": "",
-    "instrument_class": ""
-  },
-  "model": "vocabularies.instrument",
-  "pk": 1458
-},
-{
-  "fields": {
     "category": "Aircraft",
     "long_name": "",
     "series_entity": "",
@@ -25444,16 +25432,6 @@
   },
   "model": "vocabularies.platform",
   "pk": 795
-},
-{
-  "fields": {
-    "category": "",
-    "long_name": "",
-    "series_entity": "series_entity_without_short_name",
-    "short_name": ""
-  },
-  "model": "vocabularies.platform",
-  "pk": 796
 },
 {
   "fields": {
