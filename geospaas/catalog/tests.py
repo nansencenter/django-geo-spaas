@@ -233,9 +233,9 @@ class SourceTests(TestCase):
         subtype = '',
         short_name = '',
         long_name = '')
-        Platform2.save()
-        Instrument2.save()
-        source2 = Source(platform=Platform2, instrument=Instrument2)
+        platform2.save()
+        instrument2.save()
+        source2 = Source(platform=platform2, instrument=instrument2)
         source2.save()
         self.assertEqual(source2.platform.long_name, "")
         self.assertEqual(source2.platform.series_entity, "")
