@@ -222,11 +222,11 @@ class SourceTests(TestCase):
     def test_empty_short_names(self):
         ''' creating objects without short_name and creating source 
         based on them'''
-        Platform2=Platform(category = '',
+        platform2=Platform(category = '',
         series_entity = '',
         short_name = '',
         long_name = '')
-        Instrument2=Instrument(
+        instrument2=Instrument(
                 category ='',
         instrument_class = '',
         type = '',
