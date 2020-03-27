@@ -248,7 +248,7 @@ class SourceTests(TestCase):
         i = Instrument.objects.get(pk=139)# "short_name": ""
         source,_ = Source.objects.get_or_create(platform=p, instrument=i)
         source2, created = Source.objects.get_or_create(platform=p, instrument=i)
-        self.assertEqual(created, 0)
+        self.assertFalse(created)
         self.assertEqual(source2, source)
         i2 = Instrument.objects.get(pk=136)# "short_name": "SCATTEROMETERS"
         source3,_ = Source.objects.get_or_create(platform=p, instrument=i2)
