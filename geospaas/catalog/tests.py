@@ -244,14 +244,15 @@ class SourceTests(TestCase):
 
     def test_source_uniqueness(self):
 
-        p = Platform.objects.get(pk=661) # "short_name": ""
-        i = Instrument.objects.get(pk=139)# "short_name": ""
-        source,_ = Source.objects.get_or_create(platform=p, instrument=i)
-        source2, created = Source.objects.get_or_create(platform=p, instrument=i)
-        self.assertFalse(created)
+        plat1 = Platform.objects.get(pk=661) # "short_name": ""
+        inst1 = Instrument.objects.get(pk=139)# "short_name": ""
+        source, created1 = Source.objects.get_or_create(platform=plat1, instrument=inst1)
+        source2, created2 = Source.objects.get_or_create(platform=plat1, instrument=inst1)
+        self.assertTrue(created1)
+        self.assertFalse(created2)
         self.assertEqual(source2, source)
-        i2 = Instrument.objects.get(pk=136)# "short_name": "SCATTEROMETERS"
-        source3,_ = Source.objects.get_or_create(platform=p, instrument=i2)
+        inst2 = Instrument.objects.get(pk=160)# "short_name": ""
+        source3,_ = Source.objects.get_or_create(platform=plat1, instrument=inst2)
         self.assertNotEqual(source3, source2)
 
 
