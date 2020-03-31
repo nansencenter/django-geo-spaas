@@ -27,6 +27,11 @@ class Platform(models.Model):
     def __str__(self):
         return str(self.short_name)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_platform', fields=[
+                'category', 'series_entity', 'short_name', 'long_name'])
+        ]
 
 
 class Instrument(models.Model):
@@ -43,6 +48,13 @@ class Instrument(models.Model):
     def __str__(self):
         return str(self.short_name)
 
+
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_instrument', fields=[
+                'category', 'instrument_class', 'type', 'subtype', 'short_name', 'long_name'])
+        ]
 
 
 class ISOTopicCategory(models.Model):
@@ -70,6 +82,12 @@ class ISOTopicCategory(models.Model):
     def natural_key(self):
         return (self.name)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_iso_topic_category', fields=['name'])
+        ]
+
+
 class DataCenter(models.Model):
     ''' The data center is needed to control data access and also for indexing
     to allow search.
@@ -90,6 +108,14 @@ class DataCenter(models.Model):
     def natural_key(self):
         return (self.short_name)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_data_center', fields=[
+                'bucket_level0', 'bucket_level1', 'bucket_level2', 'bucket_level3',
+                'short_name', 'long_name', 'data_center_url'])
+        ]
+
+
 class Location(models.Model):
     category = models.CharField(max_length=50)
     type = models.CharField(max_length=50)
@@ -105,6 +131,13 @@ class Location(models.Model):
     def natural_key(self):
         return (category, type, subregion1, subregion2,
             subregion3)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_location', fields=[
+                'category', 'type', 'subregion1', 'subregion2', 'subregion3'])
+        ]
+
 
 class ScienceKeyword(models.Model):
     category = models.CharField(max_length=50)
@@ -124,6 +157,14 @@ class ScienceKeyword(models.Model):
         return (self.category, self.topic, self.term, self.variable_level_1,
                 self.variable_level_2, self.variable_level_3)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_science_keyword', fields=[
+                'category', 'topic', 'term', 'variable_level_1', 'variable_level_2',
+                'variable_level_3', 'detailed_variable'])
+        ]
+
+
 class Project(models.Model):
     bucket = models.CharField(max_length=6)
     short_name = models.CharField(max_length=80)
@@ -137,6 +178,13 @@ class Project(models.Model):
     def natural_key(self):
         return (self.bucket, self.short_name)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_project',
+                                    fields=['bucket', 'short_name', 'long_name'])
+        ]
+
+
 class HorizontalDataResolution(models.Model):
     range = models.CharField(max_length=220)
 
@@ -147,6 +195,12 @@ class HorizontalDataResolution(models.Model):
 
     def natural_key(self):
         return (self.range)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_horizontal_data_resolution', fields=['range'])
+        ]
+
 
 class VerticalDataResolution(models.Model):
     range = models.CharField(max_length=220)
@@ -159,6 +213,12 @@ class VerticalDataResolution(models.Model):
     def natural_key(self):
         return (self.range)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_vertical_data_resolution', fields=['range'])
+        ]
+
+
 class TemporalDataResolution(models.Model):
     range = models.CharField(max_length=220)
 
@@ -169,6 +229,12 @@ class TemporalDataResolution(models.Model):
 
     def natural_key(self):
         return (self.range)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_temporal_data_resolution', fields=['range'])
+        ]
+
 
 class Parameter(models.Model):
     ''' Standard name (and unit) is taken from the CF variables but in case a
@@ -197,4 +263,8 @@ class Parameter(models.Model):
     def natural_key(self):
         return (self.standard_name)
 
-
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_parameter', fields=[
+                'standard_name', 'short_name', 'units', 'gcmd_science_keyword'])
+        ]
