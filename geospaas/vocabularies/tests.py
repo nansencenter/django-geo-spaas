@@ -1,8 +1,8 @@
 from mock.mock import MagicMock, patch
 
+import django.db.utils
 from django.test import TestCase
 from django.core.management import call_command
-
 
 from geospaas.vocabularies.models import Parameter
 from geospaas.vocabularies.models import DataCenter
@@ -36,6 +36,14 @@ class VocabulariesTestBase(object):
         self.model.objects.update.assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
+    def _insert_twice(self, attributes):
+        """Test that an object of the given model class can't be inserted twice"""
+        object1 = self.model(**attributes)
+        object2 = self.model(**attributes)
+
+        object1.save()
+        object2.save()
+
 
 class ParameterTests(VocabulariesTestBase, TestCase):
     model = Parameter
@@ -56,6 +64,14 @@ class ParameterTests(VocabulariesTestBase, TestCase):
         dc2, cr = Parameter.objects.get_or_create(dc1)
         self.assertEqual(dc0, dc2)
         self.assertFalse(cr)
+
+    def test_unique_constraint(self):
+        """Check that the same Parameter can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'standard_name': 'test', 'short_name': 'test', 'units': 'test',
+                'gcmd_science_keyword': ScienceKeyword.objects.latest('id')
+            })
 
 
 class DataCenterTests(VocabulariesTestBase, TestCase):
@@ -82,6 +98,19 @@ class DataCenterTests(VocabulariesTestBase, TestCase):
         self.assertEqual(dc0, dc2)
         self.assertFalse(cr)
 
+    def test_unique_constraint(self):
+        """Check that the same DataCenter can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'bucket_level0': 'test',
+                'bucket_level1': 'test',
+                'bucket_level2': 'test',
+                'bucket_level3': 'test',
+                'short_name': 'test',
+                'long_name': 'test',
+                'data_center_url': 'test'
+            })
+
 
 class InstrumentTests(VocabulariesTestBase, TestCase):
     model = Instrument
@@ -104,6 +133,18 @@ class InstrumentTests(VocabulariesTestBase, TestCase):
         self.assertEqual(i0, i2)
         self.assertFalse(cr)
 
+    def test_unique_constraint(self):
+        """Check that the same Instrument can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'category': 'test',
+                'instrument_class': 'test',
+                'type': 'test',
+                'subtype': 'test',
+                'short_name': 'test',
+                'long_name': 'test'
+            })
+
 
 class ISOTopicCategoryTests(VocabulariesTestBase, TestCase):
     model = ISOTopicCategory
@@ -119,6 +160,11 @@ class ISOTopicCategoryTests(VocabulariesTestBase, TestCase):
         iso2, cr = ISOTopicCategory.objects.get_or_create(iso1)
         self.assertEqual(iso0, iso2)
         self.assertFalse(cr)
+
+    def test_unique_constraint(self):
+        """Check that the same ISOTopicCategory can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({'name': 'test'})
 
 
 class LocationTests(VocabulariesTestBase, TestCase):
@@ -141,6 +187,17 @@ class LocationTests(VocabulariesTestBase, TestCase):
         self.assertEqual(loc0, loc2)
         self.assertFalse(cr)
 
+    def test_unique_constraint(self):
+        """Check that the same Location can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'category': 'test',
+                'type': 'test',
+                'subregion1': 'test',
+                'subregion2': 'test',
+                'subregion3': 'test'
+            })
+
 
 class PlatformTests(VocabulariesTestBase, TestCase):
     model = Platform
@@ -161,6 +218,16 @@ class PlatformTests(VocabulariesTestBase, TestCase):
         self.assertEqual(p0, p2)
         self.assertFalse(cr)
 
+    def test_unique_constraint(self):
+        """Check that the same Platform can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'category': 'test',
+                'series_entity': 'test',
+                'short_name': 'test',
+                'long_name': 'test'
+            })
+
 
 class ProjectTests(VocabulariesTestBase, TestCase):
     model = Project
@@ -171,6 +238,15 @@ class ProjectTests(VocabulariesTestBase, TestCase):
         self.assertEqual(p.long_name,
             'Atmospheric Chemistry Studies in the Oceanic Environment')
 
+    def test_unique_constraint(self):
+        """Check that the same Project can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'bucket': 'test',
+                'short_name': 'test',
+                'long_name': 'test'
+            })
+
 
 class ScienceKeywordTests(VocabulariesTestBase, TestCase):
     model = ScienceKeyword
@@ -179,6 +255,19 @@ class ScienceKeywordTests(VocabulariesTestBase, TestCase):
     def test_get_science_keyword(self):
         kw = self.model.objects.get(variable_level_1='SIGMA NAUGHT')
         self.assertEqual(kw.topic, 'SPECTRAL/ENGINEERING')
+
+    def test_unique_constraint(self):
+        """Check that the same ScienceKeyword can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({
+                'category': 'test',
+                'topic': 'test',
+                'term': 'test',
+                'variable_level_1': 'test',
+                'variable_level_2': 'test',
+                'variable_level_3': 'test',
+                'detailed_variable': 'test'
+            })
 
 
 class TemporalDataResolutionTests(VocabulariesTestBase, TestCase):
@@ -189,6 +278,11 @@ class TemporalDataResolutionTests(VocabulariesTestBase, TestCase):
         tr = self.model.objects.get(range='1 minute - < 1 hour')
         self.assertEqual(tr.range, '1 minute - < 1 hour')
 
+    def test_unique_constraint(self):
+        """Check that the same TemporalDataResolution can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({'range': 'test'})
+
 
 class HorizontalDataResolutionTests(VocabulariesTestBase, TestCase):
     model = HorizontalDataResolution
@@ -198,6 +292,11 @@ class HorizontalDataResolutionTests(VocabulariesTestBase, TestCase):
         rr = self.model.objects.get(range='< 1 meter')
         self.assertEqual(rr.range, '< 1 meter')
 
+    def test_unique_constraint(self):
+        """Check that the same HorizontalDataResolution can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({'range': 'test'})
+
 
 class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
     model = VerticalDataResolution
@@ -206,6 +305,11 @@ class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
     def test_get_vertical_range(self):
         vr = self.model.objects.get(range='10 meters - < 30 meters')
         self.assertEqual(vr.range, '10 meters - < 30 meters')
+
+    def test_unique_constraint(self):
+        """Check that the same VerticalDataResolution can't be inserted twice"""
+        with self.assertRaises(django.db.utils.IntegrityError):
+            self._insert_twice({'range': 'test'})
 
 
 class CommandsTests(TestCase):
