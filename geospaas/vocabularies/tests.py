@@ -1,3 +1,5 @@
+"""Unit tests for the geospaas.vocabularies app"""
+
 import django.db.utils
 from django.core.management import call_command
 from django.test import TestCase
@@ -12,6 +14,8 @@ from geospaas.vocabularies.models import (DataCenter, HorizontalDataResolution,
 
 
 class VocabulariesTestBase(object):
+    """Base class for all vocabularies test cases. Contains mocks set up and common tests."""
+
     fixtures = ["vocabularies"]
     def setUp(self):
         self.patcher = patch('geospaas.vocabularies.managers.print')
@@ -40,6 +44,8 @@ class VocabulariesTestBase(object):
 
 
 class ParameterTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the Parameter model"""
+
     model = Parameter
     model_list = [{
         'standard_name': 'surface_radial_doppler_sea_water_velocity',
@@ -53,11 +59,16 @@ class ParameterTests(VocabulariesTestBase, TestCase):
     model.objects.get_list2 = MagicMock(return_value=[])
 
     def test_get_parameter(self):
+        """Test retrieval of a Parameter object in the database"""
         parameter = Parameter.objects.get(standard_name=(
             'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'))
         self.assertEqual(parameter.units, 'Hz')
 
     def test_get_or_create(self):
+        """
+        The get_or_create() method must not create a new object in the database if one exists with
+        the same parameters
+        """
         parameter0 = Parameter.objects.get(standard_name=(
             'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'))
         attributes = dict(
@@ -78,6 +89,7 @@ class ParameterTests(VocabulariesTestBase, TestCase):
 
 
 class DataCenterTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the DataCenter model"""
     model = DataCenter
     model_list = [{
         'Bucket_Level0': 'ACADEMIC',
@@ -90,12 +102,17 @@ class DataCenterTests(VocabulariesTestBase, TestCase):
     }]
 
     def test_get_datacenter(self):
+        """Test retrieval of a DataCenter object in the database"""
         data_center = DataCenter.objects.get(short_name='NERSC')
         # OBS: Note error in the long name - they have been notified and this
         # test should fail at some point...
         self.assertEqual(data_center.long_name, 'Nansen Environmental and Remote Sensing Centre')
 
     def test_get_or_create(self):
+        """
+        The get_or_create() method must not create a new object in the database if one exists with
+        the same parameters
+        """
         data_center0 = DataCenter.objects.get(short_name='NERSC')
         attributes = dict(
             Bucket_Level0=data_center0.bucket_level0,
@@ -124,6 +141,8 @@ class DataCenterTests(VocabulariesTestBase, TestCase):
 
 
 class InstrumentTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the Instrument model"""
+
     model = Instrument
     model_list = [{
         'Category': 'Earth Remote Sensing Instruments',
@@ -135,10 +154,15 @@ class InstrumentTests(VocabulariesTestBase, TestCase):
     }]
 
     def test_get_instrument(self):
+        """Test retrieval of a Instrument object in the database"""
         instrument = Instrument.objects.get(short_name='ASAR')
         self.assertEqual(instrument.long_name, 'Advanced Synthetic Aperature Radar')
 
     def test_get_or_create(self):
+        """
+        The get_or_create() method must not create a new object in the database if one exists with
+        the same parameters
+        """
         instrument0 = Instrument.objects.get(short_name='ASAR')
         attributes = dict(
             Category=instrument0.category,
@@ -165,14 +189,21 @@ class InstrumentTests(VocabulariesTestBase, TestCase):
 
 
 class ISOTopicCategoryTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the ISOTopicCategory model"""
+
     model = ISOTopicCategory
     model_list = [{'iso_topic_category': 'Biota'}]
 
     def test_get_iso_category(self):
+        """Test retrieval of a ISOTopicCategory object in the database"""
         cat = ISOTopicCategory.objects.get(name='Oceans')
         self.assertEqual(cat.name, 'Oceans')
 
     def test_get_or_create(self):
+        """
+        The get_or_create() method must not create a new object in the database if one exists with
+        the same parameters
+        """
         iso_topic_category0 = ISOTopicCategory.objects.get(name='Oceans')
         attributes = dict(iso_topic_category=iso_topic_category0.name)
         iso_topic_category2, created = ISOTopicCategory.objects.get_or_create(attributes)
@@ -186,6 +217,8 @@ class ISOTopicCategoryTests(VocabulariesTestBase, TestCase):
 
 
 class LocationTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the Location model"""
+
     model = Location
     model_list = [{
         'Location_Category': 'CONTINENT',
@@ -198,10 +231,15 @@ class LocationTests(VocabulariesTestBase, TestCase):
     }]
 
     def test_get_location(self):
+        """Test retrieval of a Location object in the database"""
         location = Location.objects.get(subregion2='KENYA')
         self.assertEqual(location.type, 'AFRICA')
 
     def test_get_or_create(self):
+        """
+        The get_or_create() method must not create a new object in the database if one exists with
+        the same parameters
+        """
         location0 = Location.objects.get(subregion2='KENYA')
         attributes = dict(
             Location_Category=location0.category,
@@ -226,6 +264,8 @@ class LocationTests(VocabulariesTestBase, TestCase):
 
 
 class PlatformTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the Platform model"""
+
     model = Platform
     model_list = [{
         'Category': 'Aircraft',
@@ -235,10 +275,15 @@ class PlatformTests(VocabulariesTestBase, TestCase):
     }]
 
     def test_get_platform(self):
+        """Test retrieval of a Platform object in the database"""
         platform = self.model.objects.get(short_name='ENVISAT')
         self.assertEqual(platform.category, 'Earth Observation Satellites')
 
     def test_get_or_create(self):
+        """
+        The get_or_create() method must not create a new object in the database if one exists with
+        the same parameters
+        """
         platform0 = self.model.objects.get(short_name='ENVISAT')
         attributes = dict(
             Category=platform0.category,
@@ -261,6 +306,8 @@ class PlatformTests(VocabulariesTestBase, TestCase):
 
 
 class ProjectTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the Project model"""
+
     model = Project
     model_list = [{
         'Bucket': 'A - C',
@@ -269,6 +316,7 @@ class ProjectTests(VocabulariesTestBase, TestCase):
     }]
 
     def test_get_project(self):
+        """Test retrieval of a Project object in the database"""
         project = self.model.objects.get(short_name='ACSOE')
         self.assertEqual(project.long_name,
                          'Atmospheric Chemistry Studies in the Oceanic Environment')
@@ -284,6 +332,8 @@ class ProjectTests(VocabulariesTestBase, TestCase):
 
 
 class ScienceKeywordTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the ScienceKeyword model"""
+
     model = ScienceKeyword
     model_list = [{
         'Category': 'EARTH SCIENCE SERVICES',
@@ -296,6 +346,7 @@ class ScienceKeywordTests(VocabulariesTestBase, TestCase):
     }]
 
     def test_get_science_keyword(self):
+        """Test retrieval of a ScienceKeyword object in the database"""
         keyword = self.model.objects.get(variable_level_1='SIGMA NAUGHT')
         self.assertEqual(keyword.topic, 'SPECTRAL/ENGINEERING')
 
@@ -314,10 +365,13 @@ class ScienceKeywordTests(VocabulariesTestBase, TestCase):
 
 
 class TemporalDataResolutionTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the TemporalDataResolution model"""
+
     model = TemporalDataResolution
     model_list = [{'Temporal_Resolution_Range': '1 minute - < 1 hour'}]
 
     def test_get_temporal_range(self):
+        """Test retrieval of a TemporalDataResolution object in the database"""
         temporal_resolution = self.model.objects.get(range='1 minute - < 1 hour')
         self.assertEqual(temporal_resolution.range, '1 minute - < 1 hour')
 
@@ -328,12 +382,15 @@ class TemporalDataResolutionTests(VocabulariesTestBase, TestCase):
 
 
 class HorizontalDataResolutionTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the HorizontalDataResolution model"""
+
     model = HorizontalDataResolution
     model_list = [{
         'Horizontal_Resolution_Range': '1 km - < 10 km or approximately .01 degree - < .09 degree'
     }]
 
     def test_get_horizontal_range(self):
+        """Test retrieval of a HorizontalDataResolution object in the database"""
         horizontal_resolution = self.model.objects.get(range='< 1 meter')
         self.assertEqual(horizontal_resolution.range, '< 1 meter')
 
@@ -344,10 +401,13 @@ class HorizontalDataResolutionTests(VocabulariesTestBase, TestCase):
 
 
 class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
+    """Unit tests for the VerticalDataResolution model"""
+
     model = VerticalDataResolution
     model_list = [{'Vertical_Resolution_Range': '1 meter - < 10 meters'}]
 
     def test_get_vertical_range(self):
+        """Test retrieval of a VerticalDataResolution object in the database"""
         vertical_resolution = self.model.objects.get(range='10 meters - < 30 meters')
         self.assertEqual(vertical_resolution.range, '10 meters - < 30 meters')
 
@@ -358,6 +418,8 @@ class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
 
 
 class CommandsTests(TestCase):
+    """Unit tests for the custom commands of the vocabularies app"""
+
     def setUp(self):
         return_value = [{'Revision': '2019-02-13 08:48:55'}]
         models = [
@@ -383,6 +445,8 @@ class CommandsTests(TestCase):
             for model in models]
 
     def test_command_update_vocabularies(self):
+        """Check that the command does not update the vocabularies if they are present"""
+
         call_command('update_vocabularies')
         # check that get_list was called only once
         for mock in self.get_list_mocks:
@@ -392,10 +456,15 @@ class CommandsTests(TestCase):
             mock.assert_not_called()
 
     def test_command_update_vocabularies_force(self):
+        """
+        Check that the command updates the vocabularies even if they are present when --force is
+        specified
+        """
+
         call_command('update_vocabularies', '--force')
         # check that get_list was called only once
         for mock in self.get_list_mocks:
             mock.assert_called()
-        # check that update was never called
+        # check that update was called
         for mock in self.update_mocks:
             mock.assert_called()
