@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.contrib.gis.geos import Polygon
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
-from django.utils.six import StringIO
+from io import StringIO
 from django.conf import settings
 from django.core.management.base import CommandError
 
