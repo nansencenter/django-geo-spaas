@@ -8,7 +8,7 @@ from mock import patch, PropertyMock, Mock, MagicMock, DEFAULT
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-from django.utils.six import StringIO
+from io import StringIO
 from django.test import TestCase
 
 from geospaas.vocabularies.models import Instrument, Platform
