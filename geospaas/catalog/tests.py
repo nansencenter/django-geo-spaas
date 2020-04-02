@@ -2,6 +2,7 @@ import os
 import json
 from mock import patch, PropertyMock, Mock, MagicMock, DEFAULT
 
+import django.db.utils
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.gis.geos import Polygon
@@ -185,6 +186,17 @@ class GeographicLocationTests(TestCase):
             geometry=Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0))))
         geolocation.save()
 
+    def test_unique_constraint_geographic_location(self):
+        """Test that the same GeographicLocation can't be inserted twice"""
+        attributes = {'geometry': Polygon(((0, 0), (0, 10), (10, 10), (0, 10), (0, 0)))}
+        geolocation1 = GeographicLocation(**attributes)
+        geolocation2 = GeographicLocation(**attributes)
+
+        geolocation1.save()
+
+        with self.assertRaises(django.db.utils.IntegrityError):
+            geolocation2.save()
+
 class PersonnelTests(TestCase):
 
     ''' We should add user admin with, e.g., with the Personnel model. Skip
@@ -206,9 +218,9 @@ class SourceTests(TestCase):
         i = Instrument.objects.get(short_name='MODIS')
         source = Source(platform=p, instrument=i)
         source.save()
-        
+
     def test_without_short_names(self):
-        ''' retrieving objects without short_name from the database and creating source 
+        ''' retrieving objects without short_name from the database and creating source
         based on them'''
         p = Platform.objects.get(pk=168)
         i = Instrument.objects.get(pk=140)
@@ -218,9 +230,9 @@ class SourceTests(TestCase):
         self.assertEqual(source.platform.series_entity, "Earth Explorers")
         self.assertEqual(source.instrument.short_name, "")
         self.assertEqual(source.instrument.subtype, "Lidar/Laser Spectrometers")
-    
+
     def test_empty_short_names(self):
-        ''' creating objects without short_name and creating source 
+        ''' creating objects without short_name and creating source
         based on them'''
         platform2=Platform(category = '',
         series_entity = '',

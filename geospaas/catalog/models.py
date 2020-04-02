@@ -33,6 +33,11 @@ class GeographicLocation(geomodels.Model):
     def __str__(self):
         return str(self.geometry.geom_type)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_geographic_location', fields=['geometry'])
+        ]
+
 
 class Source(models.Model):
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
@@ -43,7 +48,9 @@ class Source(models.Model):
     objects = SourceManager()
 
     class Meta:
-        unique_together = (("platform", "instrument"),)
+        constraints = [
+            models.UniqueConstraint(name='unique_source', fields=['platform', 'instrument'])
+        ]
 
     def __str__(self):
         if not self.platform and not self.instrument:
@@ -53,6 +60,7 @@ class Source(models.Model):
 
     def natural_key(self):
         return (self.platform.short_name, self.instrument.short_name)
+
 
 class Personnel(models.Model):
     '''
@@ -76,6 +84,7 @@ class Personnel(models.Model):
                 ("accessLevel2", "Can access public data only"),
             )
 
+
 class Role(models.Model):
     INVESTIGATOR = 'Investigator'
     TECH_CONTACT = 'Technical Contact' # I interpret this as the data center contact
@@ -84,6 +93,7 @@ class Role(models.Model):
             (DIF_AUTHOR, DIF_AUTHOR))
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
 
 class Dataset(models.Model):
     '''
@@ -181,7 +191,9 @@ class DatasetURI(models.Model):
 
     objects = DatasetURIManager()
     class Meta:
-        unique_together = (('uri', 'dataset'),)
+        constraints = [
+            models.UniqueConstraint(name='unique_dataset_uri', fields=['uri', 'dataset'])
+        ]
 
     def __str__(self):
         return '%s: %s'%(self.dataset, os.path.split(self.uri)[1])
@@ -192,10 +204,10 @@ class DatasetURI(models.Model):
     def save(self, *args, **kwargs):
         #validate_uri(self.uri) -- this will often fail because of server failures..
         # Validation is not usually done in the models but rather via form
-        # validation. We should discuss if we want it here or not. 
+        # validation. We should discuss if we want it here or not.
         super(DatasetURI, self).save(*args, **kwargs)
+
 
 class DatasetRelationship(models.Model):
     child = models.ForeignKey(Dataset, related_name='parents', on_delete=models.CASCADE)
     parent = models.ForeignKey(Dataset, related_name='children', on_delete=models.CASCADE)
-
