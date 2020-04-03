@@ -7,15 +7,11 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install \
     coverage \
     django==3.0 \
-    django-forms-bootstrap \
-    django-leaflet \
-    psycopg2 \
-    thredds_crawler \
-    --upgrade django-cors-headers \
+    django-forms-bootstrap==3.1.0 \
+    django-leaflet==0.26.0 \
+    psycopg2==2.8.4 \
+    thredds_crawler==1.5.4 \
 &&  echo "alias ll='ls -lh'" >> /root/.bashrc
-
-# moving to django 3
-#RUN pip install --upgrade django-cors-headers
 
 # install Geo-SPaaS
 COPY geospaas /tmp/geospaas
@@ -24,7 +20,5 @@ COPY MANIFEST.in /tmp/
 WORKDIR /tmp
 RUN python setup.py install \
 &&  rm -r geospaas setup.py MANIFEST.in
-
-
 
 WORKDIR /src
