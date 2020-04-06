@@ -33,7 +33,8 @@ deploy:
       tags: true
     script: /bin/bash scripts/docker_push.sh $TRAVIS_TAG latest
   - provider: pypi
+    skip_cleanup: true
     user: "__token__"
     password: "${PYPI_TOKEN}"
     on:
-      tags: true  
+      tags: true
