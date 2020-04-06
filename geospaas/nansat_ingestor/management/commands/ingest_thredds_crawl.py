@@ -30,7 +30,7 @@ def crawl(url, **options):
     for ds in c.datasets:
         for s in ds.services:
             if s.get('service').lower()=='opendap':
-                url = s.get('url') 
+                url = s.get('url')
                 name = s.get('name')
                 service = s.get('service')
         try:
@@ -45,22 +45,25 @@ def crawl(url, **options):
             print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
         # Connect all service uris to the dataset
         for s in ds.services:
-            ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
-                    service=s.get('service'), uri=s.get('url'), dataset=gds)
+            ds_uri, _ = DatasetURI.objects.get_or_create(
+            service_name=s.get('name'),
+            service=s.get('service'),
+            uri=s.get('url'),
+            dataset=gds)
         print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
     return added
 
 class Command(BaseCommand):
     args = '<url> <select>'
     help = """
-        Add metadata of datasets available on thredds/opendap to archive. 
+        Add metadata of datasets available on thredds/opendap to archive.
 
         Args:
             <url>: the url to the thredds catalog
             <date>: Select datasets by date (yyyy/mm/dd)
             <filename>: Select datasets by filename
 
-        Example: 
+        Example:
             (1) Find all Sentinel-2A datasets in 2017
 
             url = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html'

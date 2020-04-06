@@ -22,12 +22,18 @@ from geospaas.vocabularies.models import (Platform,
                                           ISOTopicCategory,
                                           Location)
 from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
-from geospaas.catalog.managers import DAP_SERVICE_NAME, OPENDAP_SERVICE 
-from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE 
+from geospaas.catalog.managers import DAP_SERVICE_NAME, OPENDAP_SERVICE
+from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE
 
 class DatasetManager(models.Manager):
 
-    def get_or_create(self, uri, n_points=10, uri_filter_args=None, *args, **kwargs):
+    def get_or_create(self,
+        uri,
+        n_points=10,
+        uri_filter_args=None,
+        service_name= FILE_SERVICE_NAME,
+        service= LOCAL_FILE_SERVICE,
+        *args, **kwargs):
         """ Create dataset and corresponding metadata
 
         Parameters:
@@ -57,8 +63,7 @@ class DatasetManager(models.Manager):
             return uris[0].dataset, False
 
         # Get name and sevice of data protocol
-        service_name = kwargs.pop('name', FILE_SERVICE_NAME)
-        service = kwargs.pop('service', LOCAL_FILE_SERVICE)
+
 
         # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
@@ -132,4 +137,3 @@ class DatasetManager(models.Manager):
                 dataset=ds)
 
         return ds, created
-
