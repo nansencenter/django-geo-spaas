@@ -31,8 +31,8 @@ class DatasetManager(models.Manager):
         uri,
         n_points=10,
         uri_filter_args=None,
-        service_name= FILE_SERVICE_NAME,
-        service= LOCAL_FILE_SERVICE,
+        uri_service_name=FILE_SERVICE_NAME,
+        uri_service_type=LOCAL_FILE_SERVICE,
         *args, **kwargs):
         """ Create dataset and corresponding metadata
 
