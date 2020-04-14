@@ -35,8 +35,8 @@ def crawl(url, **options):
                 service = s.get('service')
         try:
             # Create Dataset from OPeNDAP url - this is necessary to get all metadata
-            gds, cr = NansatDataset.objects.get_or_create(url, name=name,
-                    service=service)
+            gds, cr = NansatDataset.objects.get_or_create(url, uri_service_name=name,
+                    uri_service_type=service)
         except (IOError, AttributeError) as e:
             #warnings.warn(e.message)
             continue
