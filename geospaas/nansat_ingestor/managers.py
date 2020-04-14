@@ -144,18 +144,18 @@ class DatasetManager(models.Manager):
             if 'standard_name' in band_meta.keys():
                 pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
                 dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
-
+                ds.parameters.add(pp)
 
         # GCMD keywords must be imported from Nansat object as is ...
         # For now, the codes below will add all parameters except GCMD keywords.
         # After fixing the issue in Nansat, the codes can be replaced by the one commented above.
         # create parameter
-        all_band_meta = n.bands()
-        for band_id in range(1, len(all_band_meta)+1):
-            band_meta = all_band_meta[band_id]
-            if 'standard_name' in band_meta.keys():
-                pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
-                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
+        ###all_band_meta = n.bands()
+        ###for band_id in range(1, len(all_band_meta)+1):
+        ###    band_meta = all_band_meta[band_id]
+        ###    if 'standard_name' in band_meta.keys():
+        ###        pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
+        ###        dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
 
 
         # create dataset URI
