@@ -133,7 +133,7 @@ class DatasetManager(models.Manager):
                 **options)
 
         # create dataset URI
-        ds_uri, _ = DatasetURI.objects.get_or_create(name=service_name, service=service, uri=uri,
+        ds_uri, _ = DatasetURI.objects.get_or_create(name=uri_service_name, service=uri_service_type, uri=uri,
                 dataset=ds)
 
         return ds, created
