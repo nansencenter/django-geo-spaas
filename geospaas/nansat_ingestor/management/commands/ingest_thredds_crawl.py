@@ -46,7 +46,7 @@ def crawl(url, **options):
         # Connect all service uris to the dataset
         for s in ds.services:
             ds_uri, _ = DatasetURI.objects.get_or_create(
-            service_name=s.get('name'),
+            name=s.get('name'),
             service=s.get('service'),
             uri=s.get('url'),
             dataset=gds)
