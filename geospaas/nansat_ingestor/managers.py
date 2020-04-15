@@ -1,29 +1,26 @@
+import json
 import uuid
 import warnings
-import json
 from xml.sax.saxutils import unescape
+
+import pythesint as pti
+from django.contrib.gis.geos import WKTReader
+from django.db import models
+from nansat.nansat import Nansat
+
+from geospaas.catalog.managers import (DAP_SERVICE_NAME, FILE_SERVICE_NAME,
+                                       LOCAL_FILE_SERVICE, OPENDAP_SERVICE)
+from geospaas.catalog.models import (Dataset, DatasetURI, GeographicLocation,
+                                     Source)
+from geospaas.utils.utils import nansat_filename, validate_uri
+from geospaas.vocabularies.models import (DataCenter, Instrument,
+                                          ISOTopicCategory, Location, Platform)
 
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
 
-import pythesint as pti
-
-from nansat.nansat import Nansat
-
-from django.db import models
-from django.contrib.gis.geos import WKTReader
-
-from geospaas.utils.utils import validate_uri, nansat_filename
-from geospaas.vocabularies.models import (Platform,
-                                          Instrument,
-                                          DataCenter,
-                                          ISOTopicCategory,
-                                          Location)
-from geospaas.catalog.models import GeographicLocation, DatasetURI, Source, Dataset
-from geospaas.catalog.managers import DAP_SERVICE_NAME, OPENDAP_SERVICE
-from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE
 
 class DatasetManager(models.Manager):
 
@@ -61,9 +58,6 @@ class DatasetManager(models.Manager):
         uris = DatasetURI.objects.filter(uri=uri, **uri_filter_args)
         if len(uris) > 0:
             return uris[0].dataset, False
-
-        # Get name and sevice of data protocol
-
 
         # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
@@ -122,7 +116,6 @@ class DatasetManager(models.Manager):
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
-
 
         # create dataset
         ds, created = Dataset.objects.get_or_create(
