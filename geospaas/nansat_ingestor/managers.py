@@ -111,14 +111,6 @@ class DatasetManager(models.Manager):
         geolocation = GeographicLocation.objects.get_or_create(
                       geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
-        # create parameter
-        from geospaas.vocabularies.models import Parameter
-        nansat_bands = n.bands()
-        for band_number in range(1, len(nansat_bands)+1):
-            band_dict = nansat_bands[band_number]
-            if 'standard_name' in band_dict.keys():
-                parameter = Parameter.objects.get_or_create(nansat_bands[band_number])[0]
-
         # create dataset
         ds, created = Dataset.objects.get_or_create(
                 time_coverage_start=n.get_metadata('time_coverage_start'),
@@ -135,7 +127,6 @@ class DatasetManager(models.Manager):
             service_name = FILE_SERVICE_NAME
             service = LOCAL_FILE_SERVICE
         ds.save()
-
 
         # create parameter
         all_band_meta = n.bands()

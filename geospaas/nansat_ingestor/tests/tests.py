@@ -67,6 +67,7 @@ class BasetForTests(TestCase):
         self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
         self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
         self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
+        self.addCleanup(self.patcher.stop) # in order to prevent "mock leak" in the tests
 
     def tearDown(self):
         self.patcher.stop()
@@ -118,6 +119,20 @@ class TestDatasetURI(BasetForTests):
         uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
         self.assertEqual(uris, new_uris)
 
+#################
+#class TestParameterRelation(BasetForTests):
+#
+#    def test_relation_between_parameter_and_dataset(self, mock_isfile):
+#        #mock_isfile.return_value = True
+#        ''' Shall return the parameters based on the filtering of datasets'''
+#        testfile = 'file://localhost/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
+#        ds = Dataset.objects.get_or_create(testfile)[0]
+#        new_uris = ['file://fake/path/file1.ext', 'file://fake/path/file2.ext']
+#        all_uris = new_uris + [testfile]
+#
+#        uris = Dataset.objects.filter(parameters__standard_name='quality_flags')
+#        self.assertEqual(uris, new_uris)
+###################
 
 class TestIngestNansatCommand(BasetForTests):
 
@@ -127,6 +142,9 @@ class TestIngestNansatCommand(BasetForTests):
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, stdout=out)
+        print('###################')
+        print(out.getvalue())
+        print('###################')
         self.assertIn('Successfully added:', out.getvalue())
 
     @patch('os.path.isfile')
@@ -180,7 +198,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_validate_uri.return_value = True
 
         self.patch_Crawl = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.Crawl')
-        self.mock_Crawl = self.patch_Crawl.start() 
+        self.mock_Crawl = self.patch_Crawl.start()
         self.mock_Crawl.SKIPS = []
 
         self.patch_Dataset = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
@@ -194,23 +212,23 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         test_LeafDataset = LeafDataset()
         test_LeafDataset.services = [
             {
-                'name': 'odap', 
-                'service': 'OPENDAP', 
+                'name': 'odap',
+                'service': 'OPENDAP',
                 'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
                     'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
             },{
-                'name': 'httpService', 
-                'service': 'HTTPServer', 
+                'name': 'httpService',
+                'service': 'HTTPServer',
                 'url': 'http://nbstds.met.no/TEST/fileServer/dodsC/NBS/S2A/2019/01/24/' \
                     'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
             },{
-                'name': 'wms', 
-                'service': 'WMS', 
+                'name': 'wms',
+                'service': 'WMS',
                 'url': 'http://nbstds.met.no/TEST/wms/dodsC/NBS/S2A/2019/01/24/' \
                     'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
             },{
-                'name': 'wcs', 
-                'service': 'WCS', 
+                'name': 'wcs',
+                'service': 'WCS',
                 'url': 'http://nbstds.met.no/TEST/wcs/dodsC/NBS/S2A/2019/01/24/' \
                     'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
             }
@@ -264,5 +282,3 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         # I am not sure which situations caused AttributeError, so this is not tested now (on 2019-02-15,
         # the S2 data access from the Norwegian ground segment was failing)
         pass
-
-
