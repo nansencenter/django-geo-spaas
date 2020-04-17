@@ -86,8 +86,11 @@ class BasetForTests(TestCase):
 
 class TestDatasetManager(BasetForTests):
 
+
+
+
     @patch('os.path.isfile')
-    def test_getorcreate_localfile(self, mock_isfile):
+    def test_getorcreate_localfile_only_created_for_the_very_first_time(self, mock_isfile):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
@@ -95,10 +98,28 @@ class TestDatasetManager(BasetForTests):
 
         self.assertTrue(cr0)
         self.assertFalse(cr1)
+
+
+
+    @patch('os.path.isfile')
+    def test_getorcreate_localfile_is_mached_in_metadata(self, mock_isfile):
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds1, cr1 = Dataset.objects.get_or_create(uri)
         self.assertEqual(
             ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
         self.assertEqual(ds0.summary, 'NONE')
+
+
+
+    @patch('os.path.isfile')
+    def test_getorcreate_localfile_matched_parameter(self, mock_isfile):
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds1, cr1 = Dataset.objects.get_or_create(uri)
         self.assertEqual(ds0.parameters.values()[0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
 
     def test_fail_invalid_uri(self):
@@ -147,7 +168,7 @@ class TestIngestThreddsCrawl(TestCase):
     def setUp(self):
         self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
         self.patch_crawl = patch(
-            'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.crawl')
+            'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.crawl_and_ingest')
         self.mock_crawl = self.patch_crawl.start()
         self.mock_crawl.return_value = 10
 
@@ -239,8 +260,8 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
-        added = crawl(self.uri)
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
+        added = crawl_and_ingest(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(
             self.uri, debug=True, select=None, skip=['.*ncml'])
@@ -255,8 +276,8 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
-        added = crawl(self.uri, date='2019/01/01')
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
+        added = crawl_and_ingest(self.uri, date='2019/01/01')
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
                                                 select=['(.*2019/01/01.*\\.nc)'], skip=['.*ncml'])
@@ -266,9 +287,9 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
         fn = 'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-        added = crawl(self.uri, filename=fn)
+        added = crawl_and_ingest(self.uri, filename=fn)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
                                                 select=[

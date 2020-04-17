@@ -13,7 +13,7 @@ from geospaas.nansat_ingestor.models import Dataset as NansatDataset
 from geospaas.utils.utils import validate_uri
 
 
-def crawl(url, **options):
+def crawl_and_ingest(url, **options):
     validate_uri(url)
 
     date = options.get('date', None)
@@ -92,6 +92,6 @@ class Command(BaseCommand):
         if not len(options['url']) == 1:
             raise IOError('Please provide a url to the data')
         url = options.pop('url')[0]
-        added = crawl(url, **options)
+        added = crawl_and_ingest(url, **options)
         self.stdout.write(
             'Successfully added metadata of %s datasets' % added)
