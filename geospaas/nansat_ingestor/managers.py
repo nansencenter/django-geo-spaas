@@ -10,8 +10,8 @@ from nansat.nansat import Nansat
 
 from geospaas.catalog.managers import (DAP_SERVICE_NAME, FILE_SERVICE_NAME,
                                        LOCAL_FILE_SERVICE, OPENDAP_SERVICE)
-from geospaas.catalog.models import (Dataset, DatasetURI, GeographicLocation,
-                                     Source)
+from geospaas.catalog.models import (Dataset, DatasetParameter, DatasetURI,
+                                     GeographicLocation, Source)
 from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
                                           ISOTopicCategory, Location, 
