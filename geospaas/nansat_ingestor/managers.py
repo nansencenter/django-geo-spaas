@@ -6,16 +6,16 @@ from xml.sax.saxutils import unescape
 import pythesint as pti
 from django.contrib.gis.geos import WKTReader
 from django.db import models
+from nansat.nansat import Nansat
+
 from geospaas.catalog.managers import (DAP_SERVICE_NAME, FILE_SERVICE_NAME,
                                        LOCAL_FILE_SERVICE, OPENDAP_SERVICE)
 from geospaas.catalog.models import (Dataset, DatasetParameter, DatasetURI,
                                      GeographicLocation, Source)
 from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
-                                          ISOTopicCategory, Location,
+                                          ISOTopicCategory, Location, 
                                           Parameter, Platform)
-from nansat.nansat import Nansat
-
 try:
     from urlparse import urlparse
 except ImportError:
@@ -24,7 +24,13 @@ except ImportError:
 
 class DatasetManager(models.Manager):
 
-    def get_or_create(self, uri, n_points=10, uri_filter_args=None, *args, **kwargs):
+    def get_or_create(self,
+        uri,
+        n_points=10,
+        uri_filter_args=None,
+        uri_service_name=FILE_SERVICE_NAME,
+        uri_service_type=LOCAL_FILE_SERVICE,
+        *args, **kwargs):
         """ Create dataset and corresponding metadata
 
         Parameters:
@@ -35,6 +41,10 @@ class DatasetManager(models.Manager):
                   Number of border points (default is 10)
             uri_filter_args : dict
                 Extra DatasetURI filter arguments if several datasets can refer to the same URI
+            uri_service_name : str
+                name of the service which is used  ('dapService', 'fileService', 'http' or 'wms')
+            uri_service_type : str
+                type of the service which is used  ('OPENDAP', 'local', 'HTTPServer' or 'WMS')
 
         Returns:
         -------
@@ -119,15 +129,6 @@ class DatasetManager(models.Manager):
                 geographic_location=geolocation,
                 **options)
 
-        uri_scheme = urlparse(uri).scheme
-        if 'http' in uri_scheme:
-            service_name = DAP_SERVICE_NAME
-            service = OPENDAP_SERVICE
-        else:
-            service_name = FILE_SERVICE_NAME
-            service = LOCAL_FILE_SERVICE
-        ds.save()
-
         # create parameter
         all_band_meta = n.bands()
         for band_id in range(1, len(all_band_meta)+1):
@@ -138,7 +139,7 @@ class DatasetManager(models.Manager):
                 ds.parameters.add(pp)
 
         # create dataset URI
-        ds_uri, _ = DatasetURI.objects.get_or_create(name=service_name, service=service, uri=uri,
+        ds_uri, _ = DatasetURI.objects.get_or_create(name=uri_service_name, service=uri_service_type, uri=uri,
                 dataset=ds)
 
         return ds, created

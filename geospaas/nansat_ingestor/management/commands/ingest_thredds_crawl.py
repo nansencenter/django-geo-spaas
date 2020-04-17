@@ -3,14 +3,15 @@ Arome forecasts from thredds.met.no. Other repositories may require slight chang
 must be developed gradually..
 """
 import warnings
-from thredds_crawler.crawl import Crawl
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError
+from thredds_crawler.crawl import Crawl
 
-from geospaas.utils.utils import validate_uri
 from geospaas.catalog.models import DatasetURI
 from geospaas.nansat_ingestor.models import Dataset as NansatDataset
+from geospaas.utils.utils import validate_uri
+
 
 def crawl(url, **options):
     validate_uri(url)
@@ -18,9 +19,9 @@ def crawl(url, **options):
     date = options.get('date', None)
     filename = options.get('filename', None)
     if date:
-        select = ['(.*%s.*\.nc)' %date]
+        select = ['(.*%s.*\.nc)' % date]
     elif filename:
-        select = ['(.*%s)' %filename]
+        select = ['(.*%s)' % filename]
     else:
         select = None
 
@@ -28,42 +29,43 @@ def crawl(url, **options):
     c = Crawl(url, select=select, skip=skips, debug=True)
     added = 0
     for ds in c.datasets:
-        url = [s.get('url') for s in ds.services if
-                s.get('service').lower()=='opendap'][0]
+        for s in ds.services:
+            if s.get('service').lower() == 'opendap':
+                url = s.get('url')
+                name = s.get('name')
+                service = s.get('service')
         try:
-            gds, cr = NansatDataset.objects.get_or_create(url)
+            # Create Dataset from OPeNDAP url - this is necessary to get all metadata
+            gds, cr = NansatDataset.objects.get_or_create(url, uri_service_name=name,
+                                                          uri_service_type=service)
         except (IOError, AttributeError) as e:
-            #warnings.warn(e.message)
+            # warnings.warn(e.message)
             continue
-        else:
-            if cr:
-                added += 1
-                print('Added %s, no. %d/%d'%(url, added, len(c.datasets)))
+        if cr:
+            added += 1
+            print('Added %s, no. %d/%d' % (url, added, len(c.datasets)))
         # Connect all service uris to the dataset
         for s in ds.services:
-            try:
-                ds_uri, _ = DatasetURI.objects.get_or_create(name=s.get('name'),
-                    service=s.get('service'), uri=s.get('url'), dataset=gds)
-            except IntegrityError:
-                # There is no standard for the name (and possibly the service). This means that the
-                # naming defined by geospaas.catalog.managers.DAP_SERVICE_NAME (and assigned to the
-                # DatasetURI in geospaas.nansat_ingestor.managers.DatasetManager.get_or_create) may
-                # be different from s.get('name').
-                # Solution: ignore the error and continue the loop
-                continue
+            ds_uri, _ = DatasetURI.objects.get_or_create(
+                name=s.get('name'),
+                service=s.get('service'),
+                uri=s.get('url'),
+                dataset=gds)
+        print('Added %s, no. %d/%d' % (url, added, len(c.datasets)))
     return added
+
 
 class Command(BaseCommand):
     args = '<url> <select>'
     help = """
-        Add metadata of datasets available on thredds/opendap to archive. 
+        Add metadata of datasets available on thredds/opendap to archive.
 
         Args:
             <url>: the url to the thredds catalog
             <date>: Select datasets by date (yyyy/mm/dd)
             <filename>: Select datasets by filename
 
-        Example: 
+        Example:
             (1) Find all Sentinel-2A datasets in 2017
 
             url = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/catalog.html'
@@ -87,9 +89,9 @@ class Command(BaseCommand):
                             help='''Filename of a specific dataset''')
 
     def handle(self, *args, **options):
-        if not len(options['url'])==1:
+        if not len(options['url']) == 1:
             raise IOError('Please provide a url to the data')
         url = options.pop('url')[0]
         added = crawl(url, **options)
         self.stdout.write(
-            'Successfully added metadata of %s datasets' %added)
+            'Successfully added metadata of %s datasets' % added)

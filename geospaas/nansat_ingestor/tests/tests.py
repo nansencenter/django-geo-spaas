@@ -3,17 +3,16 @@ import sys
 from contextlib import contextmanager
 from io import StringIO
 
-from mock import patch, PropertyMock, Mock, MagicMock, DEFAULT
-
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-from io import StringIO
 from django.test import TestCase
+from mock import DEFAULT, MagicMock, Mock, PropertyMock, patch
 
-from geospaas.vocabularies.models import Instrument, Platform
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
+from geospaas.vocabularies.models import Instrument, Platform
+
 
 @contextmanager
 def captured_output():
@@ -28,6 +27,7 @@ def captured_output():
 # See also:
 # https://docs.python.org/3.5/library/unittest.mock-examples.html#applying-the-same-patch-to-every-test-method
 
+
 class BasetForTests(TestCase):
     fixtures = ['vocabularies', 'catalog']
     predefined_metadata_dict = {
@@ -36,7 +36,7 @@ class BasetForTests(TestCase):
         'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
         'time_coverage_start': '2011-05-03T10:56:38.995099',
         'time_coverage_end': '2011-05-03T10:56:38.995099',
-        'data_center' : '{"Bucket_Level0": "MULTINATIONAL ORGANIZATIONS", "Bucket_Level1": "", "Bucket_Level2": "", "Bucket_Level3": "", "Short_Name": "ESA/EO", "Long_Name": "Observing the Earth, European Space Agency", "Data_Center_URL": "http://www.esa.int/esaEO/"}',
+        'data_center': '{"Bucket_Level0": "MULTINATIONAL ORGANIZATIONS", "Bucket_Level1": "", "Bucket_Level2": "", "Bucket_Level3": "", "Short_Name": "ESA/EO", "Long_Name": "Observing the Earth, European Space Agency", "Data_Center_URL": "http://www.esa.int/esaEO/"}',
         'gcmd_location': '{"Location_Category": "VERTICAL LOCATION", "Location_Type": "SEA SURFACE", "Location_Subregion1": "", "Location_Subregion2": "", "Location_Subregion3": ""}',
         'ISO_topic_category' : '{"iso_topic_category": "Oceans"}',
         }
@@ -83,6 +83,7 @@ class BasetForTests(TestCase):
     def mock_bands(self):
         return self.predefined_band_metadata_dict
 
+
 class TestDatasetManager(BasetForTests):
 
     @patch('os.path.isfile')
@@ -94,7 +95,8 @@ class TestDatasetManager(BasetForTests):
 
         self.assertTrue(cr0)
         self.assertFalse(cr1)
-        self.assertEqual(ds0.entry_id, self.predefined_metadata_dict['entry_id'])
+        self.assertEqual(
+            ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
         self.assertEqual(ds0.summary, 'NONE')
         self.assertEqual(ds0.parameters.values()[0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
@@ -135,14 +137,17 @@ class TestIngestNansatCommand(BasetForTests):
         mock_isfile.return_value = True
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
-        call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
+        call_command('ingest', f, nansat_option=[
+                     'mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
+
 
 class TestIngestThreddsCrawl(TestCase):
 
     def setUp(self):
         self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
-        self.patch_crawl = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.crawl')
+        self.patch_crawl = patch(
+            'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.crawl')
         self.mock_crawl = self.patch_crawl.start()
         self.mock_crawl.return_value = 10
 
@@ -164,9 +169,10 @@ class TestIngestThreddsCrawl(TestCase):
     def test_ingest_with_filename_arg(self):
         with captured_output() as (out, err):
             call_command('ingest_thredds_crawl', self.uri,
-                filename='S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc')
+                         filename='S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc')
         output = out.getvalue().strip()
         self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+
 
 class TestIngestThreddsCrawl__crawl__function(TestCase):
 
@@ -176,15 +182,18 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.patch_LeafDataset = patch('thredds_crawler.crawl.LeafDataset')
         self.mock_LeafDataset = self.patch_LeafDataset.start()
 
-        self.patch_validate_uri = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.validate_uri')
+        self.patch_validate_uri = patch(
+            'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.validate_uri')
         self.mock_validate_uri = self.patch_validate_uri.start()
         self.mock_validate_uri.return_value = True
 
-        self.patch_Crawl = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.Crawl')
+        self.patch_Crawl = patch(
+            'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.Crawl')
         self.mock_Crawl = self.patch_Crawl.start()
         self.mock_Crawl.SKIPS = []
 
-        self.patch_Dataset = patch('geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
+        self.patch_Dataset = patch(
+            'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
         self.mock_ds = self.patch_Dataset.start()
 
         pmod = 'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.DatasetURI'
@@ -216,7 +225,8 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
                     'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
             }
         ]
-        self.mock_Crawl.return_value = PropertyMock(datasets = [test_LeafDataset])
+        self.mock_Crawl.return_value = PropertyMock(
+            datasets=[test_LeafDataset])
 
     def tearDown(self):
         self.patch_LeafDataset.stop()
@@ -227,33 +237,43 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
 
     def test_ds_created(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
-        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (
+            DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
         added = crawl(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
-        self.mock_Crawl.assert_called_once_with(self.uri, debug=True, select=None, skip=['.*ncml'])
+        self.mock_Crawl.assert_called_once_with(
+            self.uri, debug=True, select=None, skip=['.*ncml'])
+        self.mock_ds.objects.get_or_create.assert_called_once_with(
+            'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
+            'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc',
+            uri_service_name='odap',
+            uri_service_type='OPENDAP')
         self.assertEqual(added, 1)
 
     def test_ds_created_with_date_arg(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
-        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (
+            DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
         added = crawl(self.uri, date='2019/01/01')
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
-                select=['(.*2019/01/01.*\\.nc)'], skip=['.*ncml'])
+                                                select=['(.*2019/01/01.*\\.nc)'], skip=['.*ncml'])
         self.assertEqual(added, 1)
 
     def test_ds_created_with_filename_arg(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
-        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (
+            DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl
         fn = 'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
         added = crawl(self.uri, filename=fn)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
-                select=['(.*S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc)'],
-                skip=['.*ncml'])
+                                                select=[
+                                                    '(.*S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc)'],
+                                                skip=['.*ncml'])
         self.assertEqual(added, 1)
 
     def test_get_or_create_raises_IOError(self):
