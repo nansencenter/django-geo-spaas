@@ -119,20 +119,6 @@ class TestDatasetURI(BasetForTests):
         uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
         self.assertEqual(uris, new_uris)
 
-#################
-#class TestParameterRelation(BasetForTests):
-#
-#    def test_relation_between_parameter_and_dataset(self, mock_isfile):
-#        #mock_isfile.return_value = True
-#        ''' Shall return the parameters based on the filtering of datasets'''
-#        testfile = 'file://localhost/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
-#        ds = Dataset.objects.get_or_create(testfile)[0]
-#        new_uris = ['file://fake/path/file1.ext', 'file://fake/path/file2.ext']
-#        all_uris = new_uris + [testfile]
-#
-#        uris = Dataset.objects.filter(parameters__standard_name='quality_flags')
-#        self.assertEqual(uris, new_uris)
-###################
 
 class TestIngestNansatCommand(BasetForTests):
 
@@ -142,9 +128,6 @@ class TestIngestNansatCommand(BasetForTests):
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, stdout=out)
-        print('###################')
-        print(out.getvalue())
-        print('###################')
         self.assertIn('Successfully added:', out.getvalue())
 
     @patch('os.path.isfile')
