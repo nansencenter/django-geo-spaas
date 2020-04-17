@@ -97,7 +97,6 @@ class TestDatasetManager(BasetForTests):
         self.assertTrue(cr0)
         self.assertFalse(cr1)
 
-
     @patch('os.path.isfile')
     def test_getorcreate_localfile_is_mached_in_metadata(self, mock_isfile):
         mock_isfile.return_value = True
@@ -118,6 +117,17 @@ class TestDatasetManager(BasetForTests):
         self.assertEqual(ds0.parameters.values()[
                          0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
 
+    @patch('os.path.isfile')
+    def test_getorcreate_localfile_matched_parameter(self, mock_isfile):
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds0.save()
+        testingDataset = Dataset.objects.filter(
+            parameters__standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
+        self.assertEqual(str(testingDataset.first().parameters.first(
+        )), self.predefined_band_metadata_dict[2]['standard_name'])
+
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
         with self.assertRaises(ValueError):
@@ -125,7 +135,6 @@ class TestDatasetManager(BasetForTests):
 
 
 class TestDatasetURI(BasetForTests):
-
     @patch('os.path.isfile')
     def test_get_non_ingested_uris(self, mock_isfile):
         mock_isfile.return_value = True
@@ -134,13 +143,11 @@ class TestDatasetURI(BasetForTests):
         ds = Dataset.objects.get_or_create(testfile)[0]
         new_uris = ['file://fake/path/file1.ext', 'file://fake/path/file2.ext']
         all_uris = new_uris + [testfile]
-
         uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
         self.assertEqual(uris, new_uris)
 
 
 class TestIngestNansatCommand(BasetForTests):
-
     @patch('os.path.isfile')
     def test_add_asar(self, mock_isfile):
         mock_isfile.return_value = True
@@ -160,7 +167,6 @@ class TestIngestNansatCommand(BasetForTests):
 
 
 class TestIngestThreddsCrawl(TestCase):
-
     def setUp(self):
         self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
         self.patch_crawl = patch(
@@ -192,31 +198,24 @@ class TestIngestThreddsCrawl(TestCase):
 
 
 class TestIngestThreddsCrawl__crawl__function(TestCase):
-
     def setUp(self):
         self.uri = 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
-
         self.patch_LeafDataset = patch('thredds_crawler.crawl.LeafDataset')
         self.mock_LeafDataset = self.patch_LeafDataset.start()
-
         self.patch_validate_uri = patch(
             'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.validate_uri')
         self.mock_validate_uri = self.patch_validate_uri.start()
         self.mock_validate_uri.return_value = True
-
         self.patch_Crawl = patch(
             'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.Crawl')
         self.mock_Crawl = self.patch_Crawl.start()
         self.mock_Crawl.SKIPS = []
-
         self.patch_Dataset = patch(
             'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.NansatDataset')
         self.mock_ds = self.patch_Dataset.start()
-
         pmod = 'geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl.DatasetURI'
         self.patch_DatasetURI = patch(pmod)
         self.mock_dsuri = self.patch_DatasetURI.start()
-
         from thredds_crawler.crawl import LeafDataset
         test_LeafDataset = LeafDataset()
         test_LeafDataset.services = [
