@@ -41,6 +41,10 @@ class DatasetManager(models.Manager):
                   Number of border points (default is 10)
             uri_filter_args : dict
                 Extra DatasetURI filter arguments if several datasets can refer to the same URI
+            uri_service_name : str
+                name of the service which is used  ('dapService', 'fileService', 'http' or 'wms')
+            uri_service_type : str
+                type of the service which is used  ('OPENDAP', 'local', 'HTTPServer' or 'WMS')
 
         Returns:
         -------
