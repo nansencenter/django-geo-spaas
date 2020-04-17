@@ -14,7 +14,8 @@ from geospaas.catalog.models import (Dataset, DatasetURI, GeographicLocation,
                                      Source)
 from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
-                                          ISOTopicCategory, Location, Platform)
+                                          ISOTopicCategory, Location, 
+                                          Parameter, Platform)
 try:
     from urlparse import urlparse
 except ImportError:
