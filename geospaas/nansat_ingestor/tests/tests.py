@@ -38,14 +38,36 @@ class BasetForTests(TestCase):
         'time_coverage_end': '2011-05-03T10:56:38.995099',
         'data_center': '{"Bucket_Level0": "MULTINATIONAL ORGANIZATIONS", "Bucket_Level1": "", "Bucket_Level2": "", "Bucket_Level3": "", "Short_Name": "ESA/EO", "Long_Name": "Observing the Earth, European Space Agency", "Data_Center_URL": "http://www.esa.int/esaEO/"}',
         'gcmd_location': '{"Location_Category": "VERTICAL LOCATION", "Location_Type": "SEA SURFACE", "Location_Subregion1": "", "Location_Subregion2": "", "Location_Subregion3": ""}',
-        'ISO_topic_category': '{"iso_topic_category": "Oceans"}',
-    }
+        'ISO_topic_category' : '{"iso_topic_category": "Oceans"}',
+        }
+    predefined_band_metadata_dict = {
+        1:{'dataType': '2',
+           'name': 'DN_HH',
+           'SourceBand': '1',
+           'SourceFilename': '/some/folder/filename.ext'},
+        2:{'colormap': 'gray',
+           'dataType': '6',
+           'long_name': 'Normalized Radar Cross Section',
+           'minmax': '0 0.1',
+           'name': 'sigma0_HH',
+           'PixelFunctionType': 'Sentinel1Calibration',
+           'polarization': 'HH',
+           'short_name': 'sigma0',
+           'SourceBand': '1',
+           'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
+           'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
+           'suffix': 'HH',
+           'units': 'm/m',
+           'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'}
+        }
 
     def setUp(self):
         self.patcher = patch('geospaas.nansat_ingestor.managers.Nansat')
         self.mock_Nansat = self.patcher.start()
         self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
         self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
+        self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
+        self.addCleanup(self.patcher.stop) # in order to prevent "mock leak" in the tests
 
     def tearDown(self):
         self.patcher.stop()
@@ -57,6 +79,9 @@ class BasetForTests(TestCase):
         if args[0] not in self.predefined_metadata_dict:
             raise
         return self.predefined_metadata_dict[args[0]]
+
+    def mock_bands(self):
+        return self.predefined_band_metadata_dict
 
 
 class TestDatasetManager(BasetForTests):
@@ -74,6 +99,7 @@ class TestDatasetManager(BasetForTests):
             ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
         self.assertEqual(ds0.summary, 'NONE')
+        self.assertEqual(ds0.parameters.values()[0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
 
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
@@ -180,23 +206,23 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
             {
                 'name': 'odap',
                 'service': 'OPENDAP',
-                'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/'
-                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-            }, {
+                'url': 'http://nbstds.met.no/TEST/thredds/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            },{
                 'name': 'httpService',
                 'service': 'HTTPServer',
-                'url': 'http://nbstds.met.no/TEST/fileServer/dodsC/NBS/S2A/2019/01/24/'
-                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-            }, {
+                'url': 'http://nbstds.met.no/TEST/fileServer/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            },{
                 'name': 'wms',
                 'service': 'WMS',
-                'url': 'http://nbstds.met.no/TEST/wms/dodsC/NBS/S2A/2019/01/24/'
-                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
-            }, {
+                'url': 'http://nbstds.met.no/TEST/wms/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+            },{
                 'name': 'wcs',
                 'service': 'WCS',
-                'url': 'http://nbstds.met.no/TEST/wcs/dodsC/NBS/S2A/2019/01/24/'
-                'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
+                'url': 'http://nbstds.met.no/TEST/wcs/dodsC/NBS/S2A/2019/01/24/' \
+                    'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
             }
         ]
         self.mock_Crawl.return_value = PropertyMock(

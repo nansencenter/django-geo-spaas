@@ -15,7 +15,6 @@ from geospaas.catalog.models import (Dataset, DatasetURI, GeographicLocation,
 from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
                                           ISOTopicCategory, Location, Platform)
-
 try:
     from urlparse import urlparse
 except ImportError:
@@ -128,6 +127,15 @@ class DatasetManager(models.Manager):
                 source=source,
                 geographic_location=geolocation,
                 **options)
+
+        # create parameter
+        all_band_meta = n.bands()
+        for band_id in range(1, len(all_band_meta)+1):
+            band_meta = all_band_meta[band_id]
+            if 'standard_name' in band_meta.keys():
+                pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
+                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
+                ds.parameters.add(pp)
 
         # create dataset URI
         ds_uri, _ = DatasetURI.objects.get_or_create(name=uri_service_name, service=uri_service_type, uri=uri,

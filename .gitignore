@@ -11,3 +11,13 @@ provisioning/site.retry
 provisioning/roles/andrew*
 provisioning/roles/nansencenter.django/*
 provisioning/roles/localvm/defaults/*
+.DS_Store
+provisioning/.DS_Store
+provisioning/roles/.DS_Store
+provisioning/roles/andrewrothstein.bash/
+provisioning/roles/andrewrothstein.conda-env
+provisioning/roles/andrewrothstein.miniconda
+provisioning/roles/andrewrothstein.unarchive-deps
+provisioning/roles/geospaas/.DS_Store
+provisioning/roles/nansencenter.django
+provisioning/site.retry
