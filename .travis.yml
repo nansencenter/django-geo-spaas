@@ -22,7 +22,7 @@ script:
     -e TRAVIS_PULL_REQUEST
     -v "$(pwd):/src"
     $IMAGE_NAME
-    bash -c "source /opt/conda/bin/activate && coverage run runtests.py && coveralls"
+    bash -c "source /opt/conda/bin/activate && coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py  && coveralls"
 
 before_deploy:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -36,4 +36,4 @@ deploy:
     user: "__token__"
     password: "${PYPI_TOKEN}"
     on:
-      tags: true  
+      tags: true
