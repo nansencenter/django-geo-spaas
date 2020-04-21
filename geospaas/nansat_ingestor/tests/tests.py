@@ -12,7 +12,7 @@ from mock import DEFAULT, MagicMock, Mock, PropertyMock, patch
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
 from geospaas.vocabularies.models import Instrument, Platform
-from geospaas.catalog.models import Source
+
 
 @contextmanager
 def captured_output():
@@ -89,20 +89,23 @@ class TestDatasetManager(BasetForTests):
 
     @patch('os.path.isfile')
     def test_getorcreate_localfile_only_created_for_the_very_first_time(self, mock_isfile):
+        '''shall return the creation flag (the second returned value)
+        equals to True for the first time and
+        equals to False for the second time'''
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         ds1, cr1 = Dataset.objects.get_or_create(uri)
-
         self.assertTrue(cr0)
         self.assertFalse(cr1)
 
     @patch('os.path.isfile')
-    def test_getorcreate_localfile_is_mached_in_metadata(self, mock_isfile):
+    def test_getorcreate_localfile_is_matched_in_metadata(self, mock_isfile):
+        '''shall return the correct specification of dataset created based on
+        predefined metadata declared in the test'''
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds1, cr1 = Dataset.objects.get_or_create(uri)
         self.assertEqual(
             ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
@@ -113,16 +116,17 @@ class TestDatasetManager(BasetForTests):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds1, cr1 = Dataset.objects.get_or_create(uri)
         self.assertEqual(ds0.parameters.values()[
                          0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
 
     @patch('os.path.isfile')
-    def test_getorcreate_localfile_matched_parameter(self, mock_isfile):
+    def test_getorcreate_localfile_filtering_base_on_parameter(self, mock_isfile):
+        '''shall return standard name of
+        an specified parameter of the correct filtered dataset
+        based on parameter filtering'''
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds0.save()
         testingDataset = Dataset.objects.filter(
             parameters__standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
         self.assertEqual(str(testingDataset.first().parameters.first(
@@ -252,6 +256,8 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.patch_DatasetURI.stop()
 
     def test_ds_created(self):
+        '''shall assert that NansatDataset.objects.get_or_create
+        is called for only once with correct input calls (called with opendap)'''
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
@@ -267,21 +273,25 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
             uri_service_type='OPENDAP')
         self.assertEqual(added, 1)
 
-    def test_ds_created2(self):
-
+    def test_dsuri_ds_created(self):
+        '''shall assert that DatasetURI.objects.get_or_create
+        is called several times with correct input calls'''
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
-        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
-        self.mock_dsuri.source.platform=Platform()
+        self.mock_dsuri.objects.get_or_create.return_value = (
+            DatasetURI(), True)
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
         added = crawl_and_ingest(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(
             self.uri, debug=True, select=None, skip=['.*ncml'])
-        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[0].kwargs['name'],'odap')
-        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[1].kwargs['service'],'HTTPServer')
-        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[2].kwargs['name'],'wms')
-        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[3].kwargs['service'],'WCS')
-
+        self.assertEqual(
+            self.mock_dsuri.objects.get_or_create.call_args_list[0].kwargs['name'], 'odap')
+        self.assertEqual(
+            self.mock_dsuri.objects.get_or_create.call_args_list[1].kwargs['service'], 'HTTPServer')
+        self.assertEqual(
+            self.mock_dsuri.objects.get_or_create.call_args_list[2].kwargs['name'], 'wms')
+        self.assertEqual(
+            self.mock_dsuri.objects.get_or_create.call_args_list[3].kwargs['service'], 'WCS')
 
     def test_ds_created_with_date_arg(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
