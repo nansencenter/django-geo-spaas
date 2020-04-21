@@ -12,7 +12,7 @@ from mock import DEFAULT, MagicMock, Mock, PropertyMock, patch
 from geospaas.catalog.models import DatasetURI, GeographicLocation
 from geospaas.nansat_ingestor.models import Dataset
 from geospaas.vocabularies.models import Instrument, Platform
-
+from geospaas.catalog.models import Source
 
 @contextmanager
 def captured_output():
@@ -267,10 +267,27 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
             uri_service_type='OPENDAP')
         self.assertEqual(added, 1)
 
+    def test_ds_created2(self):
+
+        self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
+        self.mock_dsuri.objects.get_or_create.return_value = (DatasetURI(), True)
+        self.mock_dsuri.source.platform=Platform()
+        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
+        added = crawl_and_ingest(self.uri)
+        self.mock_validate_uri.assert_called_once_with(self.uri)
+        self.mock_Crawl.assert_called_once_with(
+            self.uri, debug=True, select=None, skip=['.*ncml'])
+        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[0].kwargs['name'],'odap')
+        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[1].kwargs['service'],'HTTPServer')
+        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[2].kwargs['name'],'wms')
+        self.assertEqual(self.mock_dsuri.objects.get_or_create.call_args_list[3].kwargs['service'],'WCS')
+
+
     def test_ds_created_with_date_arg(self):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
+
         from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
         added = crawl_and_ingest(self.uri, date='2019/01/01')
         self.mock_validate_uri.assert_called_once_with(self.uri)
