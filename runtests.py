@@ -23,7 +23,6 @@ if __name__ == "__main__":
     django.setup()
 
     test_module = f".{sys.argv[1]}" if len(sys.argv) >= 2 else ''
-    #test_module = '.nansat_ingestor.tests'
 
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True)
