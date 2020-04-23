@@ -58,7 +58,36 @@ class BasetForTests(TestCase):
             'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
             'suffix': 'HH',
             'units': 'm/m',
-            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'}
+            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'},
+        3: {'colormap': 'testing',
+            'dataType': '6',
+            'long_name': 'testing',
+            'minmax': '0 0.1',
+            'name': 'testing',
+            'PixelFunctionType': 'testing',
+            'polarization': 'testing',
+            'short_name': 'testing',
+            'SourceBand': '1',
+            'SourceFilename': 'testing',
+            'standard_name': 'longitude',#<=== notice the difference between testing records
+            'suffix': 'testing',
+            'units': 'testing',
+            'wkv': 'testing'},
+        4: {'colormap': 'testing',
+            'dataType': '10',
+            'long_name': 'testing',
+            'minmax': '0 0.1',
+            'name': 'testing',
+            'PixelFunctionType': 'testing',
+            'polarization': 'testing',
+            'short_name': 'testing',
+            'SourceBand': '1',
+            'SourceFilename': 'testing',
+            'standard_name': 'latitude',#<=== notice the difference between testing records
+            'suffix': 'testing',
+            'units': 'testing',
+            'wkv': 'testing'},
+
     }
 
     def setUp(self):
@@ -136,6 +165,20 @@ class TestDatasetManager(BasetForTests):
         uri = '/this/is/some/file/but/not/an/uri'
         with self.assertRaises(ValueError):
             ds, created = Dataset.objects.get_or_create(uri)
+
+    @patch('os.path.isfile')
+    def test_exception_of_parameter_handling_for_longitude_and_latitude(self, mock_isfile):
+        '''shall return standard all specified parameter
+        without the parameter for latitude and longitude'''
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        # longitude should not be one of the parameters
+        self.assertNotIn(self.predefined_band_metadata_dict[3]['standard_name'],list(ds0.parameters.all().values('standard_name'))[0].values())
+        # latitude should not be one of the parameters
+        self.assertNotIn(self.predefined_band_metadata_dict[4]['standard_name'],list(ds0.parameters.all().values('standard_name'))[0].values())
+        # other parameters must be in the parameters
+        self.assertIn(self.predefined_band_metadata_dict[2]['standard_name'],list(ds0.parameters.all().values('standard_name'))[0].values())
 
 
 class TestDatasetURI(BasetForTests):
