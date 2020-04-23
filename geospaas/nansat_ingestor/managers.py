@@ -14,7 +14,7 @@ from geospaas.catalog.models import (Dataset, DatasetParameter, DatasetURI,
                                      GeographicLocation, Source)
 from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
-                                          ISOTopicCategory, Location, 
+                                          ISOTopicCategory, Location,
                                           Parameter, Platform)
 try:
     from urlparse import urlparse
@@ -25,12 +25,12 @@ except ImportError:
 class DatasetManager(models.Manager):
 
     def get_or_create(self,
-        uri,
-        n_points=10,
-        uri_filter_args=None,
-        uri_service_name=FILE_SERVICE_NAME,
-        uri_service_type=LOCAL_FILE_SERVICE,
-        *args, **kwargs):
+                      uri,
+                      n_points=10,
+                      uri_filter_args=None,
+                      uri_service_name=FILE_SERVICE_NAME,
+                      uri_service_type=LOCAL_FILE_SERVICE,
+                      *args, **kwargs):
         """ Create dataset and corresponding metadata
 
         Parameters:
@@ -70,17 +70,19 @@ class DatasetManager(models.Manager):
         n_metadata = n.get_metadata()
 
         # set compulsory metadata (source)
-        platform, _ = Platform.objects.get_or_create(json.loads(n_metadata['platform']))
-        instrument, _ = Instrument.objects.get_or_create(json.loads(n_metadata['instrument']))
+        platform, _ = Platform.objects.get_or_create(
+            json.loads(n_metadata['platform']))
+        instrument, _ = Instrument.objects.get_or_create(
+            json.loads(n_metadata['instrument']))
         specs = n_metadata.get('specs', '')
         source, _ = Source.objects.get_or_create(platform=platform,
                                                  instrument=instrument,
                                                  specs=specs)
 
         default_char_fields = {
-            'entry_id'           : lambda : 'NERSC_' + str(uuid.uuid4()),
-            'entry_title'        : lambda : 'NONE',
-            'summary'            : lambda : 'NONE',
+            'entry_id': lambda: 'NERSC_' + str(uuid.uuid4()),
+            'entry_title': lambda: 'NONE',
+            'summary': lambda: 'NONE',
         }
 
         # set optional CharField metadata from Nansat or from default_char_fields
@@ -93,12 +95,12 @@ class DatasetManager(models.Manager):
                 options[name] = n_metadata[name]
 
         default_foreign_keys = {
-            'gcmd_location'      : {'model': Location,
-                                    'value': pti.get_gcmd_location('SEA SURFACE')},
-            'data_center'        : {'model': DataCenter,
-                                    'value': pti.get_gcmd_provider('NERSC')},
-            'ISO_topic_category' : {'model': ISOTopicCategory,
-                                    'value': pti.get_iso19115_topic_category('Oceans')},
+            'gcmd_location': {'model': Location,
+                              'value': pti.get_gcmd_location('SEA SURFACE')},
+            'data_center': {'model': DataCenter,
+                            'value': pti.get_gcmd_provider('NERSC')},
+            'ISO_topic_category': {'model': ISOTopicCategory,
+                                   'value': pti.get_iso19115_topic_category('Oceans')},
         }
 
         # set optional ForeignKey metadata from Nansat or from default_foreign_keys
@@ -112,34 +114,40 @@ class DatasetManager(models.Manager):
                     value = json.loads(n_metadata[name])
                 except:
                     warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
-                                    (n_metadata[name], name))
+                                  (n_metadata[name], name))
             options[name], _ = model.objects.get_or_create(value)
 
         # Find coverage to set number of points in the geolocation
         if len(n.vrt.dataset.GetGCPs()) > 0:
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
-                      geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
+            geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
         # create dataset
         ds, created = Dataset.objects.get_or_create(
-                time_coverage_start=n.get_metadata('time_coverage_start'),
-                time_coverage_end=n.get_metadata('time_coverage_end'),
-                source=source,
-                geographic_location=geolocation,
-                **options)
+            time_coverage_start=n.get_metadata('time_coverage_start'),
+            time_coverage_end=n.get_metadata('time_coverage_end'),
+            source=source,
+            geographic_location=geolocation,
+            **options)
 
         # create parameter
         all_band_meta = n.bands()
         for band_id in range(1, len(all_band_meta)+1):
             band_meta = all_band_meta[band_id]
-            if 'standard_name' in band_meta.keys():
-                pp = Parameter.objects.get(standard_name=band_meta['standard_name'])
-                dsp, dsp_created = DatasetParameter.objects.get_or_create(dataset=ds, parameter=pp)
-                ds.parameters.add(pp)
+            if ('standard_name' in band_meta.keys()):
+                # There is no need to introduce latitude and longitude as a paramter for
+                # ingested dataset. Thus, these two are excluded from this loop
+                if ((band_meta['standard_name'] != 'latitude')
+                        & (band_meta['standard_name'] != 'longitude')):
+                    pp = Parameter.objects.get(
+                        standard_name=band_meta['standard_name'])
+                    dsp, dsp_created = DatasetParameter.objects.get_or_create(
+                        dataset=ds, parameter=pp)
+                    ds.parameters.add(pp)
 
         # create dataset URI
         ds_uri, _ = DatasetURI.objects.get_or_create(name=uri_service_name, service=uri_service_type, uri=uri,
-                dataset=ds)
+                                                     dataset=ds)
 
         return ds, created
