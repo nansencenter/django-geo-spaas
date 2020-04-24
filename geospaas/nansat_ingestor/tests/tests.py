@@ -174,11 +174,17 @@ class TestDatasetManager(BasetForTests):
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         # longitude should not be one of the parameters
-        self.assertNotIn(self.predefined_band_metadata_dict[3]['standard_name'],list(ds0.parameters.all().values('standard_name'))[0].values())
+        self.assertNotIn(
+            self.predefined_band_metadata_dict[3]['standard_name'],
+            list(ds0.parameters.all().values('standard_name'))[0].values())
         # latitude should not be one of the parameters
-        self.assertNotIn(self.predefined_band_metadata_dict[4]['standard_name'],list(ds0.parameters.all().values('standard_name'))[0].values())
+        self.assertNotIn(
+            self.predefined_band_metadata_dict[4]['standard_name'],
+            list(ds0.parameters.all().values('standard_name'))[0].values())
         # other parameters must be in the parameters
-        self.assertIn(self.predefined_band_metadata_dict[2]['standard_name'],list(ds0.parameters.all().values('standard_name'))[0].values())
+        self.assertIn(
+            self.predefined_band_metadata_dict[2]['standard_name'],
+            list(ds0.parameters.all().values('standard_name'))[0].values())
 
 
 class TestDatasetURI(BasetForTests):
