@@ -1,0 +1,73 @@
+{% load static  %}
+{% load leaflet_tags %}
+<html lang="en">
+
+<head>
+	<title>Meta-data finder</title>
+	<meta charset="utf-8" />
+	{% leaflet_js plugins="forms" %}
+	{% leaflet_css plugins="forms" %}
+
+<!--
+	<style>
+
+		.leaflet-container {  /* all maps */
+			width:  100%;
+			height: 100%;
+		}
+	</style>-->
+	<style>
+		#para_container {
+			display: grid;
+			grid-template-columns: 3fr 2fr;
+			grid-gap: 10px;
+			position: relative;
+		}
+
+		.para2 {
+			float: left;
+			padding: 2px;
+			border: 2px solid red;
+		}
+
+		#content {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		#result {
+			grid-column: 2;
+			grid-row: 1;
+		}
+
+		#searchbox {
+			padding: 20px;
+			border: 2px solid rgb(13, 0, 255);
+			grid-column: 1 / 3;
+			grid-row: 2;
+		}
+
+	</style>
+</head>
+
+<body class="body" >
+	<div id="para_container">
+
+		<div id=content class="para2"><!--start of contentmap-->
+			{% block contentmap %}
+			{% endblock contentmap%}
+		</div><!--end of contentmap-->
+
+		<div id=result class="para2"><!--start of result section-->
+			{% block content_result %}
+			{% endblock content_result%}
+		</div><!--end of result section-->
+
+		<div id="searchbox"><!--start of searchbox-->
+			{% block searchbox %}
+			{% endblock searchbox %}
+		</div><!--end of searchbox-->
+    </div>
+</body>
+
+</html>
