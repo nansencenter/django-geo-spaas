@@ -28,7 +28,15 @@ class Migration(migrations.Migration):
             model_name='geographiclocation',
             constraint=models.UniqueConstraint(
                 fields=('geometry',), name='unique_geographic_location'),
-        ) if connection.vendor != 'sqlite' else migrations.RunSQL('CREATE UNIQUE INDEX unique_catalog_geographiclocation ON catalog_geographiclocation(geometry);'),
+        ) if connection.vendor != 'sqlite' else migrations.RunSQL(
+            sql='CREATE UNIQUE INDEX unique_catalog_geographiclocation ON catalog_geographiclocation(geometry);',
+            reverse_sql='DROP INDEX unique_catalog_geographiclocation',
+            state_operations=[
+                migrations.AddConstraint(
+                model_name='geographiclocation',
+                constraint=models.UniqueConstraint(fields=('geometry',), name='unique_geographic_location'))
+            ]
+        ),
         migrations.AddConstraint(
             model_name='source',
             constraint=models.UniqueConstraint(fields=('platform', 'instrument'), name='unique_source'),
