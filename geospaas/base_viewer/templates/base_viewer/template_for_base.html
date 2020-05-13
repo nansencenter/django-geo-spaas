@@ -2,6 +2,9 @@
 
 {% load leaflet_tags %}
 
+{% leaflet_js %}
+{% leaflet_css %}
+
 {% block searchbox %}
 
 {% endblock searchbox %}
@@ -17,28 +20,20 @@
         {% block headers %}
         <th>Filename</th>
         {% endblock headers %}
-        <th>Show</th>
+        <!--<th>Show</th>-->
     </tr>
 
     {% if datasets %}
 
     {% for ds in datasets %}
-    <tr id={{ forloop.counter }}>
+    <tr >
 
-        {% block columns %}
         <td>
             {% for url in ds.dataseturi_set.all %}
-            {% if url.uri|slice:":4" == 'file'%}
-            Local file (ingested offline)<br>
-            {% else %}
-            {{ url.uri|default_if_none:"no URL"|urlizetrunc:100}} <br>
-            {% endif %}
+            {{ url.uri|urlizetrunc:64}} <br>
             {% endfor %}
         </td>
-        {% endblock columns %}
 
-        <td><input class='dsOverlay' type="checkbox" name="{{ forloop.counter }}" id="{{ forloop.counter }}">
-        </td>
     </tr>
     {% endfor %}
 
@@ -58,9 +53,9 @@
 
 <form method="post" width='100%' height='100%'>
     {% csrf_token %}
-
-    {{ formi.as_p }}
-
+{% for o in form_list %}
+{{ o.as_p }}
+{% endfor %}
     <input type="submit" value="Search all meta-data" />
 </form>
 {% endblock contentmap %}

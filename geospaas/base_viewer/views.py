@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.utils import timezone
+from django.db.models import Q
 from django.views.generic import View
 from geospaas.base_viewer.forms import SearchFormBelow, SearchFormAbove
 from geospaas.catalog.models import Dataset as CatalogDataset
@@ -54,7 +55,6 @@ class IndexView(View):
         for counter, element_form_class in enumerate(self.form_class):
             self.forms[counter] = element_form_class(request.POST)
 
-
         self.validation_and_error_check()
         # modify attributes based on self.form
         return self.sorting_func(request)
@@ -66,18 +66,39 @@ class IndexView(View):
                 print(f"errorField")
 
     def sorting_func(self, request):
-        ds = CatalogDataset
-        # filter by date
-        #ds = blabla(ds)
-        # filter by source
-        # ds = blabla(ds)
-        # filter by geometry
-        # ds = blabla(ds)
-        return self.final_rendering(request,ds)
+        self.ds = CatalogDataset.objects.all()
+        self.filtering_func()
+        return self.final_rendering(request)
 
 
-    def final_rendering(self, request,ds):
+    def final_rendering(self, request):
         ''' Render page based on several forms of data as well as some other context '''
+        self.set_context()
+        return render(request, self.main_template, self.context)
+
+
+# functions to be overloaded in child classes
+
+    def filtering_func(self):
+        # filter by source
+        src=[]
+        for element_forms in self.forms:
+            if 'source' in element_forms.cleaned_data:
+                if element_forms.cleaned_data['source'] is not None:
+                    src.append(element_forms.cleaned_data['source'])
+
+        self.ds = self.ds.filter(source__in=src)
+        # filter by time
+        t0 = self.forms[1].cleaned_data['time_coverage_start']
+        t1 = self.forms[1].cleaned_data['time_coverage_end'] + timezone.timedelta(hours=24)
+        self.ds = self.ds.filter(Q(time_coverage_end__lt=t1) & Q(time_coverage_start__gt=t0))
+        # filter by geometry
+        if self.forms[0].cleaned_data['polygon'] is not None:
+            self.ds = self.ds.filter(geographic_location__geometry__intersects= self.forms[0].cleaned_data['polygon'])
+        # ds = blabla(ds)
+        #return self.ds
+
+    def set_context(self):
         self.context = {}  # initializing the contect for templates
         # initializing the list of the forms that passed into context
         form_list = [None] * len(self.forms)
@@ -86,4 +107,4 @@ class IndexView(View):
             form_list[counter] = value
         # passing the form_list into context
         self.context['form_list'] = form_list
-        return render(request, self.main_template, self.context)
+        self.context['datasets'] = self.ds
