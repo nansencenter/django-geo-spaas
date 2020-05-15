@@ -1,22 +1,19 @@
 from django.shortcuts import render
-from django.utils import timezone
-from django.db.models import Q
 from django.views.generic import View
-from geospaas.base_viewer.forms import SearchFormBelow, SearchFormAbove
+
+from geospaas.base_viewer.forms import TimeAndSourceForm, SpatialSearchForm
 from geospaas.catalog.models import Dataset as CatalogDataset
+
 #from geospaas.base_viewer.forms import Search_with_para_Form
 # Create your views here.
 
 
 class IndexView(View):
 
-    # order of this list matters for showing propery in the templates with correct order
-    form_class = [SearchFormAbove, SearchFormBelow, ]
-
+    form_class = [SpatialSearchForm, TimeAndSourceForm, ]
     main_template = 'base_viewer/template_for_base.html'
     viewname = 'index'
     forms = list()
-    context = {}
 
     def create_forms(self):
         ''' Set default values for the form by instantiating them '''
@@ -44,7 +41,7 @@ class IndexView(View):
 
         # modify attributes based on the forms cleaned data
         self.filtering_the_datasets(request)
-        #return self.final_rendering(request)
+        # return self.final_rendering(request)
         self.set_context()
         return render(request, self.main_template, self.context)
 
@@ -68,9 +65,10 @@ class IndexView(View):
         self.context = {}
         # initializing the list of the forms that passed into context
         form_list = [i for i in self.forms]
-        ## passing the form_list into context
+        # passing the form_list into context
         self.context['form_list'] = form_list
         self.set_dataset_context()
 
-    def set_dataset_context(self): # excluded from other context for pagination development of django
+    # excluded from other context for pagination development of django
+    def set_dataset_context(self):
         self.context['datasets'] = self.ds
