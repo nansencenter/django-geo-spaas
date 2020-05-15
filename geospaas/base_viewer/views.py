@@ -27,7 +27,8 @@ class IndexView(View):
         ''' Render page if no data is given '''
         self.create_forms()
         self.validate_forms()
-        self.filtering_the_datasets(request)
+        #self.filtering_the_datasets(request)
+        self.ds = self.get_all_datasets()
         self.set_context()
         return render(request, self.main_template, self.context)
 
@@ -40,10 +41,14 @@ class IndexView(View):
         self.validate_forms()
 
         # modify attributes based on the forms cleaned data
-        self.filtering_the_datasets(request)
+        self.ds = self.get_filtered_datasets(request)
         # return self.final_rendering(request)
         self.set_context()
         return render(request, self.main_template, self.context)
+
+    def get_all_datasets(self):
+        return CatalogDataset.objects.all()
+
 
     def validate_forms(self):
         for element_forms in self.forms:  # for loop for making clean data by is_valid() method
@@ -51,15 +56,12 @@ class IndexView(View):
             for errorField in element_forms.errors:  # temporary error message
                 print(f"errorField")
 
-    def filtering_the_datasets(self, request):
-        ds = CatalogDataset.objects.all()
-        if (request.method == 'POST'):
-            for counter in range(len(self.form_class)):
-                # using the filter function of each form sequentially
-                ds = self.forms[counter].filter(ds)
-            self.ds = ds
-        elif (request.method == 'GET'):
-            self.ds = ds
+    def get_filtered_datasets(self, request):
+        ds = self.get_all_datasets()
+        for counter in range(len(self.form_class)):
+            # using the filter function of each form sequentially
+            ds = self.forms[counter].filter(ds)
+        return ds
 
     def set_context(self):
         self.context = {}
