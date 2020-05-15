@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils import timezone
 from django.db.models import Q
 from django.views.generic import View
 from geospaas.base_viewer.forms import SearchFormBelow, SearchFormAbove
@@ -17,44 +18,43 @@ class IndexView(View):
     forms = list()
     context = {}
 
-    def instantiation_and_set_form_defaults(self):
+    def create_forms(self):
         ''' Set default values for the form by instantiating them '''
         # initialize the form list for setting default values
-        self.forms = [None] * len(self.form_class)
         # loop for instantiating with defaults
+        self.forms = [i({}) for i in self.form_class]
         for counter, element_form_class in enumerate(self.form_class):
-            self.forms[counter] = element_form_class({})  # instantiation
             self.forms[counter].set_defaults()  # setting the defaults
 
     def get(self, request, *args, **kwargs):
         ''' Render page if no data is given '''
-        self.instantiation_and_set_form_defaults()
-        self.validation_and_error_check()
-        self.filtering_func(request)
-        return self.final_rendering(request)
+        self.create_forms()
+        self.validate_forms()
+        self.filtering_the_datasets(request)
+        self.set_context()
+        return render(request, self.main_template, self.context)
 
     def post(self, request, *args, **kwargs):
         ''' all sections needed for POST requests'''
-        # initialize the form list for setting default values
-        self.forms = [None] * len(self.form_class)
 
-        # loop for instantiating with data of POST request
-        for counter, element_form_class in enumerate(self.form_class):
-            self.forms[counter] = element_form_class(request.POST)
+        # instantiating with data of POST request
+        self.forms = [i(request.POST) for i in self.form_class]
 
-        self.validation_and_error_check()
+        self.validate_forms()
 
         # modify attributes based on the forms cleaned data
-        self.filtering_func(request)
-        return self.final_rendering(request)
+        self.filtering_the_datasets(request)
+        #return self.final_rendering(request)
+        self.set_context()
+        return render(request, self.main_template, self.context)
 
-    def validation_and_error_check(self):
+    def validate_forms(self):
         for element_forms in self.forms:  # for loop for making clean data by is_valid() method
             element_forms.is_valid()
             for errorField in element_forms.errors:  # temporary error message
                 print(f"errorField")
 
-    def filtering_func(self, request):
+    def filtering_the_datasets(self, request):
         ds = CatalogDataset.objects.all()
         if (request.method == 'POST'):
             for counter in range(len(self.form_class)):
@@ -64,19 +64,11 @@ class IndexView(View):
         elif (request.method == 'GET'):
             self.ds = ds
 
-    def final_rendering(self, request):
-        ''' Render page based on several forms of data as well as some other context '''
-        self.context = {}
-        self.set_context()
-        return render(request, self.main_template, self.context)
-
     def set_context(self):
+        self.context = {}
         # initializing the list of the forms that passed into context
-        form_list = [None] * len(self.forms)
-        for counter, value in enumerate(self.forms):
-            # make the form_list elements one by one (form by form)
-            form_list[counter] = value
-        # passing the form_list into context
+        form_list = [i for i in self.forms]
+        ## passing the form_list into context
         self.context['form_list'] = form_list
         self.set_dataset_context()
 

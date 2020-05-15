@@ -13,6 +13,8 @@ class SearchFormBelow(forms.ModelForm):
         model = CatalogDataset
         fields = ['time_coverage_start','time_coverage_end','source']
 
+
+
     def set_defaults(self):
         self.data['time_coverage_end'] = timezone.now().date()
         self.data['time_coverage_start'] = timezone.datetime(2000, 1, 1,
@@ -23,8 +25,7 @@ class SearchFormBelow(forms.ModelForm):
         t0 = self.cleaned_data['time_coverage_start']
         t1 = self.cleaned_data['time_coverage_end'] + timezone.timedelta(hours=24)
         ds = ds.filter(Q(time_coverage_end__lt=t1) & Q(time_coverage_start__gt=t0))
-        src=[]
-        src.append(self.cleaned_data['source'])
+        src = [self.cleaned_data['source']]
         ds = ds.filter(source__in=src)
         return ds
 
@@ -44,9 +45,9 @@ class SearchFormAbove(forms.ModelForm):
         pass
 
     def filter(self,ds):
-        received_polygon= self.cleaned_data['polygon']
+        received_polygon = self.cleaned_data['polygon']
         if received_polygon is not None:
-            ds = ds.filter(geographic_location__geometry__intersects= received_polygon)
+            ds = ds.filter(geographic_location__geometry__intersects = received_polygon)
             return ds
         else:
             # in the case that user have no specified polygon
