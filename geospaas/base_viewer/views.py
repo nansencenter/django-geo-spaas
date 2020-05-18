@@ -15,13 +15,22 @@ class IndexView(View):
     viewname = 'index'
     forms = list()
 
-    def create_forms(self):
+    def create_forms(self, *args):#request_method='GET'
         ''' Set default values for the form by instantiating them '''
-        # initialize the form list for setting default values
-        # loop for instantiating with defaults
-        self.forms = [i({}) for i in self.form_class]
-        for counter, element_form_class in enumerate(self.form_class):
-            self.forms[counter].set_defaults()  # setting the defaults
+        self.forms = [i(*args) for i in self.form_class]
+        #if request_post is 'GET':
+        #    request_post = dict()
+        #if len(args)==0:
+        #     # GET method
+        #else:
+        #    self.forms = [i(args[0]) for i in self.form_class] # POST method
+        #return self.forms
+
+        #### initialize the form list for setting default values
+        #### loop for instantiating with defaults
+        ###self.forms = [i({}) for i in self.form_class]
+        ###for counter, element_form_class in enumerate(self.form_class):
+        ###    self.forms[counter].set_defaults()  # setting the defaults
 
     def get(self, request, *args, **kwargs):
         ''' Render page if no data is given '''
@@ -35,8 +44,9 @@ class IndexView(View):
     def post(self, request, *args, **kwargs):
         ''' all sections needed for POST requests'''
 
-        # instantiating with data of POST request
-        self.forms = [i(request.POST) for i in self.form_class]
+        #### instantiating with data of POST request
+        ###self.forms = [i(request.POST) for i in self.form_class]
+        self.create_forms(request.POST)
 
         self.validate_forms()
 

@@ -8,17 +8,27 @@ from geospaas.catalog.models import Dataset as CatalogDataset
 
 #from geospaas.base_viewer.models import Search_with_para
 
+class BaseForm(forms.ModelForm):
+    initial = dict()
 
-class TimeAndSourceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(initial=self.initial, *args, **kwargs)
+
+
+class TimeAndSourceForm(BaseForm):
+    initial = dict(
+        time_coverage_end = timezone.now(),
+        time_coverage_start = timezone.datetime(2000, 1, 1),
+        )
     class Meta:
         model = CatalogDataset
         fields = ['time_coverage_start', 'time_coverage_end', 'source']
 
-    def set_defaults(self):
-        self.data['time_coverage_end'] = timezone.now()
-        self.data['time_coverage_start'] = timezone.datetime(2000, 1, 1,
-                                                             tzinfo=timezone.utc).date()
-        self.data['source'] = CatalogDataset.objects.first().source
+    #def set_defaults(self):
+    #    self.data['time_coverage_end'] = timezone.now()
+    #    self.data['time_coverage_start'] = timezone.datetime(2000, 1, 1,
+    #                                                         tzinfo=timezone.utc).date()
+    #    self.data['source'] = CatalogDataset.objects.first().source
 
     def filter(self, ds):
         t0 = self.cleaned_data['time_coverage_start']
@@ -31,7 +41,8 @@ class TimeAndSourceForm(forms.ModelForm):
         return ds
 
 
-class SpatialSearchForm(forms.ModelForm):
+class SpatialSearchForm(BaseForm):
+    #initial = None
     class Meta:
         model = SearchModelForLeaflet
         fields = ['polygon']
@@ -45,8 +56,8 @@ class SpatialSearchForm(forms.ModelForm):
                     }}
         )}
 
-    def set_defaults(self):
-        pass
+    #def set_defaults(self):
+    #    pass
 
     def filter(self, ds):
         received_polygon = self.cleaned_data['polygon']
