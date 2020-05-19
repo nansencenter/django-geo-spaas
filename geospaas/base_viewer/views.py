@@ -15,9 +15,10 @@ class IndexView(View):
     viewname = 'index'
     forms = list()
 
-    def create_forms(self, *args):#request_method='GET'
+    @classmethod
+    def create_forms(cls, *args):#request_method='GET'
         ''' Set default values for the form by instantiating them '''
-        self.forms = [i(*args) for i in self.form_class]
+        return [i(*args) for i in cls.form_class]
 
     def get(self, request, *args, **kwargs):
         ''' Render page if no data is given '''
