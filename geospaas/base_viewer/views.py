@@ -63,14 +63,8 @@ class IndexView(View):
     def set_context(self):
         self.context = {}
         # initializing the list of the forms that passed into context
-        form_list = [None] * len(self.forms)#[i for i in self.forms]
-        for i in range(len(self.forms)):
-            if isinstance(self.forms[i].__class__(), SpatialSearchForm):
-                form_list[0] = self.forms[i] # DICTATE the spatial search form to be the FIRST one
-            if isinstance(self.forms[i].__class__(), TimeAndSourceForm):
-                form_list[1] = self.forms[i] # DICTATE the time-and-date search form to be the SECOND one
         # passing the form_list into context
-        self.context['form_list'] = form_list
+        self.context['form_list'] = self.forms
         self.set_dataset_context()
 
     # excluded from other context for pagination development of django
