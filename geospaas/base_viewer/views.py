@@ -55,9 +55,9 @@ class IndexView(View):
 
     def get_filtered_datasets(self):
         ds = self.get_all_datasets()
-        for counter in range(len(self.form_class)):
+        for form in self.form_class:
             # using the filter function of each form sequentially
-            ds = self.forms[counter].filter(ds)
+            ds = form.filter(ds)
         return ds
 
     def set_context(self):
