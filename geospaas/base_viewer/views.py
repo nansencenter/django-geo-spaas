@@ -10,7 +10,7 @@ from geospaas.catalog.models import Dataset as CatalogDataset
 
 class IndexView(View):
 
-    form_class = [ TimeAndSourceForm, SpatialSearchForm,]
+    form_class = [ SpatialSearchForm, TimeAndSourceForm,]
     main_template = 'base_viewer/template_for_base.html'
     viewname = 'index'
     forms = list()
@@ -48,14 +48,13 @@ class IndexView(View):
 
 
     def validate_forms(self):
-        for element_forms in self.forms:  # for loop for making clean data by is_valid() method
-            element_forms.is_valid()
-            for errorField in element_forms.errors:  # temporary error message
-                print(f"errorField")
+        for form in self.forms:  # for loop for making clean data by is_valid() method
+            form.is_valid()
+
 
     def get_filtered_datasets(self):
         ds = self.get_all_datasets()
-        for form in self.form_class:
+        for form in self.forms:
             # using the filter function of each form sequentially
             ds = form.filter(ds)
         return ds
