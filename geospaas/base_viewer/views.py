@@ -15,13 +15,14 @@ class IndexView(View):
     viewname = 'index'
     forms = list()
 
-    def create_forms(self, *args):#request_method='GET'
+    @classmethod
+    def create_forms(cls, *args):#request_method='GET'
         ''' Set default values for the form by instantiating them '''
-        self.forms = [i(*args) for i in self.form_class]
+        return [i(*args) for i in cls.form_class]
 
     def get(self, request, *args, **kwargs):
         ''' Render page if no data is given '''
-        self.create_forms()
+        forms = self.create_forms()
         self.validate_forms()
         #self.filtering_the_datasets(request)
         self.ds = self.get_all_datasets()
@@ -47,10 +48,11 @@ class IndexView(View):
         return CatalogDataset.objects.all()
 
 
-    def validate_forms(self):
-        for form in self.forms:  # for loop for making clean data by is_valid() method
+    @classmethod
+    def validate_forms(self, forms):
+        for form in forms:  # for loop for making clean data by is_valid() method
             form.is_valid()
-
+        return forms
 
     def get_filtered_datasets(self):
         ds = self.get_all_datasets()
