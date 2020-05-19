@@ -10,7 +10,7 @@ from geospaas.catalog.models import Dataset as CatalogDataset
 
 class IndexView(View):
 
-    form_class = [SpatialSearchForm, TimeAndSourceForm, ]
+    form_class = [ TimeAndSourceForm, SpatialSearchForm,]
     main_template = 'base_viewer/template_for_base.html'
     viewname = 'index'
     forms = list()
@@ -51,7 +51,7 @@ class IndexView(View):
         self.validate_forms()
 
         # modify attributes based on the forms cleaned data
-        self.ds = self.get_filtered_datasets(request)
+        self.ds = self.get_filtered_datasets()
         # return self.final_rendering(request)
         self.set_context()
         return render(request, self.main_template, self.context)
@@ -66,7 +66,7 @@ class IndexView(View):
             for errorField in element_forms.errors:  # temporary error message
                 print(f"errorField")
 
-    def get_filtered_datasets(self, request):
+    def get_filtered_datasets(self):
         ds = self.get_all_datasets()
         for counter in range(len(self.form_class)):
             # using the filter function of each form sequentially
@@ -76,7 +76,12 @@ class IndexView(View):
     def set_context(self):
         self.context = {}
         # initializing the list of the forms that passed into context
-        form_list = [i for i in self.forms]
+        form_list = [None] * len(self.forms)#[i for i in self.forms]
+        for i in range(len(self.forms)):
+            if isinstance(self.forms[i].__class__(), SpatialSearchForm):
+                form_list[0] = self.forms[i] # DICTATE the spatial search form to be the FIRST one
+            if isinstance(self.forms[i].__class__(), TimeAndSourceForm):
+                form_list[1] = self.forms[i] # DICTATE the time-and-date search form to be the SECOND one
         # passing the form_list into context
         self.context['form_list'] = form_list
         self.set_dataset_context()
