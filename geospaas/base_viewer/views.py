@@ -23,10 +23,10 @@ class IndexView(View):
     def get(self, request, *args, **kwargs):
         ''' Render page if no data is given '''
         forms = self.create_forms()
-        self.validate_forms()
-        #self.filtering_the_datasets(request)
-        self.ds = self.get_all_datasets()
-        self.set_context()
+        forms = self.validate_forms(forms)
+        #self.forms = forms
+        ds = self.get_all_datasets()
+        self.set_context(forms,ds)
         return render(request, self.main_template, self.context)
 
     def post(self, request, *args, **kwargs):
@@ -34,40 +34,41 @@ class IndexView(View):
 
         #### instantiating with data of POST request
         ###self.forms = [i(request.POST) for i in self.form_class]
-        self.create_forms(request.POST)
+        #self.create_forms(request.POST)
+        forms = self.create_forms(request.POST)
 
-        self.validate_forms()
+        forms = self.validate_forms(forms)
+        # modify ds based on the forms cleaned data
+        ds = self.get_filtered_datasets(forms)
 
-        # modify attributes based on the forms cleaned data
-        self.ds = self.get_filtered_datasets()
         # return self.final_rendering(request)
-        self.set_context()
+        self.set_context(forms,ds)
         return render(request, self.main_template, self.context)
 
     def get_all_datasets(self):
         return CatalogDataset.objects.all()
 
 
-    @classmethod
-    def validate_forms(self, forms):
+    @staticmethod
+    def validate_forms(forms):
         for form in forms:  # for loop for making clean data by is_valid() method
             form.is_valid()
         return forms
 
-    def get_filtered_datasets(self):
+    def get_filtered_datasets(self,forms):
         ds = self.get_all_datasets()
-        for form in self.forms:
+        for form in forms:
             # using the filter function of each form sequentially
             ds = form.filter(ds)
         return ds
 
-    def set_context(self):
+    def set_context(self,forms,ds):
         self.context = {}
         # initializing the list of the forms that passed into context
         # passing the form_list into context
-        self.context['form_list'] = self.forms
-        self.set_dataset_context()
+        self.context['form_list'] = forms
+        self.set_dataset_context(ds)
 
     # excluded from other context for pagination development of django
-    def set_dataset_context(self):
-        self.context['datasets'] = self.ds
+    def set_dataset_context(self,ds):
+        self.context['datasets'] = ds
