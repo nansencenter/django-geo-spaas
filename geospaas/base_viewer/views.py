@@ -48,11 +48,11 @@ class IndexView(View):
         return CatalogDataset.objects.all()
 
 
-    def validate_forms(self):
-        for element_forms in self.forms:  # for loop for making clean data by is_valid() method
-            element_forms.is_valid()
-            for errorField in element_forms.errors:  # temporary error message
-                print(f"errorField")
+    @classmethod
+    def validate_forms(self, forms):
+        for form in forms:  # for loop for making clean data by is_valid() method
+            form.is_valid()
+        return forms
 
     def get_filtered_datasets(self):
         ds = self.get_all_datasets()
