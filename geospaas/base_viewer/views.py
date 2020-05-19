@@ -22,7 +22,7 @@ class IndexView(View):
 
     def get(self, request, *args, **kwargs):
         ''' Render page if no data is given '''
-        self.create_forms()
+        forms = self.create_forms()
         self.validate_forms()
         #self.filtering_the_datasets(request)
         self.ds = self.get_all_datasets()
