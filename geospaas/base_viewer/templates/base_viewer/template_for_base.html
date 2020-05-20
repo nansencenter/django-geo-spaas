@@ -53,9 +53,15 @@
 
 <form method="post" width='100%' height='100%'>
     {% csrf_token %}
-{% for o in form_list %}
-{{ o.as_p }}
-{% endfor %}
+
+    {{SpatialSearchForm.as_p}}
+
+    {{TimeAndSourceForm.as_p}}
+
     <input type="submit" value="Search all meta-data" />
 </form>
 {% endblock contentmap %}
+<!--{% for o in form_list %}
+
+{{ o.as_p }}
+{% endfor %}-->
