@@ -65,10 +65,7 @@ class SpatialSearchForm(BaseForm):
             ds = ds.filter(
                 geographic_location__geometry__intersects=received_polygon)
         return ds
-        #else:
-            # in the case that user have no specified polygon
-            # there is no need to filter
-        #    return ds
+
 
 # class Search_with_para_Form(SearchForm_below):
 #   fields = SearchForm.Meta.fields.append('DatasetParameter')

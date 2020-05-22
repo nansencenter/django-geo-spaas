@@ -27,4 +27,4 @@ if __name__ == "__main__":
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True)
     failures = test_runner.run_tests(["geospaas" + test_module])
-    sys.exit(bool(failures))
+#    sys.exit(bool(failures))

@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'leaflet',
     'django_forms_bootstrap',
     'geospaas.viewer',
+    'geospaas.base_viewer',
     'geospaas.nansat_ingestor',
     'geospaas.catalog',
     'geospaas.vocabularies',

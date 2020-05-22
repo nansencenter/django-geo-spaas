@@ -28,7 +28,7 @@
     {% for ds in datasets %}
     <tr >
 
-        <td>
+        <td class="place_ds">
             {% for url in ds.dataseturi_set.all %}
             {{ url.uri|urlizetrunc:64}} <br>
             {% endfor %}
@@ -39,7 +39,7 @@
 
     {% else %}
     <tr>
-        <td colspan=10>No datasets are available.</td>
+        <td colspan=10 class="place_ds">No datasets are available (or maybe no one is ingested)</td>
     </tr>
     {% endif %}
 </table>
