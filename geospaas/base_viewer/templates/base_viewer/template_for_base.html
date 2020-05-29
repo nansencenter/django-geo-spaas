@@ -54,9 +54,11 @@
 <form method="post" width='100%' height='100%'>
     {% csrf_token %}
 
-    {{SpatialSearchForm.as_p}}
 
-    {{TimeAndSourceForm.as_p}}
+
+    {{OverallForm.as_p}}
+
+
 
     <input type="submit" value="Search all meta-data" />
 </form>

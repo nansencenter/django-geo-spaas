@@ -2,6 +2,7 @@ from html.parser import HTMLParser
 
 from django.test import Client, TestCase
 from django.utils import timezone
+from mock.mock import MagicMock, patch
 
 from geospaas.base_viewer.views import IndexView
 
@@ -26,8 +27,8 @@ class MyHTMLParser(HTMLParser):
             self.flag = False # make it false AGAIN in order not to save the data from other tags of HTML
 
 
-class GUIHavingNewBaseIntegrationTests(TestCase):
-    '''INtegration tests for GET and POST methods'''
+class IntegrationTestsForGUIWithNewBase(TestCase):
+    '''INtegration tests for GET and POST methods of GUI'''
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
@@ -102,44 +103,25 @@ class GUIHavingNewBaseIntegrationTests(TestCase):
         self.assertIn(True, [('file://localhost/some/test/file2.ext' in dat)
                              for dat in self.parser.data])
 
-
-class UnitTestingForViews(TestCase):
-    fixtures = ["vocabularies", "catalog"]
-
-    def setUp(self):
-        self.v1 = IndexView()
-        self.ds = self.v1.get_all_datasets()
-        self.forms = self.v1.create_forms(self)
-
-    def test_creating_the_forms(self):
-        '''shall create the specified fields of forms'''
-        self.assertTrue('polygon' in self.forms.__str__())
-        self.assertTrue('time_coverage_start' in self.forms.__str__())
-        self.assertTrue('time_coverage_end' in self.forms.__str__())
-        self.assertTrue('source' in self.forms.__str__())
-
-    def test_setting_the_context_correctly(self):
-        '''shall return the correct key of context dictionary for correct viewing by templates'''
-        context = self.v1.set_context(self.forms, self.ds)
-        self.assertIn('TimeAndSourceForm', context.keys())
-        self.assertIn('SpatialSearchForm', context.keys())
-        self.assertIn('datasets', context.keys())
+class IndexViewTests(TestCase):
+    @patch('geospaas.base_viewer.views.CatalogDataset')
+    def test_get_all_datasets(self, mock_dataset):
+        """ Shall call CatalogDataset.objects.all() inside get_all_datasets """
+        IndexView.get_all_datasets()
+        mock_dataset.objects.all.assert_called_once()
 
     def test_get_filtered_datasets(self):
-        '''shall return the fixture datasets when large time-interval is set and none of them when a nonrelevant one is set'''
-        forms = self.v1.create_forms({'polygon': '',
-                                      'time_coverage_start': timezone.datetime(2000, 12, 29),
-                                      'time_coverage_end': timezone.datetime(2020, 1, 1),
-                                      'source': 1})
-        forms = self.v1.validate_forms(forms)
-        ds = self.v1.get_filtered_datasets(forms)
-        self.assertEqual(len(ds), 2)  # shall return the fixture datasets
-        self.assertEqual(
-            '<QuerySet [<Dataset: AQUA/MODIS/2010-01-01T00:00:00+00:00>, <Dataset: AQUA/MODIS/2010-01-02T00:00:00+00:00>]>', str(ds))
-        forms = self.v1.create_forms({'polygon': '',
-                                      'time_coverage_start': timezone.datetime(2019, 12, 29),
-                                      'time_coverage_end': timezone.datetime(2020, 1, 1),
-                                      'source': 1})
-        forms = self.v1.validate_forms(forms)
-        ds = self.v1.get_filtered_datasets(forms)
-        self.assertEqual(len(ds), 0)  # shall return no datasets
+        """ Shall  call filter function from form class once """
+        form = MagicMock()
+        ds = IndexView.get_filtered_datasets(form)
+        form.filter.assert_called_once()#form.filter.
+
+    def test_set_context(self):
+        """ Shall  contain 'OverallForm' and 'datasets' in the context.
+        Results should not be filtered by this function """
+        form = MagicMock()
+        ds = MagicMock()
+        context = IndexView.set_context(form,ds)
+        form.filter.assert_not_called()
+        self.assertTrue('OverallForm' in context)
+        self.assertTrue('datasets' in context)
