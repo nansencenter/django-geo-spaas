@@ -25,7 +25,7 @@ class IndexView(View):
     @classmethod
     def set_context(cls, form, ds):
         context = {}
-        context[cls.form_class.__name__] = form
+        context['form'] = form
         context['datasets'] = cls.set_dataset_context(ds)
         return context
 
