@@ -15,7 +15,7 @@ class IndexView(View):
 
     @classmethod
     def get_all_datasets(cls):
-        return CatalogDataset.objects.all()
+        return Dataset.objects.all()
 
     @classmethod
     def get_filtered_datasets(cls, form):
