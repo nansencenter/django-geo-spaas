@@ -7,7 +7,12 @@ from mock.mock import MagicMock, patch
 from geospaas.base_viewer.views import IndexView
 
 
-class MyHTMLParser(HTMLParser):
+class BaseViewerHTMLParser(HTMLParser):
+    """a tiny parser for extraction and storage of data of specific tag(s) in html files.
+    The specific tag(s) should be specificed in the handle_starttag method and the data is stored in the self.data.
+
+    In the case of inheritance, modify the 'handle_starttag method' based on your purpose of using this class."""
+
     def __init__(self):
         """Constructor with extra attribute definition"""
         super().__init__()
@@ -19,22 +24,23 @@ class MyHTMLParser(HTMLParser):
             for attr in attrs:
                 # find out the ones with ///class="place_ds"///
                 if ('class' in attr) and ('place_ds' in attr):
-                    self.flag = True # make the flag true to enable the storage action
+                    self.flag = True  # make the flag true to enable the storage action
 
     def handle_data(self, Data):
-        if (self.flag == True):# just store the data of specified tags with the help of flag
+        if (self.flag == True):  # just store the data of specified tags with the help of flag
             self.data.append(Data)
-            self.flag = False # make it false AGAIN in order not to save the data from other tags of HTML
+            # make it false AGAIN in order not to save the data from other tags of HTML
+            self.flag = False
 
 
 class IntegrationTestsForGUIWithNewBase(TestCase):
-    '''INtegration tests for GET and POST methods of GUI'''
+    '''Integration tests for GET and POST methods of GUI'''
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
         self.client = Client()
         # this parser is configured to store the desired data of td tag into self.data
-        self.parser = MyHTMLParser()
+        self.parser = BaseViewerHTMLParser()
 
     def test_the_post_verb_of_GUI_with_proper_polygon(self):
         """shall return only the first dataset of fixtures in the specified placement of datasets inside the resulted HTML
@@ -46,11 +52,11 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertEqual(res1.status_code, 200)
         self.parser.feed(str(res1.content))
         # the first dataset of fixtures must be in the html
-        self.assertIn(True, [('file://localhost/some/test/file1.ext' in dat)
-                             for dat in self.parser.data])
+        self.assertTrue(any([('file://localhost/some/test/file1.ext' in dat)
+                             for dat in self.parser.data]))
         # the second dataset of fixturesshould not be in the html
-        self.assertIn(False, [('file://localhost/some/test/file2.ext' in dat)
-                              for dat in self.parser.data])
+        self.assertFalse(any([('file://localhost/some/test/file2.ext' in dat)
+                              for dat in self.parser.data]))
 
     def test_the_post_verb_of_GUI_with_nonrelevant_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets inside the resulted HTML
@@ -61,8 +67,8 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
                                       'source': 1})
         self.assertEqual(res2.status_code, 200)
         self.parser.feed(str(res2.content))
-        self.assertIn(True, [
-                      ('No datasets are available (or maybe no one is ingested)' in dat) for dat in self.parser.data])
+        self.assertTrue(any([
+            ('No datasets are available (or maybe no one is ingested)' in dat) for dat in self.parser.data]))
 
     def test_the_post_verb_of_GUI_without_polygon(self):
         """shall return the uri of fixtures' datasets in the specified placement of datasets inside the resulted HTML
@@ -74,10 +80,10 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertEqual(res3.status_code, 200)
         self.parser.feed(str(res3.content))
         # both datasets must be in the html
-        self.assertIn(True, [('file://localhost/some/test/file1.ext' in dat)
-                             for dat in self.parser.data])
-        self.assertIn(True, [('file://localhost/some/test/file2.ext' in dat)
-                             for dat in self.parser.data])
+        self.assertTrue(any([('file://localhost/some/test/file1.ext' in dat)
+                             for dat in self.parser.data]))
+        self.assertTrue(any([('file://localhost/some/test/file2.ext' in dat)
+                             for dat in self.parser.data]))
 
     def test_the_post_verb_of_GUI_incorrect_dates_without_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets inside the resulted HTML
@@ -88,8 +94,8 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
             'source': 1})
         self.assertEqual(res3.status_code, 200)
         self.parser.feed(str(res3.content))
-        self.assertIn(True, [
-                      ('No datasets are available (or maybe no one is ingested)' in dat) for dat in self.parser.data])
+        self.assertTrue(any([
+            ('No datasets are available (or maybe no one is ingested)' in dat) for dat in self.parser.data]))
 
     def test_the_get_verb_of_GUI(self):
         """shall return ALL uri of fixtures' datasets in the specified placement
@@ -98,13 +104,14 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertEqual(res4.status_code, 200)
         self.parser.feed(str(res4.content))
         # both datasets must be in the html
-        self.assertIn(True, [('file://localhost/some/test/file1.ext' in dat)
-                             for dat in self.parser.data])
-        self.assertIn(True, [('file://localhost/some/test/file2.ext' in dat)
-                             for dat in self.parser.data])
+        self.assertTrue(any([('file://localhost/some/test/file1.ext' in dat)
+                             for dat in self.parser.data]))
+        self.assertTrue(any([('file://localhost/some/test/file2.ext' in dat)
+                             for dat in self.parser.data]))
+
 
 class IndexViewTests(TestCase):
-    @patch('geospaas.base_viewer.views.CatalogDataset')
+    @patch('geospaas.base_viewer.views.Dataset')
     def test_get_all_datasets(self, mock_dataset):
         """ Shall call CatalogDataset.objects.all() inside get_all_datasets """
         IndexView.get_all_datasets()
@@ -114,14 +121,14 @@ class IndexViewTests(TestCase):
         """ Shall  call filter function from form class once """
         form = MagicMock()
         ds = IndexView.get_filtered_datasets(form)
-        form.filter.assert_called_once()#form.filter.
+        form.filter.assert_called_once()
 
     def test_set_context(self):
         """ Shall  contain 'OverallForm' and 'datasets' in the context.
         Results should not be filtered by this function """
         form = MagicMock()
         ds = MagicMock()
-        context = IndexView.set_context(form,ds)
+        context = IndexView.set_context(form, ds)
         form.filter.assert_not_called()
-        self.assertTrue('OverallForm' in context)
+        self.assertTrue('form' in context)
         self.assertTrue('datasets' in context)

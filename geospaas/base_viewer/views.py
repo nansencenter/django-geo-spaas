@@ -1,16 +1,14 @@
 from django.shortcuts import render
 from django.views.generic import View
 
-from geospaas.base_viewer.forms import OverallForm
+from geospaas.base_viewer.forms import BaseSearchForm
 from geospaas.catalog.models import Dataset
-
-# Create your views here.
 
 
 class IndexView(View):
 
-    form_class = OverallForm
-    main_template = 'base_viewer/template_for_base.html'
+    form_class = BaseSearchForm
+    main_template = 'base_viewer/elements.html'
     viewname = 'index'
 
     @classmethod

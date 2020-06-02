@@ -1,13 +1,12 @@
 from django.contrib.gis import forms
-from django.db.models import Q
-from django.forms import CharField
 from django.utils import timezone
+from datetime import tzinfo
 from leaflet.forms.widgets import LeafletWidget
-
+import pytz
 from geospaas.catalog.models import Source
 
 
-class OverallForm(forms.Form):
+class BaseSearchForm(forms.Form):
 
     polygon = forms.GeometryField(label='choose a location (or leave it empty for all locations)',
                                   widget=LeafletWidget(attrs={
@@ -17,9 +16,10 @@ class OverallForm(forms.Form):
                                           'PLUGINS': {'forms': {'auto-include': True}},
                                       }
                                   }))
+    utc = pytz.utc
     time_coverage_start = forms.DateTimeField(
-        initial=timezone.datetime(2000, 1, 1))
-    time_coverage_end = forms.DateTimeField(initial=timezone.now())
+        initial=timezone.datetime(2000, 1, 1, tzinfo=utc))
+    time_coverage_end = forms.DateTimeField(initial=timezone.now().utcnow())
     source = forms.ModelChoiceField(
         Source.objects.all(), required=False)
 
@@ -28,8 +28,7 @@ class OverallForm(forms.Form):
         t0 = self.cleaned_data['time_coverage_start']
         t1 = self.cleaned_data['time_coverage_end'] + \
             timezone.timedelta(hours=24)
-        ds = ds.filter(Q(time_coverage_end__lt=t1) &
-                       Q(time_coverage_start__gt=t0))
+        ds = ds.filter(time_coverage_end__lt=t1, time_coverage_start__gt=t0)
 
         # filtering based on source
 
