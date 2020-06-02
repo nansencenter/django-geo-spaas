@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View
 
 from geospaas.base_viewer.forms import OverallForm
-from geospaas.catalog.models import Dataset as CatalogDataset
+from geospaas.catalog.models import Dataset
 
 # Create your views here.
 
