@@ -4,7 +4,7 @@ from django.forms import CharField
 from django.utils import timezone
 from leaflet.forms.widgets import LeafletWidget
 
-from geospaas.catalog.models import Source as CatalogSource
+from geospaas.catalog.models import Source
 
 
 class OverallForm(forms.Form):
