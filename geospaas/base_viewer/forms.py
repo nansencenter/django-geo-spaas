@@ -21,7 +21,7 @@ class OverallForm(forms.Form):
         initial=timezone.datetime(2000, 1, 1))
     time_coverage_end = forms.DateTimeField(initial=timezone.now())
     source = forms.ModelChoiceField(
-        CatalogSource.objects.all(), required=False)
+        Source.objects.all(), required=False)
 
     def filter(self, ds):
         # filtering based on time
