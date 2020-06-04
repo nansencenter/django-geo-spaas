@@ -6,5 +6,7 @@ admin.autodiscover()
 app_name = 'geospaas'
 urlpatterns = [
     # Examples:
-    url(r'^', include('geospaas.viewer.urls')),
+    #
+    #url(r'adas/', include('geospaas.adas_viewer.urls')),
+    url(r'^', include('geospaas.base_viewer.urls')),
 ]
