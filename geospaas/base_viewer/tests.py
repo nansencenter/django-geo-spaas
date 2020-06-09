@@ -1,5 +1,6 @@
-from html.parser import HTMLParser
+import json
 
+from bs4 import BeautifulSoup
 from django.test import Client, TestCase
 from django.utils import timezone
 from mock.mock import MagicMock, patch
@@ -8,118 +9,86 @@ from geospaas.base_viewer.views import IndexView
 from geospaas.catalog.models import Dataset
 
 
-class BaseViewerHTMLParser(HTMLParser):
-    """ A tiny parser for extraction and storage of data of specific tag(s)
-    in html files. The specific tag(s) should be specificed
-    in the handle_starttag method and the data is stored in
-    the self.data.  In the case of inheritance, modify
-    the 'handle_starttag method' based on your purpose of using this class."""
-
-    def __init__(self):
-        """Constructor with extra attribute definition"""
-        super().__init__()
-        self.flag = False
-        self.data = []
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'td':  # find out the tags with td tags
-            for attr in attrs:
-                # find out the ones with ///class="place_ds"///
-                if ('class' in attr) and ('place_ds' in attr):
-                    self.flag = True  # make the flag true to enable the storage action
-
-    def handle_data(self, Data):
-        if self.flag:  # just store the data of specified tags with the help of flag
-            self.data.append(Data)
-            # make it false AGAIN in order not to save the data from other tags of HTML
-            self.flag = False
-
-
 class IntegrationTestsForGUIWithNewBase(TestCase):
     '''Integration tests for GET and POST methods of GUI'''
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
         self.client = Client()
-        # this parser is configured to store the desired data of td tag into self.data
-        self.parser = BaseViewerHTMLParser()
 
     def test_the_post_verb_of_GUI_with_proper_polygon(self):
         """shall return only the first dataset of fixtures
         in the specified placement of datasets inside the resulted HTML
         in the case of a POST request with a good choice of polygon"""
-        res1 = self.client.post('/',
+        res = self.client.post('/',
                                 {'polygon':
                                  '{"type":"Polygon","coordinates":[[[0,0],[0,5],[5,5],[5,0],[0,0]]]}',
                                  'time_coverage_start': timezone.datetime(2000, 12, 29),
                                  'time_coverage_end': timezone.datetime(2020, 1, 1),
                                  'source': 1})
-        self.assertEqual(res1.status_code, 200)
-        self.parser.feed(str(res1.content))
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(len(all_tds), 1)
         # the first dataset of fixtures must be in the html
-        self.assertTrue(any([('file://localhost/some/test/file1.ext' in dat)
-                             for dat in self.parser.data]))
-        # the second dataset of fixturesshould not be in the html
-        self.assertFalse(any([('file://localhost/some/test/file2.ext' in dat)
-                              for dat in self.parser.data]))
+        self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
+        self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[0].text)
 
     def test_the_post_verb_of_GUI_with_nonrelevant_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with nonrelevant
         polygon apart from the polygon of databases datasets"""
-        res2 = self.client.post('/',
+        res = self.client.post('/',
                                 {'polygon':
                                  '{"type":"Polygon","coordinates":[[[53.132629,-13.557892],[53.132629,4.346411],[73.721008,4.346411],[73.721008,-13.557892],[53.132629,-13.557892]]]}',
                                  'time_coverage_start': timezone.datetime(2000, 12, 29),
                                  'time_coverage_end': timezone.datetime(2020, 1, 1),
                                  'source': 1})
-        self.assertEqual(res2.status_code, 200)
-        self.parser.feed(str(res2.content))
-        self.assertTrue(any([
-            ('No datasets are available (or maybe no one is ingested)' in dat)
-            for dat in self.parser.data]))
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(all_tds[0].text,
+                        'No datasets are available (or maybe no one is ingested)')
 
     def test_the_post_verb_of_GUI_without_polygon(self):
         """shall return the uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a POST request without
         any polygon from user """
-        res3 = self.client.post('/', {
+        res = self.client.post('/', {
             'time_coverage_start': timezone.datetime(2000, 12, 29),
             'time_coverage_end': timezone.datetime(2020, 1, 1),
             'source': 1})
-        self.assertEqual(res3.status_code, 200)
-        self.parser.feed(str(res3.content))
-        # both datasets must be in the html
-        self.assertTrue(any([('file://localhost/some/test/file1.ext' in dat)
-                             for dat in self.parser.data]))
-        self.assertTrue(any([('file://localhost/some/test/file2.ext' in dat)
-                             for dat in self.parser.data]))
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(len(all_tds), 2)
+        self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
+        self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
 
     def test_the_post_verb_of_GUI_incorrect_dates_without_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with incorrect dates
         from user and without any polygon from user"""
-        res4 = self.client.post('/', {
+        res = self.client.post('/', {
             'time_coverage_start': timezone.datetime(2019, 12, 29),
             'time_coverage_end': timezone.datetime(2020, 1, 1),
             'source': 1})
-        self.assertEqual(res4.status_code, 200)
-        self.parser.feed(str(res4.content))
-        self.assertTrue(any([
-            ('No datasets are available (or maybe no one is ingested)' in dat)
-            for dat in self.parser.data]))
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(all_tds[0].text,
+                        'No datasets are available (or maybe no one is ingested)')
 
     def test_the_get_verb_of_GUI(self):
         """shall return ALL uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a GET request"""
-        res5 = self.client.get('/')
-        self.assertEqual(res5.status_code, 200)
-        self.parser.feed(str(res5.content))
-        # both datasets must be in the html
-        self.assertTrue(any([('file://localhost/some/test/file1.ext' in dat)
-                             for dat in self.parser.data]))
-        self.assertTrue(any([('file://localhost/some/test/file2.ext' in dat)
-                             for dat in self.parser.data]))
+        res = self.client.get('/')
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(len(all_tds), 2)
+        self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
+        self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
 
 
 class IndexViewTests(TestCase):
@@ -204,3 +173,25 @@ class FilteringFunctionalityTests(TestCase):
         self.ds = self.form.filter(self.ds)
         # no dataset should remain as the result of filtering with dummy source
         self.assertEqual(len(self.ds), 0)
+
+class GeometryGeojsonTests(TestCase):
+    fixtures = ["vocabularies", "catalog"]
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_get_valid_pk(self):
+        """ shall return  valid GeoJSON with geometry """
+        res = self.client.get('/geometry/1')
+        self.assertEqual(res.status_code, 200)
+        content = json.loads(res.content)
+        self.assertEqual(content['type'], 'FeatureCollection')
+        self.assertEqual(content['crs']['properties']['name'], 'EPSG:4326')
+        self.assertEqual(content['features'][0]['geometry']['type'], 'Polygon')
+        self.assertEqual(content['features'][0]['geometry']['coordinates'][0][0], [0,0])
+
+    def test_get_invalid_pk(self):
+        """ shall return  empty GeoJSON """
+        res = self.client.get('/geometry/10')
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.content, b'{}')

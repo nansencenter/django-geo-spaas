@@ -1,9 +1,10 @@
-from django.conf.urls import url, include
+from django.urls import path
 
-from geospaas.base_viewer.views import IndexView
+from geospaas.base_viewer.views import IndexView, get_geometry_geojson
 
 
 app_name = 'base_viewer'
 urlpatterns = [
-    url('', IndexView.as_view(), name='index'),
+    path('', IndexView.as_view(), name='index'),
+    path('geometry/<int:pk>', get_geometry_geojson, name='geometry_geojson'),
 ]
