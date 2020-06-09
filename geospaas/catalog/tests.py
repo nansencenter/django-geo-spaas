@@ -159,7 +159,8 @@ class DatasetParameterTests(TestCase):
     def test_add_sar_sigma0(self):
         ds = Dataset.objects.get(pk=1)
         p = Parameter.objects.get(
-                standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
+                standard_name='surface_backwards_scattering_coefficient_of_radar_wave',
+                short_name='sigma0')
         dp = DatasetParameter(dataset=ds, parameter=p)
         dp.save()
         self.assertEqual(dp.parameter.short_name, 'sigma0')
