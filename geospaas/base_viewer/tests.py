@@ -1,4 +1,5 @@
 from html.parser import HTMLParser
+import json
 
 from django.test import Client, TestCase
 from django.utils import timezone
@@ -204,3 +205,25 @@ class FilteringFunctionalityTests(TestCase):
         self.ds = self.form.filter(self.ds)
         # no dataset should remain as the result of filtering with dummy source
         self.assertEqual(len(self.ds), 0)
+
+class GeometryGeojsonTests(TestCase):
+    fixtures = ["vocabularies", "catalog"]
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_get_valid_pk(self):
+        """ shall return  valid GeoJSON with geometry """
+        res = self.client.get('/geometry/1')
+        self.assertEqual(res.status_code, 200)
+        content = json.loads(res.content)
+        self.assertEqual(content['type'], 'FeatureCollection')
+        self.assertEqual(content['crs']['properties']['name'], 'EPSG:4326')
+        self.assertEqual(content['features'][0]['geometry']['type'], 'Polygon')
+        self.assertEqual(content['features'][0]['geometry']['coordinates'][0][0], [0,0])
+
+    def test_get_invalid_pk(self):
+        """ shall return  empty GeoJSON """
+        res = self.client.get('/geometry/10')
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.content, b'{}')
