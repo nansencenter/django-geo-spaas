@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Install Django
 RUN pip install \
+    bs4 \
     coverage \
     django==3.0 \
     django-forms-bootstrap==3.1.0 \
