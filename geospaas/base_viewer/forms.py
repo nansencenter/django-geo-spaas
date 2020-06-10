@@ -35,11 +35,16 @@ class BaseSearchForm(forms.Form):
 
         src = [self.cleaned_data['source']]
         # Just the one(s) with correct selected source should pass the filtering actions
-        ds = ds.filter(source__in=src)
+        # if Source is given in the input form
+        if src[0] is not None:
+            ds = ds.filter(source__in=src)
 
         # spatial filtering
         if 'polygon' in self.cleaned_data:
             # filtering by user provided polygon
             ds = ds.filter(
                 geographic_location__geometry__intersects=self.cleaned_data['polygon'])
+
+        # sorting
+        ds = ds.order_by('time_coverage_start')
         return ds

@@ -5,18 +5,19 @@ from django.test import Client, TestCase
 from django.utils import timezone
 from mock.mock import MagicMock, patch
 
+from geospaas.base_viewer.forms import BaseSearchForm
 from geospaas.base_viewer.views import IndexView
 from geospaas.catalog.models import Dataset
 
 
-class IntegrationTestsForGUIWithNewBase(TestCase):
+class GUIIntegrationTests(TestCase):
     '''Integration tests for GET and POST methods of GUI'''
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
         self.client = Client()
 
-    def test_the_post_verb_of_GUI_with_proper_polygon(self):
+    def test_post_with_proper_polygon(self):
         """shall return only the first dataset of fixtures
         in the specified placement of datasets inside the resulted HTML
         in the case of a POST request with a good choice of polygon"""
@@ -34,7 +35,7 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[0].text)
 
-    def test_the_post_verb_of_GUI_with_nonrelevant_polygon(self):
+    def test_post_with_irrelevant_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with nonrelevant
         polygon apart from the polygon of databases datasets"""
@@ -48,9 +49,9 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         soup = BeautifulSoup(str(res.content), features="lxml")
         all_tds = soup.find_all("td", class_="place_ds")
         self.assertEqual(all_tds[0].text,
-                        'No datasets are available (or maybe no one is ingested)')
+                        'No datasets found')
 
-    def test_the_post_verb_of_GUI_without_polygon(self):
+    def test_post_without_polygon(self):
         """shall return the uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a POST request without
         any polygon from user """
@@ -65,7 +66,7 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
 
-    def test_the_post_verb_of_GUI_incorrect_dates_without_polygon(self):
+    def test_post_with_incorrect_dates_without_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with incorrect dates
         from user and without any polygon from user"""
@@ -77,9 +78,9 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         soup = BeautifulSoup(str(res.content), features="lxml")
         all_tds = soup.find_all("td", class_="place_ds")
         self.assertEqual(all_tds[0].text,
-                        'No datasets are available (or maybe no one is ingested)')
+                        'No datasets found')
 
-    def test_the_get_verb_of_GUI(self):
+    def test_get(self):
         """shall return ALL uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a GET request"""
         res = self.client.get('/')
@@ -94,6 +95,7 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
 class IndexViewTests(TestCase):
     """ Unittesting for all functions inside the classed-based view of basic viewer """
     fixtures = ["vocabularies", "catalog"]
+
     @patch('geospaas.base_viewer.views.Dataset')
     def test_get_all_datasets(self, mock_dataset):
         """ Shall call CatalogDataset.objects.all() inside get_all_datasets """
@@ -114,18 +116,33 @@ class IndexViewTests(TestCase):
         context = IndexView.set_context(form, ds)
         form.filter.assert_not_called()
         self.assertTrue('form' in context)
-        self.assertTrue('datasets' in context)
+        self.assertTrue('page_obj' in context)
+
+    def test_paginate(self):
+        """
+        Shall return paginator with 2 pages and only one dataset
+        when paginate_by set to 1
+        """
+        IndexView.paginate_by = 1
+        ds = Dataset.objects.all()
+        request = MagicMock()
+        request.GET = dict(page=1)
+        page_obj = IndexView.paginate(ds, request)
+        self.assertEqual(page_obj.number, 1)
+        self.assertEqual(page_obj.paginator.num_pages, 2)
+        self.assertTrue(page_obj.has_next())
+        self.assertFalse(page_obj.has_previous())
+        self.assertEqual(page_obj.object_list.count(), 1)
 
 
-class FilteringFunctionalityTests(TestCase):
-    """ Unit tests for filter method which is placed inside the basic form"""
+class BaseSearchFormTests(TestCase):
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
-        self.form = IndexView.form_class({'polygon': '',
-                                          'time_coverage_start': timezone.datetime(2000, 12, 29),
-                                          'time_coverage_end': timezone.datetime(2020, 1, 1),
-                                          'source': 1})
+        self.form = BaseSearchForm({'polygon': '',
+                                    'time_coverage_start': timezone.datetime(2000, 12, 29),
+                                    'time_coverage_end': timezone.datetime(2020, 1, 1),
+                                    'source': 1})
         self.ds = Dataset.objects.all()
         self.form.is_valid()
 
