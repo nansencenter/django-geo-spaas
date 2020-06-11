@@ -5,27 +5,27 @@ from django.test import Client, TestCase
 from django.utils import timezone
 from mock.mock import MagicMock, patch
 
+from geospaas.base_viewer.forms import BaseSearchForm
 from geospaas.base_viewer.views import IndexView
 from geospaas.catalog.models import Dataset
 
 
-class IntegrationTestsForGUIWithNewBase(TestCase):
+class GUIIntegrationTests(TestCase):
     '''Integration tests for GET and POST methods of GUI'''
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
         self.client = Client()
 
-    def test_the_post_verb_of_GUI_with_proper_polygon(self):
+    def test_post_with_proper_polygon(self):
         """shall return only the first dataset of fixtures
         in the specified placement of datasets inside the resulted HTML
         in the case of a POST request with a good choice of polygon"""
-        res = self.client.post('/',
-                                {'polygon':
-                                 '{"type":"Polygon","coordinates":[[[0,0],[0,5],[5,5],[5,0],[0,0]]]}',
-                                 'time_coverage_start': timezone.datetime(2000, 12, 29),
-                                 'time_coverage_end': timezone.datetime(2020, 1, 1),
-                                 'source': 1})
+        res = self.client.post('/', {
+            'polygon':
+            '{"type":"Polygon","coordinates":[[[0,0],[0,5],[5,5],[5,0],[0,0]]]}',
+            'time_coverage_start': timezone.datetime(2000, 12, 29),
+            'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
         all_tds = soup.find_all("td", class_="place_ds")
@@ -34,23 +34,24 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[0].text)
 
-    def test_the_post_verb_of_GUI_with_nonrelevant_polygon(self):
+    def test_post_with_irrelevant_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with nonrelevant
         polygon apart from the polygon of databases datasets"""
-        res = self.client.post('/',
-                                {'polygon':
-                                 '{"type":"Polygon","coordinates":[[[53.132629,-13.557892],[53.132629,4.346411],[73.721008,4.346411],[73.721008,-13.557892],[53.132629,-13.557892]]]}',
-                                 'time_coverage_start': timezone.datetime(2000, 12, 29),
-                                 'time_coverage_end': timezone.datetime(2020, 1, 1),
-                                 'source': 1})
+        res = self.client.post('/', {
+            'polygon':
+            ('{"type":"Polygon","coordinates":[[[53.132629,-13.557892],'
+             '[53.132629,4.346411],[73.721008,4.346411],[73.721008,-13.'
+             '557892],[53.132629,-13.557892]]]}'),
+            'time_coverage_start': timezone.datetime(2000, 12, 29),
+            'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
         all_tds = soup.find_all("td", class_="place_ds")
         self.assertEqual(all_tds[0].text,
-                        'No datasets are available (or maybe no one is ingested)')
+                        'No datasets found')
 
-    def test_the_post_verb_of_GUI_without_polygon(self):
+    def test_post_without_polygon(self):
         """shall return the uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a POST request without
         any polygon from user """
@@ -65,21 +66,20 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
 
-    def test_the_post_verb_of_GUI_incorrect_dates_without_polygon(self):
+    def test_post_with_incorrect_dates_without_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with incorrect dates
         from user and without any polygon from user"""
         res = self.client.post('/', {
             'time_coverage_start': timezone.datetime(2019, 12, 29),
-            'time_coverage_end': timezone.datetime(2020, 1, 1),
-            'source': 1})
+            'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
         all_tds = soup.find_all("td", class_="place_ds")
         self.assertEqual(all_tds[0].text,
-                        'No datasets are available (or maybe no one is ingested)')
+                        'No datasets found')
 
-    def test_the_get_verb_of_GUI(self):
+    def test_get(self):
         """shall return ALL uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a GET request"""
         res = self.client.get('/')
@@ -94,6 +94,7 @@ class IntegrationTestsForGUIWithNewBase(TestCase):
 class IndexViewTests(TestCase):
     """ Unittesting for all functions inside the classed-based view of basic viewer """
     fixtures = ["vocabularies", "catalog"]
+
     @patch('geospaas.base_viewer.views.Dataset')
     def test_get_all_datasets(self, mock_dataset):
         """ Shall call CatalogDataset.objects.all() inside get_all_datasets """
@@ -114,65 +115,89 @@ class IndexViewTests(TestCase):
         context = IndexView.set_context(form, ds)
         form.filter.assert_not_called()
         self.assertTrue('form' in context)
-        self.assertTrue('datasets' in context)
+        self.assertTrue('page_obj' in context)
+
+    def test_paginate(self):
+        """
+        Shall return paginator with 2 pages and only one dataset
+        when paginate_by set to 1
+        """
+        IndexView.paginate_by = 1
+        ds = Dataset.objects.all()
+        request = MagicMock()
+        request.GET = dict(page=1)
+        page_obj = IndexView.paginate(ds, request)
+        self.assertEqual(page_obj.number, 1)
+        self.assertEqual(page_obj.paginator.num_pages, 2)
+        self.assertTrue(page_obj.has_next())
+        self.assertFalse(page_obj.has_previous())
+        self.assertEqual(page_obj.object_list.count(), 1)
 
 
-class FilteringFunctionalityTests(TestCase):
-    """ Unit tests for filter method which is placed inside the basic form"""
+class BaseSearchFormTests(TestCase):
     fixtures = ["vocabularies", "catalog"]
 
     def setUp(self):
-        self.form = IndexView.form_class({'polygon': '',
-                                          'time_coverage_start': timezone.datetime(2000, 12, 29),
-                                          'time_coverage_end': timezone.datetime(2020, 1, 1),
-                                          'source': 1})
         self.ds = Dataset.objects.all()
-        self.form.is_valid()
 
-    def tearDown(self):
-        self.form = None
-        self.ds = None
-
-    def test_filtering_functionality_by_end_time(self):
+    def test_filter_by_end_time(self):
         """Shall return (filter out) 'NERSC_test_dataset_titusen' dataset
         from fixtures based on their end date """
         # filtering by end time
-        self.form.cleaned_data['time_coverage_start'] = timezone.datetime(
-            2010, 1, 1, 0)
-        self.form.cleaned_data['time_coverage_end'] = timezone.datetime(
-            2010, 1, 1, 8)
-        self.ds = self.form.filter(self.ds)
-        self.assertEqual(self.ds.first().entry_id,
+        form = BaseSearchForm({
+            'time_coverage_start': timezone.datetime(2010, 1, 1, 0, tzinfo=timezone.utc),
+            'time_coverage_end': timezone.datetime(2010, 1, 1, 8, tzinfo=timezone.utc),
+        })
+        form.is_valid()
+        ds = form.filter(self.ds)
+        self.assertEqual(ds.first().entry_id,
                          'NERSC_test_dataset_titusen')
         # only one of the fixture datasets should remain after filtering(titusen)
-        self.assertEqual(len(self.ds), 1)
+        self.assertEqual(len(ds), 1)
 
-    def test_filtering_functionality_by_start_time(self):
+    def test_filter_by_start_time(self):
         """Shall return (filter out) 'NERSC_test_dataset_tjuetusen' dataset
          from fixtures based on their start date """
         # filtering by start time
-        self.form.cleaned_data['time_coverage_start'] = timezone.datetime(
-            2010, 1, 2, 2)
-        self.form.cleaned_data['time_coverage_end'] = timezone.datetime(
-            2010, 1, 3, 4)
-        self.ds = self.form.filter(self.ds)
-        self.assertEqual(self.ds.first().entry_id,
+        form = BaseSearchForm({
+            'time_coverage_start': timezone.datetime(2010, 1, 2, 2, tzinfo=timezone.utc),
+            'time_coverage_end': timezone.datetime(2010, 1, 3, 4, tzinfo=timezone.utc),
+        })
+        form.is_valid()
+
+        ds = form.filter(self.ds)
+        self.assertEqual(ds.first().entry_id,
                          'NERSC_test_dataset_tjuetusen')
         # only one of the fixture datasets should remain after filtering(tjuetusen)
-        self.assertEqual(len(self.ds), 1)
+        self.assertEqual(len(ds), 1)
 
-    def test_filtering_functionality_by_source(self):
-        """ shall return non of datasets because of filtering based on dummy source """
-
-        self.form.cleaned_data['time_coverage_start'] = timezone.datetime(
-            2010, 1, 2, 2)
-        self.form.cleaned_data['time_coverage_end'] = timezone.datetime(
-            2010, 1, 3, 4)
-        self.form.cleaned_data['source'] = 9999 # dummy number for source id
+    def test_filter_by_valid_source(self):
+        """ shall return both datasets """
+        form = BaseSearchForm({
+            'time_coverage_start': timezone.datetime(2000, 1, 1, tzinfo=timezone.utc),
+            'time_coverage_end': timezone.datetime(2020, 1, 1, 1, tzinfo=timezone.utc),
+            'source': [1],
+        })
+        form.is_valid()
+        self.assertIn('source', form.cleaned_data)
         # filtering by source
-        self.ds = self.form.filter(self.ds)
+        ds = form.filter(self.ds)
         # no dataset should remain as the result of filtering with dummy source
-        self.assertEqual(len(self.ds), 0)
+        self.assertEqual(len(ds), 2)
+
+    def test_filter_by_invalid_source(self):
+        """ shall return both datasets """
+        form = BaseSearchForm({
+            'time_coverage_start': timezone.datetime(2000, 1, 1, tzinfo=timezone.utc),
+            'time_coverage_end': timezone.datetime(2020, 1, 1, 1, tzinfo=timezone.utc),
+            'source': [10],
+        })
+        form.is_valid()
+        self.assertNotIn('source', form.cleaned_data)
+        # filtering by source
+        ds = form.filter(self.ds)
+        # no dataset should remain as the result of filtering with dummy source
+        self.assertEqual(len(ds), 2)
 
 class GeometryGeojsonTests(TestCase):
     fixtures = ["vocabularies", "catalog"]

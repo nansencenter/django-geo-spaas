@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -34,6 +35,7 @@ class IndexView(View):
     form_class = BaseSearchForm
     main_template = 'base_viewer/elements.html'
     viewname = 'index'
+    paginate_by = 20
 
     @classmethod
     def get_all_datasets(cls):
@@ -47,31 +49,35 @@ class IndexView(View):
         return form.filter(ds)
 
     @classmethod
-    def set_context(cls, form, ds):
+    def paginate(cls, ds, request):
+        """ Paginate datasets and return paginator at current page"""
+        paginator = Paginator(ds, cls.paginate_by)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        return page_obj
+
+    @classmethod
+    def set_context(cls, form, page_obj):
         """ Prepare all context for rendering """
         context = {}
         context['form'] = form
-        context['datasets'] = cls.set_dataset_context(ds)
+        context['page_obj'] = page_obj
         return context
-
-    @classmethod
-    def set_dataset_context(cls, ds):
-        """ Prepare dataset context for rendering """
-        return ds  # excluded from other context for pagination development of django
 
     def get(self, request, *args, **kwargs):
         """ Render page if no data is given """
         form = self.form_class()
         form.is_valid()
         ds = self.get_all_datasets()
-        context = self.set_context(form, ds)
+        page_obj = self.paginate(ds, request)
+        context = self.set_context(form, page_obj)
         return render(request, self.main_template, context)
 
     def post(self, request, *args, **kwargs):
         """ Render page when user submits search request """
         form = self.form_class(request.POST)
         form.is_valid()
-        # modify ds based on the forms cleaned data
         ds = self.get_filtered_datasets(form)
-        context = self.set_context(form, ds)
+        page_obj = self.paginate(ds, request)
+        context = self.set_context(form, page_obj)
         return render(request, self.main_template, context)
