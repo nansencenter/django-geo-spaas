@@ -87,7 +87,20 @@ class BasetForTests(TestCase):
             'suffix': 'testing',
             'units': 'testing',
             'wkv': 'testing'},
-
+        5: {'colormap': 'gray',
+            'dataType': '6',
+            'long_name': 'Normalized Radar Cross Section',
+            'minmax': '0 0.1',
+            'name': 'gamma0_HH',
+            'PixelFunctionType': 'Sentinel1Calibration',
+            'polarization': 'HH',
+            'short_name': 'gamma0',
+            'SourceBand': '1',
+            'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
+            'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
+            'suffix': 'HH',
+            'units': 'm/m',
+            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'},
     }
 
     def setUp(self):
@@ -167,25 +180,31 @@ class TestDatasetManager(BasetForTests):
             ds, created = Dataset.objects.get_or_create(uri)
 
     @patch('os.path.isfile')
-    def test_exception_of_parameter_handling_for_longitude_and_latitude(self, mock_isfile):
-        '''shall return standard all specified parameter
-        without the parameter for latitude and longitude'''
+    def test_dont_add_longitude_latitude(self, mock_isfile):
+        """ shall not add latitude and longitude into DatasetParameter table """
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
         # longitude should not be one of the parameters
-        self.assertNotIn(
-            self.predefined_band_metadata_dict[3]['standard_name'],
-            list(ds0.parameters.all().values('standard_name'))[0].values())
+        self.assertNotIn('longitude', ds_params_standard_names)
         # latitude should not be one of the parameters
-        self.assertNotIn(
-            self.predefined_band_metadata_dict[4]['standard_name'],
-            list(ds0.parameters.all().values('standard_name'))[0].values())
-        # other parameters must be in the parameters
-        self.assertIn(
-            self.predefined_band_metadata_dict[2]['standard_name'],
-            list(ds0.parameters.all().values('standard_name'))[0].values())
+        self.assertNotIn('latidtude', ds_params_standard_names)
 
+    @patch('os.path.isfile')
+    def test_add_sigma0_gamma0(self, mock_isfile):
+        """ shall add both sigma0 and gamma0 with same standard name  into DatasetParameter table """
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
+        ds_params_short_names = ds0.parameters.values_list('short_name', flat=True)
+        self.assertEqual(len(ds_params_standard_names), 2)
+        self.assertEqual(len(ds_params_short_names), 2)
+        self.assertIn('surface_backwards_scattering_coefficient_of_radar_wave',
+            ds_params_standard_names)
+        self.assertIn('sigma0', ds_params_short_names)
+        self.assertIn('gamma0', ds_params_short_names)
 
 class TestDatasetURI(BasetForTests):
     @patch('os.path.isfile')

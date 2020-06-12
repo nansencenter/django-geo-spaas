@@ -135,19 +135,26 @@ class DatasetManager(models.Manager):
         all_band_meta = n.bands()
         for band_id in range(1, len(all_band_meta)+1):
             band_meta = all_band_meta[band_id]
-            if ('standard_name' in band_meta.keys()):
-                # There is no need to introduce latitude and longitude as a paramter for
-                # ingested dataset. Thus, these two are excluded from this loop
-                if ((band_meta['standard_name'] != 'latitude')
-                        & (band_meta['standard_name'] != 'longitude')):
-                    pp = Parameter.objects.get(
-                        standard_name=band_meta['standard_name'])
-                    dsp, dsp_created = DatasetParameter.objects.get_or_create(
-                        dataset=ds, parameter=pp)
-                    ds.parameters.add(pp)
+            standard_name = band_meta.get('standard_name', None)
+            short_name = band_meta.get('short_name', None)
+            units = band_meta.get('units', None)
+            if standard_name in ['latitude', 'longitude', None]:
+                continue
+            params = Parameter.objects.filter(standard_name=standard_name)
+            if params.count() > 1 and short_name is not None:
+                params = params.filter(short_name=short_name)
+            if params.count() > 1 and units is not None:
+                params = params.filter(units=units)
+            if params.count() >= 1:
+                dsp, dsp_created = DatasetParameter.objects.get_or_create(
+                        dataset=ds, parameter=params[0])
+                ds.parameters.add(params[0])
 
         # create dataset URI
-        ds_uri, _ = DatasetURI.objects.get_or_create(name=uri_service_name, service=uri_service_type, uri=uri,
-                                                     dataset=ds)
+        ds_uri, _ = DatasetURI.objects.get_or_create(
+            name=uri_service_name,
+            service=uri_service_type,
+            uri=uri,
+            dataset=ds)
 
         return ds, created
