@@ -29,4 +29,4 @@ Quick start for developers
 
 1. Obtain the geospaas in your machine by clone the whole repo of geospaas.
 
-2. open your browser with `localhost:8080/base/` after running the runserver command of django
+2. open your browser with `localhost:8080/` after running the runserver command of django
