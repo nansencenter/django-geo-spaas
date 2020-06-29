@@ -39,8 +39,8 @@ class Command(BaseCommand):
             for opt in options['nansat_option']:
                 var, val = opt.split('=')
                 nansat_options[var] = val
-        
-        return non_ingested_uris, n_points, nansat_options 
+
+        return non_ingested_uris, n_points, nansat_options
 
     def handle(self, *args, **options):
         """ Ingest one Dataset per file that has not previously been ingested
@@ -55,4 +55,4 @@ class Command(BaseCommand):
             elif type(ds)==Dataset:
                 self.stdout.write('%s has been added before.\n' % non_ingested_uri)
             else:
-                self.stdout.write('Could not add %s.\n' % non_ingested_uri)
+                self.stdout.write('Could not add %s. It may updated as an improvement of prior hervested version.\n' % non_ingested_uri)
