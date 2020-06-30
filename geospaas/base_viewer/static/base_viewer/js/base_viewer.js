@@ -9,7 +9,7 @@ function add_geojson_geometries(map) {
     var geoms = document.getElementsByClassName("geometry_ref");
     for (var i = 0; i < geoms.length; i++) {
         var jsonTest = new L.GeoJSON.AJAX(
-        "geometry/" + geoms.item(i).id,
+        geoms.item(i).attributes.ajax_url.value,
         {style: footprints_layer_style}).addTo(map);
     };
 };
