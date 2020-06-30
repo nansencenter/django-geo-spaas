@@ -132,4 +132,4 @@ STATICFILES_DIRS = [
 SERIALIZATION_MODULES = {"geojson": "django.contrib.gis.serializers.geojson",}
 ALLOWED_HOSTS = ['*']
 SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
-# END ANSIBLE MANAGED BLOCK
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
