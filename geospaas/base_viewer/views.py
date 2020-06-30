@@ -35,7 +35,7 @@ class IndexView(View):
     form_class = BaseSearchForm
     main_template = 'base_viewer/elements.html'
     viewname = 'index'
-    paginate_by = 20
+    paginate_by = 2
 
     @classmethod
     def get_all_datasets(cls):
@@ -66,11 +66,16 @@ class IndexView(View):
 
     def get(self, request, *args, **kwargs):
         """ Render page if no data is given """
-        form = self.form_class()
+        form = self.form_class(request.session['post'])
         form.is_valid()
         ds = self.get_all_datasets()
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
+
+        request.session['use_post'] = False
+        request.session['use_get'] = True
+        context['session'] = request.session
+
         return render(request, self.main_template, context)
 
     def post(self, request, *args, **kwargs):
@@ -80,4 +85,8 @@ class IndexView(View):
         ds = self.get_filtered_datasets(form)
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
+        request.session['use_post'] = True
+        request.session['use_get'] = False
+        request.session['post'] = request.POST
+        context['session'] = request.session
         return render(request, self.main_template, context)
