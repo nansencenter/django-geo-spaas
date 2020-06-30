@@ -21,7 +21,7 @@ class GUIIntegrationTests(TestCase):
         """shall return only the first dataset of fixtures
         in the specified placement of datasets inside the resulted HTML
         in the case of a POST request with a good choice of polygon"""
-        res = self.client.post('/', {
+        res = self.client.post('/tests/', {
             'polygon':
             '{"type":"Polygon","coordinates":[[[0,0],[0,5],[5,5],[5,0],[0,0]]]}',
             'time_coverage_start': timezone.datetime(2000, 12, 29),
@@ -38,7 +38,7 @@ class GUIIntegrationTests(TestCase):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with nonrelevant
         polygon apart from the polygon of databases datasets"""
-        res = self.client.post('/', {
+        res = self.client.post('/tests/', {
             'polygon':
             ('{"type":"Polygon","coordinates":[[[53.132629,-13.557892],'
              '[53.132629,4.346411],[73.721008,4.346411],[73.721008,-13.'
@@ -55,7 +55,7 @@ class GUIIntegrationTests(TestCase):
         """shall return the uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a POST request without
         any polygon from user """
-        res = self.client.post('/', {
+        res = self.client.post('/tests/', {
             'time_coverage_start': timezone.datetime(2000, 12, 29),
             'time_coverage_end': timezone.datetime(2020, 1, 1),
             'source': 1})
@@ -70,7 +70,7 @@ class GUIIntegrationTests(TestCase):
         """shall return 'No datasets are...' in the specified placement of datasets
         inside the resulted HTML in the case of a POST request with incorrect dates
         from user and without any polygon from user"""
-        res = self.client.post('/', {
+        res = self.client.post('/tests/', {
             'time_coverage_start': timezone.datetime(2019, 12, 29),
             'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
@@ -82,13 +82,15 @@ class GUIIntegrationTests(TestCase):
     def test_get(self):
         """shall return ALL uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a GET request"""
-        res = self.client.get('/')
+        res = self.client.get('/tests/')
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
         all_tds = soup.find_all("td", class_="place_ds")
         self.assertEqual(len(all_tds), 2)
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
+        grefs=soup.find_all("div", class_="geometry_ref")
+        self.assertEqual(grefs[0].attrs['ajax_url'], '/tests/geometry/1')
 
 
 class IndexViewTests(TestCase):
@@ -207,7 +209,7 @@ class GeometryGeojsonTests(TestCase):
 
     def test_get_valid_pk(self):
         """ shall return  valid GeoJSON with geometry """
-        res = self.client.get('/geometry/1')
+        res = self.client.get('/tests/geometry/1')
         self.assertEqual(res.status_code, 200)
         content = json.loads(res.content)
         self.assertEqual(content['type'], 'FeatureCollection')
@@ -217,6 +219,6 @@ class GeometryGeojsonTests(TestCase):
 
     def test_get_invalid_pk(self):
         """ shall return  empty GeoJSON """
-        res = self.client.get('/geometry/10')
+        res = self.client.get('/tests/geometry/10')
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.content, b'{}')
