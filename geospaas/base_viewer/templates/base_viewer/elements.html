@@ -15,7 +15,7 @@
         <td class="place_ds">
             <div class="geometry_ref" id="{{ ds.geographic_location.pk }}">
             {% for url in ds.dataseturi_set.all %}
-            {{ url.uri|urlizetrunc:264}} <br>
+            {{ url.uri|urlize}} <br>
             {% endfor %}
             </div>
         </td>
