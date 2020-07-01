@@ -35,12 +35,12 @@ class IndexView(View):
     form_class = BaseSearchForm
     main_template = 'base_viewer/elements.html'
     viewname = 'index'
-    paginate_by = 2
+    paginate_by = 20
 
     @classmethod
     def get_all_datasets(cls):
         """ Retrieve all dataset(s) from the database"""
-        return Dataset.objects.all()
+        return Dataset.objects.order_by('time_coverage_start')
 
     @classmethod
     def get_filtered_datasets(cls, form):
@@ -52,7 +52,7 @@ class IndexView(View):
     def paginate(cls, ds, request):
         """ Paginate datasets and return paginator at current page"""
         paginator = Paginator(ds, cls.paginate_by)
-        page_number = request.GET.get('page', 1)
+        page_number = request.POST.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
 
@@ -66,13 +66,11 @@ class IndexView(View):
 
     def get(self, request, *args, **kwargs):
         """ Render page if no data is given """
-        form = self.form_class(request.session['post'])
+        form = self.form_class()
         form.is_valid()
         ds = self.get_all_datasets()
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
-
-        context['session'] = request.session
         return render(request, self.main_template, context)
 
     def post(self, request, *args, **kwargs):
@@ -82,6 +80,4 @@ class IndexView(View):
         ds = self.get_filtered_datasets(form)
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
-        request.session['post'] = request.POST
-        context['session'] = request.session
         return render(request, self.main_template, context)

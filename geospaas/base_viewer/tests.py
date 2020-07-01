@@ -79,6 +79,25 @@ class GUIIntegrationTests(TestCase):
         self.assertEqual(all_tds[0].text,
                         'No datasets found')
 
+    @patch('geospaas.base_viewer.views.Paginator')
+    def test_post_with_correct_dates_with_page(self, mock_paginator):
+        """ post with page=100 shall call Paginator.get_page with 100 """
+        res = self.client.post('/tests/', {
+            'time_coverage_start': timezone.datetime(2019, 12, 29),
+            'time_coverage_end': timezone.datetime(2020, 1, 1),
+            'page': 100})
+        mock_paginator.return_value.get_page.assert_called_with('100')
+
+    @patch('geospaas.base_viewer.views.Paginator')
+    def test_post_or_get_without_page(self, mock_paginator):
+        """ post without page shall call Paginator.get_page with 1 """
+        res = self.client.post('/tests/', {
+            'time_coverage_start': timezone.datetime(2019, 12, 29),
+            'time_coverage_end': timezone.datetime(2020, 1, 1)})
+        mock_paginator.return_value.get_page.assert_called_with(1)
+        res = self.client.get('/tests/')
+        mock_paginator.return_value.get_page.assert_called_with(1)
+
     def test_get(self):
         """shall return ALL uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a GET request"""
@@ -99,9 +118,9 @@ class IndexViewTests(TestCase):
 
     @patch('geospaas.base_viewer.views.Dataset')
     def test_get_all_datasets(self, mock_dataset):
-        """ Shall call CatalogDataset.objects.all() inside get_all_datasets """
+        """ Shall call Dataset.objects.order_by() inside get_all_datasets """
         IndexView.get_all_datasets()
-        mock_dataset.objects.all.assert_called_once()
+        mock_dataset.objects.order_by.assert_called_once()
 
     def test_get_filtered_datasets(self):
         """ Shall  call filter function from form class once """
@@ -125,9 +144,9 @@ class IndexViewTests(TestCase):
         when paginate_by set to 1
         """
         IndexView.paginate_by = 1
-        ds = Dataset.objects.all()
+        ds = Dataset.objects.order_by('time_coverage_start')
         request = MagicMock()
-        request.GET = dict(page=1)
+        request.POST = dict(page=1)
         page_obj = IndexView.paginate(ds, request)
         self.assertEqual(page_obj.number, 1)
         self.assertEqual(page_obj.paginator.num_pages, 2)
