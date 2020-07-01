@@ -72,10 +72,7 @@ class IndexView(View):
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
 
-        request.session['use_post'] = False
-        request.session['use_get'] = True
         context['session'] = request.session
-
         return render(request, self.main_template, context)
 
     def post(self, request, *args, **kwargs):
@@ -85,8 +82,6 @@ class IndexView(View):
         ds = self.get_filtered_datasets(form)
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
-        request.session['use_post'] = True
-        request.session['use_get'] = False
         request.session['post'] = request.POST
         context['session'] = request.session
         return render(request, self.main_template, context)
