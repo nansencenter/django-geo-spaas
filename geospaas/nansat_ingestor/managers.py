@@ -69,23 +69,22 @@ class DatasetManager(models.Manager):
         # get metadata from Nansat and get objects from vocabularies
         n_metadata = n.get_metadata()
         entry_id = n_metadata['entry_id']
-        if len(Dataset.objects.filter(entry_id__icontains=entry_id)) >= 1:
-            qds = Dataset.objects.filter(
+        if Dataset.objects.filter(entry_id__icontains=entry_id).count() >= 1:
+            qds = Dataset.objects.get(
                 entry_id__icontains=entry_id)  # query of found dataset
             assert len(qds) == 1
             ds = qds.first()  # this dataset (which is the first and the only one) must be updated
             # ds. Here is the place for setting the metadata from the nansat that comes from the localfile
-            if (n_metadata['platform'] is not None and
-                    n_metadata['instrument'] is not None):
-                platform, _ = Platform.objects.get_or_create(
-                    json.loads(n_metadata['platform']))
-                instrument, _ = Instrument.objects.get_or_create(
-                    json.loads(n_metadata['instrument']))
-                specs = n_metadata.get('specs', '')
-                source, _ = Source.objects.get_or_create(platform=platform,
-                                                         instrument=instrument,
-                                                         specs=specs)
-                ds.source = source  # update source
+
+            platform, _ = Platform.objects.get_or_create(
+                json.loads(n_metadata['platform']))
+            instrument, _ = Instrument.objects.get_or_create(
+                json.loads(n_metadata['instrument']))
+            specs = n_metadata.get('specs', '')
+            source, _ = Source.objects.get_or_create(platform=platform,
+                                                     instrument=instrument,
+                                                     specs=specs)
+            ds.source = source  # update source
 
             if 'entry_title' in n_metadata and n_metadata['entry_title'] is not None:
                 # update entry_title
@@ -101,9 +100,9 @@ class DatasetManager(models.Manager):
 
             if len(n.vrt.dataset.GetGCPs()) > 0:
                 n.reproject_gcps()
-                geolocation = GeographicLocation.objects.get_or_create(
-                    geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
-                ds.geographic_location = geolocation
+            geolocation = GeographicLocation.objects.get_or_create(
+                geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
+            ds.geographic_location = geolocation
 
             if 'data_center' in n_metadata and n_metadata['data_center'] is not None:
                 ds.data_center = DataCenter.objects.get_or_create(
