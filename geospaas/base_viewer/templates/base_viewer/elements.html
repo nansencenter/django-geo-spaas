@@ -15,7 +15,7 @@
         <td class="place_ds">
             <div class="geometry_ref" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
             {% for url in ds.dataseturi_set.all %}
-            <a href="{{url.uri}}">Start: {{url.dataset.time_coverage_start}} {{url.dataset.entry_id}}</a>  <br>
+            <a href="{{url.uri}}">{{url.uri}}</a>  <br>
             {% endfor %}
             </div>
         </td>
