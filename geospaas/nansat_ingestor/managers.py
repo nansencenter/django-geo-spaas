@@ -88,6 +88,10 @@ class DatasetManager(models.Manager):
 
         # set optional CharField metadata from Nansat or from default_char_fields
         options = {}
+        try:
+            existing_ds = Dataset.objects.get(entry_id=entry_id)
+        except (Dataset.DoesNotExist, Dataset.MultipleObjectsReturned):
+            existing_ds = None
         for name in default_char_fields:
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
@@ -132,7 +136,7 @@ class DatasetManager(models.Manager):
             geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
         # create dataset
-        ds, created = Dataset.objects.get_or_create(
+        ds, created = Dataset.objects.update_or_create(
             time_coverage_start=n.get_metadata('time_coverage_start'),
             time_coverage_end=n.get_metadata('time_coverage_end'),
             source=source,

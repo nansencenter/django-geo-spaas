@@ -38,7 +38,7 @@ class BasetForTests(TestCase):
         'time_coverage_end': '2011-05-03T10:56:38.995099',
         'data_center': '{"Bucket_Level0": "MULTINATIONAL ORGANIZATIONS", "Bucket_Level1": "", "Bucket_Level2": "", "Bucket_Level3": "", "Short_Name": "ESA/EO", "Long_Name": "Observing the Earth, European Space Agency", "Data_Center_URL": "http://www.esa.int/esaEO/"}',
         'gcmd_location': '{"Location_Category": "VERTICAL LOCATION", "Location_Type": "SEA SURFACE", "Location_Subregion1": "", "Location_Subregion2": "", "Location_Subregion3": ""}',
-        'ISO_topic_category': '{"iso_topic_category": "Oceans"}',
+        'ISO_topic_category': '{"iso_topic_category": "Oceans_XXXXX"}',
     }
     predefined_band_metadata_dict = {
         1: {'dataType': '2',
@@ -160,6 +160,16 @@ class TestDatasetManager(BasetForTests):
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         self.assertEqual(ds0.parameters.values()[
                          0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
+
+    @patch('os.path.isfile')
+    def test_for_examining_the_updating_purpose_of_ingestor_code(self, mock_isfile):
+        '''shall update the previous record (existing dataset) in the database without creating a new one'''
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        d0, cr0 = Dataset.objects.get_or_create(uri)
+        d0.ISO_topic_category.name='dummy_value'#=dummy_var #replacing with the incorrect one (dummy one!)
+        d0, cr0 = Dataset.objects.get_or_create(uri)
+        self.assertEqual(d0.ISO_topic_category.name,'Oceans_XXXXX') # 'Oceans_XXXXX' is coming from predefined_metadata_dict (from a mapper)
 
     @patch('os.path.isfile')
     def test_getorcreate_localfile_filtering_base_on_parameter(self, mock_isfile):
