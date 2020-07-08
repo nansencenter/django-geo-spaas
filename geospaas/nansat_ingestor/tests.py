@@ -168,8 +168,9 @@ class TestDatasetManager(BasetForTests):
         uri = 'file://localhost/some/folder/filename.ext'
         d0, cr0 = Dataset.objects.get_or_create(uri)
         d0.ISO_topic_category.name='dummy_value'#=dummy_var #replacing with the incorrect one (dummy one!)
-        d0, cr0 = Dataset.objects.get_or_create(uri)
+        d0, cr1 = Dataset.objects.get_or_create(uri)
         self.assertEqual(d0.ISO_topic_category.name,'Oceans_XXXXX') # 'Oceans_XXXXX' is coming from predefined_metadata_dict (from a mapper)
+        self.assertFalse(cr1) #assert that no dataset is created when updating
 
     @patch('os.path.isfile')
     def test_getorcreate_localfile_filtering_base_on_parameter(self, mock_isfile):
