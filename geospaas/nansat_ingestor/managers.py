@@ -91,9 +91,8 @@ class DatasetManager(models.Manager):
         for name in default_char_fields:
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
-                #prevent the existing values from overwriten action by those of default values
-                if len(Dataset.objects.filter(entry_id=entry_id))>0:
-                    existing_ds = Dataset.objects.get(entry_id=entry_id)
+                #prevent overwriting of existing values by defaults
+                if existing_ds:
                     options[name] = existing_ds.__getattribute__(name)
                 else:
                     options[name] = default_char_fields[name]()
