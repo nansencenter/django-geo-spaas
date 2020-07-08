@@ -120,8 +120,7 @@ class DatasetManager(models.Manager):
                 except:
                     warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
                                   (n_metadata[name], name))
-            if len(Dataset.objects.filter(entry_id=entry_id))>0:
-                existing_ds = Dataset.objects.get(entry_id=entry_id)
+            if  existing_ds:
                 options[name] = existing_ds.__getattribute__(name)
             else:
                 options[name], _ = model.objects.get_or_create(value)
