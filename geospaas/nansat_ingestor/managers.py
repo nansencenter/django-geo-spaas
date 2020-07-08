@@ -69,8 +69,7 @@ class DatasetManager(models.Manager):
         # get metadata from Nansat and get objects from vocabularies
         n_metadata = n.get_metadata()
 
-        if n_metadata['entry_id'] is not None:
-            entry_id = n_metadata['entry_id']
+        entry_id = n_metadata.get('entry_id', None)
         # set compulsory metadata (source)
         platform, _ = Platform.objects.get_or_create(
             json.loads(n_metadata['platform']))
