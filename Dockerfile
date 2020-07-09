@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install \
     bs4 \
     coverage \
-    django==3.0 \
+    django==3.0.6 \
     django-forms-bootstrap==3.1.0 \
     django-leaflet==0.26.0 \
     psycopg2==2.8.4 \
