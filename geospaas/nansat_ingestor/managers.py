@@ -1,14 +1,12 @@
 import json
 import uuid
 import warnings
-from xml.sax.saxutils import unescape
 
 import pythesint as pti
 from django.contrib.gis.geos import WKTReader
 from django.db import models
 
-from geospaas.catalog.managers import (DAP_SERVICE_NAME, FILE_SERVICE_NAME,
-                                       LOCAL_FILE_SERVICE, OPENDAP_SERVICE)
+from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE
 from geospaas.catalog.models import (Dataset, DatasetParameter, DatasetURI,
                                      GeographicLocation, Source)
 from geospaas.utils.utils import nansat_filename, validate_uri
@@ -159,12 +157,12 @@ class DatasetManager(models.Manager):
             if params.count() > 1 and units is not None:
                 params = params.filter(units=units)
             if params.count() >= 1:
-                dsp, dsp_created = DatasetParameter.objects.get_or_create(
+                DatasetParameter.objects.get_or_create(
                     dataset=ds, parameter=params[0])
                 ds.parameters.add(params[0])
 
         # create dataset URI
-        ds_uri, _ = DatasetURI.objects.get_or_create(
+        DatasetURI.objects.get_or_create(
             name=uri_service_name,
             service=uri_service_type,
             uri=uri,

@@ -1,17 +1,15 @@
-import datetime
+"""Tests for nansat_ingestor app"""
 import sys
 from contextlib import contextmanager
 from io import StringIO
 
-from django.contrib.gis.geos import Polygon
-from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.test import TestCase
-from mock import DEFAULT, MagicMock, Mock, PropertyMock, patch
+from mock import PropertyMock, patch
 
-from geospaas.catalog.models import DatasetURI, GeographicLocation
+from geospaas.catalog.models import DatasetURI
 from geospaas.nansat_ingestor.models import Dataset
-from geospaas.vocabularies.models import Instrument, Platform
+from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
 
 
 @contextmanager
@@ -29,6 +27,7 @@ def captured_output():
 
 
 class BasetForTests(TestCase):
+    """Base class for creating the testing environment"""
     fixtures = ['vocabularies', 'catalog']
     predefined_metadata_dict = {
         'entry_id': 'UNIQUE_ID_1000',
@@ -112,10 +111,15 @@ class BasetForTests(TestCase):
         # in order to prevent "mock leak" in the tests
         self.addCleanup(self.patcher.stop)
 
+        self.patcher2 = patch('geospaas.utils.utils.os.path.isfile')
+        self.mock_isfile = self.patcher2.start()
+        self.mock_isfile.return_value = True
+
     def tearDown(self):
         self.patcher.stop()
+        self.patcher2.stop()
 
-    def mock_get_metadata(self, *args, **kwargs):
+    def mock_get_metadata(self, *args):
         """ Mock behaviour of Nansat.get_metadata method """
         if len(args) == 0:
             return self.predefined_metadata_dict
@@ -128,47 +132,40 @@ class BasetForTests(TestCase):
 
 
 class TestDatasetManager(BasetForTests):
+    """Class for containing all the tests of creating the datasets and related situations"""
 
-    @patch('os.path.isfile')
-    def test_getorcreate_localfile_only_created_for_the_very_first_time(self, mock_isfile):
+    def test_getorcreate_localfile_only_created_for_the_very_first_time(self):
         '''shall return the creation flag (the second returned value)
         equals to True for the first time and
         equals to False for the second time'''
-        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds1, cr1 = Dataset.objects.get_or_create(uri)
+        _, cr0 = Dataset.objects.get_or_create(uri)
+        _, cr1 = Dataset.objects.get_or_create(uri)
         self.assertTrue(cr0)
         self.assertFalse(cr1)
 
-    @patch('os.path.isfile')
-    def test_getorcreate_localfile_is_matched_in_metadata(self, mock_isfile):
+    def test_getorcreate_localfile_is_matched_in_metadata(self):
         '''shall return the correct specification of dataset created based on
         predefined metadata declared in the test'''
-        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.get_or_create(uri)
         self.assertEqual(
             ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
         self.assertEqual(ds0.summary, 'NONE')
 
-    @patch('os.path.isfile')
-    def test_getorcreate_localfile_matched_parameter(self, mock_isfile):
-        mock_isfile.return_value = True
+    def test_getorcreate_localfile_matched_parameter(self):
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, cr0 = Dataset.objects.get_or_create(uri)
-        self.assertEqual(ds0.parameters.values()[
-                         0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
+        ds0, _ = Dataset.objects.get_or_create(uri)
+        self.assertEqual(ds0.parameters.values()[0]['short_name'],
+                         self.predefined_band_metadata_dict[2]['short_name'])
 
-    @patch('os.path.isfile')
-    def test_getorcreate_localfile_filtering_base_on_parameter(self, mock_isfile):
+    def test_getorcreate_localfile_filtering_base_on_parameter(self):
         '''shall return standard name of
         an specified parameter of the correct filtered dataset
         based on parameter filtering'''
-        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        Dataset.objects.get_or_create(uri)
         testingDataset = Dataset.objects.filter(
             parameters__standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
         self.assertEqual(str(testingDataset.first().parameters.first()),
@@ -177,26 +174,22 @@ class TestDatasetManager(BasetForTests):
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
         with self.assertRaises(ValueError):
-            ds, created = Dataset.objects.get_or_create(uri)
+            Dataset.objects.get_or_create(uri)
 
-    @patch('os.path.isfile')
-    def test_dont_add_longitude_latitude(self, mock_isfile):
+    def test_dont_add_longitude_latitude(self):
         """ shall not add latitude and longitude into DatasetParameter table """
-        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.get_or_create(uri)
         ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
         # longitude should not be one of the parameters
         self.assertNotIn('longitude', ds_params_standard_names)
         # latitude should not be one of the parameters
         self.assertNotIn('latidtude', ds_params_standard_names)
 
-    @patch('os.path.isfile')
-    def test_add_sigma0_gamma0(self, mock_isfile):
+    def test_add_sigma0_gamma0(self):
         """ shall add both sigma0 and gamma0 with same standard name  into DatasetParameter table """
-        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, cr0 = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.get_or_create(uri)
         ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
         ds_params_short_names = ds0.parameters.values_list('short_name', flat=True)
         self.assertEqual(len(ds_params_standard_names), 2)
@@ -208,12 +201,11 @@ class TestDatasetManager(BasetForTests):
 
 
 class TestDatasetURI(BasetForTests):
-    @patch('os.path.isfile')
-    def test_get_non_ingested_uris(self, mock_isfile):
-        mock_isfile.return_value = True
+    """Class for containing the tests of creation of dataseturi after creation of dataset"""
+    def test_get_non_ingested_uris(self):
         ''' Shall return list with only  non existing files '''
         testfile = 'file://localhost/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
-        ds = Dataset.objects.get_or_create(testfile)[0]
+        Dataset.objects.get_or_create(testfile)
         new_uris = ['file://fake/path/file1.ext', 'file://fake/path/file2.ext']
         all_uris = new_uris + [testfile]
         uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
@@ -221,21 +213,16 @@ class TestDatasetURI(BasetForTests):
 
 
 class TestIngestNansatCommand(BasetForTests):
-    @patch('os.path.isfile')
-    def test_add_asar(self, mock_isfile):
-        mock_isfile.return_value = True
+    def test_add_asar(self):
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
         call_command('ingest', f, stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
-    @patch('os.path.isfile')
-    def test_add_asar_with_nansat_options(self, mock_isfile):
-        mock_isfile.return_value = True
+    def test_add_asar_with_nansat_options(self):
         out = StringIO()
         f = 'file://localhost/vagrant/shared/test_data/asar/ASA_WSM_1PNPDK20081110_205618_000000922073_00401_35024_0844.N1'
-        call_command('ingest', f, nansat_option=[
-                     'mapperName=asar'], stdout=out)
+        call_command('ingest', f, nansat_option=['mapperName=asar'], stdout=out)
         self.assertIn('Successfully added:', out.getvalue())
 
 
@@ -330,7 +317,6 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
         added = crawl_and_ingest(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(
@@ -348,8 +334,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
-        added = crawl_and_ingest(self.uri)
+        crawl_and_ingest(self.uri)
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(
             self.uri, debug=True, select=None, skip=['.*ncml'])
@@ -367,7 +352,6 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
 
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
         added = crawl_and_ingest(self.uri, date='2019/01/01')
         self.mock_validate_uri.assert_called_once_with(self.uri)
         self.mock_Crawl.assert_called_once_with(self.uri, debug=True,
@@ -378,7 +362,6 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         self.mock_ds.objects.get_or_create.return_value = (Dataset(), True)
         self.mock_dsuri.objects.get_or_create.return_value = (
             DatasetURI(), True)
-        from geospaas.nansat_ingestor.management.commands.ingest_thredds_crawl import crawl_and_ingest
         fn = 'S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc'
         added = crawl_and_ingest(self.uri, filename=fn)
         self.mock_validate_uri.assert_called_once_with(self.uri)
@@ -418,10 +401,14 @@ class TestsForUpdateAbility(BasetForTests):
         # in order to prevent "mock leak" in the tests
         self.addCleanup(self.patcher.stop)
 
+        self.patcher2 = patch('geospaas.utils.utils.os.path.isfile')
+        self.mock_isfile = self.patcher2.start()
+        self.mock_isfile.return_value = True
+
     def tearDown(self):
         self.patcher.stop()
 
-    def mock_get_metadata(self, *args, **kwargs):
+    def mock_get_metadata(self, *args):
         """ Mock behaviour of Nansat.get_metadata method """
         if len(args) == 0:
             return self.predefined_metadata_dict
@@ -432,12 +419,10 @@ class TestsForUpdateAbility(BasetForTests):
     def mock_bands(self):
         return self.predefined_band_metadata_dict
 
-    @patch('os.path.isfile')
-    def test_for_examining_the_updating_purpose_of_ingestor_code(self, mock_isfile):
+    def test_for_examining_the_updating_purpose_of_ingestor_code(self):
         '''shall update the previous record (existing dataset) in the database without creating a new one'''
-        mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
-        d0, cr0 = Dataset.objects.get_or_create(uri)
+        d0, _ = Dataset.objects.get_or_create(uri)
         # assertion of updating ability
         self.assertEqual(d0.entry_title, 'new title from nansat mapper')
         # assertion of presence of both online link and offline link are present in the set of uri
