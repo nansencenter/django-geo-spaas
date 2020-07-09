@@ -15,7 +15,7 @@ class TestUtils(TestCase):
             utils.validate_uri(uri)
         self.assertEqual('NetCDF: file not found', cm.exception.args[1])
 
-    @patch('os.path.isfile')
+    @patch('geospaas.utils.utils.os.path.isfile')
     def test_validate_uri_local(self, mock_isfile):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
