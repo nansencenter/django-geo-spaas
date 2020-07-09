@@ -69,7 +69,7 @@ class BasetForTests(TestCase):
             'short_name': 'testing',
             'SourceBand': '1',
             'SourceFilename': 'testing',
-            'standard_name': 'longitude',#<=== notice the difference between testing records
+            'standard_name': 'longitude',  # <=== notice the difference between testing records
             'suffix': 'testing',
             'units': 'testing',
             'wkv': 'testing'},
@@ -83,7 +83,7 @@ class BasetForTests(TestCase):
             'short_name': 'testing',
             'SourceBand': '1',
             'SourceFilename': 'testing',
-            'standard_name': 'latitude',#<=== notice the difference between testing records
+            'standard_name': 'latitude',  # <=== notice the difference between testing records
             'suffix': 'testing',
             'units': 'testing',
             'wkv': 'testing'},
@@ -162,17 +162,6 @@ class TestDatasetManager(BasetForTests):
                          0]['short_name'], self.predefined_band_metadata_dict[2]['short_name'])
 
     @patch('os.path.isfile')
-    def test_for_examining_the_updating_purpose_of_ingestor_code(self, mock_isfile):
-        '''shall update the previous record (existing dataset) in the database without creating a new one'''
-        mock_isfile.return_value = True
-        uri = 'file://localhost/some/folder/filename.ext'
-        d0, cr0 = Dataset.objects.get_or_create(uri)
-        d0.ISO_topic_category.name='dummy_value'#=dummy_var #replacing with the incorrect one (dummy one!)
-        d0, cr1 = Dataset.objects.get_or_create(uri)
-        self.assertEqual(d0.ISO_topic_category.name,'Oceans_XXXXX') # 'Oceans_XXXXX' is coming from predefined_metadata_dict (from a mapper)
-        self.assertFalse(cr1) #assert that no dataset is created when updating
-
-    @patch('os.path.isfile')
     def test_getorcreate_localfile_filtering_base_on_parameter(self, mock_isfile):
         '''shall return standard name of
         an specified parameter of the correct filtered dataset
@@ -196,7 +185,8 @@ class TestDatasetManager(BasetForTests):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
+        ds_params_standard_names = ds0.parameters.values_list(
+            'standard_name', flat=True)
         # longitude should not be one of the parameters
         self.assertNotIn('longitude', ds_params_standard_names)
         # latitude should not be one of the parameters
@@ -208,14 +198,17 @@ class TestDatasetManager(BasetForTests):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
-        ds_params_short_names = ds0.parameters.values_list('short_name', flat=True)
+        ds_params_standard_names = ds0.parameters.values_list(
+            'standard_name', flat=True)
+        ds_params_short_names = ds0.parameters.values_list(
+            'short_name', flat=True)
         self.assertEqual(len(ds_params_standard_names), 2)
         self.assertEqual(len(ds_params_short_names), 2)
         self.assertIn('surface_backwards_scattering_coefficient_of_radar_wave',
-            ds_params_standard_names)
+                      ds_params_standard_names)
         self.assertIn('sigma0', ds_params_short_names)
         self.assertIn('gamma0', ds_params_short_names)
+
 
 class TestDatasetURI(BasetForTests):
     @patch('os.path.isfile')
@@ -407,3 +400,115 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         # I am not sure which situations caused AttributeError, so this is not tested now (on 2019-02-15,
         # the S2 data access from the Norwegian ground segment was failing)
         pass
+
+
+class TestsForUpdateAbility(TestCase):
+    fixtures = ['vocabularies', 'catalog']
+    predefined_metadata_dict = {
+        'entry_id': 'NERSC_test_dataset_titusen',
+        'entry_title': 'new title from nansat mapper',
+        'platform': '{"Category": "Earth Observation Satellites", "Series_Entity": "", "Short_Name": "ENVISAT", "Long_Name": "Environmental Satellite"}',
+        'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
+        'time_coverage_start': '2011-05-03T10:56:38.995099',
+        'time_coverage_end': '2012-05-03T10:56:38.995099'
+    }
+    predefined_band_metadata_dict = {
+        1: {'dataType': '2',
+            'name': 'DN_HH',
+            'SourceBand': '1',
+            'SourceFilename': '/some/folder/filename.ext'},
+        2: {'colormap': 'gray',
+            'dataType': '6',
+            'long_name': 'Normalized Radar Cross Section',
+            'minmax': '0 0.1',
+            'name': 'sigma0_HH',
+            'PixelFunctionType': 'Sentinel1Calibration',
+            'polarization': 'HH',
+            'short_name': 'sigma0',
+            'SourceBand': '1',
+            'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
+            'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
+            'suffix': 'HH',
+            'units': 'm/m',
+            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'},
+        3: {'colormap': 'testing',
+            'dataType': '6',
+            'long_name': 'testing',
+            'minmax': '0 0.1',
+            'name': 'testing',
+            'PixelFunctionType': 'testing',
+            'polarization': 'testing',
+            'short_name': 'testing',
+            'SourceBand': '1',
+            'SourceFilename': 'testing',
+            'standard_name': 'longitude',  # <=== notice the difference between testing records
+            'suffix': 'testing',
+            'units': 'testing',
+            'wkv': 'testing'},
+        4: {'colormap': 'testing',
+            'dataType': '10',
+            'long_name': 'testing',
+            'minmax': '0 0.1',
+            'name': 'testing',
+            'PixelFunctionType': 'testing',
+            'polarization': 'testing',
+            'short_name': 'testing',
+            'SourceBand': '1',
+            'SourceFilename': 'testing',
+            'standard_name': 'latitude',  # <=== notice the difference between testing records
+            'suffix': 'testing',
+            'units': 'testing',
+            'wkv': 'testing'},
+        5: {'colormap': 'gray',
+            'dataType': '6',
+            'long_name': 'Normalized Radar Cross Section',
+            'minmax': '0 0.1',
+            'name': 'gamma0_HH',
+            'PixelFunctionType': 'Sentinel1Calibration',
+            'polarization': 'HH',
+            'short_name': 'gamma0',
+            'SourceBand': '1',
+            'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
+            'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
+            'suffix': 'HH',
+            'units': 'm/m',
+            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'},
+    }
+
+    def setUp(self):
+        self.patcher = patch('geospaas.nansat_ingestor.managers.Nansat')
+        self.mock_Nansat = self.patcher.start()
+        self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
+        self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
+        self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
+        # in order to prevent "mock leak" in the tests
+        self.addCleanup(self.patcher.stop)
+
+    def tearDown(self):
+        self.patcher.stop()
+
+    def mock_get_metadata(self, *args, **kwargs):
+        """ Mock behaviour of Nansat.get_metadata method """
+        if len(args) == 0:
+            return self.predefined_metadata_dict
+        if args[0] not in self.predefined_metadata_dict:
+            raise
+        return self.predefined_metadata_dict[args[0]]
+
+    def mock_bands(self):
+        return self.predefined_band_metadata_dict
+
+    @patch('os.path.isfile')
+    def test_for_examining_the_updating_purpose_of_ingestor_code(self, mock_isfile):
+        '''shall update the previous record (existing dataset) in the database without creating a new one'''
+        mock_isfile.return_value = True
+        uri = 'file://localhost/some/folder/filename.ext'
+        d0, cr0 = Dataset.objects.get_or_create(uri)
+        # assertion of updating ability
+        self.assertEqual(d0.entry_title, 'new title from nansat mapper')
+        # assertion of presence of both online link and offline link are present in the set of uri
+        self.assertEqual(2, d0.dataseturi_set.all().count())
+        self.assertIn('file://localhost/some/test/file1.ext', [d0.dataseturi_set.first(
+        ).uri, d0.dataseturi_set.last().uri])  # assertion of online link
+        self.assertIn('file://localhost/some/folder/filename.ext', [d0.dataseturi_set.first(
+        ).uri, d0.dataseturi_set.last().uri])  # assertion of offline link

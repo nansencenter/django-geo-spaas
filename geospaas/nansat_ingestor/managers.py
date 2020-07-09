@@ -6,7 +6,6 @@ from xml.sax.saxutils import unescape
 import pythesint as pti
 from django.contrib.gis.geos import WKTReader
 from django.db import models
-from nansat.nansat import Nansat
 
 from geospaas.catalog.managers import (DAP_SERVICE_NAME, FILE_SERVICE_NAME,
                                        LOCAL_FILE_SERVICE, OPENDAP_SERVICE)
@@ -16,10 +15,7 @@ from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
                                           ISOTopicCategory, Location,
                                           Parameter, Platform)
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+from nansat.nansat import Nansat
 
 
 class DatasetManager(models.Manager):
@@ -95,7 +91,7 @@ class DatasetManager(models.Manager):
         for name in default_char_fields:
             if name not in n_metadata:
                 warnings.warn('%s is not provided in Nansat metadata!' % name)
-                #prevent overwriting of existing values by defaults
+                # prevent overwriting of existing values by defaults
                 if existing_ds:
                     options[name] = existing_ds.__getattribute__(name)
                 else:
@@ -124,7 +120,7 @@ class DatasetManager(models.Manager):
                 except:
                     warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
                                   (n_metadata[name], name))
-            if  existing_ds:
+            if existing_ds:
                 options[name] = existing_ds.__getattribute__(name)
             else:
                 options[name], _ = model.objects.get_or_create(value)
@@ -136,12 +132,17 @@ class DatasetManager(models.Manager):
             geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
         # create dataset
-        ds, created = Dataset.objects.update_or_create(
-            time_coverage_start=n.get_metadata('time_coverage_start'),
-            time_coverage_end=n.get_metadata('time_coverage_end'),
-            source=source,
-            geographic_location=geolocation,
-            **options)
+        ds, created = Dataset.objects.update_or_create(entry_id=entry_id, defaults={
+            'time_coverage_start': n.get_metadata('time_coverage_start'),
+            'time_coverage_end': n.get_metadata('time_coverage_end'),
+            'source': source,
+            'geographic_location': geolocation,
+            'gcmd_location': options["gcmd_location"],
+            'ISO_topic_category': options["ISO_topic_category"],
+            "data_center": options["data_center"],
+            'entry_title': options["entry_title"],
+            'summary': options["summary"]}
+        )
 
         # create parameter
         all_band_meta = n.bands()
@@ -159,7 +160,7 @@ class DatasetManager(models.Manager):
                 params = params.filter(units=units)
             if params.count() >= 1:
                 dsp, dsp_created = DatasetParameter.objects.get_or_create(
-                        dataset=ds, parameter=params[0])
+                    dataset=ds, parameter=params[0])
                 ds.parameters.add(params[0])
 
         # create dataset URI
