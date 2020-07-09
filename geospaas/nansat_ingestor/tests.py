@@ -171,8 +171,8 @@ class TestDatasetManager(BasetForTests):
         ds0, cr0 = Dataset.objects.get_or_create(uri)
         testingDataset = Dataset.objects.filter(
             parameters__standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
-        self.assertEqual(str(testingDataset.first().parameters.first(
-        )), self.predefined_band_metadata_dict[2]['standard_name'])
+        self.assertEqual(str(testingDataset.first().parameters.first()),
+                         self.predefined_band_metadata_dict[2]['standard_name'])
 
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
@@ -185,8 +185,7 @@ class TestDatasetManager(BasetForTests):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds_params_standard_names = ds0.parameters.values_list(
-            'standard_name', flat=True)
+        ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
         # longitude should not be one of the parameters
         self.assertNotIn('longitude', ds_params_standard_names)
         # latitude should not be one of the parameters
@@ -198,10 +197,8 @@ class TestDatasetManager(BasetForTests):
         mock_isfile.return_value = True
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, cr0 = Dataset.objects.get_or_create(uri)
-        ds_params_standard_names = ds0.parameters.values_list(
-            'standard_name', flat=True)
-        ds_params_short_names = ds0.parameters.values_list(
-            'short_name', flat=True)
+        ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
+        ds_params_short_names = ds0.parameters.values_list('short_name', flat=True)
         self.assertEqual(len(ds_params_standard_names), 2)
         self.assertEqual(len(ds_params_short_names), 2)
         self.assertIn('surface_backwards_scattering_coefficient_of_radar_wave',
