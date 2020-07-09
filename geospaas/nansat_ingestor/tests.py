@@ -407,6 +407,7 @@ class TestsForUpdateAbility(BasetForTests):
 
     def tearDown(self):
         self.patcher.stop()
+        self.patcher2.stop()
 
     def mock_get_metadata(self, *args):
         """ Mock behaviour of Nansat.get_metadata method """
