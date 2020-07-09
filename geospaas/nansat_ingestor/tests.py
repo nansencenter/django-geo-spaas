@@ -399,8 +399,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         pass
 
 
-class TestsForUpdateAbility(TestCase):
-    fixtures = ['vocabularies', 'catalog']
+class TestsForUpdateAbility(BasetForTests):
     predefined_metadata_dict = {
         'entry_id': 'NERSC_test_dataset_titusen',
         'entry_title': 'new title from nansat mapper',
@@ -408,68 +407,6 @@ class TestsForUpdateAbility(TestCase):
         'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
         'time_coverage_start': '2011-05-03T10:56:38.995099',
         'time_coverage_end': '2012-05-03T10:56:38.995099'
-    }
-    predefined_band_metadata_dict = {
-        1: {'dataType': '2',
-            'name': 'DN_HH',
-            'SourceBand': '1',
-            'SourceFilename': '/some/folder/filename.ext'},
-        2: {'colormap': 'gray',
-            'dataType': '6',
-            'long_name': 'Normalized Radar Cross Section',
-            'minmax': '0 0.1',
-            'name': 'sigma0_HH',
-            'PixelFunctionType': 'Sentinel1Calibration',
-            'polarization': 'HH',
-            'short_name': 'sigma0',
-            'SourceBand': '1',
-            'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
-            'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
-            'suffix': 'HH',
-            'units': 'm/m',
-            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'},
-        3: {'colormap': 'testing',
-            'dataType': '6',
-            'long_name': 'testing',
-            'minmax': '0 0.1',
-            'name': 'testing',
-            'PixelFunctionType': 'testing',
-            'polarization': 'testing',
-            'short_name': 'testing',
-            'SourceBand': '1',
-            'SourceFilename': 'testing',
-            'standard_name': 'longitude',  # <=== notice the difference between testing records
-            'suffix': 'testing',
-            'units': 'testing',
-            'wkv': 'testing'},
-        4: {'colormap': 'testing',
-            'dataType': '10',
-            'long_name': 'testing',
-            'minmax': '0 0.1',
-            'name': 'testing',
-            'PixelFunctionType': 'testing',
-            'polarization': 'testing',
-            'short_name': 'testing',
-            'SourceBand': '1',
-            'SourceFilename': 'testing',
-            'standard_name': 'latitude',  # <=== notice the difference between testing records
-            'suffix': 'testing',
-            'units': 'testing',
-            'wkv': 'testing'},
-        5: {'colormap': 'gray',
-            'dataType': '6',
-            'long_name': 'Normalized Radar Cross Section',
-            'minmax': '0 0.1',
-            'name': 'gamma0_HH',
-            'PixelFunctionType': 'Sentinel1Calibration',
-            'polarization': 'HH',
-            'short_name': 'gamma0',
-            'SourceBand': '1',
-            'SourceFilename': '/vsimem/0BSD1QSPFL.vrt',
-            'standard_name': 'surface_backwards_scattering_coefficient_of_radar_wave',
-            'suffix': 'HH',
-            'units': 'm/m',
-            'wkv': 'surface_backwards_scattering_coefficient_of_radar_wave'},
     }
 
     def setUp(self):
