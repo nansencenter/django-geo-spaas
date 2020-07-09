@@ -1,4 +1,3 @@
-import os, glob, warnings
 from django.core.management.base import BaseCommand, CommandError
 
 from geospaas.utils.utils import uris_from_args
@@ -52,7 +51,7 @@ class Command(BaseCommand):
             ds, cr = Dataset.objects.get_or_create(non_ingested_uri, n_points=n_points, **nansat_options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
-            elif type(ds)==Dataset:
+            elif type(ds) == Dataset:
                 self.stdout.write('%s has been added before.\n' % non_ingested_uri)
             else:
                 self.stdout.write('Could not add %s.\n' % non_ingested_uri)
