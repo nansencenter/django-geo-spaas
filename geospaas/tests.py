@@ -42,3 +42,8 @@ class TestUtils(TestCase):
         root = '/home/vagrant/site_media/media'
         mpath = utils.module_path(module, root)
         self.assertEqual(mpath, os.path.join(root, 'geospaas/catalog'))
+
+    def test_fail_invalid_uri(self):
+        uri = '/this/is/some/file/but/not/an/uri'
+        with self.assertRaises(ValueError):
+            utils.validate_uri(uri)
