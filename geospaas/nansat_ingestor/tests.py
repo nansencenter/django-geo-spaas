@@ -392,34 +392,6 @@ class TestsForUpdateAbility(BasetForTests):
         'time_coverage_end': '2012-05-03T10:56:38.995099'
     }
 
-    def setUp(self):
-        self.patcher = patch('geospaas.nansat_ingestor.managers.Nansat')
-        self.mock_Nansat = self.patcher.start()
-        self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
-        self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
-        self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
-        # in order to prevent "mock leak" in the tests
-        self.addCleanup(self.patcher.stop)
-
-        self.patcher2 = patch('geospaas.utils.utils.os.path.isfile')
-        self.mock_isfile = self.patcher2.start()
-        self.mock_isfile.return_value = True
-
-    def tearDown(self):
-        self.patcher.stop()
-        self.patcher2.stop()
-
-    def mock_get_metadata(self, *args):
-        """ Mock behaviour of Nansat.get_metadata method """
-        if len(args) == 0:
-            return self.predefined_metadata_dict
-        if args[0] not in self.predefined_metadata_dict:
-            raise
-        return self.predefined_metadata_dict[args[0]]
-
-    def mock_bands(self):
-        return self.predefined_band_metadata_dict
-
     def test_for_examining_the_updating_purpose_of_ingestor_code(self):
         '''shall update the previous record (existing dataset) in the database without creating a new one'''
         uri = 'file://localhost/some/folder/filename.ext'
