@@ -109,7 +109,7 @@ class BasetForTests(TestCase):
         self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
         self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
         # in order to prevent "mock leak" in the tests
-        self.addCleanup(self.patcher.stop)
+        self.addCleanup(patcher.stopall)
 
         self.patcher2 = patch('geospaas.utils.utils.os.path.isfile')
         self.mock_isfile = self.patcher2.start()
