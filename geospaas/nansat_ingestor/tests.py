@@ -115,9 +115,6 @@ class BasetForTests(TestCase):
         self.mock_isfile = self.patcher2.start()
         self.mock_isfile.return_value = True
 
-    def tearDown(self):
-        self.patcher.stop()
-        self.patcher2.stop()
 
     def mock_get_metadata(self, *args):
         """ Mock behaviour of Nansat.get_metadata method """
