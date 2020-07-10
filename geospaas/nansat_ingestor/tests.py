@@ -108,13 +108,13 @@ class BasetForTests(TestCase):
         self.mock_Nansat.return_value.get_metadata.side_effect = self.mock_get_metadata
         self.mock_Nansat.return_value.get_border_wkt.return_value = 'POLYGON((24.88 68.08,22.46 68.71,19.96 69.31,17.39 69.87,24.88 68.08))'
         self.mock_Nansat.return_value.bands.side_effect = self.mock_bands
+
+
+        self.patcher2 = patch('geospaas.nansat_ingestor.managers.validate_uri')
+        self.mock_validate_uri = self.patcher2.start()
+        self.mock_validate_uri.return_value = None
         # in order to prevent "mock leak" in the tests
-        self.addCleanup(patcher.stopall)
-
-        self.patcher2 = patch('geospaas.utils.utils.os.path.isfile')
-        self.mock_isfile = self.patcher2.start()
-        self.mock_isfile.return_value = True
-
+        self.addCleanup(patch.stopall)
 
     def mock_get_metadata(self, *args):
         """ Mock behaviour of Nansat.get_metadata method """
@@ -167,11 +167,6 @@ class TestDatasetManager(BasetForTests):
             parameters__standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
         self.assertEqual(str(testingDataset.first().parameters.first()),
                          self.predefined_band_metadata_dict[2]['standard_name'])
-
-    def test_fail_invalid_uri(self):
-        uri = '/this/is/some/file/but/not/an/uri'
-        with self.assertRaises(ValueError):
-            Dataset.objects.get_or_create(uri)
 
     def test_dont_add_longitude_latitude(self):
         """ shall not add latitude and longitude into DatasetParameter table """
@@ -300,13 +295,7 @@ class TestIngestThreddsCrawl__crawl__function(TestCase):
         ]
         self.mock_Crawl.return_value = PropertyMock(
             datasets=[test_LeafDataset])
-
-    def tearDown(self):
-        self.patch_LeafDataset.stop()
-        self.patch_validate_uri.stop()
-        self.patch_Crawl.stop()
-        self.patch_Dataset.stop()
-        self.patch_DatasetURI.stop()
+        self.addCleanup(patch.stopall)
 
     def test_ds_created(self):
         '''shall assert that NansatDataset.objects.get_or_create
