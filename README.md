@@ -35,7 +35,7 @@ How to use Docker for running Django-Geo-SPaaS
 If you already have a project directory or if you are working on another app you can use the
 existing Docker image with Django-Geo-SPaaS. The image is already uploaded to Docker Hub,
 so no above steps are necessary. The workflow can be the following:
-1. Create a containter with necessary directories mounted
+1. Create a container with necessary directories mounted
 2. Start container in background
 3. Run Django commands from your host:
 ```
@@ -51,8 +51,31 @@ docker start myapp
 # create project dir in /host/dir/myapp
 docker exec myapp django-admin startproject myproject
 
-# update settings.py and urls.py to use Geo-Django (see tests/settings.py for example)
-# don't forget to set correct name of the project and add your app to the settings.py
+# update settings.py
+```
+INSTALLED_APPS = [
+    ...
+    'django.contrib.gis',
+    'leaflet',
+    'django_forms_bootstrap',
+    'geospaas.base_viewer',
+    'geospaas.nansat_ingestor',
+    'geospaas.catalog',
+    'geospaas.vocabularies',
+    'myproject',
+]
+```
+
+# update urls.py
+```
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('tests/', include('geospaas.base_viewer.urls')),
+]
+```
 
 # migrate database schema
 docker exec myapp /src/myproject/manage.py migrate
