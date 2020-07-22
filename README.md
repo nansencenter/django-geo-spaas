@@ -66,6 +66,15 @@ INSTALLED_APPS = [
     'geospaas.vocabularies',
     'myproject',
 ]
+
+...
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'NAME': os.path.join(BASE_DIR, 'geodjango.db'),
+    }
+}
 ```
 
 ```
