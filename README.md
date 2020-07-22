@@ -53,6 +53,8 @@ docker exec myapp django-admin startproject myproject
 
 # update settings.py
 ```
+
+```
 INSTALLED_APPS = [
     ...
     'django.contrib.gis',
@@ -66,7 +68,10 @@ INSTALLED_APPS = [
 ]
 ```
 
+```
 # update urls.py
+```
+
 ```
 from django.contrib import admin
 from django.urls import path, include
@@ -77,6 +82,7 @@ urlpatterns = [
 ]
 ```
 
+```
 # migrate database schema
 docker exec myapp /src/myproject/manage.py migrate
 
