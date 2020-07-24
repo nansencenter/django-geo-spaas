@@ -75,7 +75,9 @@ class DatasetManager(models.Manager):
                                                  specs=specs)
 
         default_char_fields = {
-            'entry_id': lambda: 'NERSC_' + str(uuid.uuid4()),
+            # Adding NERSC_ in front of the id violates the string representation of the uuid
+            #'entry_id': lambda: 'NERSC_' + str(uuid.uuid4()),
+            'entry_id': lambda: str(uuid.uuid4()),
             'entry_title': lambda: 'NONE',
             'summary': lambda: 'NONE',
         }
@@ -84,7 +86,11 @@ class DatasetManager(models.Manager):
         options = {}
         try:
             existing_ds = Dataset.objects.get(entry_id=entry_id)
-        except (Dataset.DoesNotExist, Dataset.MultipleObjectsReturned):
+        # Since the entry_id should be unique, it would be a rather serious issue if multiple objects 
+        # are returned here. I suggest to remove the exception Dataset.MultipleObjectsReturned to 
+        # catch such a theoretical error..
+        #except (Dataset.DoesNotExist, Dataset.MultipleObjectsReturned):
+        except Dataset.DoesNotExist:
             existing_ds = None
         for name in default_char_fields:
             if name not in n_metadata:
@@ -130,7 +136,9 @@ class DatasetManager(models.Manager):
             geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
         # create dataset
-        ds, created = Dataset.objects.update_or_create(entry_id=entry_id, defaults={
+        # - the get_or_create method should use get_or_create here as well - see issue #127
+        # - also read entry_id from options dict
+        ds, created = Dataset.objects.update_or_create(entry_id=options['entry_id'], defaults={
             'time_coverage_start': n.get_metadata('time_coverage_start'),
             'time_coverage_end': n.get_metadata('time_coverage_end'),
             'source': source,
