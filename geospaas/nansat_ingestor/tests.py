@@ -30,7 +30,11 @@ class BasetForTests(TestCase):
     """Base class for creating the testing environment"""
     fixtures = ['vocabularies', 'catalog']
     predefined_metadata_dict = {
-        'entry_id': 'UNIQUE_ID_1000',
+        # In development, it does not necessarily make sense to provide the entry_id from metadata. 
+        # Also, Nansat should not set the entry_id, as this would then be different each time a new 
+        # Nansat instance is created (provided uuid is used). I propose to remove it from this dict,
+        # and test both with and without the enty_id.
+        #'entry_id': 'UNIQUE_ID_1000',
         'platform': '{"Category": "Earth Observation Satellites", "Series_Entity": "", "Short_Name": "ENVISAT", "Long_Name": "Environmental Satellite"}',
         'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
         'time_coverage_start': '2011-05-03T10:56:38.995099',
@@ -130,6 +134,12 @@ class BasetForTests(TestCase):
 
 class TestDatasetManager(BasetForTests):
     """Class for containing all the tests of creating the datasets and related situations"""
+
+    def test__get_or_create__with__entry_id__in__metadata(self):
+        self.predefined_metadata_dict['entry_id'] = 'UNIQUE_ID_1000'
+        uri = 'file://localhost/some/folder/filename.ext'
+        _, cr0 = Dataset.objects.get_or_create(uri)
+        self.assertTrue(cr0)
 
     def test_getorcreate_localfile_only_created_for_the_very_first_time(self):
         '''shall return the creation flag (the second returned value)
