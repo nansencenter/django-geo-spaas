@@ -138,7 +138,7 @@ class DatasetManager(models.Manager):
         # create dataset
         # - the get_or_create method should use get_or_create here as well - see issue #127
         # - also read entry_id from options dict
-        ds, created = Dataset.objects.update_or_create(entry_id=options['entry_id'], defaults={
+        ds, created = Dataset.objects.get_or_create(entry_id=options['entry_id'], defaults={
             'time_coverage_start': n.get_metadata('time_coverage_start'),
             'time_coverage_end': n.get_metadata('time_coverage_end'),
             'source': source,
