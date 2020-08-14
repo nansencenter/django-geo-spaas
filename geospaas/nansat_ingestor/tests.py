@@ -30,11 +30,6 @@ class BasetForTests(TestCase):
     """Base class for creating the testing environment"""
     fixtures = ['vocabularies', 'catalog']
     predefined_metadata_dict = {
-        # In development, it does not necessarily make sense to provide the entry_id from metadata. 
-        # Also, Nansat should not set the entry_id, as this would then be different each time a new 
-        # Nansat instance is created (provided uuid is used). I propose to remove it from this dict,
-        # and test both with and without the enty_id.
-        #'entry_id': 'UNIQUE_ID_1000',
         'platform': '{"Category": "Earth Observation Satellites", "Series_Entity": "", "Short_Name": "ENVISAT", "Long_Name": "Environmental Satellite"}',
         'instrument': '{"Category": "Earth Remote Sensing Instruments", "Class": "Passive Remote Sensing", "Type": "Spectrometers/Radiometers", "Subtype": "Imaging Spectrometers/Radiometers", "Short_Name": "MERIS", "Long_Name": "Medium Resolution Imaging Spectrometer"}',
         'time_coverage_start': '2011-05-03T10:56:38.995099',
