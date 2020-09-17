@@ -1,10 +1,17 @@
 # Initialize from docker image with Python, libraries and Nansat
-FROM nansencenter/nansat:latest
+ARG BASE_IMAGE='nansencenter/nansat:latest'
+FROM ${BASE_IMAGE}
 LABEL purpose="Running and developing Django-Geo-SpaaS"
 ENV PYTHONUNBUFFERED=1
 
 # Install Django
-RUN pip install \
+RUN apt update \
+&&  apt install -y \
+    # psycopg2 dependencies
+    g++ \
+    libpq5 \
+    libpq-dev \
+&&  pip install \
     bs4 \
     coverage \
     django==3.0.6 \
@@ -12,6 +19,8 @@ RUN pip install \
     django-leaflet==0.26.0 \
     psycopg2==2.8.4 \
     thredds_crawler==1.5.4 \
+&&  apt remove -y g++ && apt autoremove -y \
+&&  apt clean && rm -rf /var/lib/apt/lists/* \
 &&  echo "alias ll='ls -lh'" >> /root/.bashrc
 
 # install Geo-SPaaS
