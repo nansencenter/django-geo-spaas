@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
         for non_ingested_uri in non_ingested_uris:
             self.stdout.write('Ingesting %s ...\n' % non_ingested_uri)
-            ds, cr = Dataset.objects.get_or_create(non_ingested_uri, n_points=n_points, **nansat_options)
+            ds, cr = Dataset.objects.update_or_ingest(non_ingested_uri, n_points=n_points, **nansat_options)
             if cr:
                 self.stdout.write('Successfully added: %s\n' % non_ingested_uri)
             elif type(ds) == Dataset:

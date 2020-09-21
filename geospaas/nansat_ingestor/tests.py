@@ -133,7 +133,7 @@ class TestDatasetManager(BasetForTests):
     def test__get_or_create__with__entry_id__in__metadata(self):
         self.predefined_metadata_dict['entry_id'] = 'UNIQUE_ID_1000'
         uri = 'file://localhost/some/folder/filename.ext'
-        _, cr0 = Dataset.objects.get_or_create(uri)
+        _, cr0 = Dataset.objects.update_or_ingest(uri)
         self.assertTrue(cr0)
 
     def test_getorcreate_localfile_only_created_for_the_very_first_time(self):
@@ -141,8 +141,8 @@ class TestDatasetManager(BasetForTests):
         equals to True for the first time and
         equals to False for the second time'''
         uri = 'file://localhost/some/folder/filename.ext'
-        _, cr0 = Dataset.objects.get_or_create(uri)
-        _, cr1 = Dataset.objects.get_or_create(uri)
+        _, cr0 = Dataset.objects.update_or_ingest(uri)
+        _, cr1 = Dataset.objects.update_or_ingest(uri)
         self.assertTrue(cr0)
         self.assertFalse(cr1)
 
@@ -150,7 +150,7 @@ class TestDatasetManager(BasetForTests):
         '''shall return the correct specification of dataset created based on
         predefined metadata declared in the test'''
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, _ = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.update_or_ingest(uri)
         self.assertEqual(
             ds0.entry_id, self.predefined_metadata_dict['entry_id'])
         self.assertEqual(ds0.entry_title, 'NONE')
@@ -158,7 +158,7 @@ class TestDatasetManager(BasetForTests):
 
     def test_getorcreate_localfile_matched_parameter(self):
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, _ = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.update_or_ingest(uri)
         self.assertEqual(ds0.parameters.values()[0]['short_name'],
                          self.predefined_band_metadata_dict[2]['short_name'])
 
@@ -167,7 +167,7 @@ class TestDatasetManager(BasetForTests):
         an specified parameter of the correct filtered dataset
         based on parameter filtering'''
         uri = 'file://localhost/some/folder/filename.ext'
-        Dataset.objects.get_or_create(uri)
+        Dataset.objects.update_or_ingest(uri)
         testingDataset = Dataset.objects.filter(
             parameters__standard_name='surface_backwards_scattering_coefficient_of_radar_wave')
         self.assertEqual(str(testingDataset.first().parameters.first()),
@@ -176,7 +176,7 @@ class TestDatasetManager(BasetForTests):
     def test_dont_add_longitude_latitude(self):
         """ shall not add latitude and longitude into DatasetParameter table """
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, _ = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.update_or_ingest(uri)
         ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
         # longitude should not be one of the parameters
         self.assertNotIn('longitude', ds_params_standard_names)
@@ -186,7 +186,7 @@ class TestDatasetManager(BasetForTests):
     def test_add_sigma0_gamma0(self):
         """ shall add both sigma0 and gamma0 with same standard name  into DatasetParameter table """
         uri = 'file://localhost/some/folder/filename.ext'
-        ds0, _ = Dataset.objects.get_or_create(uri)
+        ds0, _ = Dataset.objects.update_or_ingest(uri)
         ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
         ds_params_short_names = ds0.parameters.values_list('short_name', flat=True)
         self.assertEqual(len(ds_params_standard_names), 2)
@@ -202,7 +202,7 @@ class TestDatasetURI(BasetForTests):
     def test_get_non_ingested_uris(self):
         ''' Shall return list with only  non existing files '''
         testfile = 'file://localhost/vagrant/shared/test_data/meris_l1/MER_FRS_1PNPDK20120303_093810_000000333112_00180_52349_3561.N1'
-        Dataset.objects.get_or_create(testfile)
+        Dataset.objects.update_or_ingest(testfile)
         new_uris = ['file://fake/path/file1.ext', 'file://fake/path/file2.ext']
         all_uris = new_uris + [testfile]
         uris = DatasetURI.objects.all().get_non_ingested_uris(all_uris)
@@ -386,7 +386,7 @@ class TestsForUpdateAbility(BasetForTests):
     def test_for_examining_the_updating_purpose_of_ingestor_code(self):
         '''shall update the previous record (existing dataset) in the database without creating a new one'''
         uri = 'file://localhost/some/folder/filename.ext'
-        d0, _ = Dataset.objects.get_or_create(uri)
+        d0, _ = Dataset.objects.update_or_ingest(uri)
         # assertion of updating ability
         self.assertEqual(d0.entry_title, 'new title from nansat mapper')
         # assertion of presence of both online link and offline link are present in the set of uri

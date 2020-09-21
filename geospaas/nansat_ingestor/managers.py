@@ -18,7 +18,7 @@ from nansat.nansat import Nansat
 
 class DatasetManager(models.Manager):
 
-    def get_or_create(self,
+    def update_or_ingest(self,
                       uri,
                       n_points=10,
                       uri_filter_args=None,
@@ -74,65 +74,24 @@ class DatasetManager(models.Manager):
                                                  instrument=instrument,
                                                  specs=specs)
 
-        default_char_fields = {
-            # Adding NERSC_ in front of the id violates the string representation of the uuid
-            #'entry_id': lambda: 'NERSC_' + str(uuid.uuid4()),
-            'entry_id': lambda: str(uuid.uuid4()),
-            'entry_title': lambda: 'NONE',
-            'summary': lambda: 'NONE',
-        }
-
-        # set optional CharField metadata from Nansat or from default_char_fields
-        options = {}
-        try:
-            existing_ds = Dataset.objects.get(entry_id=entry_id)
-        except Dataset.DoesNotExist:
-            existing_ds = None
-        for name in default_char_fields:
-            if name not in n_metadata:
-                warnings.warn('%s is not provided in Nansat metadata!' % name)
-                # prevent overwriting of existing values by defaults
-                if existing_ds:
-                    options[name] = existing_ds.__getattribute__(name)
-                else:
-                    options[name] = default_char_fields[name]()
-            else:
-                options[name] = n_metadata[name]
-
-        default_foreign_keys = {
-            'gcmd_location': {'model': Location,
-                              'value': pti.get_gcmd_location('SEA SURFACE')},
-            'data_center': {'model': DataCenter,
-                            'value': pti.get_gcmd_provider('NERSC')},
-            'ISO_topic_category': {'model': ISOTopicCategory,
-                                   'value': pti.get_iso19115_topic_category('Oceans')},
-        }
-
-        # set optional ForeignKey metadata from Nansat or from default_foreign_keys
-        for name in default_foreign_keys:
-            value = default_foreign_keys[name]['value']
-            model = default_foreign_keys[name]['model']
-            if name not in n_metadata:
-                warnings.warn('%s is not provided in Nansat metadata!' % name)
-            else:
-                try:
-                    value = json.loads(n_metadata[name])
-                except:
-                    warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
-                                  (n_metadata[name], name))
-            if existing_ds:
-                options[name] = existing_ds.__getattribute__(name)
-            else:
-                options[name], _ = model.objects.get_or_create(value)
-
         # Find coverage to set number of points in the geolocation
         if len(n.vrt.dataset.GetGCPs()) > 0:
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
             geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
+        try:
+            existing_ds = Dataset.objects.get(entry_id=entry_id)
+        except Dataset.DoesNotExist:
+            existing_ds = None
+        options = {}
+        options = self.update_options_values_by_default_char_fields(
+            options, n_metadata, existing_ds)
+        options = self.update_options_values_by_default_foreign_keys(
+            options, n_metadata, existing_ds)
+
         # create dataset
-        # - the get_or_create method should use get_or_create here as well, 
+        # - the get_or_create method should use get_or_create here as well,
         #   or its name should be changed - see issue #127
         ds, created = Dataset.objects.update_or_create(entry_id=options['entry_id'], defaults={
             'time_coverage_start': n.get_metadata('time_coverage_start'),
@@ -173,3 +132,54 @@ class DatasetManager(models.Manager):
             dataset=ds)
 
         return ds, created
+
+    @staticmethod
+    def update_options_values_by_default_char_fields(options, n_metadata, existing_ds):
+        """set optional CharField metadata from Nansat or from default_char_fields"""
+        default_char_fields = {
+            # Adding NERSC_ in front of the id violates the string representation of the uuid
+            # 'entry_id': lambda: 'NERSC_' + str(uuid.uuid4()),
+            'entry_id': lambda: str(uuid.uuid4()),
+            'entry_title': lambda: 'NONE',
+            'summary': lambda: 'NONE',
+        }
+        for name in default_char_fields:
+            if name not in n_metadata:
+                warnings.warn('%s is not provided in Nansat metadata!' % name)
+                # prevent overwriting of existing values by defaults
+                if existing_ds:
+                    options[name] = existing_ds.__getattribute__(name)
+                else:
+                    options[name] = default_char_fields[name]()
+            else:
+                options[name] = n_metadata[name]
+        return options
+
+    @staticmethod
+    def update_options_values_by_default_foreign_keys(options, n_metadata, existing_ds):
+        """set optional CharField metadata from Nansat or from default_foreign_keys"""
+        default_foreign_keys = {
+            'gcmd_location': {'model': Location,
+                              'value': pti.get_gcmd_location('SEA SURFACE')},
+            'data_center': {'model': DataCenter,
+                            'value': pti.get_gcmd_provider('NERSC')},
+            'ISO_topic_category': {'model': ISOTopicCategory,
+                                   'value': pti.get_iso19115_topic_category('Oceans')},
+        }
+        # set optional ForeignKey metadata from Nansat or from default_foreign_keys
+        for name in default_foreign_keys:
+            value = default_foreign_keys[name]['value']
+            model = default_foreign_keys[name]['model']
+            if name not in n_metadata:
+                warnings.warn('%s is not provided in Nansat metadata!' % name)
+            else:
+                try:
+                    value = json.loads(n_metadata[name])
+                except:
+                    warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
+                                  (n_metadata[name], name))
+            if existing_ds:
+                options[name] = existing_ds.__getattribute__(name)
+            else:
+                options[name], _ = model.objects.get_or_create(value)
+        return options
