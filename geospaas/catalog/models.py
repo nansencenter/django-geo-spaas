@@ -185,7 +185,7 @@ class DatasetURI(models.Model):
 
     name = models.CharField(max_length=20, default=FILE_SERVICE_NAME)
     service = models.CharField(max_length=20, default=LOCAL_FILE_SERVICE)
-    uri = models.URLField(max_length=400,
+    uri = models.URLField(max_length=200,
             validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
 
