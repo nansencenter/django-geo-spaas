@@ -174,7 +174,7 @@ class TestDatasetManager(BasetForTests):
                          self.predefined_band_metadata_dict[2]['standard_name'])
 
     def test_dont_add_longitude_latitude(self):
-        """ shall not add latitude and longitude into DatasetParameter table """
+        """ shall not add latitude and longitude into Parameters of Dataset table """
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, _ = Dataset.objects.get_or_create(uri)
         ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)
@@ -184,7 +184,7 @@ class TestDatasetManager(BasetForTests):
         self.assertNotIn('latidtude', ds_params_standard_names)
 
     def test_add_sigma0_gamma0(self):
-        """ shall add both sigma0 and gamma0 with same standard name  into DatasetParameter table """
+        """ shall add both sigma0 and gamma0 with same standard name into Parameters of Dataset table """
         uri = 'file://localhost/some/folder/filename.ext'
         ds0, _ = Dataset.objects.get_or_create(uri)
         ds_params_standard_names = ds0.parameters.values_list('standard_name', flat=True)

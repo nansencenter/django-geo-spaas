@@ -122,19 +122,6 @@ class DatasetTests(TestCase):
         ds.full_clean()
         self.assertEqual(ds.entry_id, id)
 
-    def test_search_datasets(self):
-        ''' Shall add one parameter to the first dataset
-            shall find one Dataset without sst '''
-        dataset1 = Dataset.objects.get(pk=1)
-        p = Parameter.objects.get(
-                standard_name='sea_surface_temperature')
-        dp = DatasetParameter(dataset=dataset1, parameter=p)
-        dp.save()
-        dsearch = Dataset.objects.filter( source__instrument__short_name =
-                'MODIS')
-        dsearch = dsearch.exclude(datasetparameter__parameter__short_name =
-                'SST' )
-        self.assertEqual(dsearch.count(), 1)
 
 class DatasetURITests(TestCase):
 
@@ -152,20 +139,6 @@ class DatasetURITests(TestCase):
         self.assertEqual(dsuri.uri, uri)
 
 
-
-class DatasetParameterTests(TestCase):
-
-    fixtures = ["vocabularies", "catalog"]
-
-    def test_add_sar_sigma0(self):
-        ds = Dataset.objects.get(pk=1)
-        p = Parameter.objects.get(
-                standard_name='surface_backwards_scattering_coefficient_of_radar_wave',
-                short_name='sigma0')
-        dp = DatasetParameter(dataset=ds, parameter=p)
-        dp.save()
-        self.assertEqual(dp.parameter.short_name, 'sigma0')
-
 class DatasetRelationshipTests(TestCase):
 
     fixtures = ["vocabularies", "catalog"]
@@ -180,6 +153,7 @@ class DatasetRelationshipTests(TestCase):
         dr = DatasetRelationship(child=child, parent=parent)
         dr.save()
         self.assertEqual(dr.child.source, dr.parent.source)
+
 
 class GeographicLocationTests(TestCase):
     def test_geographiclocation(self):
@@ -210,16 +184,17 @@ class GeographicLocationTests(TestCase):
         self.assertFalse(created)
         # Conclusion: db can't handle numbers with too many decimals (NOT NULL constraint failed)
 
-class PersonnelTests(TestCase):
 
+class PersonnelTests(TestCase):
     ''' We should add user admin with, e.g., with the Personnel model. Skip
     testing before that is in place
     '''
     pass
 
-class RoleTests(TestCase):
 
+class RoleTests(TestCase):
     pass
+
 
 class SourceTests(TestCase):
 
