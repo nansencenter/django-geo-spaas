@@ -103,7 +103,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='parameters',
-            field=models.ManyToManyField(through='catalog.DatasetParameter', to='vocabularies.Parameter'),
+            field=models.ManyToManyField(to='vocabularies.Parameter'),
         ),
         migrations.AddField(
             model_name='dataset',
