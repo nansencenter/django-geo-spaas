@@ -16,12 +16,12 @@ class Migration(migrations.Migration):
             name='parameters',
             field=models.ManyToManyField(to='vocabularies.Parameter'),
         ),
+        migrations.DeleteModel(
+            name='DatasetParameter',
+        ),
         migrations.AddField(
             model_name='dataset',
             name='parameters',
             field=models.ManyToManyField(to='vocabularies.Parameter'),
-        ),
-        migrations.DeleteModel(
-            name='DatasetParameter',
         ),
     ]
