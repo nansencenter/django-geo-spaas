@@ -7,7 +7,7 @@ from django.contrib.gis.geos import WKTReader
 from django.db import models
 
 from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE
-from geospaas.catalog.models import (Dataset, DatasetParameter, DatasetURI,
+from geospaas.catalog.models import (Dataset, DatasetURI,
                                      GeographicLocation, Source)
 from geospaas.utils.utils import nansat_filename, validate_uri
 from geospaas.vocabularies.models import (DataCenter, Instrument,
@@ -132,7 +132,7 @@ class DatasetManager(models.Manager):
             geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
 
         # create dataset
-        # - the get_or_create method should use get_or_create here as well, 
+        # - the get_or_create method should use get_or_create here as well,
         #   or its name should be changed - see issue #127
         ds, created = Dataset.objects.update_or_create(entry_id=options['entry_id'], defaults={
             'time_coverage_start': n.get_metadata('time_coverage_start'),
@@ -161,8 +161,6 @@ class DatasetManager(models.Manager):
             if params.count() > 1 and units is not None:
                 params = params.filter(units=units)
             if params.count() >= 1:
-                DatasetParameter.objects.get_or_create(
-                    dataset=ds, parameter=params[0])
                 ds.parameters.add(params[0])
 
         # create dataset URI
