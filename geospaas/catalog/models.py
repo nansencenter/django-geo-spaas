@@ -138,7 +138,7 @@ class Dataset(models.Model):
         )
 
     # DIF required fields
-    entry_id = models.CharField(max_length=80, unique=True, default=uuid.uuid4,
+    entry_id = models.TextField(unique=True, default=uuid.uuid4,
         validators=[
             RegexValidator(r'^[0-9a-zA-Z_.-]*$', 'Only alphanumeric characters are allowed.')
         ]
