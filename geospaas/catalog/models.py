@@ -106,27 +106,25 @@ class Dataset(models.Model):
 
     Fields:
     -------
-    entry_id : CharField
-        A unique dataset ID. Only alpanumeric characters are allowed.
+    entry_id : TextField
+        A unique dataset ID. Only alphanumeric characters are allowed.
     entry_title : CharField
-    parameters: ManyToManyField to Parameter through DatasetParameter
+    parameters: ManyToManyField to Parameter
     ISO_topic_category : ForeignKey to ISOTopicCategory
     data_center : ForeignKey to DataCenter
     summary : TextField
-            In addition to some general information, the summary should also
-            contain information about the project from/for which the data was
-            collected/created
+        In addition to some general information, the summary should also
+        contain information about the project from/for which the data was
+        collected/created
     source : ForeignKey to Source
-            Contains information about the instrument and platform by which the
-            data was collected
+        Contains information about the instrument and platform by which the
+        data was collected
     time_coverage_start : DateTimeField
     time_coverage_end : DateTimeField
     geographic_location : ForeignKey to GeographicLocation
     gcmd_location : ForeignKey to vocabularies.models.Location
     access_constraints : CharField
-            Determines the access level of the Dataset: Limited, In-house, or
-            Public
-
+        Determines the access level of the Dataset: Limited, In-house, or Public
     '''
     ACCESS_LEVEL0 = 'accessLevel0'
     ACCESS_LEVEL1 = 'accessLevel1'
