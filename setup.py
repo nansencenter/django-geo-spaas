@@ -17,7 +17,7 @@ install_requires = []
 
 setup(
     name='django-geo-spaas',
-    version='2.0.0',
+    version='2.1.0',
     description='Geo-Scientific Platform as a Service',
     zip_safe=False,
     author='Morten W. Hansen, Anton Korosov, Artem Moiseev, Jeong-Won Park, Adrien Perrin',
