@@ -25,6 +25,6 @@ if __name__ == "__main__":
     test_module = f".{sys.argv[1]}" if len(sys.argv) >= 2 else ''
 
     TestRunner = get_runner(settings)
-    test_runner = TestRunner(verbosity=1, interactive=True)
+    test_runner = TestRunner(verbosity=1, interactive=False)
     failures = test_runner.run_tests(["geospaas" + test_module])
     sys.exit(bool(failures))
