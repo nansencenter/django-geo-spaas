@@ -17,7 +17,8 @@ class GUIIntegrationTests(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def test_post_with_proper_polygon(self):
+    @patch('django.conf.settings.SHOW_LOCAL_ADDRESS', return_value=True)
+    def test_post_with_proper_polygon(self, mock_django_settings):
         """shall return only the first dataset of fixtures
         in the specified placement of datasets inside the resulted HTML
         in the case of a POST request with a good choice of polygon"""
@@ -32,6 +33,23 @@ class GUIIntegrationTests(TestCase):
         self.assertEqual(len(all_tds), 1)
         # the first dataset of fixtures must be in the html
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
+        self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[0].text)
+
+    def test_post_with_proper_polygon_public_version(self):
+        """shall not reveal any dataset of fixtures
+        in the specified placement of datasets inside the resulted HTML
+        in the case of a POST request with a good choice of polygon"""
+        res = self.client.post('/tests/', {
+            'polygon':
+            '{"type":"Polygon","coordinates":[[[0,0],[0,5],[5,5],[5,0],[0,0]]]}',
+            'time_coverage_start': timezone.datetime(2000, 12, 29),
+            'time_coverage_end': timezone.datetime(2020, 1, 1)})
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(len(all_tds), 1)
+        # the first dataset of fixtures must be in the html
+        self.assertNotIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[0].text)
 
     def test_post_with_irrelevant_polygon(self):
@@ -51,7 +69,8 @@ class GUIIntegrationTests(TestCase):
         self.assertEqual(all_tds[0].text,
                         'No datasets found')
 
-    def test_post_without_polygon(self):
+    @patch('django.conf.settings.SHOW_LOCAL_ADDRESS', return_value=True)
+    def test_post_without_polygon(self, mock_django_settings):
         """shall return the uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a POST request without
         any polygon from user """
@@ -65,6 +84,21 @@ class GUIIntegrationTests(TestCase):
         self.assertEqual(len(all_tds), 2)
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
+
+    def test_post_without_polygon_public_version(self):
+        """shall not reveal the uri of fixtures' datasets (presumably confidential) in the specified
+         placement of datasets inside the resulted HTML in the case of a POST request without
+        any polygon from user """
+        res = self.client.post('/tests/', {
+            'time_coverage_start': timezone.datetime(2000, 12, 29),
+            'time_coverage_end': timezone.datetime(2020, 1, 1),
+            'source': 1})
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(len(all_tds), 2)
+        self.assertNotIn('file://localhost/some/test/file1.ext', all_tds[0].text)
+        self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[1].text)
 
     def test_post_with_incorrect_dates_without_polygon(self):
         """shall return 'No datasets are...' in the specified placement of datasets
@@ -98,7 +132,8 @@ class GUIIntegrationTests(TestCase):
         res = self.client.get('/tests/')
         mock_paginator.return_value.get_page.assert_called_with(1)
 
-    def test_get(self):
+    @patch('django.conf.settings.SHOW_LOCAL_ADDRESS', return_value=True)
+    def test_get(self, mock_django_settings):
         """shall return ALL uri of fixtures' datasets in the specified placement
         of datasets inside the resulted HTML in the case of a GET request"""
         res = self.client.get('/tests/')
@@ -108,6 +143,19 @@ class GUIIntegrationTests(TestCase):
         self.assertEqual(len(all_tds), 2)
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
+        grefs=soup.find_all("div", class_="geometry_ref")
+        self.assertEqual(grefs[0].attrs['ajax_url'], '/tests/geometry/1')
+
+    def test_get_public_version(self):
+        """shall not reveals uri of fixtures' datasets (presumably confidential) in the specified
+         placement of datasets inside the resulted HTML in the case of a GET request"""
+        res = self.client.get('/tests/')
+        self.assertEqual(res.status_code, 200)
+        soup = BeautifulSoup(str(res.content), features="lxml")
+        all_tds = soup.find_all("td", class_="place_ds")
+        self.assertEqual(len(all_tds), 2)
+        self.assertNotIn('file://localhost/some/test/file1.ext', all_tds[0].text)
+        self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[1].text)
         grefs=soup.find_all("div", class_="geometry_ref")
         self.assertEqual(grefs[0].attrs['ajax_url'], '/tests/geometry/1')
 

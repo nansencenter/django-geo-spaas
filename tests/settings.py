@@ -72,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tests.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -132,3 +131,6 @@ STATICFILES_DIRS = [
 SERIALIZATION_MODULES = {"geojson": "django.contrib.gis.serializers.geojson",}
 ALLOWED_HOSTS = ['*']
 SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
+
+
+SHOW_LOCAL_ADDRESS = False
