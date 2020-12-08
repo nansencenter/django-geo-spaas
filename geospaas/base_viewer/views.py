@@ -63,7 +63,7 @@ class IndexView(View):
         context = {}
         context['form'] = form
         context['page_obj'] = page_obj
-        context['show_local'] = settings.SHOW_LOCAL_ADDRESS
+        context['show_local_address'] = settings.SHOW_LOCAL_ADDRESS
         context['local_file_service'] = LOCAL_FILE_SERVICE
         return context
 

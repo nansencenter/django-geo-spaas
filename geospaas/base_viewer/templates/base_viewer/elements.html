@@ -15,12 +15,10 @@
         <td class="place_ds">
             <div class="geometry_ref" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
             {% for url in ds.dataseturi_set.all %}
-            {% if show_local %}
-              {{ url.uri}} <br>
-            {% else %}
-              {% if url.service != local_file_service %}
+            {% if show_local_address or url.service != local_file_service %}
                 {{ url.uri}} <br>
-              {% endif %}
+            {% else %}
+              hidden local address of dataset <br>
             {% endif %}
             {% endfor %}
             </div>
