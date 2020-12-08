@@ -3,10 +3,11 @@ from django.core.serializers import serialize
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
+from django.conf import settings
 
 from geospaas.base_viewer.forms import BaseSearchForm
 from geospaas.catalog.models import Dataset, GeographicLocation
-
+from geospaas.catalog.managers import LOCAL_FILE_SERVICE
 
 def get_geometry_geojson(request, pk, *args, **kwargs):
     """ Get GeographicLocation.Geometry as GeoJSON
@@ -62,6 +63,8 @@ class IndexView(View):
         context = {}
         context['form'] = form
         context['page_obj'] = page_obj
+        context['show_local'] = settings.SHOW_LOCAL_ADDRESS
+        context['local_file_service'] = LOCAL_FILE_SERVICE
         return context
 
     def get(self, request, *args, **kwargs):
