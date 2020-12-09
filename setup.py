@@ -17,10 +17,10 @@ install_requires = []
 
 setup(
     name='django-geo-spaas',
-    version='2.1.0',
+    version='2.2.0',
     description='Geo-Scientific Platform as a Service',
     zip_safe=False,
-    author='Morten W. Hansen, Anton Korosov, Artem Moiseev, Jeong-Won Park, Adrien Perrin',
+    author='Morten W. Hansen, Anton Korosov, Artem Moiseev, Jeong-Won Park, Adrien Perrin, A.Azamifard',
     author_email='anton.korosov@nersc.no',
     url='https://github.com/nansencenter/django-geo-spaas',
     download_url='https://github.com/nansencenter/django-geo-spaas/archive/master.zip',
