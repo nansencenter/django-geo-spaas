@@ -41,7 +41,7 @@ class IndexView(View):
     @classmethod
     def get_all_datasets(cls):
         """ Retrieve all dataset(s) from the database"""
-        return Dataset.objects.order_by('time_coverage_start')
+        return Dataset.objects.order_by('time_coverage_start').exclude(geographic_location__isnull=True)
 
     @classmethod
     def get_filtered_datasets(cls, form):
