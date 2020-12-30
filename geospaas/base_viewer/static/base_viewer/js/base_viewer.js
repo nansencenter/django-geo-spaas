@@ -1,7 +1,13 @@
 var footprints_layer_style = {
     "color": "#0000ff",
     "weight": 1,
-    "opacity": 0.5,
+    "opacity": 0.9,
+    "fillOpacity": 0.1,
+};
+var highlight_layer_style = {
+    "color": "#ff00ff",
+    "weight": 1,
+    "opacity": 0.9,
     "fillOpacity": 0.1,
 };
 
