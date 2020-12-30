@@ -1,77 +1,90 @@
 {% extends "base_viewer/page_structure.html" %}
 ##############################################################################################################
 {% block content_result %}
-<table border=1 width='100%' height='100%'>
-    <tr>
-        {% block headers %}
-        <th>Filename</th>
-        {% endblock headers %}
-    </tr>
+<table border=1 height='100%'>
+  <tr>
+    {% block headers %}
+    <th>Datasets</th>
+    {% endblock headers %}
+  </tr>
 
-    {% if page_obj %}
+  {% if page_obj %}
 
-    {% for ds in page_obj %}
-    <tr class="dataset_row" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}" >
-        <td >
-            {% for url in ds.dataseturi_set.all %}
-            {% if show_local_address or url.service != local_file_service %}
-                {{ url.uri}} <br>
-            {% else %}
-              hidden local address of dataset <br>
-            {% endif %}
-            {% endfor %}
-        </td>
-
-    </tr>
+  {% for ds in page_obj %}
+  <tr class="dataset_row" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
+    <td>
+      <ul>
+        <li>
+          <div class="info_entry_id"><b>Title:</b> {{ ds.entry_id}} </div>
+        </li><br>
+        <li>
+          <div class="info_data_center"><b>Data center:</b> {{ ds.data_center}} </div>
+        </li><br>
+        <li>
+          <div class="info_source"><b>Source:</b> {{ ds.source}} </div>
+        </li><br>
+        <li>
+          <div class="info_st_time"><b>Start time:</b> {{ ds.time_coverage_start}} </div>
+        </li><br>
+        <li>
+          <div class="info_end_time"><b>End time:</b> {{ ds.time_coverage_end}} </div>
+        </li><br>
+        {% for url in ds.dataseturi_set.all %}
+        {% if show_local_address or url.service != local_file_service %}
+        <li>
+          <div class="info_url"><b>Address:</b> {{ url.uri|escape|urlize}} </div>
+        </li><br>
+        {% else %}
+        hidden local address of dataset
+        {% endif %}
+        {% endfor %}
+        <li>
+          {% if ds.parameters %}
+          {% for parameter in ds.parameters.all %}
+          <div class="info parameters"><b>Parameter(s):</b>
+            <ul>
+              <li>{{ parameter.standard_name }} </li><br>
+              {% endfor %}
+              {% endif %}
+            </ul>
+        </li>
+        </div>
+      </ul>
+    </td>
     {% endfor %}
-
     {% else %}
-    <tr>
-        <td colspan=10 class="place_ds">No datasets found</td>
-    </tr>
-    {% endif %}
+  <tr>
+    <td colspan=10 class="place_ds">No datasets found</td>
+  </tr>
+  {% endif %}
 </table>
 
 <div class="pagination">
-    <span class="step-links">
-    <button
-      form='search_form'
-      {% if page_obj.has_previous %}
-        name="page"
-        value="{{ page_obj.previous_page_number }}"
-        type="submit"
-      {% else %}
-        disabled="disabled"
-      {% endif %}>
+  <span class="step-links">
+    <button form='search_form' {% if page_obj.has_previous %} name="page" value="{{ page_obj.previous_page_number }}"
+      type="submit" {% else %} disabled="disabled" {% endif %}>
       Previous
     </button>
 
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
 
-    <button
-      form='search_form'
-      {% if page_obj.has_next %}
-        name="page"
-        value="{{ page_obj.next_page_number }}"
-        type="submit"
-      {% else %}
-        disabled="disabled"
-      {% endif %}>
+    <button form='search_form' {% if page_obj.has_next %} name="page" value="{{ page_obj.next_page_number }}"
+      type="submit" {% else %} disabled="disabled" {% endif %}>
       Next
     </button>
-    </span>
+  </span>
 </div>
 {% endblock content_result %}
 ##############################################################################################################
 {% block contentmap %}
 
 <form method="post" width='100%' height='100%' id='search_form'>
-    {% csrf_token %}
+  {% csrf_token %}
 
-    {{form.as_p}}
+  {{form.as_p}}
 
-    <input type="submit" value="Search all meta-data" />
+  <input type="submit" value="Search all meta-data" />
 </form>
 {% endblock contentmap %}
