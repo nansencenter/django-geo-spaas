@@ -2,11 +2,9 @@
     display: grid;
     grid-template-columns: 3fr 2fr;
     grid-gap: 10px;
-    position: relative;
 }
 
 .para2 {
-    float: left;
     padding: 2px;
 }
 
@@ -18,8 +16,27 @@
 #result {
     grid-column: 2;
     grid-row: 1;
+    overflow:auto;
+    max-height: 620px;
 }
 
-.leaflet-container {
-    height: 400px;
+.pagination{
+padding-bottom: 20px;
 }
+
+.parameters ul{
+    font-size: 0px;
+  }
+.parameters li {
+    display: inline-block;
+    font-size: 18px;
+    padding-left: 30px;
+  }
+.place_ds ul{
+    font-size: 0px;
+    padding-left: 0%;
+  }
+.place_ds li {
+    display: inline-block;
+    font-size: 18px;
+  }
