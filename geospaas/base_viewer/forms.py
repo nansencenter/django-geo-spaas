@@ -10,8 +10,9 @@ class BaseSearchForm(forms.Form):
     polygon = forms.GeometryField(label=False,
                                   widget=LeafletWidget(attrs={
                                       'settings_overrides': {
-                                          'DEFAULT_CENTER': (60.0, 5.0),
+                                          'DEFAULT_CENTER': (89.0, 179.0),
                                           'DEFAULT_ZOOM': 1,
+                                          'NO_GLOBALS': False,
                                           'PLUGINS': {'forms': {'auto-include': True}},
                                       }
                                   }),
