@@ -7,23 +7,27 @@
     {% leaflet_js plugins="ALL" %}
     {% leaflet_css plugins="ALL" %}
     <link rel="stylesheet" href="{% static 'base_viewer/styles.css' %}" >
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src='{% static "base_viewer/js/leaflet.ajax.min.js" %}'></script>
     <script src='{% static "base_viewer/js/base_viewer.js" %}'></script>
 </head>
 
-<body class="body" >
+<body class="body">
     <div id="para_container">
 
-        <div id=content class="para2"><!--start of contentmap-->
+        <div id=content class="para2">
+            <!--start of contentmap-->
             {% block contentmap %}
             {% endblock contentmap%}
-        </div><!--end of contentmap-->
+        </div>
+        <!--end of contentmap-->
 
-        <div id=result class="para2"><!--start of result section-->
+        <div id=result class="para2">
+            <!--start of result section-->
             {% block content_result %}
             {% endblock content_result%}
-        </div><!--end of result section-->
+        </div>
+        <!--end of result section-->
 
     </div>
 </body>
