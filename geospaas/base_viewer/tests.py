@@ -29,7 +29,7 @@ class GUIIntegrationTests(TestCase):
             'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(len(all_tds), 1)
         # the first dataset of fixtures must be in the html
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
@@ -46,7 +46,7 @@ class GUIIntegrationTests(TestCase):
             'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(len(all_tds), 1)
         # the first dataset of fixtures must be in the html
         self.assertNotIn('file://localhost/some/test/file1.ext', all_tds[0].text)
@@ -65,7 +65,7 @@ class GUIIntegrationTests(TestCase):
             'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(all_tds[0].text,
                         'No datasets found')
 
@@ -80,7 +80,7 @@ class GUIIntegrationTests(TestCase):
             'source': 1})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(len(all_tds), 2)
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
@@ -95,7 +95,7 @@ class GUIIntegrationTests(TestCase):
             'source': 1})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(len(all_tds), 2)
         self.assertNotIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[1].text)
@@ -109,7 +109,7 @@ class GUIIntegrationTests(TestCase):
             'time_coverage_end': timezone.datetime(2020, 1, 1)})
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(all_tds[0].text,
                         'No datasets found')
 
@@ -139,7 +139,7 @@ class GUIIntegrationTests(TestCase):
         res = self.client.get('/tests/')
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(len(all_tds), 2)
         self.assertIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertIn('file://localhost/some/test/file2.ext', all_tds[1].text)
@@ -152,7 +152,7 @@ class GUIIntegrationTests(TestCase):
         res = self.client.get('/tests/')
         self.assertEqual(res.status_code, 200)
         soup = BeautifulSoup(str(res.content), features="lxml")
-        all_tds = soup.find_all("td", class_="place_ds")
+        all_tds = soup.find_all("td", class_="dataset_cell")
         self.assertEqual(len(all_tds), 2)
         self.assertNotIn('file://localhost/some/test/file1.ext', all_tds[0].text)
         self.assertNotIn('file://localhost/some/test/file2.ext', all_tds[1].text)
