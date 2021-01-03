@@ -12,8 +12,7 @@
 
     {% for ds in page_obj %}
     <tr >
-        <td class="place_ds">
-            <div class="geometry_ref" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
+        <td class="dataset_cell" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
             {% for url in ds.dataseturi_set.all %}
             {% if show_local_address or url.service != local_file_service %}
                 {{ url.uri}} <br>
@@ -21,7 +20,6 @@
               hidden local address of dataset <br>
             {% endif %}
             {% endfor %}
-            </div>
         </td>
 
     </tr>

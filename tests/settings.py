@@ -134,3 +134,8 @@ SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 
 
 SHOW_LOCAL_ADDRESS = False
+
+LEAFLET_CONFIG = {
+    'NO_GLOBALS': False,
+}
+
