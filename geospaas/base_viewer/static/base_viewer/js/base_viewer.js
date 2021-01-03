@@ -8,13 +8,13 @@ var footprints_layer_style = {
 var polygons = {};
 
 $(document).ready(function(){
-  $(".dataset_cell").each(function(){
+  $(".dataset_row").each(function(){
     polygons[$(this).attr("ajax_url")] = new L.GeoJSON.AJAX(
         $(this).attr("ajax_url"),
         {style: footprints_layer_style}).addTo(window.maps[0]);
   });
 
-  $(".dataset_cell").hover(
+  $(".dataset_row").hover(
   function(){
     $(this).css("background-color", "#ffeeee");
     polygons[$(this).attr("ajax_url")].setStyle({color: '#FF0000'});
