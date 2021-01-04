@@ -5,18 +5,23 @@ var footprints_layer_style = {
     "fillOpacity": 0.1,
 };
 
-function add_geojson_geometries(map) {
-    var geoms = document.getElementsByClassName("geometry_ref");
-    for (var i = 0; i < geoms.length; i++) {
-        var jsonTest = new L.GeoJSON.AJAX(
-        geoms.item(i).attributes.ajax_url.value,
-        {style: footprints_layer_style}).addTo(map);
-    };
-};
+var polygons = {};
 
-function map_init_callback(e){
-    var detail = e.detail;
-    add_geojson_geometries(detail.map)
-};
+$(document).ready(function(){
+  $(".dataset_row").each(function(){
+    polygons[$(this).attr("ajax_url")] = new L.GeoJSON.AJAX(
+        $(this).attr("ajax_url"),
+        {style: footprints_layer_style}).addTo(window.maps[0]);
+  });
 
-window.addEventListener("map:init", map_init_callback, false);
+  $(".dataset_row").hover(
+  function(){
+    $(this).css("background-color", "#ffeeee");
+    polygons[$(this).attr("ajax_url")].setStyle({color: '#FF0000'});
+   },
+  function(){
+    $(this).css("background-color", "#ffffff");
+    polygons[$(this).attr("ajax_url")].setStyle({color: '#0000FF'});
+  },
+  );
+});
