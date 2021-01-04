@@ -4,12 +4,6 @@ var footprints_layer_style = {
     "opacity": 0.9,
     "fillOpacity": 0.1,
 };
-var highlight_layer_style = {
-    "color": "#ff00ff",
-    "weight": 1,
-    "opacity": 0.9,
-    "fillOpacity": 0.1,
-};
 
 var polygons = {};
 
@@ -23,11 +17,11 @@ $(document).ready(function(){
   $(".dataset_row").hover(
   function(){
     $(this).css("background-color", "#ffeeee");
-    polygons[$(this).attr("ajax_url")].setStyle({color: '#FF0000'});
+    polygons[$(this).attr("ajax_url")].setStyle({color: '#ff0000'});
    },
   function(){
     $(this).css("background-color", "#ffffff");
-    polygons[$(this).attr("ajax_url")].setStyle({color: '#0000FF'});
+    polygons[$(this).attr("ajax_url")].setStyle({color: '#0000ff'});
   },
   );
 });
