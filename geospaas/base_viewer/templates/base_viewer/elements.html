@@ -1,7 +1,7 @@
 {% extends "base_viewer/page_structure.html" %}
 ##############################################################################################################
 {% block content_result %}
-<table border=1 height='100%'>
+<table border=1 style="width:100%">
   <tr>
     {% block headers %}
     <th>Datasets</th>
@@ -13,43 +13,16 @@
   {% for ds in page_obj %}
   <tr class="dataset_row" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
     <td>
-      <ul>
-        <li>
-          <div class="info_entry_id"><b>Title:</b> {{ ds.entry_id}} </div>
-        </li><br>
-        <li>
-          <div class="info_data_center"><b>Data center:</b> {{ ds.data_center}} </div>
-        </li><br>
-        <li>
-          <div class="info_source"><b>Source:</b> {{ ds.source}} </div>
-        </li><br>
-        <li>
-          <div class="info_st_time"><b>Start time:</b> {{ ds.time_coverage_start}} </div>
-        </li><br>
-        <li>
-          <div class="info_end_time"><b>End time:</b> {{ ds.time_coverage_end}} </div>
-        </li><br>
-        {% for url in ds.dataseturi_set.all %}
-        {% if show_local_address or url.service != local_file_service %}
-        <li>
-          <div class="info_url"><b>Address:</b> {{ url.uri|escape|urlize}} </div>
-        </li><br>
-        {% else %}
-        hidden local address of dataset
-        {% endif %}
-        {% endfor %}
-        <li>
-          {% if ds.parameters %}
-          {% for parameter in ds.parameters.all %}
-          <div class="info parameters"><b>Parameter(s):</b>
-            <ul>
-              <li>{{ parameter.standard_name }} </li><br>
-              {% endfor %}
-              {% endif %}
-            </ul>
-        </li>
-        </div>
-      </ul>
+      {% block ds_info %}
+      {% endblock ds_info %}
+      {% for url in ds.dataseturi_set.all %}
+      {% if show_local_address or url.service != local_file_service %}
+      <div class="attr_title">Address:</div>
+      <div class="attr_content">{{ url.uri|escape|urlize}} </div>
+      {% else %}
+      <div class="attr_content">hidden local address of dataset</div>
+      {% endif %}
+      {% endfor %}
     </td>
     {% endfor %}
     {% else %}
@@ -59,6 +32,9 @@
   {% endif %}
 </table>
 
+{% endblock content_result %}
+##############################################################################################################
+{% block pagination_button_result %}
 <div class="pagination">
   <span class="step-links">
     <button form='search_form' {% if page_obj.has_previous %} name="page" value="{{ page_obj.previous_page_number }}"
@@ -76,7 +52,7 @@
     </button>
   </span>
 </div>
-{% endblock content_result %}
+{% endblock pagination_button_result %}
 ##############################################################################################################
 {% block contentmap %}
 
