@@ -34,7 +34,7 @@ def get_geometry_geojson(request, pk, *args, **kwargs):
 class IndexView(View):
     """ The class-based view for processing both GET and POST methods of basic version of viewer """
     form_class = BaseSearchForm
-    main_template = 'base_viewer/elements.html'
+    main_template = 'base_viewer/ds_info.html'
     viewname = 'index'
     paginate_by = 20
 
