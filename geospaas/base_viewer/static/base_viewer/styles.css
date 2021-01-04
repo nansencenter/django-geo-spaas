@@ -1,7 +1,7 @@
 #para_container {
     display: grid;
     grid-template-columns: 3fr 2fr;
-    grid-gap: 10px;
+    grid-column-gap: 10px;
 }
 
 .para2 {
@@ -16,27 +16,34 @@
 #result {
     grid-column: 2;
     grid-row: 1;
-    overflow:auto;
     max-height: 620px;
+    overflow:auto;
+  }
+#pgbutton {
+  grid-column: 2;
+  grid-row: 2;
 }
 
-.pagination{
-padding-bottom: 20px;
-}
 
-.parameters ul{
-    font-size: 0px;
-  }
-.parameters li {
-    display: inline-block;
-    font-size: 18px;
-    padding-left: 30px;
-  }
-.dataset_row ul{
-    font-size: 0px;
-    padding-left: 0%;
-  }
-.dataset_row li {
-    display: inline-block;
+
+.attr_title {
+  font-size: 0px;
+  font-weight: bold;
+  font-size: 18px;
+  display: contents;
+  padding-left: 0%;
+}
+.attr_content{
+  display: contents;
+  font-size: 0px;
+  clear: left;
     font-size: 18px;
   }
+  .attr_content::after{
+    content: "\a";
+    white-space: pre;
+}
+  .attr_content_list::after{
+    content: "\a";
+    white-space: pre;
+}
