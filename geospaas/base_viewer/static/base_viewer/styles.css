@@ -32,11 +32,11 @@ padding-bottom: 20px;
     font-size: 18px;
     padding-left: 30px;
   }
-.place_ds ul{
+.dataset_row ul{
     font-size: 0px;
     padding-left: 0%;
   }
-.place_ds li {
+.dataset_row li {
     display: inline-block;
     font-size: 18px;
   }
