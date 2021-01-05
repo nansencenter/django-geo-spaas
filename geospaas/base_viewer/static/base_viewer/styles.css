@@ -29,7 +29,6 @@
 .attr_title {
   font-size: 0px;
   font-weight: bold;
-  font-size: 18px;
   display: contents;
   padding-left: 0%;
 }
@@ -37,7 +36,6 @@
   display: contents;
   font-size: 0px;
   clear: left;
-    font-size: 18px;
   }
   .attr_content::after{
     content: "\a";
