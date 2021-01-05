@@ -1,8 +1,8 @@
 {% extends "base_viewer/elements.html" %}
 ##############################################################################################################
 {% block ds_info %}
-    {% block ds_info_adas %}
-    {% endblock ds_info_adas %}
+    {% block ds_detailed_info %}
+    {% endblock ds_detailed_info %}
     {% for url in ds.dataseturi_set.all %}
     {% if show_local_address or url.service != local_file_service %}
     <div class="attr_title">Address:</div>
