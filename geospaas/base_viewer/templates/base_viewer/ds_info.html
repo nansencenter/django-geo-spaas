@@ -1,4 +1,14 @@
 {% extends "base_viewer/elements.html" %}
 ##############################################################################################################
 {% block ds_info %}
+    {% block ds_info_adas %}
+    {% endblock ds_info_adas %}
+    {% for url in ds.dataseturi_set.all %}
+    {% if show_local_address or url.service != local_file_service %}
+    <div class="attr_title">Address:</div>
+    <div class="attr_content">{{ url.uri|escape|urlize}} </div>
+    {% else %}
+    <div class="attr_content">hidden local address of dataset</div>
+    {% endif %}
+    {% endfor %}
 {% endblock ds_info %}
