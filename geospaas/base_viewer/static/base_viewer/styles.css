@@ -27,14 +27,12 @@
 
 
 .attr_title {
-  font-size: 0px;
   font-weight: bold;
   display: contents;
   padding-left: 0%;
 }
 .attr_content{
   display: contents;
-  font-size: 0px;
   clear: left;
   }
   .attr_content::after{
