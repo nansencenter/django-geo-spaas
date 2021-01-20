@@ -48,11 +48,20 @@
 ##############################################################################################################
 {% block contentmap %}
 
-<form method="post" width='100%' height='100%' id='search_form'>
+<form method="post" id='search_form'>
   {% csrf_token %}
+  <div id="para_FORM">
+    <div id="map">{{form.polygon}}</div>
+    <div class="attr_title_itself">Time coverage start (UTC):</div>
+    <div class="form_content">{{form.time_coverage_start}}</div>
+    <div class="attr_title_itself">Time coverage end (UTC):</div>
+    <div class="form_content">{{form.time_coverage_end}}</div>
+    <div class="attr_title_itself">Source:</div>
+    <div class="form_content">{{form.source}}</div>
+    <div class="attr_title_itself">Name (or part of the name) of parameter:</div>
+    <div class="form_content">{{form.nameparameters}}</div>
 
-  {{form.as_p}}
-
+  </div>
   <input type="submit" value="Search all meta-data" />
 </form>
 {% endblock contentmap %}
