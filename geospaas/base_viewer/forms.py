@@ -29,7 +29,7 @@ class BaseSearchForm(forms.Form):
         t_0 = self.cleaned_data['time_coverage_start']
         t_1 = self.cleaned_data['time_coverage_end']
         # Too early datasets are excluded from the filtering results
-        ds = ds.exclude(time_coverage_end__lt=t_0)
+        ds = ds.exclude(time_coverage_end__lte=t_0)
 
         # Too late datasets are excluded from the filtering results
         ds = ds.exclude(time_coverage_start__gt=t_1)
