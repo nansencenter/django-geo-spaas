@@ -49,6 +49,7 @@ jobs:
         - TAG='latest'
       install:
         - docker pull "${IMAGE_NAME}:${TAG}" || true
+      script:
         - >
           docker build .
           --cache-from "${IMAGE_NAME}:${TAG}"
@@ -68,6 +69,7 @@ jobs:
         - TAG='latest-slim'
       install:
         - docker pull "${IMAGE_NAME}:${TAG}" || true
+      script:
         - >
           docker build .
           --cache-from "${IMAGE_NAME}:${TAG}"
