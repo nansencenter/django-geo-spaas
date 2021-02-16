@@ -1,4 +1,6 @@
-language: shell
+language: python
+python:
+  - '3.7'
 services:
   - docker
 
@@ -34,6 +36,7 @@ jobs:
           bash -c "source /opt/conda/bin/activate && coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py  && coveralls"
       deploy:
         - provider: pypi
+          edge: true
           user: "__token__"
           password: "${PYPI_TOKEN}"
           on:
