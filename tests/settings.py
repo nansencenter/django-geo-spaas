@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'leaflet',
     'django_forms_bootstrap',
     'geospaas.base_viewer',
+    'geospaas.nansat_ingestor',
     'geospaas.catalog',
     'geospaas.vocabularies',
     'django.contrib.admin',
@@ -137,3 +138,4 @@ SHOW_LOCAL_ADDRESS = False
 LEAFLET_CONFIG = {
     'NO_GLOBALS': False,
 }
+
