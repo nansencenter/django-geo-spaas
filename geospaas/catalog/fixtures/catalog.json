@@ -29,9 +29,9 @@
         "summary": "This is a quite short summary about the test dataset.",
         "source": ["AQUA", "MODIS"],
         "geographic_location": 1,
-        "data_center": ["NERSC"],
-        "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
-        "ISO_topic_category": ["Oceans"],
+        "data_center": 1391,
+        "gcmd_location": 503,
+        "ISO_topic_category": 14,
         "access_constraints": null
     }
 },{
@@ -45,9 +45,9 @@
         "summary": "This is a quite short summary about the test dataset.",
         "source": ["AQUA", "MODIS"],
         "geographic_location": 2,
-        "data_center": ["NERSC"],
-        "gcmd_location": ["VERTICAL LOCATION", "SEA SURFACE", "", "", ""],
-        "ISO_topic_category": ["Oceans"],
+        "data_center": 1391,
+        "gcmd_location": 503,
+        "ISO_topic_category": 14,
         "access_constraints": null
     }
 },{
