@@ -26,14 +26,6 @@ class VocabulariesTestBase(object):
     def tearDown(self):
         self.patcher.stop()
 
-    def test_create_from_vocabularies(self):
-        """ Test shared with all vocabularies """
-        self.model.objects.create_from_vocabularies(force=True)
-        self.model.objects.create_from_vocabularies()
-        self.model.objects.get_list.assert_called()
-        self.model.objects.update.assert_called()
-        self.assertIn('Successfully added', self.mock_print.call_args[0][0])
-
     def _insert_twice(self, attributes):
         """Test that an object of the given model class can't be inserted twice"""
         object1 = self.model(**attributes)
@@ -415,56 +407,3 @@ class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
         """Check that the same VerticalDataResolution can't be inserted twice"""
         with self.assertRaises(django.db.utils.IntegrityError):
             self._insert_twice({'range': 'test'})
-
-
-class CommandsTests(TestCase):
-    """Unit tests for the custom commands of the vocabularies app"""
-
-    def setUp(self):
-        return_value = [{'Revision': '2019-02-13 08:48:55'}]
-        models = [
-            Parameter,
-            DataCenter,
-            HorizontalDataResolution,
-            Instrument,
-            ISOTopicCategory,
-            Location,
-            Platform,
-            Project,
-            ScienceKeyword,
-            TemporalDataResolution,
-            VerticalDataResolution,
-            ]
-        # mock get_list in all managers
-        self.get_list_mocks = [
-            patch.object(model.objects, 'get_list', return_value=return_value).start()
-            for model in models]
-        # mock update in all managers
-        self.update_mocks = [
-            patch.object(model.objects, 'update', return_value=return_value).start()
-            for model in models]
-
-    def test_command_update_vocabularies(self):
-        """Check that the command does not update the vocabularies if they are present"""
-
-        call_command('update_vocabularies')
-        # check that get_list was called only once
-        for mock in self.get_list_mocks:
-            mock.assert_called()
-        # check that update was never called
-        for mock in self.update_mocks:
-            mock.assert_not_called()
-
-    def test_command_update_vocabularies_force(self):
-        """
-        Check that the command updates the vocabularies even if they are present when --force is
-        specified
-        """
-
-        call_command('update_vocabularies', '--force')
-        # check that get_list was called only once
-        for mock in self.get_list_mocks:
-            mock.assert_called()
-        # check that update was called
-        for mock in self.update_mocks:
-            mock.assert_called()
