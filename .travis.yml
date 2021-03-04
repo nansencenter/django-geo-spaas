@@ -33,7 +33,7 @@ jobs:
           -e TRAVIS_PULL_REQUEST
           -v "$(pwd):/src"
           ${TEST_IMAGE}
-          bash -c "source /opt/conda/bin/activate && coverage run --omit=geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py  && coveralls"
+          bash -c "source /opt/conda/bin/activate && coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py  && coveralls"
       deploy:
         - provider: pypi
           edge: true
