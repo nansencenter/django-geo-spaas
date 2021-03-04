@@ -34,13 +34,6 @@ class TestUtils(TestCase):
         uri = 'http://nbstds.met.no/thredds/catalog/NBS/S2A/test_catalog.html'
         self.assertEqual(utils.validate_uri(uri), None)
 
-    @patch('geospaas.utils.utils.os.mkdir')
-    def test_module_path(self, mock_mkdir):
-        mock_mkdir.return_value = None
-        module = 'geospaas.catalog'
-        root = '/home/vagrant/site_media/media'
-        mpath = utils.module_path(module, root)
-        self.assertEqual(mpath, os.path.join(root, 'geospaas/catalog'))
 
     def test_fail_invalid_uri(self):
         uri = '/this/is/some/file/but/not/an/uri'
