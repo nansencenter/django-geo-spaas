@@ -97,24 +97,4 @@ docker exec myapp /src/myproject/manage.py migrate
 
 # update vocabularies
 docker exec myapp /src/myproject/manage.py update_vocabularies
-
-# ingest metadata
-docker exec -w /src/myproject myapp ./manage.py ingest /data/myfiles*.nc
-```
-
-How to add new data to Geo-SPaaS catalog
-----------------------------------------
-Previsouly Vagrant/VirtualBox was used as a main provisionng mechanism. This is no longer supported.
-
-Install geo-spaas-vagrant:
-```
-  git clone https://github.com/nansencenter/geo-spaas-vagrant
-  cd geo-spaas-vagrant
-  vagrant up geospaas_core
-```
-Connect to the virtual machine and use GeoSPaaS
-```
-  vagrant ssh geospaas_core
-  cd django-geo-spaas/project
-  ./manage.py ingest name_of_your_file
 ```
