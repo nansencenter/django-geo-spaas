@@ -32,13 +32,7 @@ geospaas.models module
     :undoc-members:
     :show-inheritance:
 
-geospaas.urls module
---------------------
 
-.. automodule:: geospaas.urls
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 
 Module contents

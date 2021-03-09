@@ -20,7 +20,7 @@
         - django_forms_bootstrap
         - leaflet
       django_urlpatterns:
-        - "path('', include('geospaas.urls')),"
+        - "path('', include('geospaas.base_viewer.urls')),"
 
     - role: geospaas
       geospaas_project_home: '{{ project_home }}'
