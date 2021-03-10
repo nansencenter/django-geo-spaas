@@ -15,7 +15,6 @@ class Command(IngestCommand):
     def handle(self, *args, **options):
         print("WARNING!!! nansat_ingestor app will be deprecated soon and no longer "
         "accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.")
-        input("Press Enter to continue...")
         print('Searching netcdf files. May take some time...\n\n\n')
         nc_uris = find_netcdf_uris(args[0])
         num_nc_uris = len(nc_uris)

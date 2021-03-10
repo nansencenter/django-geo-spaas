@@ -46,7 +46,6 @@ class Command(BaseCommand):
         """
         print("WARNING!!! nansat_ingestor app will be deprecated soon and no longer "
         "accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.")
-        input("Press Enter to continue...")
         non_ingested_uris, n_points, nansat_options = self._get_args(*args, **options)
 
         for non_ingested_uri in non_ingested_uris:
