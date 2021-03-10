@@ -13,6 +13,8 @@ class Command(IngestCommand):
     help = 'Add file to catalog from HYRAX server'
 
     def handle(self, *args, **options):
+        print("WARNING!!! nansat_ingestor app will be deprecated soon and no longer "
+        "accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.")
         print('Searching netcdf files. May take some time...\n\n\n')
         nc_uris = find_netcdf_uris(args[0])
         num_nc_uris = len(nc_uris)
@@ -42,5 +44,3 @@ def find_netcdf_uris(uri0, sleep=1.0):
         print('Server error %s'%e.message)
     # return all links to netCDF
     return nc_uris
-
-

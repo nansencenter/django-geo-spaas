@@ -89,6 +89,8 @@ class Command(BaseCommand):
                             help='''Filename of a specific dataset''')
 
     def handle(self, *args, **options):
+        print("WARNING!!! nansat_ingestor app will be deprecated soon and no longer "
+        "accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.")
         if not len(options['url']) == 1:
             raise IOError('Please provide a url to the data')
         url = options.pop('url')[0]

@@ -238,20 +238,20 @@ class TestIngestThreddsCrawl(TestCase):
         with captured_output() as (out, err):
             call_command('ingest_thredds_crawl', self.uri)
         output = out.getvalue().strip()
-        self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+        self.assertEqual(output, 'WARNING!!! nansat_ingestor app will be deprecated soon and no longer accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.\nSuccessfully added metadata of 10 datasets')
 
     def test_ingest_with_year_arg(self):
         with captured_output() as (out, err):
             call_command('ingest_thredds_crawl', self.uri, date=['2019/01/24'])
         output = out.getvalue().strip()
-        self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+        self.assertEqual(output, 'WARNING!!! nansat_ingestor app will be deprecated soon and no longer accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.\nSuccessfully added metadata of 10 datasets')
 
     def test_ingest_with_filename_arg(self):
         with captured_output() as (out, err):
             call_command('ingest_thredds_crawl', self.uri,
                          filename='S2A_MSIL1C_20190124T115401_N0207_R023_T30VWP_20190124T120414.nc')
         output = out.getvalue().strip()
-        self.assertEqual(output, 'Successfully added metadata of 10 datasets')
+        self.assertEqual(output, 'WARNING!!! nansat_ingestor app will be deprecated soon and no longer accessible. Please use `LOCALHarvester` of geospaas harvesting package instead.\nSuccessfully added metadata of 10 datasets')
 
 
 class TestIngestThreddsCrawl__crawl__function(TestCase):

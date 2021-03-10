@@ -6,13 +6,6 @@ from django.test import TestCase
 from geospaas.utils import utils
 
 class TestUtils(TestCase):
-    @patch('urllib3.PoolManager')
-    def test_validate_uri_opendap_does_not_exist(self, mock_PoolManager):
-        uri = 'http://www.ifremer.fr'
-        mock_PoolManager.status=1
-        with self.assertRaises(OSError) as cm:
-            utils.validate_uri(uri)
-        self.assertEqual('NetCDF: file not found', cm.exception.args[1])
 
     @patch('geospaas.utils.utils.os.path.isfile')
     def test_validate_uri_local(self, mock_isfile):
