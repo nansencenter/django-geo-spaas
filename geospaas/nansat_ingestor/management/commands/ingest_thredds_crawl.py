@@ -38,7 +38,7 @@ def crawl_and_ingest(url, **options):
             # Create Dataset from OPeNDAP url - this is necessary to get all metadata
             gds, cr = NansatDataset.objects.get_or_create(url, uri_service_name=name,
                                                           uri_service_type=service)
-        except (IOError, AttributeError) as e:
+        except (IOError, AttributeError, ValueError) as e:
             # warnings.warn(e.message)
             continue
         if cr:

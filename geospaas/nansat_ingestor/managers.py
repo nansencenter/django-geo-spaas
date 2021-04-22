@@ -63,12 +63,22 @@ class DatasetManager(models.Manager):
         # get metadata from Nansat and get objects from vocabularies
         n_metadata = n.get_metadata()
 
-        entry_id = n_metadata.get('entry_id', None)
+        entry_id = n_metadata.get('entry_id', n_metadata.get('id', None))
         # set compulsory metadata (source)
-        platform, _ = Platform.objects.get_or_create(
-            json.loads(n_metadata['platform']))
-        instrument, _ = Instrument.objects.get_or_create(
-            json.loads(n_metadata['instrument']))
+        pp = n_metadata['platform']
+        try:
+            pp_dict = json.loads(pp)
+        except json.JSONDecodeError:
+            pp_entry = [elem.strip() for elem in pp.split('>')]
+            pp_dict = pti.get_gcmd_platform(pp_entry[-1])
+        platform, _ = Platform.objects.get_or_create(pp_dict)
+        ii = n_metadata['instrument']
+        try:
+            ii_dict = json.loads(ii)
+        except json.JSONDecodeError:
+            ii_entry = [elem.strip() for elem in ii.split('>')]
+            ii_dict = pti.get_gcmd_instrument(ii_entry[-1])
+        instrument, _ = Instrument.objects.get_or_create(ii_dict)
         specs = n_metadata.get('specs', '')
         source, _ = Source.objects.get_or_create(platform=platform,
                                                  instrument=instrument,
