@@ -3,8 +3,9 @@
 import django.db.utils
 from django.core.management import call_command
 from django.test import TestCase
-from mock.mock import MagicMock, patch
+from mock.mock import MagicMock, call, patch
 
+from geospaas.vocabularies.managers import VocabularyManager
 from geospaas.vocabularies.models import (DataCenter, HorizontalDataResolution,
                                           Instrument, ISOTopicCategory,
                                           Location, Parameter, Platform,
@@ -20,8 +21,15 @@ class VocabulariesTestBase(object):
     def setUp(self):
         self.patcher = patch('geospaas.vocabularies.managers.print')
         self.mock_print = self.patcher.start()
-        self.model.objects.update = MagicMock(return_value=None)
-        self.model.objects.get_list = MagicMock(return_value=self.model_list)
+        mocked_methods = {}
+        for i, vocabulary_name in enumerate(self.model.objects.vocabularies):
+            mocked_methods[vocabulary_name] = {
+                'get_list': MagicMock(return_value=self.model_lists[i]),
+                'update': MagicMock(return_value=None)
+            }
+        methods_patcher = patch.object(self.model.objects, 'vocabularies', mocked_methods)
+        methods_patcher.start()
+        self.addCleanup(methods_patcher.stop)
 
     def tearDown(self):
         self.patcher.stop()
@@ -30,8 +38,9 @@ class VocabulariesTestBase(object):
         """ Test shared with all vocabularies """
         self.model.objects.create_from_vocabularies(force=True)
         self.model.objects.create_from_vocabularies()
-        self.model.objects.get_list.assert_called()
-        self.model.objects.update.assert_called()
+        for mocked_methods in self.model.objects.vocabularies.values():
+            mocked_methods['get_list'].assert_called()
+            mocked_methods['update'].assert_called()
         self.assertIn('Successfully added', self.mock_print.call_args[0][0])
 
     def _insert_twice(self, attributes):
@@ -43,20 +52,85 @@ class VocabulariesTestBase(object):
         object2.save()
 
 
+class VocabularyManagerTests(TestCase):
+    """Tests for the VocabularyManager class"""
+
+    def test_update_and_get_list(self):
+        """Test the update_and_get_list() method"""
+        vocabulary_manager = VocabularyManager()
+        mock_get_list = MagicMock(return_value=[{'foo': 'bar'}, {'Revision': 'baz'}])
+        mock_update = MagicMock()
+
+        # test call without force
+        self.assertEqual(
+            vocabulary_manager.update_and_get_list(mock_get_list, mock_update, False),
+            [{'foo': 'bar'}])
+        mock_get_list.assert_called_once_with()
+        mock_update.assert_not_called()
+
+        mock_get_list.reset_mock()
+        mock_update.reset_mock()
+
+        # test call with force and specified version
+        self.assertEqual(
+            vocabulary_manager.update_and_get_list(
+                mock_get_list, mock_update, True, version='9.1.5'),
+            [{'foo': 'bar'}])
+        mock_get_list.assert_called_once_with()
+        mock_update.assert_called_once_with(version='9.1.5')
+
+    def test_create_from_vocabularies(self):
+        """Test that create_from_vocabularies() correctly merges the
+        lists from pythesint
+        """
+        manager = VocabularyManager()
+        manager.vocabularies = {
+            'voc1': {
+                'get_list': MagicMock(),
+                'update': MagicMock()
+            },
+            'voc2': {
+                'get_list': MagicMock(),
+                'update': MagicMock()
+            }
+        }
+
+        with patch.object(manager, 'create_instances') as mock_create_instances, \
+                patch.object(manager, 'update_and_get_list') as mock_update_and_get_list:
+            mock_update_and_get_list.side_effect = [
+                [{'standard_name': 'foo'}],
+                [{'standard_name': 'foo'}, {'standard_name': 'bar'}]
+            ]
+            manager.create_from_vocabularies(force=True, versions={'voc1': '9.1.5', 'voc2': '10.3'})
+            mock_update_and_get_list.assert_has_calls([
+                call(manager.vocabularies['voc1']['get_list'],
+                     manager.vocabularies['voc1']['update'],
+                     True, version='9.1.5'),
+                call(manager.vocabularies['voc2']['get_list'],
+                     manager.vocabularies['voc2']['update'],
+                     True, version='10.3')
+            ])
+            mock_create_instances.assert_called_with([
+                {'standard_name': 'foo'},
+                {'standard_name': 'bar'}
+            ])
+
+
 class ParameterTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Parameter model"""
 
     model = Parameter
-    model_list = [{
-        'standard_name': 'surface_radial_doppler_sea_water_velocity',
-        'long_name': 'Radial Doppler Current',
-        'short_name': 'Ur',
-        'units': 'm s-1',
-        'minmax': '-1 1',
-        'colormap': 'jet'
-    }]
-    model.objects.update2 = MagicMock(return_value=None)
-    model.objects.get_list2 = MagicMock(return_value=[])
+    model_lists = [
+        [{
+            'standard_name': 'surface_radial_doppler_sea_water_velocity',
+            'long_name': 'Radial Doppler Current',
+            'short_name': 'Ur',
+            'units': 'm s-1',
+            'minmax': '-1 1',
+            'colormap': 'jet'
+        }],
+        []
+    ]
 
     def test_get_parameter(self):
         """Test retrieval of a Parameter object in the database"""
@@ -91,7 +165,7 @@ class ParameterTests(VocabulariesTestBase, TestCase):
 class DataCenterTests(VocabulariesTestBase, TestCase):
     """Unit tests for the DataCenter model"""
     model = DataCenter
-    model_list = [{
+    model_lists = [[{
         'Bucket_Level0': 'ACADEMIC',
         'Bucket_Level1': 'OR-STATE/EOARC',
         'Bucket_Level2': '',
@@ -99,7 +173,7 @@ class DataCenterTests(VocabulariesTestBase, TestCase):
         'Short_Name': 'OR-STATE/EOARC',
         'Long_Name': 'Eastern Oregon Agriculture Research Center, Oregon State University',
         'Data_Center_URL': 'http://oregonstate.edu/dept/eoarcunion/'
-    }]
+    }]]
 
     def test_get_datacenter(self):
         """Test retrieval of a DataCenter object in the database"""
@@ -144,14 +218,14 @@ class InstrumentTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Instrument model"""
 
     model = Instrument
-    model_list = [{
+    model_lists = [[{
         'Category': 'Earth Remote Sensing Instruments',
         'Class': 'Active Remote Sensing',
         'Type': 'Altimeters',
         'Subtype': 'Lidar/Laser Altimeters',
         'Short_Name': 'AIRBORNE LASER SCANNER',
         'Long_Name': ''
-    }]
+    }]]
 
     def test_get_instrument(self):
         """Test retrieval of a Instrument object in the database"""
@@ -192,7 +266,7 @@ class ISOTopicCategoryTests(VocabulariesTestBase, TestCase):
     """Unit tests for the ISOTopicCategory model"""
 
     model = ISOTopicCategory
-    model_list = [{'iso_topic_category': 'Biota'}]
+    model_lists = [[{'iso_topic_category': 'Biota'}]]
 
     def test_get_iso_category(self):
         """Test retrieval of a ISOTopicCategory object in the database"""
@@ -220,7 +294,7 @@ class LocationTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Location model"""
 
     model = Location
-    model_list = [{
+    model_lists = [[{
         'Location_Category': 'CONTINENT',
         'Location_Type': 'AFRICA',
         'Location_Subregion1':
@@ -228,7 +302,7 @@ class LocationTests(VocabulariesTestBase, TestCase):
         'Location_Subregion2':
         'ANGOLA',
         'Location_Subregion3': ''
-    }]
+    }]]
 
     def test_get_location(self):
         """Test retrieval of a Location object in the database"""
@@ -267,12 +341,12 @@ class PlatformTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Platform model"""
 
     model = Platform
-    model_list = [{
+    model_lists = [[{
         'Category': 'Aircraft',
         'Series_Entity': '',
         'Short_Name': 'A340-600',
         'Long_Name': 'Airbus A340-600'
-    }]
+    }]]
 
     def test_get_platform(self):
         """Test retrieval of a Platform object in the database"""
@@ -309,11 +383,11 @@ class ProjectTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Project model"""
 
     model = Project
-    model_list = [{
+    model_lists = [[{
         'Bucket': 'A - C',
         'Short_Name': 'AAE',
         'Long_Name': 'Australasian Antarctic Expedition of 1911-14'
-    }]
+    }]]
 
     def test_get_project(self):
         """Test retrieval of a Project object in the database"""
@@ -335,7 +409,7 @@ class ScienceKeywordTests(VocabulariesTestBase, TestCase):
     """Unit tests for the ScienceKeyword model"""
 
     model = ScienceKeyword
-    model_list = [{
+    model_lists = [[{
         'Category': 'EARTH SCIENCE SERVICES',
         'Topic': 'DATA ANALYSIS AND VISUALIZATION',
         'Term': 'CALIBRATION/VALIDATION',
@@ -343,7 +417,7 @@ class ScienceKeywordTests(VocabulariesTestBase, TestCase):
         'Variable_Level_2': '',
         'Variable_Level_3': '',
         'Detailed_Variable': ''
-    }]
+    }]]
 
     def test_get_science_keyword(self):
         """Test retrieval of a ScienceKeyword object in the database"""
@@ -368,7 +442,7 @@ class TemporalDataResolutionTests(VocabulariesTestBase, TestCase):
     """Unit tests for the TemporalDataResolution model"""
 
     model = TemporalDataResolution
-    model_list = [{'Temporal_Resolution_Range': '1 minute - < 1 hour'}]
+    model_lists = [[{'Temporal_Resolution_Range': '1 minute - < 1 hour'}]]
 
     def test_get_temporal_range(self):
         """Test retrieval of a TemporalDataResolution object in the database"""
@@ -385,9 +459,9 @@ class HorizontalDataResolutionTests(VocabulariesTestBase, TestCase):
     """Unit tests for the HorizontalDataResolution model"""
 
     model = HorizontalDataResolution
-    model_list = [{
+    model_lists = [[{
         'Horizontal_Resolution_Range': '1 km - < 10 km or approximately .01 degree - < .09 degree'
-    }]
+    }]]
 
     def test_get_horizontal_range(self):
         """Test retrieval of a HorizontalDataResolution object in the database"""
@@ -404,7 +478,7 @@ class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
     """Unit tests for the VerticalDataResolution model"""
 
     model = VerticalDataResolution
-    model_list = [{'Vertical_Resolution_Range': '1 meter - < 10 meters'}]
+    model_lists = [[{'Vertical_Resolution_Range': '1 meter - < 10 meters'}]]
 
     def test_get_vertical_range(self):
         """Test retrieval of a VerticalDataResolution object in the database"""
@@ -434,19 +508,26 @@ class CommandsTests(TestCase):
             ScienceKeyword,
             TemporalDataResolution,
             VerticalDataResolution,
-            ]
-        # mock get_list in all managers
-        self.get_list_mocks = [
-            patch.object(model.objects, 'get_list', return_value=return_value).start()
-            for model in models]
-        # mock update in all managers
-        self.update_mocks = [
-            patch.object(model.objects, 'update', return_value=return_value).start()
-            for model in models]
+        ]
+        self.get_list_mocks = []
+        self.update_mocks = []
+        for model in models:
+            mocked_vocabulary_methods = {}
+            for vocabulary_name in model.objects.vocabularies:
+                get_list_mock = MagicMock(return_value=return_value)
+                update_mock = MagicMock(return_value=None)
+                mocked_vocabulary_methods[vocabulary_name] = {
+                    'get_list': get_list_mock,
+                    'update': update_mock
+                }
+                self.get_list_mocks.append(get_list_mock)
+                self.update_mocks.append(update_mock)
+            patcher = patch.object(model.objects, 'vocabularies', mocked_vocabulary_methods)
+            self.vocabulary_mocks = patcher.start()
+            self.addCleanup(patcher.stop)
 
     def test_command_update_vocabularies(self):
         """Check that the command does not update the vocabularies if they are present"""
-
         call_command('update_vocabularies')
         # check that get_list was called only once
         for mock in self.get_list_mocks:
@@ -460,7 +541,6 @@ class CommandsTests(TestCase):
         Check that the command updates the vocabularies even if they are present when --force is
         specified
         """
-
         call_command('update_vocabularies', '--force')
         # check that get_list was called only once
         for mock in self.get_list_mocks:
