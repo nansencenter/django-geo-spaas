@@ -20,27 +20,33 @@ from django.db import models
 class VocabularyManager(models.Manager):
     """ Base abstract class for all Managers here """
 
-    def update_and_get_list(self, get_list, update, force):
+    def update_and_get_list(self, get_list, update, force, version=None):
         """ Get list of Pythesint entires after an update if needed
 
         Parameters
         ----------
-        get_lilst : func
-            function to get lilst of Pythesint entries
+        get_list : func
+            function to get list of Pythesint entries
         update : func
             function to update Pythesint
 
         Returns
         -------
         pti_list : list
-            lilst of Pythesin entries
+            list of Pythesint entries
 
         """
-        pti_list = get_list()
-        if force==True or len(pti_list)==0:
-            update()
-        pti_list = [e for e in get_list() if not 'Revision' in e.keys()]
-        return pti_list
+        pti_list = None
+
+        if not force:
+            pti_list = get_list()
+
+        if force or not pti_list:
+            update(version=version)
+            pti_list = get_list()
+
+        filtered_list = [e for e in pti_list if not 'Revision' in e.keys()]
+        return filtered_list
 
     def create_instances(self, pti_list):
         """ Create instances in database
