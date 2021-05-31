@@ -246,7 +246,7 @@ class Parameter(models.Model):
     The table should also include the relevant GCMD science keyword
     '''
     standard_name = models.CharField(max_length=300)
-    short_name = models.CharField(max_length=30, default='')
+    short_name = models.CharField(max_length=50, default='')
     units = models.CharField(max_length=20)
 
     # The science keywords are less specific than the CF standard names -
