@@ -106,8 +106,6 @@ jobs:
   build_standard_docker_image:
     runs-on: 'ubuntu-20.04'
     needs: 'tests'
-    env:
-      LATEST_TAG: 'latest'
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
@@ -148,7 +146,7 @@ jobs:
             DJANGO_GEO_SPAAS_RELEASE=${{ steps.get_version.outputs.VERSION }}
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+            ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
@@ -164,8 +162,6 @@ jobs:
   build_slim_docker_image:
     runs-on: 'ubuntu-20.04'
     needs: 'tests'
-    env:
-      LATEST_TAG: 'latest-slim'
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
@@ -207,8 +203,8 @@ jobs:
             DJANGO_GEO_SPAAS_RELEASE=${{ steps.get_version.outputs.VERSION }}
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
-            ${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ${{ env.IMAGE_NAME }}:latest-slim
+            ${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}-slim
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
