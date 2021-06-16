@@ -1,0 +1,222 @@
+---
+name: "Unit tests and build"
+on:
+  push:
+    branches: ['**']
+  release:
+    types: [released]
+env:
+  IMAGE_NAME: "${{ secrets.DOCKER_ORG }}/geospaas"
+  BASE_IMAGE_NAME: "${{ secrets.DOCKER_ORG }}/nansat"
+  BASE_STANDARD_IMAGE_TAG: v1.4.5
+  BASE_SLIM_IMAGE_TAG: v1.4.5-slim
+jobs:
+  tests:
+    name: 'Run unit tests'
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-testing-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-testing-
+
+      - name: Build testing image
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          target: base
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_SLIM_IMAGE_TAG }}
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_NAME }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: 'Run tests'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+             docker run --rm
+             -v "$(pwd):/src"
+             -e "GITHUB_ACTIONS=$GITHUB_ACTIONS"
+             -e "GITHUB_REF=$GITHUB_REF"
+             -e "GITHUB_SHA=$GITHUB_SHA"
+             -e "GITHUB_HEAD_REF=$GITHUB_HEAD_REF"
+             -e "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
+             -e "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+             -e "GITHUB_TOKEN=$GITHUB_TOKEN"
+             "${IMAGE_NAME}"
+             bash -c "coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py && coveralls"
+
+
+  publish_python_package:
+    name: Publish the Python package to PyPI
+    runs-on: 'ubuntu-20.04'
+    needs: 'tests'
+    if: github.event_name == 'release'
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Build package
+        run: >
+             DJANGO_GEO_SPAAS_RELEASE="${GITHUB_REF#refs/tags/}"
+             python -m build --sdist --outdir dist/ .
+        shell: bash
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Storing the PyPI URL in the repositories' secrets makes
+          # publishing to the test PyPI from forks easy
+          repository_url: ${{ secrets.PYPI_REPOSITORY_URL }}
+          password: ${{ secrets.PYPI_TOKEN }}
+
+
+  build_standard_docker_image:
+    runs-on: 'ubuntu-20.04'
+    needs: 'tests'
+    env:
+      LATEST_TAG: 'latest'
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v2
+
+      - name: "Extract tag name"
+        id: get_version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]];then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG='tmp'
+          fi
+          echo "::set-output name=VERSION::${TAG}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-standard-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-standard-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Build docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_STANDARD_IMAGE_TAG }}
+            DJANGO_GEO_SPAAS_RELEASE=${{ steps.get_version.outputs.VERSION }}
+          push: ${{ startsWith(github.event.ref, 'refs/tags/') }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+            ${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  build_slim_docker_image:
+    runs-on: 'ubuntu-20.04'
+    needs: 'tests'
+    env:
+      LATEST_TAG: 'latest-slim'
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v2
+
+      - name: "Extract tag name"
+        id: get_version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]];then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG='tmp'
+          fi
+          echo "::set-output name=VERSION::${TAG}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-slim-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-slim-
+            ${{ runner.os }}-buildx-testing-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Build docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_SLIM_IMAGE_TAG }}
+            DJANGO_GEO_SPAAS_RELEASE=${{ steps.get_version.outputs.VERSION }}
+          push: ${{ startsWith(github.event.ref, 'refs/tags/') }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+            ${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+...
