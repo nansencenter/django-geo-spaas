@@ -91,7 +91,7 @@ jobs:
       - name: Build package
         run: >
              DJANGO_GEO_SPAAS_RELEASE="${GITHUB_REF#refs/tags/}"
-             python -m build --sdist --outdir dist/ .
+             python setup.py sdist
         shell: bash
 
       - name: Publish
