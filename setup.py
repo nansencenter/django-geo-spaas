@@ -10,14 +10,15 @@
 # Copyright:    (c) NERSC
 # License:
 #-------------------------------------------------------------------------------
-from setuptools import setup, find_packages
+import os
 import sys
+from setuptools import setup, find_packages
 
 install_requires = []
 
 setup(
     name='django-geo-spaas',
-    version='2.4.0',
+    version=os.getenv('DJANGO_GEO_SPAAS_RELEASE', '0.0.0dev'),
     description='Geo-Scientific Platform as a Service',
     zip_safe=False,
     author='Morten W. Hansen, Anton Korosov, Artem Moiseev, Jeong-Won Park, Adrien Perrin, A.Azamifard',
