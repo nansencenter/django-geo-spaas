@@ -8,9 +8,8 @@ from geospaas.utils import utils
 class TestUtils(TestCase):
 
     def test_validate_uri_opendap_does_not_exist(self):
-        uri = 'http://www.ifremer.fr/opendap/cerdap1/globcurrent/' \
-                'v2.0/global_012_deg/geostrophic/2014/001/' \
-                '20140101000000-GLOBCURRENT-L4-CURgeo_0m-ALT_OI-v02.0-fv01.0.nc.tull'
+        uri = 'http://www.ifremer.fr/opendap/cerdap1/cersat/' \
+              '20140101000000-GLOBCURRENT-L4-CURgeo_0m-ALT_OI-v02.0-fv01.0.nc.tull'
         with self.assertRaises(OSError) as cm:
             utils.validate_uri(uri)
         self.assertEqual('NetCDF: file not found', cm.exception.args[1])
