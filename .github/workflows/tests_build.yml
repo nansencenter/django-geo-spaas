@@ -71,7 +71,17 @@ jobs:
              -e "GITHUB_RUN_ID=$GITHUB_RUN_ID"
              -e "GITHUB_TOKEN=$GITHUB_TOKEN"
              "${IMAGE_NAME}"
-             bash -c "coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py && coveralls"
+             bash -c "coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py"
+
+      - name: 'Install Python 3.7'
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+
+      - name: 'Upload coverage to coveralls.io'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pip install coveralls && coveralls --service=github
 
 
   publish_python_package:
