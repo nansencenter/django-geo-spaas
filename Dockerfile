@@ -15,10 +15,10 @@ RUN apt update \
     bs4 \
     coverage \
     django==3.2 \
-    django-forms-bootstrap \
-    django-leaflet \
-    psycopg2 \
-    thredds_crawler \
+    django-forms-bootstrap==3.1.0 \
+    django-leaflet==0.28.2 \
+    psycopg2==2.9.3 \
+    thredds_crawler==1.5.4 \
 &&  apt remove -y g++ && apt autoremove -y \
 &&  apt clean && rm -rf /var/lib/apt/lists/* \
 &&  echo "alias ll='ls -lh'" >> /root/.bashrc
