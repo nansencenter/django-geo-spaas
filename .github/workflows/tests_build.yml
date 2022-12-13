@@ -8,8 +8,8 @@ on:
 env:
   IMAGE_NAME: "${{ secrets.DOCKER_ORG }}/geospaas"
   BASE_IMAGE_NAME: "${{ secrets.DOCKER_ORG }}/nansat"
-  BASE_STANDARD_IMAGE_TAG: 'v1.5.1'
-  BASE_SLIM_IMAGE_TAG: 'v1.5.1-slim'
+  BASE_STANDARD_IMAGE_TAG: 'v1.5.3'
+  BASE_SLIM_IMAGE_TAG: 'v1.5.3-slim'
 jobs:
   tests:
     name: 'Run unit tests'
