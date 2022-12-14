@@ -66,7 +66,20 @@ class VocabularyManager(models.Manager):
 
     def get_or_create(self, entry, *args, **kwargs):
         """ Get or create database instance from input pythesint entry """
-        params = {key : entry.get(self.mapping[key], '') for key in self.mapping}
+        # try out possible mappings and use the first that matches
+        for mapping in self.mappings:
+            if set(mapping.values()).issubset(entry.keys()):
+                params = {key: entry.get(mapping[key], '') for key in mapping}
+                break
+        else:
+            raise RuntimeError(
+                f"No mapping found for vocabulary manager {self.__class__.__name__}")
+        # crop fields to max length wen applicable
+        for field in self.model._meta.get_fields():
+            try:
+                params[field.name] = params[field.name][:field.max_length]
+            except (AttributeError, KeyError):
+                pass
         return super(VocabularyManager, self).get_or_create(**params)
 
     def create_from_vocabularies(self, force=False, versions=None, **kwargs):
@@ -112,9 +125,13 @@ class ParameterManager(VocabularyManager):
             'update': pti.update_cf_standard_name
         }
     }
-    mapping = dict(standard_name='standard_name',
-                   short_name='short_name',
-                   units='units')
+    mappings = [
+        dict(standard_name='standard_name',
+             short_name='short_name',
+             units='units'),
+        dict(standard_name='standard_name',
+             units='canonical_units'),
+    ]
 
     def get_by_natural_key(self, standard_name):
         return self.get(standard_name=standard_name)
@@ -127,11 +144,16 @@ class PlatformManager(VocabularyManager):
             'update': pti.update_gcmd_platform
         }
     }
-    mapping = dict(category='Category',
-                    series_entity='Series_Entity',
-                    short_name='Short_Name',
-                    long_name='Long_Name')
-
+    mappings = [
+        dict(category='Category',
+             series_entity='Series_Entity',
+             short_name='Short_Name',
+             long_name='Long_Name'),
+        dict(category='Category',
+             series_entity='Sub_Category',
+             short_name='Short_Name',
+             long_name='Long_Name'),
+    ]
 
 
 class InstrumentManager(VocabularyManager):
@@ -141,12 +163,12 @@ class InstrumentManager(VocabularyManager):
             'update': pti.update_gcmd_instrument
         }
     }
-    mapping = dict(category='Category',
+    mappings = [dict(category='Category',
                     instrument_class='Class',
                     type='Type',
                     subtype='Subtype',
                     short_name='Short_Name',
-                    long_name='Long_Name')
+                    long_name='Long_Name')]
 
 
 
@@ -157,13 +179,13 @@ class ScienceKeywordManager(VocabularyManager):
             'update': pti.update_gcmd_science_keyword
         }
     }
-    mapping = dict(category='Category',
+    mappings = [dict(category='Category',
                 topic='Topic',
                 term='Term',
                 variable_level_1='Variable_Level_1',
                 variable_level_2='Variable_Level_2',
                 variable_level_3='Variable_Level_3',
-                detailed_variable='Detailed_Variable')
+                detailed_variable='Detailed_Variable')]
 
     def get_by_natural_key(self, category, topic, term, variable_level_1,
             variable_level_2, variable_level_3):
@@ -180,13 +202,13 @@ class DataCenterManager(VocabularyManager):
             'update': pti.update_gcmd_provider
         }
     }
-    mapping = dict(bucket_level0='Bucket_Level0',
+    mappings = [dict(bucket_level0='Bucket_Level0',
                 bucket_level1='Bucket_Level1',
                 bucket_level2='Bucket_Level2',
                 bucket_level3='Bucket_Level3',
                 short_name='Short_Name',
                 long_name='Long_Name',
-                data_center_url='Data_Center_URL')
+                data_center_url='Data_Center_URL')]
 
     def get_by_natural_key(self, sname):
         return self.get(short_name=sname)
@@ -199,7 +221,7 @@ class HorizontalDataResolutionManager(VocabularyManager):
             'update': pti.update_gcmd_horizontalresolutionrange
         }
     }
-    mapping = dict(range='Horizontal_Resolution_Range')
+    mappings = [dict(range='Horizontal_Resolution_Range')]
 
     def get_by_natural_key(self, hrr):
         return self.get(range=hrr)
@@ -212,7 +234,7 @@ class VerticalDataResolutionManager(VocabularyManager):
             'update': pti.update_gcmd_verticalresolutionrange
         }
     }
-    mapping = dict(range='Vertical_Resolution_Range')
+    mappings = [dict(range='Vertical_Resolution_Range')]
 
     def get_by_natural_key(self, vrr):
         return self.get(range=vrr)
@@ -225,7 +247,7 @@ class TemporalDataResolutionManager(VocabularyManager):
             'update': pti.update_gcmd_temporalresolutionrange
         }
     }
-    mapping = dict(range='Temporal_Resolution_Range')
+    mappings = [dict(range='Temporal_Resolution_Range')]
 
     def get_by_natural_key(self, trr):
         return self.get(range=trr)
@@ -238,9 +260,9 @@ class ProjectManager(VocabularyManager):
             'update': pti.update_gcmd_project
         }
     }
-    mapping = dict(bucket='Bucket',
+    mappings = [dict(bucket='Bucket',
                 short_name='Short_Name',
-                long_name='Long_Name')
+                long_name='Long_Name')]
 
     def get_by_natural_key(self, bucket, short_name):
         return self.get(bucket=bucket, short_name=short_name)
@@ -253,7 +275,7 @@ class ISOTopicCategoryManager(VocabularyManager):
             'update': pti.update_iso19115_topic_category
         }
     }
-    mapping = dict(name='iso_topic_category')
+    mappings = [dict(name='iso_topic_category')]
 
     def get_by_natural_key(self, name):
         return self.get(name=name)
@@ -266,11 +288,11 @@ class LocationManager(VocabularyManager):
             'update': pti.update_gcmd_location
         }
     }
-    mapping = dict(category='Location_Category',
+    mappings = [dict(category='Location_Category',
                 type='Location_Type',
                 subregion1='Location_Subregion1',
                 subregion2='Location_Subregion2',
-                subregion3='Location_Subregion3')
+                subregion3='Location_Subregion3')]
 
     def get_by_natural_key(self, category, type, subregion1, subregion2, subregion3):
         return self.get(category=category, type=type, subregion1=subregion1,
