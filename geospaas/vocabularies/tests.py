@@ -1,5 +1,6 @@
 """Unit tests for the geospaas.vocabularies app"""
 
+import django.db.models
 import django.db.utils
 from django.core.management import call_command
 from django.test import TestCase
@@ -114,6 +115,41 @@ class VocabularyManagerTests(TestCase):
                 {'standard_name': 'foo'},
                 {'standard_name': 'bar'}
             ])
+
+    def test_get_or_create(self):
+        """Test that the model fields are correctly mapped to the GCMD
+        entries' fields
+        """
+
+        class TestVocabularyManager(VocabularyManager):
+            """Manager used for tests"""
+            vocabularies = {
+                'test_voc': {
+                    'get_list': lambda: [
+                        {'key1': 'val11', 'key2': 'val12'},
+                        {'key1': 'val21', 'key3': 'val22_loooooooong'},
+                    ],
+                    'update': lambda: None,
+                }
+            }
+            mappings = [
+                {'key1': 'key1', 'key2': 'key2'},
+                {'key1': 'key1', 'key2': 'key3'},
+            ]
+
+        class TestModel(django.db.models.Model):
+            """Model used for tests"""
+            key1 = django.db.models.CharField(max_length=10)
+            key2 = django.db.models.CharField(max_length=10)
+            objects = TestVocabularyManager()
+
+        with patch('geospaas.vocabularies.managers.models.Manager.get_or_create',
+                   return_value=(True, None)) as mock_get_or_create:
+            manager = TestModel.objects
+            manager.create_from_vocabularies()
+            mock_get_or_create.assert_has_calls((
+                call(key1='val11', key2='val12'),
+                call(key1='val21', key2='val22_looo'),))
 
 
 class ParameterTests(VocabulariesTestBase, TestCase):
