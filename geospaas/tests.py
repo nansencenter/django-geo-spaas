@@ -12,7 +12,7 @@ class TestUtils(TestCase):
               '20140101000000-GLOBCURRENT-L4-CURgeo_0m-ALT_OI-v02.0-fv01.0.nc.tull'
         with self.assertRaises(OSError) as cm:
             utils.validate_uri(uri)
-        self.assertEqual('NetCDF: file not found', cm.exception.args[1])
+        self.assertIn('NetCDF', cm.exception.args[1])
 
     @patch('geospaas.utils.utils.os.path.isfile')
     def test_validate_uri_local(self, mock_isfile):
