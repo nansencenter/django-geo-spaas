@@ -25,8 +25,14 @@ def module_path(module, root):
     return media_path
 
 
-def path(module, filename, root):
+def path(module, filename, root, date=None):
     mp = module_path(module, root)
+
+    if date is not None:
+        for xx in [date.strftime('%Y'), date.strftime('%m'), date.strftime('%d')]:
+            mp = os.path.join(mp, xx)
+            if not os.path.exists(mp):
+                os.mkdir(mp)
 
     # Get the path of media files created from <filename>
     basename = os.path.split(filename)[-1].split('.')[0]
@@ -39,8 +45,8 @@ def path(module, filename, root):
 def media_path(module, filename):
     return path(module, filename, settings.MEDIA_ROOT)
 
-def product_path(module, filename):
-    return path(module, filename, settings.PRODUCTS_ROOT)
+def product_path(module, filename, date=None):
+    return path(module, filename, settings.PRODUCTS_ROOT, date=date)
 
 def validate_uri(uri):
     """ Validation of URI and its existence
