@@ -11,6 +11,37 @@ env:
   BASE_STANDARD_IMAGE_TAG: 'v1.5.3'
   BASE_SLIM_IMAGE_TAG: 'v1.5.3-slim'
 jobs:
+  setup:
+    runs-on: 'ubuntu-20.04'
+    outputs:
+      git_tag: ${{ steps.get_git_tag.outputs.version }}
+      docker_tags: ${{ steps.make_docker_tags.outputs.tags }}
+      docker_slim_tags: ${{ steps.make_docker_tags.outputs.slim_tags }}
+    steps:
+      - name: "Extract tag name"
+        id: get_git_tag
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]];then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG='tmp'
+          fi
+          echo "version=$TAG" >> $GITHUB_OUTPUT
+
+      - name: "Make Docker tags"
+        id: make_docker_tags
+        run: |
+          if [[ '${{ github.event.action }}' == released ]];then
+            TAGS=$'${{ env.IMAGE_NAME }}:latest\n${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}'
+            SLIM_TAGS=$'${{ env.IMAGE_NAME }}:latest-slim\n${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}-slim'
+          else
+            TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}'
+            SLIM_TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}-slim'
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "slim_tags=$SLIM_TAGS" >> $GITHUB_OUTPUT
+
+
   tests:
     name: 'Run unit tests'
     runs-on: 'ubuntu-20.04'
@@ -115,20 +146,10 @@ jobs:
 
   build_standard_docker_image:
     runs-on: 'ubuntu-20.04'
-    needs: 'tests'
+    needs: ['setup', 'tests']
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
-
-      - name: "Extract tag name"
-        id: get_version
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]];then
-            TAG="${GITHUB_REF#refs/tags/}"
-          else
-            TAG='tmp'
-          fi
-          echo "::set-output name=VERSION::${TAG}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -147,25 +168,15 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
 
-      - name: "Make Docker tags"
-        id: make_tags
-        run: |
-          if [[ $GITHUB_EVENT_NAME == released ]];then
-            TAGS=$'${{ env.IMAGE_NAME }}:latest\n${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}'
-          else
-            TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}'
-          fi
-          echo "::set-output name=TAGS::${TAG}"
-
       - name: Build docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_STANDARD_IMAGE_TAG }}
-            DJANGO_GEO_SPAAS_RELEASE=${{ steps.get_version.outputs.VERSION }}
+            DJANGO_GEO_SPAAS_RELEASE=${{ needs.setup.outputs.git_tag }}
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
-          tags: ${{ steps.make_tags.outputs.TAGS }}
+          tags: ${{ needs.setup.outputs.docker_tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
@@ -179,20 +190,10 @@ jobs:
 
   build_slim_docker_image:
     runs-on: 'ubuntu-20.04'
-    needs: 'tests'
+    needs: ['setup', 'tests']
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
-
-      - name: "Extract tag name"
-        id: get_version
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]];then
-            TAG="${GITHUB_REF#refs/tags/}"
-          else
-            TAG='tmp'
-          fi
-          echo "::set-output name=VERSION::${TAG}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -218,11 +219,9 @@ jobs:
           context: .
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_SLIM_IMAGE_TAG }}
-            DJANGO_GEO_SPAAS_RELEASE=${{ steps.get_version.outputs.VERSION }}
+            DJANGO_GEO_SPAAS_RELEASE=${{ needs.setup.outputs.git_tag }}
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest-slim
-            ${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}-slim
+          tags: ${{ needs.setup.outputs.docker_slim_tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
