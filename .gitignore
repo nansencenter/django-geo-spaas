@@ -21,3 +21,4 @@ provisioning/roles/andrewrothstein.unarchive-deps
 provisioning/roles/geospaas/.DS_Store
 provisioning/roles/nansencenter.django
 provisioning/site.retry
+.coverage*
