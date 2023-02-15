@@ -31,12 +31,11 @@ jobs:
       - name: "Make Docker tags"
         id: make_docker_tags
         run: |
+          TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_git_tag.outputs.version }}'
+          SLIM_TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_git_tag.outputs.version }}-slim'
           if [[ '${{ github.event.action }}' == released ]];then
-            TAGS=$'${{ env.IMAGE_NAME }}:latest\n${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}'
-            SLIM_TAGS=$'${{ env.IMAGE_NAME }}:latest-slim\n${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}-slim'
-          else
-            TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}'
-            SLIM_TAGS='${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}-slim'
+            TAGS="$TAGS,${{ env.IMAGE_NAME }}:latest"
+            SLIM_TAGS="$SLIM_TAGS,${{ env.IMAGE_NAME }}:latest-slim"
           fi
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
           echo "slim_tags=$SLIM_TAGS" >> $GITHUB_OUTPUT
