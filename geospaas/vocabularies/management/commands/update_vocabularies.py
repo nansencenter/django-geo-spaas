@@ -35,15 +35,16 @@ class Command(BaseCommand):
         models = [
             Parameter,
             DataCenter,
-            HorizontalDataResolution,
+            #HorizontalDataResolution,
             Instrument,
             ISOTopicCategory,
             Location,
             Platform,
-            Project,
+            #Project,
             ScienceKeyword,
-            TemporalDataResolution,
-            VerticalDataResolution]
+            #TemporalDataResolution,
+            #VerticalDataResolution,
+            ]
 
         for model in models:
             model.objects.create_from_vocabularies(**options)

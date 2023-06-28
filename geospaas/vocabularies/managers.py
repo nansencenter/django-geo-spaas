@@ -52,13 +52,15 @@ class VocabularyManager(models.Manager):
         """
         num = 0
         for entry in pti_list:
-            pp, created = self.get_or_create(entry)
+            if bool(entry):
+                pp, created = self.get_or_create(entry)
+            else:
+                created = False
             if created: num+=1
         print("Successfully added %d new entries" % num)
 
     def get_or_create(self, entry, *args, **kwargs):
         """ Get or create database instance from input pythesint entry """
-
         params = {key : entry[self.mapping[key]] for key in self.mapping}
         return super(VocabularyManager, self).get_or_create(**params)
 
