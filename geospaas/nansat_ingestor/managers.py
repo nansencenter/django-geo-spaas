@@ -113,7 +113,7 @@ class DatasetManager(models.Manager):
             'gcmd_location': {'model': Location,
                               'value': pti.get_gcmd_location('SEA SURFACE')},
             'data_center': {'model': DataCenter,
-                            'value': pti.get_gcmd_provider('NERSC')},
+                            'value': pti.get_gcmd_provider('NO/MET')},
             'ISO_topic_category': {'model': ISOTopicCategory,
                                    'value': pti.get_iso19115_topic_category('Oceans')},
         }
