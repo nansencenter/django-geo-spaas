@@ -4,6 +4,7 @@ import uuid
 
 import pythesint as pti
 from django.contrib.gis.geos import WKTReader
+from django.db import connection
 from django.db import models
 
 from geospaas.catalog.managers import FILE_SERVICE_NAME, LOCAL_FILE_SERVICE
@@ -56,6 +57,7 @@ class DatasetManager(models.Manager):
         uris = DatasetURI.objects.filter(uri=uri, **uri_filter_args)
         if len(uris) > 0:
             return uris[0].dataset, False
+        connection.close()
 
         # Open file with Nansat
         n = Nansat(nansat_filename(uri), **kwargs)
@@ -72,6 +74,7 @@ class DatasetManager(models.Manager):
             pp_entry = [elem.strip() for elem in pp.split('>')]
             pp_dict = pti.get_gcmd_platform(pp_entry[-1].split('(')[1][0:-1])
         platform, _ = Platform.objects.get_or_create(pp_dict)
+        connection.close()
         ii = n_metadata['instrument']
         try:
             ii_dict = json.loads(ii)
@@ -79,10 +82,12 @@ class DatasetManager(models.Manager):
             ii_entry = [elem.strip() for elem in ii.split('>')]
             ii_dict = pti.get_gcmd_instrument(ii_entry[-1].split('(')[1][0:-1])
         instrument, _ = Instrument.objects.get_or_create(ii_dict)
+        connection.close()
         specs = n_metadata.get('specs', '')
         source, _ = Source.objects.get_or_create(platform=platform,
                                                  instrument=instrument,
                                                  specs=specs)
+        connection.close()
 
         default_char_fields = {
             # Adding NERSC_ in front of the id violates the string representation of the uuid
@@ -98,6 +103,7 @@ class DatasetManager(models.Manager):
             existing_ds = Dataset.objects.get(entry_id=entry_id)
         except Dataset.DoesNotExist:
             existing_ds = None
+        connection.close()
         for name in default_char_fields:
             if name not in n_metadata:
                 logging.debug('%s is not provided in Nansat metadata!' % name)
@@ -140,6 +146,7 @@ class DatasetManager(models.Manager):
             n.reproject_gcps()
         geolocation = GeographicLocation.objects.get_or_create(
             geometry=WKTReader().read(n.get_border_wkt(nPoints=n_points)))[0]
+        connection.close()
 
         # create dataset
         # - the get_or_create method should use get_or_create here as well,
@@ -155,6 +162,7 @@ class DatasetManager(models.Manager):
             'entry_title': options["entry_title"],
             'summary': options["summary"]}
         )
+        connection.close()
 
         # create parameter
         all_band_meta = n.bands()
@@ -172,6 +180,7 @@ class DatasetManager(models.Manager):
                 params = params.filter(units=units)
             if params.count() >= 1:
                 ds.parameters.add(params[0])
+        connection.close()
 
         # create dataset URI
         DatasetURI.objects.get_or_create(
@@ -179,5 +188,6 @@ class DatasetManager(models.Manager):
             service=uri_service_type,
             uri=uri,
             dataset=ds)
+        connection.close()
 
         return ds, created
