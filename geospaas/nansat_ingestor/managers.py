@@ -70,14 +70,14 @@ class DatasetManager(models.Manager):
             pp_dict = json.loads(pp)
         except json.JSONDecodeError:
             pp_entry = [elem.strip() for elem in pp.split('>')]
-            pp_dict = pti.get_gcmd_platform(pp_entry[-1])
+            pp_dict = pti.get_gcmd_platform(pp_entry[-1].split('(')[1][0:-1])
         platform, _ = Platform.objects.get_or_create(pp_dict)
         ii = n_metadata['instrument']
         try:
             ii_dict = json.loads(ii)
         except json.JSONDecodeError:
             ii_entry = [elem.strip() for elem in ii.split('>')]
-            ii_dict = pti.get_gcmd_instrument(ii_entry[-1])
+            ii_dict = pti.get_gcmd_instrument(ii_entry[-1].split('(')[1][0:-1])
         instrument, _ = Instrument.objects.get_or_create(ii_dict)
         specs = n_metadata.get('specs', '')
         source, _ = Source.objects.get_or_create(platform=platform,
