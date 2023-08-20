@@ -1,6 +1,6 @@
 import json
+import logging
 import uuid
-import warnings
 
 import pythesint as pti
 from django.contrib.gis.geos import WKTReader
@@ -100,7 +100,7 @@ class DatasetManager(models.Manager):
             existing_ds = None
         for name in default_char_fields:
             if name not in n_metadata:
-                warnings.warn('%s is not provided in Nansat metadata!' % name)
+                logging.debug('%s is not provided in Nansat metadata!' % name)
                 # prevent overwriting of existing values by defaults
                 if existing_ds:
                     options[name] = existing_ds.__getattribute__(name)
@@ -123,12 +123,12 @@ class DatasetManager(models.Manager):
             value = default_foreign_keys[name]['value']
             model = default_foreign_keys[name]['model']
             if name not in n_metadata:
-                warnings.warn('%s is not provided in Nansat metadata!' % name)
+                logging.debug('%s is not provided in Nansat metadata!' % name)
             else:
                 try:
                     value = json.loads(n_metadata[name])
                 except:
-                    warnings.warn('%s value of %s  metadata provided in Nansat is wrong!' %
+                    logging.debug('%s value of %s  metadata provided in Nansat is wrong!' %
                                   (n_metadata[name], name))
             if existing_ds:
                 options[name] = existing_ds.__getattribute__(name)
