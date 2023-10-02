@@ -61,7 +61,11 @@ class VocabularyManager(models.Manager):
 
     def get_or_create(self, entry, *args, **kwargs):
         """ Get or create database instance from input pythesint entry """
-        params = {key : entry[self.mapping[key]] for key in self.mapping}
+        try:
+            params = {key : entry[self.mapping[key]] for key in self.mapping}
+        except:
+            import ipdb
+            ipdb.set_trace()
         return super(VocabularyManager, self).get_or_create(**params)
 
     def create_from_vocabularies(self, force=False, **kwargs):
@@ -116,11 +120,21 @@ class ParameterManager(VocabularyManager):
 class PlatformManager(VocabularyManager):
     get_list = pti.get_gcmd_platform_list
     update = pti.update_gcmd_platform
-    mapping = dict(category='Category',
-                    series_entity='Series_Entity',
+    # mapping = dict(category='Category',
+    #                 series_entity='Series_Entity',
+    #                 short_name='Short_Name',
+    #                 long_name='Long_Name')
+    # New mapping to adapt to changes in GCMD
+    mapping = dict(category='Basis',
+                    series_entity='Category',
                     short_name='Short_Name',
                     long_name='Long_Name')
-
+    # Correct mapping needs update of tables..:
+    # mapping = dict(basis='Basis',
+    #                category='Category',
+    #                sub_category='Sub_Category',
+    #                short_name='Short_Name',
+    #                long_name='Long_Name')
 
 
 class InstrumentManager(VocabularyManager):
