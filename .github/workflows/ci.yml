@@ -11,9 +11,6 @@ jobs:
     runs-on: 'ubuntu-latest'
     strategy:
       matrix:
-        tag_suffix:
-          - ''
-          - '-slim'
         version:
           - {'python': '3.7', 'latest': false}
           - {'python': '3.8', 'latest': false}
@@ -21,7 +18,7 @@ jobs:
           - {'python': '3.10', 'latest': false}
           - {'python': '3.11', 'latest': true}
     env:
-      BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:0.0.10${{ matrix.tag_suffix }}-python${{ matrix.version.python }}"
+      BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:0.0.10-python${{ matrix.version.python }}"
       IMAGE_NAME: "${{ vars.DOCKER_ORG }}/geospaas"
     steps:
       - name: 'Checkout repository'
@@ -95,10 +92,10 @@ jobs:
             DJANGO_GEO_SPAAS_RELEASE=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
           push: ${{ github.ref_type == 'tag' }}
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}${{ matrix.tag_suffix }}-python${{ matrix.version.python }}
-            ${{ matrix.version.latest && format('{0}:{1}{2}', env.IMAGE_NAME, github.ref_name, matrix.tag_suffix) || '' }}
-            ${{ env.IMAGE_NAME }}:latest${{ matrix.tag_suffix }}-python${{ matrix.version.python }}
-            ${{ matrix.version.latest && format('{0}:latest{1}', env.IMAGE_NAME, matrix.tag_suffix) || '' }}
+            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}-python${{ matrix.version.python }}
+            ${{ matrix.version.latest && format('{0}:{1}', env.IMAGE_NAME, github.ref_name) || '' }}
+            ${{ env.IMAGE_NAME }}:latest-python${{ matrix.version.python }}
+            ${{ matrix.version.latest && format('{0}:latest', env.IMAGE_NAME) || '' }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
