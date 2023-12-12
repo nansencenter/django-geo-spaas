@@ -18,7 +18,7 @@ jobs:
           - '3.10'
           - '3.11'
     env:
-      BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:0.0.10-python${{ matrix.python_version }}"
+      BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:v1.6.0-python${{ matrix.python_version }}"
       IMAGE_NAME: "${{ vars.DOCKER_ORG }}/geospaas"
       latest: ${{ matrix.python_version == '3.11' && 'true' || '' }}
     steps:
