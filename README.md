@@ -1,6 +1,6 @@
 Django-Geo-SPaaS - GeoDjango Apps for satellite data management
 ===========================================================
-[![Unit tests and build](https://github.com/nansencenter/django-geo-spaas/actions/workflows/tests_build.yml/badge.svg)](https://github.com/nansencenter/django-geo-spaas/actions/workflows/tests_build.yml)
+[![Unit tests and build](https://github.com/nansencenter/django-geo-spaas/actions/workflows/ci.yml/badge.svg)](https://github.com/nansencenter/django-geo-spaas/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/nansencenter/django-geo-spaas/badge.svg?branch=master)](https://coveralls.io/github/nansencenter/django-geo-spaas)
 [![DOI](https://zenodo.org/badge/84077597.svg)](https://zenodo.org/badge/latestdoi/84077597)
 
