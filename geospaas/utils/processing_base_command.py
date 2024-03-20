@@ -18,22 +18,25 @@ def valid_date(s):
 
 
 class ProcessingBaseCommand(BaseCommand):
-    """ Base class for geospaas-based processing commands for initial filtering on space and time.
+    """Base class for geospaas-based processing commands for initial filtering on space and time.
 
     Usage
     -----
-    from geospaas.utils import ProcessingBaseCommand
-    class SomeProcessingCommand(ProcessingBaseCommand):
-        args = '<filename filename ...>'
-        help = 'Run classification of texture features'
+    .. code:: python
 
-        def handle(self, *args, **options):
-            # find input datasets
-            inp_datasets = self.find_datasets(**options)
+        from geospaas.utils import ProcessingBaseCommand
+        class SomeProcessingCommand(ProcessingBaseCommand):
+            args = '<filename filename ...>'
+            help = 'Run classification of texture features'
 
-            # continue to filter inp_datasets
-            # continue to process inp_datasets
+            def handle(self, *args, **options):
+                # find input datasets
+                inp_datasets = self.find_datasets(**options)
+
+                # continue to filter inp_datasets
+                # continue to process inp_datasets
     """
+
     def add_arguments(self, parser):
         parser.add_argument('--start',
                             action='store',
@@ -80,7 +83,7 @@ class ProcessingBaseCommand(BaseCommand):
                             help='Number of found datasets to process')
 
     def geometry_from_options(self, extent=None, geojson=None, **kwargs):
-        """ Generate geometry to use in spatial search
+        """Generate geometry to use in spatial search
 
         If extent is not None, return Polygon generated as POLYGON(()) with min/max lon/lat
         If geojson is not None, return Polygon loaded from the GeoJSON file
@@ -92,7 +95,7 @@ class ProcessingBaseCommand(BaseCommand):
             Values of min_lon, max_lon, min_lat, max_lat
         geojson : str
             Filename with Polygon GeoJSON
-        **kwargs : dict
+        \*\*kwargs : dict
             other options from input arguments
 
         Returns

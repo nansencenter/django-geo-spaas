@@ -16,7 +16,7 @@
         - geospaas.vocabularies
         - geospaas.catalog
         - geospaas.nansat_ingestor
-        - geospaas.viewer
+        - geospaas.base_viewer
         - django_forms_bootstrap
         - leaflet
       django_urlpatterns:

@@ -28,7 +28,7 @@ class DatasetManager(models.Manager):
         """ Create dataset and corresponding metadata
 
         Parameters:
-        ----------
+        -----------
             uri : str
                   URI to file or stream openable by Nansat
             n_points : int
@@ -41,7 +41,7 @@ class DatasetManager(models.Manager):
                 type of the service which is used  ('OPENDAP', 'local', 'HTTPServer' or 'WMS')
 
         Returns:
-        -------
+        --------
             dataset and flag
         """
         if not uri_filter_args:

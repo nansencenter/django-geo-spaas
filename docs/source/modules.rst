@@ -1,4 +1,4 @@
-geospaas
+Modules documentation
 ========
 
 .. toctree::
