@@ -16,7 +16,7 @@ import sys
 import os
 
 import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tests.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_settings')
 django.setup()
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
