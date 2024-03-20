@@ -15,17 +15,18 @@ Contents:
    :maxdepth: 1
    :caption: User documentation
 
-   #source/installation.rst
-   #source/tutorials.rst
-   #source/packages_and_modules.rst
-   #source/acknowledgments.rst
-
+..
+   source/installation.rst
+   source/tutorials.rst
+   source/packages_and_modules.rst
+   source/acknowledgments.rst
 
 .. toctree::
    :maxdepth: 2
    :caption: Feature documentation
 
-   #source/features.rst
+..
+   source/features.rst
 
 
 .. toctree::
@@ -33,11 +34,13 @@ Contents:
    :caption: Developer documentation
 
    source/extending.rst
+   source/modules.rst
 
-   #source/conventions.rst
-   #source/about_mappers.rst
-   #source/release_nansat.rst
-   #source/documenting.rst
+..
+   source/conventions.rst
+   source/about_mappers.rst
+   source/release_nansat.rst
+   source/documenting.rst
 
 
 

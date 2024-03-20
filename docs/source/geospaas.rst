@@ -10,7 +10,7 @@ Subpackages
     geospaas.export_DIF
     geospaas.nansat_ingestor
     geospaas.utils
-    geospaas.viewer
+    geospaas.base_viewer
     geospaas.vocabularies
 
 Submodules
