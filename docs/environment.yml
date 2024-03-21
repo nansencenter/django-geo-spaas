@@ -2,14 +2,16 @@ channels:
   - conda-forge
 dependencies:
   - django==3.2
-  - sphinx>=1.4
-  - sphinx-autobuild
-  - sphinx_rtd_theme
-  - recommonmark
-  - pandoc
-  - nbconvert
+  - gdal
   - ipykernel
+  - nbconvert
+  - netCDF4
+  - pandoc
+  - pythesint
   - python-dateutil
+  - recommonmark
+  - sphinx_rtd_theme
+  - sphinx-autobuild
+  - sphinx>=1.4
   - pip:
     - nbsphinx
-
