@@ -14,4 +14,5 @@ dependencies:
   - sphinx-autobuild
   - sphinx>=1.4
   - pip:
+    - nansat
     - nbsphinx
