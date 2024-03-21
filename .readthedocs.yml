@@ -4,6 +4,10 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "mambaforge-22.9"
+  jobs:
+    pre_build:
+      # add cloned repository to python importable paths
+      - 'echo "$(pwd)" >> $(python -c "import sysconfig;print(sysconfig.get_paths()[\"purelib\"])")/workdir.pth'
 
 conda:
   environment: docs/environment.yml
