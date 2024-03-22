@@ -1,3 +1,4 @@
+============================================
 geospaas.nansat\_ingestor.management package
 ============================================
 
@@ -6,7 +7,7 @@ Subpackages
 
 .. toctree::
 
-    geospaas.nansat_ingestor.management.commands
+    management.commands
 
 Module contents
 ---------------

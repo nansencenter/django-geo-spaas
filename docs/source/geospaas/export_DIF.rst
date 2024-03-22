@@ -1,15 +1,9 @@
+============================
 geospaas.export\_DIF package
 ============================
 
-Subpackages
------------
-
-.. toctree::
-
-    geospaas.export_DIF.migrations
-
 Submodules
-----------
+==========
 
 geospaas.export\_DIF.admin module
 ---------------------------------
@@ -45,7 +39,7 @@ geospaas.export\_DIF.views module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.export_DIF
     :members:

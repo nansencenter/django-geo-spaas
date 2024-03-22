@@ -1,5 +1,6 @@
-Modules documentation
-========
+=================
+Modules reference
+=================
 
 .. toctree::
    :maxdepth: 4

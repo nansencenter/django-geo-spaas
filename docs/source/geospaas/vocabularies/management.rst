@@ -1,3 +1,4 @@
+========================================
 geospaas.vocabularies.management package
 ========================================
 
@@ -6,7 +7,7 @@ Subpackages
 
 .. toctree::
 
-    geospaas.vocabularies.management.commands
+    management.commands
 
 Module contents
 ---------------

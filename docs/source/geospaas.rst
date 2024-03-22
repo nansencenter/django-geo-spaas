@@ -1,20 +1,21 @@
+================
 geospaas package
 ================
 
 Subpackages
------------
+===========
 
 .. toctree::
 
-    geospaas.catalog
-    geospaas.export_DIF
-    geospaas.nansat_ingestor
-    geospaas.utils
-    geospaas.base_viewer
-    geospaas.vocabularies
+    geospaas/catalog
+    geospaas/export_DIF
+    geospaas/nansat_ingestor
+    geospaas/utils
+    geospaas/base_viewer
+    geospaas/vocabularies
 
 Submodules
-----------
+==========
 
 geospaas.admin module
 ---------------------
@@ -42,7 +43,7 @@ geospaas.urls module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas
     :members:

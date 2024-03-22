@@ -1,16 +1,16 @@
+========================
 geospaas.catalog package
 ========================
 
 Subpackages
------------
+===========
 
 .. toctree::
 
-    geospaas.catalog.management
-    geospaas.catalog.migrations
+    catalog/management
 
 Submodules
-----------
+==========
 
 geospaas.catalog.admin module
 -----------------------------
@@ -54,7 +54,7 @@ geospaas.catalog.views module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.catalog
     :members:

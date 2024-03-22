@@ -1,8 +1,9 @@
+======================
 geospaas.utils package
 ======================
 
 Submodules
-----------
+==========
 
 geospaas.utils.processing\_base\_command module
 -----------------------------------------------
@@ -22,7 +23,7 @@ geospaas.utils.utils module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.utils
     :members:
