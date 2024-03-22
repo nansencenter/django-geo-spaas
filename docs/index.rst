@@ -6,7 +6,10 @@
 Welcome to django-geo-spaas's documentation!
 ============================================
 
-Contents:
+GeoSPaaS is a set of Python tools meant to help scientists deal with Earth Observation data.
+django-geo-spaas is the core of GeoSPaaS. It is composed of several
+`GeoDjango <https://docs.djangoproject.com/en/5.0/ref/contrib/gis/>`_ apps which provide basic
+functionalities
 
 .. toctree::
    :maxdepth: 2
@@ -15,11 +18,8 @@ Contents:
    :maxdepth: 1
    :caption: User documentation
 
-..
    source/installation.rst
    source/tutorials.rst
-   source/packages_and_modules.rst
-   source/acknowledgments.rst
 
 .. toctree::
    :maxdepth: 2

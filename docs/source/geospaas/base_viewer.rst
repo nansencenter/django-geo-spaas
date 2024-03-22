@@ -1,8 +1,9 @@
+============================
 geospaas.base_viewer package
 ============================
 
 Submodules
-----------
+==========
 
 geospaas.base_viewer.forms module
 ---------------------------------
@@ -38,7 +39,7 @@ geospaas.base_viewer.views module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.base_viewer
     :members:

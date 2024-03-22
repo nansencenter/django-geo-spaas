@@ -1,8 +1,9 @@
+=================================================
 geospaas.vocabularies.management.commands package
 =================================================
 
 Submodules
-----------
+==========
 
 geospaas.vocabularies.management.commands.update\_vocabularies module
 ---------------------------------------------------------------------
@@ -14,7 +15,7 @@ geospaas.vocabularies.management.commands.update\_vocabularies module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.vocabularies.management.commands
     :members:

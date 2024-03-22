@@ -1,8 +1,9 @@
+=====================================================
 geospaas.nansat\_ingestor.management.commands package
 =====================================================
 
 Submodules
-----------
+==========
 
 geospaas.nansat\_ingestor.management.commands.ingest module
 -----------------------------------------------------------
@@ -22,7 +23,7 @@ geospaas.nansat\_ingestor.management.commands.ingest\_hyrax module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.nansat_ingestor.management.commands
     :members:

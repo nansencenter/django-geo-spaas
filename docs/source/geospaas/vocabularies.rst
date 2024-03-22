@@ -1,16 +1,16 @@
+=============================
 geospaas.vocabularies package
 =============================
 
 Subpackages
------------
+===========
 
 .. toctree::
 
-    geospaas.vocabularies.management
-    geospaas.vocabularies.migrations
+    vocabularies/management
 
 Submodules
-----------
+==========
 
 geospaas.vocabularies.admin module
 ----------------------------------
@@ -54,7 +54,7 @@ geospaas.vocabularies.views module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.vocabularies
     :members:

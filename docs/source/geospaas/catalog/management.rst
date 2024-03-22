@@ -1,3 +1,4 @@
+===================================
 geospaas.catalog.management package
 ===================================
 
@@ -6,7 +7,7 @@ Subpackages
 
 .. toctree::
 
-    geospaas.catalog.management.commands
+    management.commands
 
 Module contents
 ---------------
