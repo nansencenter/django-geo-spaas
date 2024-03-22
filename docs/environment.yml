@@ -1,6 +1,7 @@
 channels:
   - conda-forge
 dependencies:
+  - python==3.11
   - django==3.2
   - gdal
   - ipykernel
