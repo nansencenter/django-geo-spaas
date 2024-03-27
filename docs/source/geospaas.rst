@@ -6,6 +6,7 @@ Subpackages
 ===========
 
 .. toctree::
+    :maxdepth: 1
 
     geospaas/catalog
     geospaas/export_DIF

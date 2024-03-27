@@ -6,6 +6,7 @@ Subpackages
 ===========
 
 .. toctree::
+    :maxdepth: 1
 
     nansat_ingestor/management
 
