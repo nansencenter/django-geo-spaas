@@ -1,8 +1,9 @@
+============================================
 geospaas.catalog.management.commands package
 ============================================
 
 Submodules
-----------
+==========
 
 geospaas.catalog.management.commands.count module
 -------------------------------------------------
@@ -14,7 +15,7 @@ geospaas.catalog.management.commands.count module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.catalog.management.commands
     :members:

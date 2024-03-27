@@ -1,17 +1,17 @@
+=================================
 geospaas.nansat\_ingestor package
 =================================
 
 Subpackages
------------
+===========
 
 .. toctree::
+    :maxdepth: 1
 
-    geospaas.nansat_ingestor.management
-    geospaas.nansat_ingestor.migrations
-    geospaas.nansat_ingestor.tests
+    nansat_ingestor/management
 
 Submodules
-----------
+==========
 
 geospaas.nansat\_ingestor.admin module
 --------------------------------------
@@ -47,7 +47,7 @@ geospaas.nansat\_ingestor.views module
 
 
 Module contents
----------------
+===============
 
 .. automodule:: geospaas.nansat_ingestor
     :members:

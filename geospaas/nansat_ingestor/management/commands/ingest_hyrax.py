@@ -1,7 +1,8 @@
 import os
 import time
 import re
-import urllib2
+import urllib.error
+import urllib.request
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -24,7 +25,7 @@ def find_netcdf_uris(uri0, sleep=1.0):
     print('Search in ', uri0_base)
     # get HTML from the URL
     time.sleep(sleep)
-    response = urllib2.urlopen(uri0)
+    response = urllib.request.urlopen(uri0)
     html = response.read()
 
     # find all links to netDCF
@@ -38,7 +39,7 @@ def find_netcdf_uris(uri0, sleep=1.0):
     try:
         for uri in uris:
             nc_uris += find_netcdf_uris(uri)
-    except (urllib2.HTTPError, urllib2.URLError) as e:
+    except (urllib.error.HTTPError, urllib.error.URLError) as e:
         print('Server error %s'%e.message)
     # return all links to netCDF
     return nc_uris

@@ -87,7 +87,7 @@ class GUIIntegrationTests(TestCase):
 
     def test_post_without_polygon_public_version(self):
         """shall not reveal the uri of fixtures' datasets (presumably confidential) in the specified
-         placement of datasets inside the resulted HTML in the case of a POST request without
+        placement of datasets inside the resulted HTML in the case of a POST request without
         any polygon from user """
         res = self.client.post('/tests/', {
             'time_coverage_start': timezone.datetime(2000, 12, 29),

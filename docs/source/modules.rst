@@ -1,5 +1,6 @@
-geospaas
-========
+=================
+Modules reference
+=================
 
 .. toctree::
    :maxdepth: 4
