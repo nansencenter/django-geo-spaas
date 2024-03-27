@@ -4,6 +4,7 @@ dependencies:
   - python==3.11
   - pip
   - django==3.2
+  - django-leaflet
   - gdal
   - ipykernel
   - nbconvert
