@@ -12,12 +12,3 @@ geospaas.vocabularies.management.commands.update\_vocabularies module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
-===============
-
-.. automodule:: geospaas.vocabularies.management.commands
-    :members:
-    :undoc-members:
-    :show-inheritance:

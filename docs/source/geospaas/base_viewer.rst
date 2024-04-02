@@ -1,47 +1,30 @@
-============================
-geospaas.base_viewer package
-============================
+====================
+geospaas.base_viewer
+====================
 
 Submodules
 ==========
 
-geospaas.base_viewer.forms module
----------------------------------
+geospaas.base_viewer.forms
+--------------------------
 
 .. automodule:: geospaas.base_viewer.forms
     :members:
     :undoc-members:
     :show-inheritance:
 
-geospaas.base_viewer.tests module
----------------------------------
+geospaas.base_viewer.tests
+--------------------------
 
 .. automodule:: geospaas.base_viewer.tests
     :members:
     :undoc-members:
     :show-inheritance:
 
-geospaas.base_viewer.urls module
---------------------------------
-
-.. automodule:: geospaas.base_viewer.urls
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-geospaas.base_viewer.views module
----------------------------------
+geospaas.base_viewer.views
+--------------------------
 
 .. automodule:: geospaas.base_viewer.views
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
-===============
-
-.. automodule:: geospaas.base_viewer
     :members:
     :undoc-members:
     :show-inheritance:

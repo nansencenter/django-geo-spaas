@@ -1,6 +1,6 @@
-========================
-geospaas.catalog package
-========================
+================
+geospaas.catalog
+================
 
 Subpackages
 ===========
@@ -13,51 +13,18 @@ Subpackages
 Submodules
 ==========
 
-geospaas.catalog.admin module
------------------------------
-
-.. automodule:: geospaas.catalog.admin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-geospaas.catalog.managers module
---------------------------------
+geospaas.catalog.managers
+-------------------------
 
 .. automodule:: geospaas.catalog.managers
     :members:
     :undoc-members:
     :show-inheritance:
 
-geospaas.catalog.models module
-------------------------------
+geospaas.catalog.models
+-----------------------
 
 .. automodule:: geospaas.catalog.models
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-geospaas.catalog.tests module
------------------------------
-
-.. automodule:: geospaas.catalog.tests
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-geospaas.catalog.views module
------------------------------
-
-.. automodule:: geospaas.catalog.views
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
-===============
-
-.. automodule:: geospaas.catalog
     :members:
     :undoc-members:
     :show-inheritance:

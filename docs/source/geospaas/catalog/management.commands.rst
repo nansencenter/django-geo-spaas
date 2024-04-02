@@ -1,23 +1,14 @@
-============================================
-geospaas.catalog.management.commands package
-============================================
+====================================
+geospaas.catalog.management.commands
+====================================
 
 Submodules
 ==========
 
-geospaas.catalog.management.commands.count module
--------------------------------------------------
+geospaas.catalog.management.commands.count
+------------------------------------------
 
 .. automodule:: geospaas.catalog.management.commands.count
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
-===============
-
-.. automodule:: geospaas.catalog.management.commands
     :members:
     :undoc-members:
     :show-inheritance:

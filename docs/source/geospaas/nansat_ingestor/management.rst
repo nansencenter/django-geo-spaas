@@ -1,6 +1,6 @@
-============================================
-geospaas.nansat\_ingestor.management package
-============================================
+====================================
+geospaas.nansat\_ingestor.management
+====================================
 
 Subpackages
 -----------
@@ -8,11 +8,3 @@ Subpackages
 .. toctree::
 
     management.commands
-
-Module contents
----------------
-
-.. automodule:: geospaas.nansat_ingestor.management
-    :members:
-    :undoc-members:
-    :show-inheritance:
