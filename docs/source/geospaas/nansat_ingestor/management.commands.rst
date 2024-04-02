@@ -1,31 +1,22 @@
-=====================================================
-geospaas.nansat\_ingestor.management.commands package
-=====================================================
+=============================================
+geospaas.nansat\_ingestor.management.commands
+=============================================
 
 Submodules
 ==========
 
-geospaas.nansat\_ingestor.management.commands.ingest module
------------------------------------------------------------
+geospaas.nansat\_ingestor.management.commands.ingest
+----------------------------------------------------
 
 .. automodule:: geospaas.nansat_ingestor.management.commands.ingest
     :members:
     :undoc-members:
     :show-inheritance:
 
-geospaas.nansat\_ingestor.management.commands.ingest\_hyrax module
-------------------------------------------------------------------
+geospaas.nansat\_ingestor.management.commands.ingest\_hyrax
+-----------------------------------------------------------
 
 .. automodule:: geospaas.nansat_ingestor.management.commands.ingest_hyrax
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
-===============
-
-.. automodule:: geospaas.nansat_ingestor.management.commands
     :members:
     :undoc-members:
     :show-inheritance:
