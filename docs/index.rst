@@ -19,15 +19,8 @@ functionalities
    :caption: User documentation
 
    source/installation.rst
+   source/ecosystem.rst
    source/tutorials.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Feature documentation
-
-..
-   source/features.rst
-
 
 .. toctree::
    :maxdepth: 2
@@ -35,14 +28,6 @@ functionalities
 
    source/extending.rst
    source/modules.rst
-
-..
-   source/conventions.rst
-   source/about_mappers.rst
-   source/release_nansat.rst
-   source/documenting.rst
-
-
 
 Indices and tables
 ==================
