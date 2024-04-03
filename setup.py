@@ -18,6 +18,7 @@ install_requires = [
     'django-forms-bootstrap',
     'django-leaflet',
     'django<4',
+    'gdal',
     'nansat',
     'netCDF4',
     'pythesint',
