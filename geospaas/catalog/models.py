@@ -6,7 +6,7 @@ from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import URLValidator
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
 
 from geospaas.utils.utils import validate_uri
