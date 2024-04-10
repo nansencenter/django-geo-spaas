@@ -3,23 +3,17 @@ import uuid
 
 from django.db import models
 from django.contrib.gis.db import models as geomodels
-from django.core.exceptions import PermissionDenied
-from django.core.files.storage import FileSystemStorage
 from django.core.validators import URLValidator
 from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
 
 from geospaas.utils.utils import validate_uri
 from geospaas.vocabularies.models import Parameter
-from geospaas.vocabularies.models import ScienceKeyword
 from geospaas.vocabularies.models import Platform
 from geospaas.vocabularies.models import Instrument
 from geospaas.vocabularies.models import ISOTopicCategory
 from geospaas.vocabularies.models import DataCenter
 from geospaas.vocabularies.models import Location as GCMDLocation
-from geospaas.vocabularies.models import HorizontalDataResolution
-from geospaas.vocabularies.models import VerticalDataResolution
-from geospaas.vocabularies.models import TemporalDataResolution
 
 from geospaas.catalog.managers import SourceManager
 from geospaas.catalog.managers import DatasetURIManager
