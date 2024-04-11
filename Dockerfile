@@ -31,7 +31,7 @@ COPY geospaas /tmp/geospaas
 COPY setup.py /tmp/
 COPY MANIFEST.in /tmp/
 WORKDIR /tmp
-RUN python setup.py install \
+RUN pip install . \
 &&  rm -r geospaas setup.py MANIFEST.in
 
 WORKDIR /src
