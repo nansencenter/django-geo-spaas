@@ -22,3 +22,5 @@ provisioning/roles/geospaas/.DS_Store
 provisioning/roles/nansencenter.django
 provisioning/site.retry
 .coverage*
+dist
+build
