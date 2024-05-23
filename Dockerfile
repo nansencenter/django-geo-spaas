@@ -25,13 +25,9 @@ RUN apt update \
 
 FROM base as full
 
-ARG DJANGO_GEO_SPAAS_RELEASE '0.0.0dev'
 # install Geo-SPaaS
-COPY geospaas /tmp/geospaas
-COPY setup.py /tmp/
-COPY MANIFEST.in /tmp/
-WORKDIR /tmp
-RUN pip install . \
-&&  rm -r geospaas setup.py MANIFEST.in
+COPY . /tmp/geospaas/
+RUN pip install /tmp/geospaas && \
+    rm -rf /tmp/geospaas
 
 WORKDIR /src
