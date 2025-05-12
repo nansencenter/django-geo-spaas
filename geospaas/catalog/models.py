@@ -1,19 +1,23 @@
 import os
 import uuid
 
-from django.db import models
 from django.contrib.gis.db import models as geomodels
-from django.core.validators import URLValidator
-from django.utils.translation import gettext as _
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.core.validators import URLValidator
+from django.db import models
+from django.utils.translation import gettext as _
+
 
 from geospaas.utils.utils import validate_uri
 from geospaas.vocabularies.models import Parameter
+from geospaas.vocabularies.models import Keyword
 from geospaas.vocabularies.models import Platform
 from geospaas.vocabularies.models import Instrument
 from geospaas.vocabularies.models import ISOTopicCategory
 from geospaas.vocabularies.models import DataCenter
 from geospaas.vocabularies.models import Location as GCMDLocation
+
 
 from geospaas.catalog.managers import SourceManager
 from geospaas.catalog.managers import DatasetURIManager
@@ -89,6 +93,19 @@ class Role(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
 
+def validate_tag(tag):
+    """Validate the tag data
+    """
+    if not isinstance(tag, dict):
+        raise ValidationError('Tag must be a dict')
+
+
+class Tag(models.Model):
+    """Tag which can be associated to a dataset
+    """
+    data = models.JSONField(null=False, validators=(validate_tag,))
+
+
 class Dataset(models.Model):
     '''
     The Dataset model contains fields from the GCMD DIF conventions that are
@@ -128,27 +145,28 @@ class Dataset(models.Model):
             (ACCESS_LEVEL1, _('In-house')),
             (ACCESS_LEVEL2, _('Public')),
         )
+    access_constraints = models.CharField(max_length=50,
+            choices=ACCESS_CHOICES, blank=True, null=True)
 
-    # DIF required fields
     entry_id = models.TextField(unique=True, default=uuid.uuid4,
         validators=[
             RegexValidator(r'^[0-9a-zA-Z_.-]*$', 'Only alphanumeric characters are allowed.')
         ]
     )
+    time_coverage_start = models.DateTimeField(blank=True, null=True)
+    time_coverage_end = models.DateTimeField(blank=True, null=True)
+    location = geomodels.GeometryField(blank=True, null=True)
+    keywords = models.ManyToManyField(Keyword)
+    tags = models.ManyToManyField(Tag)
+
     entry_title = models.CharField(max_length=220)
     parameters = models.ManyToManyField(Parameter)
     ISO_topic_category = models.ForeignKey(ISOTopicCategory, on_delete=models.CASCADE)
     data_center = models.ForeignKey(DataCenter, on_delete=models.CASCADE)
     summary = models.TextField()
-
-    # DIF highly recommended fields
-    source = models.ForeignKey(Source, blank=True, null=True, on_delete=models.CASCADE)
-    time_coverage_start = models.DateTimeField(blank=True, null=True)
-    time_coverage_end = models.DateTimeField(blank=True, null=True)
     geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True, on_delete=models.CASCADE)
+    source = models.ForeignKey(Source, blank=True, null=True, on_delete=models.CASCADE)
     gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True, on_delete=models.CASCADE)
-    access_constraints = models.CharField(max_length=50,
-            choices=ACCESS_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return '%s/%s/%s' % (self.source.platform, self.source.instrument,
