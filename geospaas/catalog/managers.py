@@ -1,6 +1,3 @@
-import warnings
-import pythesint as pti
-
 from django.db import models
 
 DAP_SERVICE_NAME = 'dapService'
@@ -12,10 +9,6 @@ HTTP_SERVICE = 'HTTPServer'
 WMS_SERVICE_NAME = 'wms'
 WMS_SERVICE = 'WMS'
 
-class SourceManager(models.Manager):
-
-    def get_by_natural_key(self, p, i):
-        return self.get(platform__short_name=p, instrument__short_name=i)
 
 class DatasetURIQuerySet(models.QuerySet):
     def get_non_ingested_uris(self, all_uris):
