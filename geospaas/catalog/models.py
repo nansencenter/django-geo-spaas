@@ -8,56 +8,12 @@ from django.core.validators import URLValidator
 from django.db import models
 from django.utils.translation import gettext as _
 
-
-from geospaas.utils.utils import validate_uri
 from geospaas.vocabularies.models import Parameter
 from geospaas.vocabularies.models import Keyword
-from geospaas.vocabularies.models import Platform
-from geospaas.vocabularies.models import Instrument
-from geospaas.vocabularies.models import ISOTopicCategory
-from geospaas.vocabularies.models import DataCenter
-from geospaas.vocabularies.models import Location as GCMDLocation
 
-
-from geospaas.catalog.managers import SourceManager
 from geospaas.catalog.managers import DatasetURIManager
 from geospaas.catalog.managers import FILE_SERVICE_NAME
 from geospaas.catalog.managers import LOCAL_FILE_SERVICE
-
-class GeographicLocation(geomodels.Model):
-    geometry = geomodels.GeometryField()
-    #objects = geomodels.GeoManager() # apparently this is not needed already in Django 1.11
-
-    def __str__(self):
-        return str(self.geometry.geom_type)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(name='unique_geographic_location', fields=['geometry'])
-        ]
-
-
-class Source(models.Model):
-    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
-    specs = models.CharField(max_length=50, default='',
-        help_text=_('Further specifications of the source.'))
-
-    objects = SourceManager()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(name='unique_source', fields=['platform', 'instrument'])
-        ]
-
-    def __str__(self):
-        if not self.platform and not self.instrument:
-            return '%s' % self.specs
-        else:
-            return '%s/%s' % (self.platform, self.instrument)
-
-    def natural_key(self):
-        return (self.platform.short_name, self.instrument.short_name)
 
 
 class Personnel(models.Model):
@@ -162,28 +118,9 @@ class Dataset(models.Model):
     entry_title = models.CharField(max_length=220)
     parameters = models.ManyToManyField(Parameter)
 
-    ISO_topic_category = models.ForeignKey(ISOTopicCategory, on_delete=models.CASCADE)
-    data_center = models.ForeignKey(DataCenter, on_delete=models.CASCADE)
-    summary = models.TextField()
-    geographic_location = models.ForeignKey(GeographicLocation, blank=True, null=True, on_delete=models.CASCADE)
-    source = models.ForeignKey(Source, blank=True, null=True, on_delete=models.CASCADE)
-    gcmd_location = models.ForeignKey(GCMDLocation, blank=True, null=True, on_delete=models.CASCADE)
-
     def __str__(self):
         return '%s/%s/%s' % (self.source.platform, self.source.instrument,
                 self.time_coverage_start.isoformat())
-
-# Keep this for reference if we want to add it
-#class DataResolution(models.Model):
-#    dataset = models.ForeignKey(Dataset)
-#    latitude_resolution = models.CharField(max_length=50)
-#    longitude_resolution = models.CharField(max_length=50)
-#    horizontal_resolution = models.CharField(max_length=220)
-#    horizontal_resolution_range = models.ForeignKey(HorizontalDataResolution)
-#    vertical_resolution = models.CharField(max_length=220)
-#    vertical_resolution_range = models.ForeignKey(VerticalDataResolution)
-#    temporal_resolution = models.CharField(max_length=220)
-#    temporal_resolution_range = models.ForeignKey(TemporalDataResolution)
 
 
 class DatasetURI(models.Model):
@@ -205,12 +142,6 @@ class DatasetURI(models.Model):
 
     def protocol(self):
         return self.uri.split(':')[0]
-
-    def save(self, *args, **kwargs):
-        #validate_uri(self.uri) -- this will often fail because of server failures..
-        # Validation is not usually done in the models but rather via form
-        # validation. We should discuss if we want it here or not.
-        super(DatasetURI, self).save(*args, **kwargs)
 
 
 class DatasetRelationship(models.Model):
