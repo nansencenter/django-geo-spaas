@@ -48,7 +48,7 @@ class Parameter(models.Model):
     short_name = models.CharField(max_length=50, default='')
     units = models.CharField(max_length=20)
 
-    data = models.JSONField(null=True, validators=(validate_parameter,))
+    data = models.JSONField(unique=True, validators=(validate_parameter,))
 
     # The science keywords are less specific than the CF standard names -
     # therefore one science keyword can be in many parameters, whereas the
