@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from geospaas.vocabularies.managers import ParameterManager
+from geospaas.vocabularies.managers import KeywordManager, ParameterManager
 
 
 # GCMD keywords loaded into the models in migrations/0001_initial.py using the
@@ -12,6 +12,8 @@ class Keyword(models.Model):
     version = models.CharField(max_length=100, blank=True, null=True)
     type = models.CharField(max_length=100, null=False)
     data = models.JSONField(null=False)
+
+    objects = KeywordManager()
 
     class Meta:
         constraints = [
