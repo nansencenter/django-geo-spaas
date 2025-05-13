@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from geospaas.vocabularies.managers import ParameterManager
 from geospaas.vocabularies.managers import PlatformManager
@@ -27,6 +28,13 @@ class Keyword(models.Model):
         ]
 
 
+def validate_parameter(value):
+    """Validate that a parameter has a 'standard_name' attribute
+    """
+    if not (isinstance(value, dict) and 'standard_name' in value):
+        raise ValidationError
+
+
 class Parameter(models.Model):
     ''' Standard name (and unit) is taken from the CF variables but in case a
     geophysical parameter is not in the CF standard names table it needs to be
@@ -40,6 +48,8 @@ class Parameter(models.Model):
     short_name = models.CharField(max_length=50, default='')
     units = models.CharField(max_length=20)
 
+    data = models.JSONField(null=True, validators=(validate_parameter,))
+
     # The science keywords are less specific than the CF standard names -
     # therefore one science keyword can be in many parameters, whereas the
     # CF/WKV standard names are unique
@@ -49,16 +59,10 @@ class Parameter(models.Model):
     objects = ParameterManager()
 
     def __str__(self):
-        return str('%s' %self.standard_name)
+        return str(self.data['standard_name'])
 
     def natural_key(self):
-        return (self.standard_name)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(name='unique_parameter', fields=[
-                'standard_name', 'short_name', 'units', 'gcmd_science_keyword'])
-        ]
+        return (self.data['standard_name'])
 
 
 class Platform(models.Model):
