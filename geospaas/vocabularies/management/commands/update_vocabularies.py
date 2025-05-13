@@ -14,17 +14,8 @@ import argparse
 
 from django.core.management.base import BaseCommand, CommandError
 
-from geospaas.vocabularies.models import Parameter
-from geospaas.vocabularies.models import DataCenter
-from geospaas.vocabularies.models import HorizontalDataResolution
-from geospaas.vocabularies.models import Instrument
-from geospaas.vocabularies.models import ISOTopicCategory
-from geospaas.vocabularies.models import Location
-from geospaas.vocabularies.models import Platform
-from geospaas.vocabularies.models import Project
-from geospaas.vocabularies.models import ScienceKeyword
-from geospaas.vocabularies.models import TemporalDataResolution
-from geospaas.vocabularies.models import VerticalDataResolution
+from geospaas.vocabularies.models import Keyword, Parameter
+
 
 
 class StoreDictAction(argparse.Action):
@@ -49,16 +40,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         models = [
             Parameter,
-            DataCenter,
-            HorizontalDataResolution,
-            Instrument,
-            ISOTopicCategory,
-            Location,
-            Platform,
-            Project,
-            ScienceKeyword,
-            TemporalDataResolution,
-            VerticalDataResolution]
+            Keyword,
+        ]
 
         for model in models:
             model.objects.create_from_vocabularies(**options)
