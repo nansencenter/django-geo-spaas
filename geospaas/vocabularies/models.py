@@ -10,14 +10,14 @@ from geospaas.vocabularies.managers import KeywordManager, ParameterManager
 class Keyword(models.Model):
     """"""
     version = models.CharField(max_length=100, blank=True, null=True)
-    type = models.CharField(max_length=100, null=False)
+    kind = models.CharField(max_length=100, null=False)
     data = models.JSONField(null=False)
 
     objects = KeywordManager()
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(name='unique_keyword', fields=('version', 'type', 'data'))
+            models.UniqueConstraint(name='unique_keyword', fields=('version', 'kind', 'data'))
         ]
 
 
@@ -37,6 +37,8 @@ class Parameter(models.Model):
 
     The table should also include the relevant GCMD science keyword
     '''
+    version = models.CharField(max_length=100, blank=True, null=True)
+    kind = models.CharField(max_length=100, blank=True, null=True)
     data = models.JSONField(unique=True, validators=(validate_parameter,))
 
     # The science keywords are less specific than the CF standard names -
