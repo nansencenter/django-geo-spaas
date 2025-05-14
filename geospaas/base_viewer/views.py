@@ -6,29 +6,29 @@ from django.views.generic import View
 from django.conf import settings
 
 from geospaas.base_viewer.forms import BaseSearchForm
-from geospaas.catalog.models import Dataset, GeographicLocation
+from geospaas.catalog.models import Dataset
 from geospaas.catalog.managers import LOCAL_FILE_SERVICE
 
-def get_geometry_geojson(request, pk, *args, **kwargs):
-    """ Get GeographicLocation.Geometry as GeoJSON
+# def get_geometry_geojson(request, pk, *args, **kwargs):
+#     """ Get GeographicLocation.Geometry as GeoJSON
 
-    Parameters
-    ----------
-    pk : int
-        primary key of GeographicLocation object
+#     Parameters
+#     ----------
+#     pk : int
+#         primary key of GeographicLocation object
 
-    Returns
-    -------
-    response : HttpResponse
-        GeoJSON with geometry of GeographicLocation
+#     Returns
+#     -------
+#     response : HttpResponse
+#         GeoJSON with geometry of GeographicLocation
 
-    """
-    gl = GeographicLocation.objects.filter(pk=pk)
-    if gl.count() == 0:
-        geojson = '{}'
-    else:
-        geojson = serialize('geojson', gl)
-    return HttpResponse(geojson)
+#     """
+#     gl = GeographicLocation.objects.filter(pk=pk)
+#     if gl.count() == 0:
+#         geojson = '{}'
+#     else:
+#         geojson = serialize('geojson', gl)
+#     return HttpResponse(geojson)
 
 
 class IndexView(View):
