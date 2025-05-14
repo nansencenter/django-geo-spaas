@@ -62,7 +62,7 @@ class VocabularyManager(models.Manager):
         for entry in pti_list:
             pp, created = self.get_or_create(
                 version=version,
-                type=vocabulary_name,
+                kind=vocabulary_name,
                 data=entry)
             if created: num+=1
         print("Successfully added %d new entries" % num)
@@ -82,7 +82,11 @@ class VocabularyManager(models.Manager):
                 methods['get_list'],
                 methods['update'],
                 force, version=versions.get(vocabulary_name))
-            version = methods.get('get_version') or None
+            get_version = methods.get('get_version')
+            if get_version is not None:
+                version = get_version()
+            else:
+                version = None
             self.create_instances(vocabulary_name, pti_list, version)
 
 
