@@ -7,7 +7,6 @@ from django.conf import settings
 
 from geospaas.base_viewer.forms import BaseSearchForm
 from geospaas.catalog.models import Dataset
-from geospaas.catalog.managers import LOCAL_FILE_SERVICE
 
 # def get_geometry_geojson(request, pk, *args, **kwargs):
 #     """ Get GeographicLocation.Geometry as GeoJSON

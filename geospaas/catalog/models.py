@@ -11,10 +11,6 @@ from django.utils.translation import gettext as _
 from geospaas.vocabularies.models import Parameter
 from geospaas.vocabularies.models import Keyword
 
-from geospaas.catalog.managers import DatasetURIManager
-from geospaas.catalog.managers import FILE_SERVICE_NAME
-from geospaas.catalog.managers import LOCAL_FILE_SERVICE
-
 
 class Personnel(models.Model):
     '''
@@ -122,14 +118,10 @@ class Dataset(models.Model):
         return self.entry_id
 
 class DatasetURI(models.Model):
-
-    name = models.CharField(max_length=20, default=FILE_SERVICE_NAME)
-    service = models.CharField(max_length=20, default=LOCAL_FILE_SERVICE)
     uri = models.URLField(max_length=500,
             validators=[URLValidator(schemes=URLValidator.schemes + ['file'])])
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
 
-    objects = DatasetURIManager()
     class Meta:
         constraints = [
             models.UniqueConstraint(name='unique_dataset_uri', fields=['uri', 'dataset'])
