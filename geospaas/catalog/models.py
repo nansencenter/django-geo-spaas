@@ -136,7 +136,7 @@ class DatasetURI(models.Model):
         ]
 
     def __str__(self):
-        return '%s: %s'%(self.dataset, os.path.split(self.uri)[1])
+        return self.uri
 
     def protocol(self):
         return self.uri.split(':')[0]
