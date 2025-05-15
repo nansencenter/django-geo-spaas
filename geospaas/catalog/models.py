@@ -119,9 +119,7 @@ class Dataset(models.Model):
     parameters = models.ManyToManyField(Parameter)
 
     def __str__(self):
-        return '%s/%s/%s' % (self.source.platform, self.source.instrument,
-                self.time_coverage_start.isoformat())
-
+        return self.entry_id
 
 class DatasetURI(models.Model):
 
