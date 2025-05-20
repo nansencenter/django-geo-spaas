@@ -54,3 +54,8 @@ class Parameter(models.Model):
 
     def natural_key(self):
         return (self.data['standard_name'])
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_parameter', fields=('version', 'kind', 'data'))
+        ]
