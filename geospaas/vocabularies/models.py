@@ -19,7 +19,17 @@ class Keyword(models.Model):
         constraints = [
             models.UniqueConstraint(name='unique_keyword', fields=('version', 'kind', 'data'))
         ]
+        # ordering on the "data" field makes more generic
+        # vocabularies be returned first. For Postgres, ordering
+        # rules are the ones for B-tree indexs described here:
+        # https://www.postgresql.org/docs/9.5/datatype-json.html#JSON-INDEXING
+        ordering = ['-version', 'kind', 'data']
 
+    def __str__(self):
+        name = str(self.data.get('Short_Name', ''))
+        if not name:
+            name = super().__str__()
+        return name
 
 def validate_parameter(value):
     """Validate that a parameter has a 'standard_name' attribute
