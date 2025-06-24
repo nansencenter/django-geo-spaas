@@ -1,0 +1,8 @@
+{% extends "catalog/elements.html" %}
+##############################################################################################################
+{% block ds_info %}
+    {% block ds_detailed_info %}
+    {% endblock ds_detailed_info %}
+    <div class="attr_title">Entry ID:</div>
+    <div class="attr_content">{{ ds.entry_id }}</div>
+{% endblock ds_info %}

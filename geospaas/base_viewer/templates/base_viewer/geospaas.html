@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+    <head>
+        <link rel="stylesheet" href="{% static 'base_viewer/styles.css' %}" >
+    </head>
+    <body>
+        <div id="geospaas_apps">
+            <div id="geospaas_sidebar">
+                {% block geospaas_sidebar %}
+                    {% for app in geospaas_apps %}
+                        <div class="app.label{% if app.label == selected_tab %} geospaas_selected_tab{% endif %}">
+                            <a href="{% url 'base_viewer:index' %}{{ app.path }}">{{ app.label }}</a>
+                        </div>
+                    {% endfor %}
+                {% endblock geospaas_sidebar %}
+            </div>
+            <div id="geospaas_tab_contents">
+                {% block geospaas_tab_contents %}{% endblock geospaas_tab_contents %}
+                {% comment %} Hello {% endcomment %}
+            </div>
+        </div>
+    </body>
+</html>

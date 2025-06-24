@@ -1,0 +1,65 @@
+#para_container {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr 0.0001fr;
+    grid-gap: 10px;
+    width: 100%;
+    height: 98.5%;
+}
+
+.para2 {
+    padding: 2px;
+}
+
+#content {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#result {
+    grid-column: 2;
+    grid-row: 1;
+    overflow:auto;
+  }
+#pgbutton {
+  grid-column: 2;
+  grid-row: 2;
+}
+.attr_title_itself{
+  font-weight: bold;
+  display: contents;
+  padding-left: 0%;
+  padding-top: 0%;
+  padding-bottom: 0%;
+  clear: left;
+}
+.attr_title {
+  font-weight: bold;
+  display: contents;
+  padding-left: 0%;
+  clear: left;
+}
+.attr_title::before{
+  content: "\a";
+  white-space: pre;
+}
+.attr_content{
+  display: contents;
+  clear: left;
+  }
+
+  #para_FORM {
+    display: grid;
+    grid-template-rows: 6.5fr 0.01fr 0.01fr 0.01fr 0.01fr ;
+    grid-gap: 1px;
+}
+.leaflet-container{
+  height: 58%;
+}
+.form_content {
+  font-weight: bold;
+  padding-left: 0%;
+  padding-bottom: 0%;
+  padding-top: 0%;
+  clear: left;
+}

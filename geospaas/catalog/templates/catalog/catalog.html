@@ -1,18 +1,15 @@
-{% load static %}
-{% load leaflet_tags %}
-<html>
-
-<head>
-    <title>Meta-data finder</title>
+{% extends "base_viewer/geospaas.html" %}
+{% block geospaas_tab_contents %}
+<div id="catalog" class="app" >
+    {% load static %}
+    {% load leaflet_tags %}
     {% leaflet_js plugins="ALL" %}
     {% leaflet_css plugins="ALL" %}
-    <link rel="stylesheet" href="{% static 'base_viewer/styles.css' %}" >
+    <link rel="stylesheet" href="{% static 'catalog/styles.css' %}" >
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src='{% static "base_viewer/js/leaflet.ajax.min.js" %}'></script>
-    <script src='{% static "base_viewer/js/base_viewer.js" %}'></script>
-</head>
+    <script src='{% static "catalog/js/leaflet.ajax.min.js" %}'></script>
+    <script src='{% static "catalog/js/catalog.js" %}'></script>
 
-<body class="body">
     <div id="para_container">
 
         <div id=content class="para2">
@@ -36,6 +33,5 @@
         <!--end of button section-->
 
     </div>
-</body>
-
-</html>
+</div>
+{% endblock %}

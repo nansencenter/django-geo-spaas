@@ -1,10 +1,32 @@
-from django.urls import path
+from django.urls import include, path
 
-from geospaas.base_viewer.views import IndexView#, get_geometry_geojson
+from geospaas.config import config
+from .views import GeoSPaaSView
 
 
 app_name = 'base_viewer'
+
+geospaas_apps = config.get_setting('base_viewer', 'apps')
 urlpatterns = [
-    path('', IndexView.as_view(), name='index'),
-    # path('geometry/<int:pk>', get_geometry_geojson, name='geometry_geojson'),
+    path(
+        route='',
+        view=GeoSPaaSView.as_view(),
+        name='index',
+        kwargs={
+            'geospaas_apps': geospaas_apps,
+            'selected_tab': None,
+        },
+    )
 ]
+
+for geospaas_app in geospaas_apps:
+    urlpatterns.append(
+        path(
+            geospaas_app['path'],
+            include(geospaas_app['urls']),
+            {
+                'geospaas_apps': geospaas_apps,
+                'selected_tab': geospaas_app['label'],
+            }
+        )
+    )
