@@ -1,4 +1,4 @@
-{% extends "base_viewer/page_structure.html" %}
+{% extends "catalog/catalog.html" %}
 ##############################################################################################################
 {% block content_result %}
 <table border=1 style="width:100%">
@@ -11,7 +11,7 @@
   {% if page_obj %}
 
   {% for ds in page_obj %}
-  <tr class="dataset_row" ajax_url="{% url 'base_viewer:geometry_geojson' ds.geographic_location.pk %}">
+  <tr class="dataset_row" ajax_url="{% url 'base_viewer:catalog:geometry_geojson' ds.pk %}">
     <td>
       {% block ds_info %}
       {% endblock ds_info %}
