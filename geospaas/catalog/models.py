@@ -57,6 +57,9 @@ class Tag(models.Model):
     """
     name = models.CharField(max_length=200, null=False, blank=False)
     value = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"({self.name}: {self.value})"
     class Meta:
         constraints = [
             models.UniqueConstraint(name='unique_tag', fields=['name', 'value'])
