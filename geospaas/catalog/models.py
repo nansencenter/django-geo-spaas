@@ -55,7 +55,12 @@ def validate_tag(tag):
 class Tag(models.Model):
     """Tag which can be associated to a dataset
     """
-    data = models.JSONField(null=False, validators=(validate_tag,))
+    name = models.CharField(max_length=200, null=False, blank=False)
+    value = models.TextField(null=True, blank=True)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_tag', fields=['name', 'value'])
+        ]
 
 
 class Dataset(models.Model):
