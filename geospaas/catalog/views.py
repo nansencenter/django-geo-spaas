@@ -38,7 +38,6 @@ def get_geometry_geojson(request, pk, *args, **kwargs):
     return HttpResponse(geojson)
 
 
-# class IndexView(View):
 class IndexView(GeoSPaaSView):
     """ The class-based view for processing both GET and POST methods of basic version of viewer """
     form_class = BaseSearchForm
