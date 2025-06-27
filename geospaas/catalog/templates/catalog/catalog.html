@@ -1,37 +1,36 @@
 {% extends "base_viewer/geospaas.html" %}
 {% block geospaas_tab_contents %}
-<div id="catalog" class="app" >
+<div id="catalog" class="geospaas_app" >
     {% load static %}
     {% load leaflet_tags %}
     {% leaflet_js plugins="ALL" %}
     {% leaflet_css plugins="ALL" %}
     <link rel="stylesheet" href="{% static 'catalog/styles.css' %}" >
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src='{% static "catalog/js/leaflet.ajax.min.js" %}'></script>
     <script src='{% static "catalog/js/catalog.js" %}'></script>
 
-    <div id="para_container">
+    <div id="dataset_search">
+        <form id='dataset_search_form'>
+            {% comment %} {% csrf_token %} {% endcomment %}
+            <table>
+            {{ form.as_p }}
+            </table>
+            <input id="dataset_search_button" type="button" value="Search" data-path="{% url 'base_viewer:catalog:api:dataset-list' %}"/>
+        </form>
+    </div>
 
-        <div id=content class="para2">
-            <!--start of contentmap-->
-            {% block contentmap %}
-            {% endblock contentmap%}
+    <div id="datasets_search_results">
+        <form id="datasets_search_pages_controls">
+            <input id="datasets_previous_button" type="button" value="Previous" disabled data-path="{% url 'base_viewer:catalog:api:dataset-list' %}" data-cursor=""/>
+            <input id="datasets_next_button" type="button" value="Next" disabled data-path="{% url 'base_viewer:catalog:api:dataset-list' %}" data-cursor=""/>
+            <input id="datasets_page_size" type="number" value="25" action=""/>
+        </form>
+        <div id="datasets_display">
+            <table id='datasets_table'>
+                <tbody></tbody>
+            </table>
         </div>
-        <!--end of contentmap-->
-
-        <div id=result class="para2">
-            <!--start of result section-->
-            {% block content_result %}
-            {% endblock content_result%}
-        </div>
-        <!--end of result section-->
-        <div id=pgbutton class="para2">
-            <!--start of pagination button section-->
-            {% block pagination_button_result %}
-            {% endblock pagination_button_result%}
-        </div>
-        <!--end of button section-->
-
     </div>
 </div>
 {% endblock %}

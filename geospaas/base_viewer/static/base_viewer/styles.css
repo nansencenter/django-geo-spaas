@@ -1,7 +1,25 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.geospaas_app {
+    height: 100%;
+}
+
+.geospaas_selected_tab {
+    background-color: lightgrey;
+}
+
 #geospaas_apps {
     display: grid;
+    height: 100%;
+    width: 100%;
     grid-template-columns: 5% auto;
-    grid-template-rows: 100%;
+    grid-template-rows: minmax(0, 1fr);
     grid-gap: 10px;
 }
 
@@ -15,6 +33,7 @@
     grid-row: 1;
 }
 
-.geospaas_selected_tab {
-    background-color: lightgrey;
-}
+/* form  { display: table;      }
+p     { display: table-row;  }
+label { display: table-cell; }
+input { display: table-cell; } */
