@@ -1,15 +1,17 @@
 from django.conf import settings
-from django.db.models import QuerySet
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
-from django.views.generic import View
 
+from rest_framework.viewsets import ModelViewSet
+
+import geospaas.catalog.serializers as serializers
+import geospaas.catalog.filters as filters
 from geospaas.base_viewer.views import GeoSPaaSView
+from .forms import BaseSearchForm
+from .models import Dataset, DatasetURI
 
-from geospaas.catalog.forms import BaseSearchForm
-from geospaas.catalog.models import Dataset
 
 
 def get_geometry_geojson(request, pk, *args, **kwargs):
@@ -38,12 +40,14 @@ def get_geometry_geojson(request, pk, *args, **kwargs):
     return HttpResponse(geojson)
 
 
+###### Website views ######
 class IndexView(GeoSPaaSView):
     """ The class-based view for processing both GET and POST methods of basic version of viewer """
     form_class = BaseSearchForm
     main_template = 'catalog/ds_info.html'
     viewname = 'index'
     paginate_by = 20
+    tab_label = 'Catalog'
 
     @classmethod
     def get_all_datasets(cls):
@@ -89,3 +93,19 @@ class IndexView(GeoSPaaSView):
         page_obj = self.paginate(ds, request)
         context = self.set_context(form, page_obj)
         return render(request, self.main_template, context)
+
+
+###### API views ######
+
+class DatasetViewSet(ModelViewSet):
+    """API endpoint to view Datasets"""
+    queryset = Dataset.objects.all()
+    serializer_class = serializers.DatasetSerializer
+    filterset_class = filters.DatasetFilter
+
+
+class DatasetURIViewSet(ModelViewSet):
+    """API endpoint to view DatasetURIs"""
+    queryset = DatasetURI.objects.all()
+    serializer_class = serializers.DatasetURISerializer
+    filterset_class = filters.DatasetURIFilter
