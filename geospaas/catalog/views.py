@@ -10,7 +10,7 @@ import geospaas.catalog.serializers as serializers
 import geospaas.catalog.filters as filters
 from geospaas.base_viewer.views import GeoSPaaSView
 from .forms import BaseSearchForm
-from .models import Dataset, DatasetURI
+from .models import Dataset, DatasetURI, Tag
 
 
 
@@ -109,3 +109,10 @@ class DatasetURIViewSet(ModelViewSet):
     queryset = DatasetURI.objects.all()
     serializer_class = serializers.DatasetURISerializer
     filterset_class = filters.DatasetURIFilter
+
+
+class TagViewSet(ModelViewSet):
+    """API endpoint to view Tags"""
+    queryset = Tag.objects.all()
+    serializer_class = serializers.TagSerializer
+    filterset_class = filters.TagFilter

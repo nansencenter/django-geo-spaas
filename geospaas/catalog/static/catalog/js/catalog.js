@@ -37,7 +37,10 @@ class APIObject extends HTMLElement {
 
   make_table() {
     this._table = document.createElement("table");
-    this._table.createTHead().appendChild(document.createTextNode(this.title));
+    let header = document.createElement("th");
+    header.colSpan = 2;
+    header.appendChild(document.createTextNode(this.title));
+    this._table.createTHead().insertRow().appendChild(header);
     let tbody = this._table.createTBody();
     let newRow;
     for(let key in this.api_data) {
@@ -114,6 +117,7 @@ function get_datasets(url, request_parameters) {
   if(polygon) {full_request_parameters.location__intersects = polygon;}
   if(time_coverage_start) {full_request_parameters.time_coverage_end__gte = time_coverage_start;}
   if(time_coverage_end) {full_request_parameters.time_coverage_start__lte = time_coverage_end;}
+  // if(tags) {full_request_parameters.tags = tags;}
 
   fetch(`${url}?` + new URLSearchParams(full_request_parameters).toString())
     .then(response => response.json())
