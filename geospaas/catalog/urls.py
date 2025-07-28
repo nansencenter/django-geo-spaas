@@ -9,6 +9,7 @@ import geospaas.catalog.views as views
 app_name = 'catalog'
 
 router = routers.DefaultRouter()
+router.register(r'tags', views.TagViewSet)
 router.register(r'dataset_uris', views.DatasetURIViewSet)
 router.register(r'datasets', views.DatasetViewSet)
 

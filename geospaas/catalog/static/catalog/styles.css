@@ -13,12 +13,16 @@
   grid-column: 1;
   grid-row: 1;
   height: 100%;
+  width:100%;
+  min-width: 0; /* prevents contents from expanding width */
 }
 
 #datasets_search_results {
   grid-column: 2;
   grid-row: 1;
   height: 100%;
+  width: 100%;
+  min-width: 0; /* prevents contents from expanding width */
 }
 
 #datasets_search_pages_controls {
@@ -29,6 +33,16 @@
   max-height: 95%;
   overflow: auto;
   background-color: azure;
+}
+
+geospaas-dataset > table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+geospaas-dataset > table th {
+  font-weight: normal;
+  text-align: left;
 }
 
 #datasets_table > tbody > tr:hover {
