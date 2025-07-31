@@ -45,10 +45,6 @@ geospaas-dataset > table th {
   text-align: left;
 }
 
-#datasets_table > tbody > tr:hover {
-  background-color: lightblue;
-}
-
 #dataset_search_form {
   height: 100%;
 }
@@ -57,6 +53,10 @@ geospaas-dataset > table th {
   margin: 0;
 }
 
-.leaflet-container{
+.leaflet-container {
   height: 70%;
+}
+
+p:has(> #id_tags) {
+  display: flex;
 }
