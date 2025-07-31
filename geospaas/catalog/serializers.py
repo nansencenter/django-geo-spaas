@@ -8,7 +8,7 @@ class TagSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = geospaas.catalog.models.Tag
-        fields = ['url', 'name', 'value']
+        fields = ['id', 'url', 'name', 'value']
         extra_kwargs = {
             'url': {'view_name': 'base_viewer:catalog:api:tag-detail'}
         }
@@ -44,5 +44,4 @@ class DatasetURISerializer(rest_framework.serializers.HyperlinkedModelSerializer
     """Serializer for DatasetURI objects"""
     class Meta:
         model = geospaas.catalog.models.DatasetURI
-        # fields = '__all__'
-        fields = ['uri']
+        fields = ['id', 'url', 'uri']
