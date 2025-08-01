@@ -7,6 +7,12 @@ class APIObject extends HTMLElement {
     this._html_repr = null;
   }
 
+  static create(customElementName, api_data) {
+    let element = document.createElement(customElementName);
+    element.api_data = api_data;
+    return element;
+  }
+
   get api_data() {
     return this._api_data;
   }
@@ -19,40 +25,52 @@ class APIObject extends HTMLElement {
     throw new Error("make_html_repr() must be implemented");
   }
 
-  get style() {
-    return this._html_repr.style;
+  get_style() {
+    return "";
   }
 
   connectedCallback() {
     this.make_html_repr();
-    this.insertAdjacentElement("afterbegin", this._html_repr);
+    const shadow = this.attachShadow({ mode: "open" });
+    shadow.appendChild(this._html_repr);
+
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(this.get_style());
+    shadow.adoptedStyleSheets = [sheet];
   }
 }
 
-class Dataset extends APIObject {
+customElements.define("geospaas-dataset", class extends APIObject {
   constructor() {
     super();
-    this._expanded = false;
     this._footprint = null;
+    this._text_fields = {
+      "entry_id": "ID",
+      "entry_title": "Title",
+      "time_coverage_start": "Start",
+      "time_coverage_end": "End",
+      "summary": "Summary",
+    };
+    this._related_fields = {
+      "tags": {"title": "Tags", "element": "geospaas-tag"},
+    };
   }
 
   get title() {
     return this.api_data.entry_id;
   }
 
-  collapse() {
-    for(let tb of this._html_repr.tBodies) {tb.hidden = true;}
-    this._expanded = false;
-  }
+  get_style() {
+    return `
+      table {
+        table-layout: fixed;
+        width: 100%;
+      }
 
-  expand() {
-    for(let tb of this._html_repr.tBodies) {tb.hidden = false;}
-    this._expanded = true;
-  }
-
-  toggle() {
-    if(this._expanded) {this.collapse();}
-    else {this.expand();}
+      table th {
+        font-weight: normal;
+        text-align: left;
+      }`;
   }
 
   make_html_repr() {
@@ -62,12 +80,38 @@ class Dataset extends APIObject {
     header.appendChild(document.createTextNode(this.title));
     this._html_repr.createTHead().insertRow().appendChild(header);
     let tbody = this._html_repr.createTBody();
+    tbody.hidden = true;
     let newRow;
-    for(let key in this.api_data) {
-      newRow = tbody.insertRow();
-      newRow.insertCell().appendChild(document.createTextNode(key));
-      newRow.insertCell().appendChild(document.createTextNode(this.api_data[key]));
+    for(const key in this._text_fields) {
+      if(this.api_data[key] && this.api_data[key].length) {
+        newRow = tbody.insertRow();
+        newRow.insertCell().appendChild(document.createTextNode(this._text_fields[key]));
+        newRow.insertCell().appendChild(document.createTextNode(this.api_data[key]));
+      }
     }
+    for(const key in this._related_fields) {
+      if(this.api_data[key] && this.api_data[key].length) {
+        let value = this.api_data[key];
+        if(Array.isArray(value)){
+          newRow = tbody.insertRow();
+          newRow.insertCell().appendChild(document.createTextNode(this._related_fields[key].title));
+          let contents_cell = newRow.insertCell();
+          for(let url of this.api_data[key]) {
+            fetch(url)
+            .then(response => response.json())
+            .then(page => {
+              contents_cell.appendChild(APIObject.create(this._related_fields[key].element, page));
+            })
+            .catch(error => console.log(`${error}: Failed to get tag`))
+          }
+        }
+      }
+    }
+    this.addEventListener("click", () => {
+      for(let tb of this._html_repr.tBodies) {
+        if(tb.hidden) {tb.hidden = false} else {tb.hidden = true};
+      }
+    });
   }
 
   display_footprint() {
@@ -114,8 +158,6 @@ class Dataset extends APIObject {
 
   connectedCallback() {
     super.connectedCallback();
-    this.collapse();
-    this.addEventListener("click", () => this.toggle());
     this.display_footprint();
     this.setup_footprint_highlight();
   }
@@ -125,16 +167,15 @@ class Dataset extends APIObject {
       this._footprint.removeFrom(window.maps[0]);
     }
   }
-}
-customElements.define("geospaas-dataset", Dataset);
+});
 
-class Tag extends APIObject {
+customElements.define("geospaas-tag", class extends APIObject {
   make_html_repr() {
     this._html_repr = document.createElement("div");
     this._html_repr.appendChild(document.createTextNode(`${this._api_data.name}: ${this._api_data.value}`));
   }
-}
-customElements.define("geospaas-tag", Tag);
+});
+
 
 function display_page(page) {
   // clear existing contents
@@ -209,7 +250,6 @@ function add_search_tag(tag, selected_tags) {
   selected_tag.api_data = tag.api_data;
   selected_tags.appendChild(selected_tag);
 
-  selected_tag.style.display = "flex";
   selected_tag.style.marginRight = "4px";
   selected_tag.style.marginLeft = "4px";
   selected_tag.style.background = "#c2f3fc";
@@ -221,6 +261,7 @@ function add_search_tag(tag, selected_tags) {
   close_button.style.color = "#018096";
   close_button.style.cursor = "pointer";
 
+  selected_tag._html_repr.style.display = "flex";
   close_button.appendChild(document.createTextNode("X"));
   close_button.addEventListener("click", () => {
     selected_tag.parentNode.removeChild(selected_tag);

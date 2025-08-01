@@ -35,16 +35,6 @@
   background-color: azure;
 }
 
-geospaas-dataset > table {
-  table-layout: fixed;
-  width: 100%;
-}
-
-geospaas-dataset > table th {
-  font-weight: normal;
-  text-align: left;
-}
-
 #dataset_search_form {
   height: 100%;
 }
