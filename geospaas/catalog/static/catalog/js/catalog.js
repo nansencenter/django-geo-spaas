@@ -189,14 +189,12 @@ function get_datasets(url, request_parameters) {
   if(time_coverage_start) {full_request_parameters.time_coverage_end__gte = time_coverage_start;}
   if(time_coverage_end) {full_request_parameters.time_coverage_start__lte = time_coverage_end;}
   if(tags.length !== 0) {
-    console.log(tags);
     let tag_ids = [];
     for(let tag of tags) {
       tag_ids.push(tag.api_data.id);
     }
     full_request_parameters.tags__id__in = tag_ids.join(",");
   }
-  console.log(full_request_parameters);
   fetch(`${url}?` + new URLSearchParams(full_request_parameters).toString())
     .then(response => response.json())
     .then(page => display_page(page))
