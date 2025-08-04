@@ -5,6 +5,7 @@ from django.contrib.gis.db.models import GeometryField
 from django_filters.rest_framework.filters import CharFilter
 
 import geospaas.catalog.models
+import geospaas.vocabularies.models
 
 
 class TagFilter(rest_framework_filters.FilterSet):
@@ -18,6 +19,23 @@ class TagFilter(rest_framework_filters.FilterSet):
         }
 
 
+class KeywordFilter(rest_framework_filters.FilterSet):
+    """Filterset for keywords"""
+    class Meta:
+        model = geospaas.catalog.models.Keyword
+        fields = {
+            'id': '__all__',
+            'version': '__all__',
+            'kind': '__all__',
+            'data': '__all__',
+        }
+        filter_overrides = {
+            models.JSONField: {
+                'filter_class': CharFilter
+            }
+        }
+
+
 class DatasetFilter(rest_framework_filters.FilterSet):
     """Filter for Datasets"""
 
@@ -25,6 +43,11 @@ class DatasetFilter(rest_framework_filters.FilterSet):
         TagFilter,
         field_name='tags',
         queryset=geospaas.catalog.models.Tag.objects.all(),
+        distinct=True)
+    keywords = rest_framework_filters.RelatedFilter(
+        KeywordFilter,
+        field_name='keywords',
+        queryset=geospaas.vocabularies.models.Keyword.objects.all(),
         distinct=True)
 
     class Meta:

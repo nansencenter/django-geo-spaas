@@ -46,7 +46,3 @@
 .leaflet-container {
   height: 70%;
 }
-
-p:has(> #id_tags) {
-  display: flex;
-}
