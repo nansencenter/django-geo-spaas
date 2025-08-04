@@ -54,6 +54,7 @@ customElements.define("geospaas-dataset", class extends APIObject {
     this._related_fields = {
       "tags": {"title": "Tags", "element": "geospaas-tag"},
       "keywords": {"title": "Keywords", "element": "geospaas-keyword"},
+      "parameters": {"title": "Parameters", "element": "geospaas-parameter"},
     };
   }
 
@@ -198,6 +199,20 @@ customElements.define("geospaas-keyword", class extends APIObject {
   }
 });
 
+customElements.define("geospaas-parameter", class extends APIObject {
+  make_html_repr() {
+    this._html_repr = document.createElement("div");
+    let display_name = null;
+    if("standard_name" in this._api_data.data) {
+      display_name = this._api_data.data.standard_name;
+    } else if("short_name" in this._api_data.data) {
+      display_name = this._api_data.data.short_name;
+    } else {
+      display_name = String(this._api_data.data);
+    }
+    this._html_repr.appendChild(document.createTextNode(display_name));
+  }
+});
 
 
 function display_page(page) {
@@ -247,7 +262,7 @@ function get_datasets(url, request_parameters) {
   let tags = document.getElementById("selected_geospaas-tag").childNodes;
   let keywords = document.getElementById("selected_geospaas-keyword").childNodes;
   // let full_text = document.getElementById("id_full_text").value;
-  // let parameters = document.getElementById("id_parameters").value;
+  let parameters = document.getElementById("selected_geospaas-parameter").childNodes;
 
   if(polygon) {full_request_parameters.location__intersects = polygon;}
   if(time_coverage_start) {full_request_parameters.time_coverage_end__gte = time_coverage_start;}
@@ -265,6 +280,13 @@ function get_datasets(url, request_parameters) {
       keyword_ids.push(keyword.api_data.id);
     }
     full_request_parameters.keywords__id__in = keyword_ids.join(",");
+  }
+  if(parameters.length !== 0) {
+    let parameter_ids = [];
+    for(let parameter of parameters) {
+      parameter_ids.push(parameter.api_data.id);
+    }
+    full_request_parameters.parameters__id__in = parameter_ids.join(",");
   }
   fetch(`${url}?` + new URLSearchParams(full_request_parameters).toString())
     .then(response => response.json())
@@ -382,13 +404,15 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   // tag search field
-  let tag_search_box = document.getElementById("id_tags");
   make_selector_field(
-    tag_search_box, "geospaas-tag",
+    document.getElementById("id_tags"), "geospaas-tag",
     `${window.location}api/tags/?`, "value__icontains");
   // keyword search field
-  let keyword_search_box = document.getElementById("id_keywords");
   make_selector_field(
-    keyword_search_box, "geospaas-keyword",
+    document.getElementById("id_keywords"), "geospaas-keyword",
     `${host}/vocabularies/api/keywords/?`, "data__icontains");
+  // parameters search field
+  make_selector_field(
+    document.getElementById("id_parameters"), "geospaas-parameter",
+    `${host}/vocabularies/api/parameters/?`, "data__icontains");
 });

@@ -8,6 +8,7 @@ app_name = 'vocabularies'
 
 router = routers.DefaultRouter()
 router.register(r'keywords', views.KeywordViewSet)
+router.register(r'parameters', views.ParameterViewSet)
 
 urlpatterns = [
     path('api/', include((router.urls, 'api'))),

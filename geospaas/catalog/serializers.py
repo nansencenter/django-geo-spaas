@@ -4,6 +4,7 @@ import geospaas.vocabularies.models
 
 import rest_framework.serializers
 
+
 class TagSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
     """Serializer for Tag objects"""
 
@@ -12,17 +13,6 @@ class TagSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
         fields = ['id', 'url', 'name', 'value']
         extra_kwargs = {
             'url': {'view_name': 'base_viewer:catalog:api:tag-detail'}
-        }
-
-
-class KeywordSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
-    """Serializer for Keyword objects"""
-
-    class Meta:
-        model = geospaas.vocabularies.models.Keyword
-        fields = ['id', 'url', 'version', 'kind', 'data']
-        extra_kwargs = {
-            'url': {'view_name': 'base_viewer:vocabularies:api:keyword-detail'}
         }
 
 
@@ -42,6 +32,7 @@ class DatasetSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
             'summary',
             'tags',
             'keywords',
+            'parameters',
         ]
         extra_kwargs = {
             'url': {'view_name': 'base_viewer:catalog:api:dataset-detail'},
@@ -52,6 +43,11 @@ class DatasetSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
             },
             'keywords': {
                 'view_name': 'base_viewer:vocabularies:api:keyword-detail',
+                'read_only': True,
+                'many': True
+            },
+            'parameters': {
+                'view_name': 'base_viewer:vocabularies:api:parameter-detail',
                 'read_only': True,
                 'many': True
             },
