@@ -261,7 +261,6 @@ function get_datasets(url, request_parameters) {
   let time_coverage_end = document.getElementById("id_time_coverage_end").value;
   let tags = document.getElementById("selected_geospaas-tag").childNodes;
   let keywords = document.getElementById("selected_geospaas-keyword").childNodes;
-  // let full_text = document.getElementById("id_full_text").value;
   let parameters = document.getElementById("selected_geospaas-parameter").childNodes;
 
   if(polygon) {full_request_parameters.location__intersects = polygon;}

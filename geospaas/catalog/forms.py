@@ -20,7 +20,6 @@ class BaseSearchForm(forms.Form):
     time_coverage_end = forms.DateTimeField()
     tags = forms.CharField(required=False)
     keywords = forms.CharField(required=False)
-    full_text = forms.CharField(required=False)
     parameters = forms.CharField(required=False)
 
     # def filter(self, ds):
