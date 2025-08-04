@@ -6,6 +6,7 @@ from django_filters.rest_framework.filters import CharFilter
 
 import geospaas.catalog.models
 import geospaas.vocabularies.models
+from geospaas.vocabularies.filters import KeywordFilter, ParameterFilter
 
 
 class TagFilter(rest_framework_filters.FilterSet):
@@ -16,23 +17,6 @@ class TagFilter(rest_framework_filters.FilterSet):
             'id': '__all__',
             'name': '__all__',
             'value': '__all__',
-        }
-
-
-class KeywordFilter(rest_framework_filters.FilterSet):
-    """Filterset for keywords"""
-    class Meta:
-        model = geospaas.catalog.models.Keyword
-        fields = {
-            'id': '__all__',
-            'version': '__all__',
-            'kind': '__all__',
-            'data': '__all__',
-        }
-        filter_overrides = {
-            models.JSONField: {
-                'filter_class': CharFilter
-            }
         }
 
 
@@ -48,6 +32,11 @@ class DatasetFilter(rest_framework_filters.FilterSet):
         KeywordFilter,
         field_name='keywords',
         queryset=geospaas.vocabularies.models.Keyword.objects.all(),
+        distinct=True)
+    parameters = rest_framework_filters.RelatedFilter(
+        ParameterFilter,
+        field_name='parameters',
+        queryset=geospaas.vocabularies.models.Parameter.objects.all(),
         distinct=True)
 
     class Meta:
