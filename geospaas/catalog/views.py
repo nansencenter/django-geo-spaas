@@ -8,36 +8,10 @@ from rest_framework.viewsets import ModelViewSet
 
 import geospaas.catalog.serializers as serializers
 import geospaas.catalog.filters as filters
+import geospaas.catalog.models as models
 from geospaas.base_viewer.views import GeoSPaaSView
 from .forms import BaseSearchForm
-from .models import Dataset, DatasetURI, Tag
 
-
-
-def get_geometry_geojson(request, pk, *args, **kwargs):
-    """ Get GeographicLocation.Geometry as GeoJSON
-
-    Parameters
-    ----------
-    pk : int
-        primary key of GeographicLocation object
-
-    Returns
-    -------
-    response : HttpResponse
-        GeoJSON with geometry of GeographicLocation
-
-    """
-    try:
-        dataset = Dataset.objects.get(pk=pk)
-    except Dataset.DoesNotExist:
-        return HttpResponseNotFound(f"<h1>Dataset {pk} does not exist</h1>")
-
-    if dataset.location is None:
-        geojson = '{}'
-    else:
-        geojson = dataset.location.geojson
-    return HttpResponse(geojson)
 
 
 ###### Website views ######
@@ -52,7 +26,7 @@ class IndexView(GeoSPaaSView):
     @classmethod
     def get_all_datasets(cls):
         """ Retrieve all dataset(s) from the database"""
-        return Dataset.objects.order_by('time_coverage_start')
+        return models.Dataset.objects.order_by('time_coverage_start')
 
     @classmethod
     def get_filtered_datasets(cls, form):
@@ -99,20 +73,20 @@ class IndexView(GeoSPaaSView):
 
 class DatasetViewSet(ModelViewSet):
     """API endpoint to view Datasets"""
-    queryset = Dataset.objects.all()
+    queryset = models.Dataset.objects.all()
     serializer_class = serializers.DatasetSerializer
     filterset_class = filters.DatasetFilter
 
 
 class DatasetURIViewSet(ModelViewSet):
     """API endpoint to view DatasetURIs"""
-    queryset = DatasetURI.objects.all()
+    queryset = models.DatasetURI.objects.all()
     serializer_class = serializers.DatasetURISerializer
     filterset_class = filters.DatasetURIFilter
 
 
 class TagViewSet(ModelViewSet):
     """API endpoint to view Tags"""
-    queryset = Tag.objects.all()
+    queryset = models.Tag.objects.all()
     serializer_class = serializers.TagSerializer
     filterset_class = filters.TagFilter

@@ -53,6 +53,7 @@ customElements.define("geospaas-dataset", class extends APIObject {
     };
     this._related_fields = {
       "tags": {"title": "Tags", "element": "geospaas-tag"},
+      "keywords": {"title": "Keywords", "element": "geospaas-keyword"},
     };
   }
 
@@ -90,20 +91,28 @@ customElements.define("geospaas-dataset", class extends APIObject {
       }
     }
     for(const key in this._related_fields) {
+
       if(this.api_data[key] && this.api_data[key].length) {
         let value = this.api_data[key];
         if(Array.isArray(value)){
           newRow = tbody.insertRow();
           newRow.insertCell().appendChild(document.createTextNode(this._related_fields[key].title));
           let contents_cell = newRow.insertCell();
-          for(let url of this.api_data[key]) {
-            fetch(url)
-            .then(response => response.json())
-            .then(page => {
-              contents_cell.appendChild(APIObject.create(this._related_fields[key].element, page));
-            })
-            .catch(error => console.log(`${error}: Failed to get tag`))
-          }
+
+          // populate related objects lazily
+          this.addEventListener("click", () => {
+            if(!this._related_fields[key].resolved) {
+              for(let url of this.api_data[key]) {
+                fetch(url)
+                .then(response => response.json())
+                .then(page => {
+                  contents_cell.appendChild(APIObject.create(this._related_fields[key].element, page));
+                })
+                .catch(error => console.log(`${error}: Failed to get object from API`))
+              }
+              this._related_fields[key].resolved = true;
+            }
+          });
         }
       }
     }
@@ -176,6 +185,20 @@ customElements.define("geospaas-tag", class extends APIObject {
   }
 });
 
+customElements.define("geospaas-keyword", class extends APIObject {
+  make_html_repr() {
+    this._html_repr = document.createElement("div");
+    let display_name = null;
+    if("Short_Name" in this._api_data.data) {
+      display_name = this._api_data.data.Short_Name;
+    } else {
+      display_name = String(this._api_data.data);
+    }
+    this._html_repr.appendChild(document.createTextNode(`${this._api_data.kind}(${this._api_data.version}): ${display_name}`));
+  }
+});
+
+
 
 function display_page(page) {
   // clear existing contents
@@ -221,8 +244,8 @@ function get_datasets(url, request_parameters) {
   let polygon = document.getElementById("id_polygon").value;
   let time_coverage_start = document.getElementById("id_time_coverage_start").value;
   let time_coverage_end = document.getElementById("id_time_coverage_end").value;
-  let tags = document.getElementById("selected_tags").childNodes;
-  // let keywords = document.getElementById("id_keywords").value;
+  let tags = document.getElementById("selected_geospaas-tag").childNodes;
+  let keywords = document.getElementById("selected_geospaas-keyword").childNodes;
   // let full_text = document.getElementById("id_full_text").value;
   // let parameters = document.getElementById("id_parameters").value;
 
@@ -236,23 +259,83 @@ function get_datasets(url, request_parameters) {
     }
     full_request_parameters.tags__id__in = tag_ids.join(",");
   }
+  if(keywords.length !== 0) {
+    let keyword_ids = [];
+    for(let keyword of keywords) {
+      keyword_ids.push(keyword.api_data.id);
+    }
+    full_request_parameters.keywords__id__in = keyword_ids.join(",");
+  }
   fetch(`${url}?` + new URLSearchParams(full_request_parameters).toString())
     .then(response => response.json())
     .then(page => display_page(page))
     .catch(error => console.log(`${error}: Failed to get datasets`));
 }
 
-function add_search_tag(tag, selected_tags) {
-  for(let existing_tag of selected_tags.childNodes) {
-    if(existing_tag.api_data.id === tag.api_data.id) {return null;}
-  }
-  let selected_tag = document.createElement("geospaas-tag");
-  selected_tag.api_data = tag.api_data;
-  selected_tags.appendChild(selected_tag);
+function make_selector_field(search_box, api_element_name, api_url, api_filter) {
+  /* Make a text input field search for GeoSPaaS API objects to be used
+     in the datasets search form */
+  search_box.parentNode.style.display = "flex";
+  let selected_elements = document.createElement("div");
+  selected_elements.id = `selected_${api_element_name}`;
+  selected_elements.style.display = "flex";
+  search_box.after(selected_elements);
 
-  selected_tag.style.marginRight = "4px";
-  selected_tag.style.marginLeft = "4px";
-  selected_tag.style.background = "#c2f3fc";
+  let dropdown = document.createElement("div");
+  dropdown.style.position = "relative";
+  dropdown.setAttribute("tabindex", 0)
+  search_box.before(dropdown);
+  let dropdown_contents = document.createElement("div");
+  dropdown_contents.id = `dropdown_contents_${api_element_name}`;
+  dropdown_contents.style.cssText = `
+    position: absolute;
+    top: ${search_box.clientHeight}px;
+    z-index: 10;
+    max-height: ${search_box.clientHeight * 5}px;
+    width: ${search_box.clientWidth}px;
+    background-color: #f1f1f1;
+    overflow: scroll;
+  `;
+  dropdown.appendChild(dropdown_contents);
+
+  search_box.addEventListener("input", (event) => {
+    clear_children(dropdown_contents);
+    if(event.target.value.length >= 2) {
+      fetch(api_url + new URLSearchParams({[api_filter]: search_box.value}).toString())
+        .then(response => response.json())
+        .then(page => {
+          for (let api_data of page.results) {
+            let api_element = APIObject.create(api_element_name, api_data);
+            api_element.addEventListener("click", () => {
+              add_search_element(api_element, selected_elements);
+            });
+            dropdown_contents.appendChild(api_element);
+          }
+        })
+        .catch(error => console.log(`${error}: Failed to get objects from API`));
+    }
+  });
+  search_box.addEventListener("focusout", (event) => {
+    if(event.relatedTarget !== dropdown) {
+      search_box.value = "";
+      search_box.dispatchEvent(new Event("input"));
+    } else {
+      search_box.focus();
+    }
+  });
+}
+
+function add_search_element(element, selected_elements) {
+  for(let existing_element of selected_elements.childNodes) {
+    if(existing_element.api_data.id === element.api_data.id) {return null;}
+  }
+  let selected_element = element.cloneNode(true);
+  selected_element.api_data = element.api_data;
+  selected_elements.appendChild(selected_element);
+
+  selected_element.style.marginRight = "4px";
+  selected_element.style.marginLeft = "4px";
+  selected_element.style.background = "#c2f3fc";
 
   // make close button that removes the tag
   let close_button = document.createElement("div");
@@ -261,13 +344,12 @@ function add_search_tag(tag, selected_tags) {
   close_button.style.color = "#018096";
   close_button.style.cursor = "pointer";
 
-  selected_tag._html_repr.style.display = "flex";
+  selected_element._html_repr.style.display = "flex";
   close_button.appendChild(document.createTextNode("X"));
   close_button.addEventListener("click", () => {
-    selected_tag.parentNode.removeChild(selected_tag);
+    selected_element.parentNode.removeChild(selected_element);
   });
-
-  selected_tag._html_repr.appendChild(close_button);
+  selected_element._html_repr.appendChild(close_button);
 }
 
 function clear_children(parent) {
@@ -301,44 +383,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // tag search field
   let tag_search_box = document.getElementById("id_tags");
-  let selected_tags = document.createElement("div");
-  selected_tags.id = "selected_tags";
-  selected_tags.style.display = "flex";
-  tag_search_box.after(selected_tags);
-
-  let tags_dropdown = document.createElement("div");
-  tags_dropdown.style.position = "relative";
-  tag_search_box.before(tags_dropdown);
-  let tags_dropdown_contents = document.createElement("div");
-  tags_dropdown_contents.id = "tags_dropdown_contents";
-  tags_dropdown_contents.style.cssText = `
-    position: absolute;
-    top: ${tag_search_box.clientHeight}px;
-    z-index: 10;
-    max-height: ${tag_search_box.clientHeight * 5}px;
-    width: ${tag_search_box.clientWidth}px;
-    background-color: #f1f1f1;
-    overflow: scroll;
-  `;
-  tags_dropdown.appendChild(tags_dropdown_contents);
-
-  tag_search_box.addEventListener("input", (event) => {
-    let tags_dropdown_contents = document.getElementById("tags_dropdown_contents");
-    clear_children(tags_dropdown_contents);
-    if(event.target.value.length >= 2) {
-      fetch(`${window.location}api/tags/?` + new URLSearchParams({"value__icontains": tag_search_box.value}).toString())
-        .then(response => response.json())
-        .then(page => {
-          for (let tag_data of page.results) {
-            let tag = document.createElement("geospaas-tag")
-            tag.api_data = tag_data;
-            tag.addEventListener("click", () => {
-              add_search_tag(tag, selected_tags);
-            });
-            tags_dropdown_contents.appendChild(tag);
-          }
-        })
-        .catch(error => console.log(`${error}: Failed to get tags`));
-    }
-  });
+  make_selector_field(
+    tag_search_box, "geospaas-tag",
+    `${window.location}api/tags/?`, "value__icontains");
+  // keyword search field
+  let keyword_search_box = document.getElementById("id_keywords");
+  make_selector_field(
+    keyword_search_box, "geospaas-keyword",
+    `${host}/vocabularies/api/keywords/?`, "data__icontains");
 });

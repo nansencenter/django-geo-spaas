@@ -11,6 +11,7 @@ config = Config({
     'base_viewer': {
         'apps': [
             {'label': 'Catalog', 'path': 'catalog/', 'urls': 'geospaas.catalog.urls'},
+            {'label': 'Vocabularies', 'path': 'vocabularies/', 'urls': 'geospaas.vocabularies.urls'},
             {'label': 'Harvesting', 'path': 'harvesting/', 'urls': 'geospaas_harvesting.urls'},
         ]
     }
