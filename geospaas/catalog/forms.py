@@ -16,8 +16,8 @@ class BaseSearchForm(forms.Form):
             }
         }),
         required=False)
-    time_coverage_start = forms.DateTimeField()
-    time_coverage_end = forms.DateTimeField()
+    time_coverage_start = forms.DateTimeField(widget=forms.TextInput(attrs={'type':'datetime-local'}))
+    time_coverage_end = forms.DateTimeField(widget=forms.TextInput(attrs={'type':'datetime-local'}))
     tags = forms.CharField(required=False)
     keywords = forms.CharField(required=False)
     parameters = forms.CharField(required=False)
