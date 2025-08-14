@@ -11,7 +11,7 @@ class GeoSPaaSView(TemplateView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.geospaas_apps = config.get_setting('base_viewer', 'apps')
+        self.geospaas_apps = config['web_ui']['apps']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

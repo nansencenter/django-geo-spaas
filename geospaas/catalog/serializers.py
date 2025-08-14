@@ -12,7 +12,7 @@ class TagSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
         model = geospaas.catalog.models.Tag
         fields = ['id', 'url', 'name', 'value']
         extra_kwargs = {
-            'url': {'view_name': 'base_viewer:catalog:api:tag-detail'}
+            'url': {'view_name': 'base_viewer:api:catalog:tag-detail'}
         }
 
 
@@ -35,19 +35,19 @@ class DatasetSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
             'parameters',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'base_viewer:catalog:api:dataset-detail'},
+            'url': {'view_name': 'base_viewer:api:catalog:dataset-detail'},
             'tags': {
-                'view_name': 'base_viewer:catalog:api:tag-detail',
+                'view_name': 'base_viewer:api:catalog:tag-detail',
                 'read_only': True,
                 'many': True
             },
             'keywords': {
-                'view_name': 'base_viewer:vocabularies:api:keyword-detail',
+                'view_name': 'base_viewer:api:vocabularies:keyword-detail',
                 'read_only': True,
                 'many': True
             },
             'parameters': {
-                'view_name': 'base_viewer:vocabularies:api:parameter-detail',
+                'view_name': 'base_viewer:api:vocabularies:parameter-detail',
                 'read_only': True,
                 'many': True
             },

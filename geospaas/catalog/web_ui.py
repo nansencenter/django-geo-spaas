@@ -1,21 +1,14 @@
 from django.conf import settings
 from django.core.paginator import Paginator
-from django.core.serializers import serialize
-from django.http import HttpResponse, HttpResponseNotFound
+from django.urls import path
 from django.shortcuts import render
 
-from rest_framework.viewsets import ModelViewSet
-
-import geospaas.catalog.serializers as serializers
-import geospaas.catalog.filters as filters
 import geospaas.catalog.models as models
 from geospaas.base_viewer.views import GeoSPaaSView
 from .forms import BaseSearchForm
 
 
-
-###### Website views ######
-class IndexView(GeoSPaaSView):
+class CatalogView(GeoSPaaSView):
     """ The class-based view for processing both GET and POST methods of basic version of viewer """
     form_class = BaseSearchForm
     main_template = 'catalog/ds_info.html'
@@ -59,34 +52,13 @@ class IndexView(GeoSPaaSView):
         context = self.get_context_data(form=form, page_obj=page_obj, **kwargs)
         return render(request, self.main_template, context)
 
-    def post(self, request, *args, **kwargs):
-        """ Render page when user submits search request """
-        form = self.form_class(request.POST)
-        form.is_valid()
-        ds = self.get_filtered_datasets(form)
-        page_obj = self.paginate(ds, request)
-        context = self.set_context(form, page_obj)
-        return render(request, self.main_template, context)
+    # def post(self, request, *args, **kwargs):
+    #     """ Render page when user submits search request """
+    #     form = self.form_class(request.POST)
+    #     form.is_valid()
+    #     ds = self.get_filtered_datasets(form)
+    #     page_obj = self.paginate(ds, request)
+    #     context = self.set_context(form, page_obj)
+    #     return render(request, self.main_template, context)
 
-
-###### API views ######
-
-class DatasetViewSet(ModelViewSet):
-    """API endpoint to view Datasets"""
-    queryset = models.Dataset.objects.all()
-    serializer_class = serializers.DatasetSerializer
-    filterset_class = filters.DatasetFilter
-
-
-class DatasetURIViewSet(ModelViewSet):
-    """API endpoint to view DatasetURIs"""
-    queryset = models.DatasetURI.objects.all()
-    serializer_class = serializers.DatasetURISerializer
-    filterset_class = filters.DatasetURIFilter
-
-
-class TagViewSet(ModelViewSet):
-    """API endpoint to view Tags"""
-    queryset = models.Tag.objects.all()
-    serializer_class = serializers.TagSerializer
-    filterset_class = filters.TagFilter
+urlpatterns = [path('', CatalogView.as_view(), name='geospaas_catalog')]
