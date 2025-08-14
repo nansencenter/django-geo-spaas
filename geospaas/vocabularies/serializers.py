@@ -10,7 +10,7 @@ class KeywordSerializer(rest_framework.serializers.HyperlinkedModelSerializer):
         model = geospaas.vocabularies.models.Keyword
         fields = ['id', 'url', 'version', 'kind', 'data']
         extra_kwargs = {
-            'url': {'view_name': 'base_viewer:vocabularies:api:keyword-detail'}
+            'url': {'view_name': 'base_viewer:api:vocabularies:keyword-detail'}
         }
 
 
@@ -20,9 +20,9 @@ class ParameterSerializer(rest_framework.serializers.HyperlinkedModelSerializer)
         model = geospaas.vocabularies.models.Parameter
         fields = ['id', 'url', 'version', 'kind', 'data', 'gcmd_science_keyword']
         extra_kwargs = {
-            'url': {'view_name': 'base_viewer:vocabularies:api:parameter-detail'},
+            'url': {'view_name': 'base_viewer:api:vocabularies:parameter-detail'},
             'gcmd_science_keyword': {
-                'view_name': 'base_viewer:vocabularies:api:keyword-detail',
+                'view_name': 'base_viewer:api:vocabularies:keyword-detail',
                 'read_only': True,
             },
         }
