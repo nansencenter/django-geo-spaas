@@ -50,6 +50,7 @@ jobs:
           target: base
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE }}
+            PYTHESINT_VERSION=v1.7.3.dev0
           push: false
           load: true
           tags: testing
