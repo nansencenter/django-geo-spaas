@@ -70,7 +70,7 @@ jobs:
              -e "GITHUB_RUN_ID=$GITHUB_RUN_ID"
              -e "GITHUB_TOKEN=$GITHUB_TOKEN"
              testing
-             bash -c "coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py"
+             bash -c "coverage run --omit='*/tests/*,*/tests.py,*/migrations/*' runtests.py"
 
       - name: 'Install Python 3.11'
         if: ${{ env.latest }}
