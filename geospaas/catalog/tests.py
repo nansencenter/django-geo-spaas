@@ -76,20 +76,7 @@ class DatasetTests(TestCase):
         self.assertIsInstance(ds_uri3, DatasetURI)
         self.assertEqual(cr3, True)
 
-        # Add parameter
-        ## Dump data for use in fixture
-        #with open('dataset.json', 'w') as out:
-        #    call_command('dumpdata', '--natural-foreign', '--traceback',
-        #            '--indent=4',
-        #            'catalog.Dataset',
-        #            'catalog.GeographicLocation',
-        #            stdout=out)
-
     def test_entry_id_is_wrong(self):
-        # iso_category = ISOTopicCategory.objects.get(name='Oceans')
-        # dc = DataCenter.objects.get(short_name='NERSC')
-        # source = Source.objects.get(pk=1)
-        # geolocation = GeographicLocation.objects.get(pk=1)
         et = 'Test dataset'
         id = 'NERSC/test/dataset/1'
         ds = Dataset(
