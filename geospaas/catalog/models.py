@@ -1,5 +1,5 @@
-import os
 import uuid
+from urllib.parse import urlparse
 
 from django.contrib.gis.db import models as geomodels
 from django.core.exceptions import ValidationError
@@ -139,7 +139,7 @@ class DatasetURI(models.Model):
         return self.uri
 
     def protocol(self):
-        return self.uri.split(':')[0]
+        return urlparse(self.uri).scheme
 
 
 class DatasetRelationship(models.Model):
