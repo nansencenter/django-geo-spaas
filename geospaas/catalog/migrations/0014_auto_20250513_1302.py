@@ -10,6 +10,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RemoveConstraint(
+            model_name='source',
+            name='unique_source'),
         migrations.RemoveField(
             model_name='source',
             name='instrument',
