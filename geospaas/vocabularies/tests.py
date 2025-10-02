@@ -7,7 +7,7 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from geospaas.vocabularies.managers import VocabularyManager
-from geospaas.vocabularies.models import (Keyword, Parameter)
+from geospaas.vocabularies.models import (Keyword, Parameter, validate_parameter, ValidationError)
 
 
 class VocabulariesTestBase(object):
@@ -20,7 +20,7 @@ class VocabulariesTestBase(object):
         mocked_methods = {}
         for i, vocabulary_name in enumerate(self.model.objects.vocabularies):
             mocked_methods[vocabulary_name] = {
-                'get_list': MagicMock(return_value=self.model_lists[i]),
+                'get_list': MagicMock(return_value=[]),
                 'update': MagicMock(return_value=None)
             }
         methods_patcher = patch.object(self.model.objects, 'vocabularies', mocked_methods)
@@ -147,22 +147,24 @@ class VocabularyManagerTests(TestCase):
                                                           'key3': 'val22_loooooooong'})))
 
 
+class KeywordTests(VocabulariesTestBase, TestCase):
+    """Tests """
+    model = Keyword
+
+    def test_str(self):
+        """Test string representation of a Keyword object"""
+        self.assertEqual(
+            str(Keyword(version='v1', kind='test', data={'foo': 'bar'})),
+            'Keyword object (None)')
+        self.assertEqual(
+            str(Keyword(version='v1', kind='test', data={'foo': 'bar', 'Short_Name': 'baz'})),
+            'baz')
+
+
 class ParameterTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Parameter model"""
-    fixtures = ["vocabularies"]
 
     model = Parameter
-    model_lists = [
-        [{
-            'standard_name': 'surface_radial_doppler_sea_water_velocity',
-            'long_name': 'Radial Doppler Current',
-            'short_name': 'Ur',
-            'units': 'm s-1',
-            'minmax': '-1 1',
-            'colormap': 'jet'
-        }],
-        []
-    ]
 
     def test_unique_constraint(self):
         """Check that the same Parameter can't be inserted twice"""
@@ -179,6 +181,23 @@ class ParameterTests(VocabulariesTestBase, TestCase):
         self.assertEqual(
             Parameter.objects.get_by_natural_key('baz'),
             Parameter.objects.get(id=1))
+
+    def test_validate_parameter(self):
+        """Test validation of the data field"""
+        self.assertIsNone(validate_parameter({'standard_name': 'foo'}))
+        with self.assertRaises(ValidationError):
+            validate_parameter('foo')
+
+    def test_str(self):
+        """Test getting the string representation of a Parameter"""
+        self.assertEqual(
+            str(Parameter(version='v1', kind='test', data={'standard_name': 'foo'})), 'foo')
+
+    def test_natural_key(self):
+        """Test getting the natural key of a Parameter"""
+        self.assertEqual(
+            Parameter(version='v1', kind='test', data={'standard_name': 'foo'}).natural_key(),
+            'foo')
 
 
 class CommandsTests(TestCase):
