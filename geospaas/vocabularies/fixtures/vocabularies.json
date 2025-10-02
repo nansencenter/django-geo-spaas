@@ -7,5 +7,15 @@
             "kind": "test",
             "data": {"foo": "bar"}
         }
+    },
+    {
+        "pk": 1,
+        "model": "vocabularies.parameter",
+        "fields": {
+            "version": null,
+            "kind": "test",
+            "data": {"standard_name": "baz"},
+            "gcmd_science_keyword": 1
+        }
     }
 ]
