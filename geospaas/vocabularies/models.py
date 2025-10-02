@@ -31,11 +31,12 @@ class Keyword(models.Model):
             name = super().__str__()
         return name
 
+
 def validate_parameter(value):
     """Validate that a parameter has a 'standard_name' attribute
     """
     if not (isinstance(value, dict) and 'standard_name' in value):
-        raise ValidationError
+        raise ValidationError('"data" must be a dict with a "standard_name" key')
 
 
 class Parameter(models.Model):
