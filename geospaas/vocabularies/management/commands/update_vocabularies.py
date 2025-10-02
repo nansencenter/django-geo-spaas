@@ -12,10 +12,9 @@
 #-------------------------------------------------------------------------------
 import argparse
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
-from geospaas.vocabularies.models import Keyword, Parameter
-
+from geospaas.vocabularies.managers import KeywordManager, ParameterManager
 
 
 class StoreDictAction(argparse.Action):
@@ -29,6 +28,10 @@ class StoreDictAction(argparse.Action):
 
 class Command(BaseCommand):
     help = 'Put vocabularies into the database'
+    managers = [
+        KeywordManager,
+        ParameterManager,
+    ]
 
     def add_arguments(self, parser):
         parser.add_argument('-f', '--force', action='store_true',
@@ -38,10 +41,5 @@ class Command(BaseCommand):
                             help='pythesint vocabularies versions to use')
 
     def handle(self, *args, **options):
-        models = [
-            Parameter,
-            Keyword,
-        ]
-
-        for model in models:
-            model.objects.create_from_vocabularies(**options)
+        for manager in self.managers:
+            manager.create_from_vocabularies(**options)
