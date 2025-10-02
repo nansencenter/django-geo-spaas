@@ -82,12 +82,14 @@ class VocabularyManager(models.Manager):
                 methods['get_list'],
                 methods['update'],
                 force, version=versions.get(vocabulary_name))
+
+            # retrieve version from downloaded pythesint vocabulary
             get_version = methods.get('get_version')
             if get_version is not None:
-                version = get_version()
+                current_voc_version = get_version()
             else:
-                version = None
-            self.create_instances(vocabulary_name, pti_list, version)
+                current_voc_version = None
+            self.create_instances(vocabulary_name, pti_list, current_voc_version)
 
 
 class ParameterManager(VocabularyManager):
