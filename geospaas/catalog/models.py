@@ -62,6 +62,8 @@ class Tag(models.Model):
         return f"({self.name}: {self.value})"
     class Meta:
         constraints = [
+            # TODO: after update to Django>=4.0, set the constraint on
+            # a hash to avoid problems with long strings
             models.UniqueConstraint(name='unique_tag', fields=['name', 'value'])
         ]
 
