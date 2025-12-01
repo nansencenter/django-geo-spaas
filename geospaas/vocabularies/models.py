@@ -50,7 +50,7 @@ class Parameter(models.Model):
     '''
     version = models.CharField(max_length=100, blank=True, null=True)
     kind = models.CharField(max_length=100, blank=True, null=True)
-    data = models.JSONField(unique=True, validators=(validate_parameter,))
+    data = models.JSONField(validators=(validate_parameter,))
 
     # The science keywords are less specific than the CF standard names -
     # therefore one science keyword can be in many parameters, whereas the
