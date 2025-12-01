@@ -138,7 +138,8 @@ class VocabularyManagerTests(TestCase):
             objects = TestVocabularyManager()
 
         with patch('geospaas.vocabularies.managers.models.Manager.get_or_create',
-                   return_value=(True, None)) as mock_get_or_create:
+                   return_value=(True, None)) as mock_get_or_create, \
+             patch('builtins.print'):
             manager = TestModel.objects
             manager.create_from_vocabularies()
             mock_get_or_create.assert_has_calls((
@@ -170,7 +171,7 @@ class ParameterTests(VocabulariesTestBase, TestCase):
         """Check that the same Parameter can't be inserted twice"""
         with self.assertRaises(django.db.utils.IntegrityError):
             self._insert_twice({
-                'version': None,
+                'version': '1.0',
                 'kind': 'test',
                 'data': {'standard_name': 'test', 'short_name': 'test', 'units': 'test'},
                 'gcmd_science_keyword': Keyword.objects.first(),
