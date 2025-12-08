@@ -6,6 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('vocabularies', '0007_auto_20250513_0616'),
         ('catalog', '0013_auto_20250512_1414'),
     ]
 
