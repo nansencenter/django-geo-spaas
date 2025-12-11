@@ -21,6 +21,7 @@ jobs:
       BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:v1.6.1-python${{ matrix.python_version }}"
       IMAGE_NAME: "${{ vars.DOCKER_ORG }}/geospaas"
       latest: ${{ matrix.python_version == '3.11' && 'true' || '' }}
+      full_release: ${{ github.event_name == 'release' && github.event.action == 'released' && 'true' || '' }}
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
@@ -95,8 +96,8 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:${{ github.ref_name }}-python${{ matrix.python_version }}
             ${{ env.latest && format('{0}:{1}', env.IMAGE_NAME, github.ref_name) || '' }}
-            ${{ env.IMAGE_NAME }}:latest-python${{ matrix.python_version }}
-            ${{ env.latest && format('{0}:latest', env.IMAGE_NAME) || '' }}
+            ${{ env.full_release && format('{0}:latest-python{1}', env.IMAGE_NAME, matrix.python_version) || '' }}
+            ${{ env.full_release && env.latest && format('{0}:latest', env.IMAGE_NAME) || '' }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
