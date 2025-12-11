@@ -15,6 +15,7 @@ import argparse
 from django.core.management.base import BaseCommand
 
 from geospaas.vocabularies.managers import KeywordManager, ParameterManager
+from geospaas.vocabularies.models import Keyword, Parameter
 
 
 class StoreDictAction(argparse.Action):
@@ -28,9 +29,9 @@ class StoreDictAction(argparse.Action):
 
 class Command(BaseCommand):
     help = 'Put vocabularies into the database'
-    managers = [
-        KeywordManager,
-        ParameterManager,
+    models = [
+        Keyword,
+        Parameter,
     ]
 
     def add_arguments(self, parser):
@@ -41,5 +42,5 @@ class Command(BaseCommand):
                             help='pythesint vocabularies versions to use')
 
     def handle(self, *args, **options):
-        for manager in self.managers:
-            manager.create_from_vocabularies(**options)
+        for model in self.models:
+            model.objects.create_from_vocabularies(**options)
