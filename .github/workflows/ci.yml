@@ -12,15 +12,15 @@ jobs:
     strategy:
       matrix:
         python_version:
-          - '3.7'
           - '3.8'
           - '3.9'
           - '3.10'
           - '3.11'
     env:
-      BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:v1.6.1-python${{ matrix.python_version }}"
+      BASE_IMAGE: "${{ vars.DOCKER_ORG }}/nansat:v1.6.3-python${{ matrix.python_version }}"
       IMAGE_NAME: "${{ vars.DOCKER_ORG }}/geospaas"
       latest: ${{ matrix.python_version == '3.11' && 'true' || '' }}
+      full_release: ${{ github.event_name == 'release' && github.event.action == 'released' && 'true' || '' }}
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
@@ -50,6 +50,7 @@ jobs:
           target: base
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE }}
+            PYTHESINT_VERSION=v1.7.3.dev0
           push: false
           load: true
           tags: testing
@@ -70,7 +71,7 @@ jobs:
              -e "GITHUB_RUN_ID=$GITHUB_RUN_ID"
              -e "GITHUB_TOKEN=$GITHUB_TOKEN"
              testing
-             bash -c "coverage run --omit=geospaas/nansat_ingestor/tests/*,geospaas/catalog/tests/*,geospaas/vocabularies/tests/* runtests.py"
+             bash -c "coverage run --omit='*/tests/*,*/tests.py,*/migrations/*' runtests.py"
 
       - name: 'Install Python 3.11'
         if: ${{ env.latest }}
@@ -94,8 +95,8 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:${{ github.ref_name }}-python${{ matrix.python_version }}
             ${{ env.latest && format('{0}:{1}', env.IMAGE_NAME, github.ref_name) || '' }}
-            ${{ env.IMAGE_NAME }}:latest-python${{ matrix.python_version }}
-            ${{ env.latest && format('{0}:latest', env.IMAGE_NAME) || '' }}
+            ${{ env.full_release && format('{0}:latest-python{1}', env.IMAGE_NAME, matrix.python_version) || '' }}
+            ${{ env.full_release && env.latest && format('{0}:latest', env.IMAGE_NAME) || '' }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
