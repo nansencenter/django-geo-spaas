@@ -60,5 +60,3 @@ class CatalogView(GeoSPaaSView):
     #     page_obj = self.paginate(ds, request)
     #     context = self.set_context(form, page_obj)
     #     return render(request, self.main_template, context)
-
-urlpatterns = [path('', CatalogView.as_view(), name='geospaas_catalog')]

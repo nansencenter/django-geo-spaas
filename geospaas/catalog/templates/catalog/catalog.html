@@ -17,14 +17,14 @@
             <table>
             {{ form.as_p }}
             </table>
-            <input id="dataset_search_button" type="button" value="Search" data-path="{% url 'base_viewer:api:catalog:dataset-list' %}"/>
+            <input id="dataset_search_button" type="button" value="Search" data-path="{% url 'geospaas:catalog:api:dataset-list' %}"/>
         </form>
     </div>
 
     <div id="datasets_search_results">
         <form id="datasets_search_pages_controls">
-            <input id="datasets_previous_button" type="button" value="Previous" disabled data-path="{% url 'base_viewer:api:catalog:dataset-list' %}" data-cursor=""/>
-            <input id="datasets_next_button" type="button" value="Next" disabled data-path="{% url 'base_viewer:api:catalog:dataset-list' %}" data-cursor=""/>
+            <input id="datasets_previous_button" type="button" value="Previous" disabled data-path="{% url 'geospaas:catalog:api:dataset-list' %}" data-cursor=""/>
+            <input id="datasets_next_button" type="button" value="Next" disabled data-path="{% url 'geospaas:catalog:api:dataset-list' %}" data-cursor=""/>
             <input id="datasets_page_size" type="number" value="25" action=""/>
         </form>
         <div id="datasets_display">

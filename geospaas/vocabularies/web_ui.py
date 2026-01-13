@@ -7,6 +7,3 @@ class VocabulariesView(GeoSPaaSView):
     """"""
     template_name = 'vocabularies/vocabularies.html'
     tab_label = 'Vocabularies'
-
-
-urlpatterns = [path('', VocabulariesView.as_view(), name='geospaas_vocabularies')]
