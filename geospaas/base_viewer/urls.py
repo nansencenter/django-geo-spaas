@@ -3,30 +3,21 @@ import logging
 
 from django.urls import include, path
 
-from geospaas.config import config
+# import geospaas.catalog.urls
+# import geospaas.vocabularies.urls
+# import geospaas_harvesting.urls
+from geospaas.config import web_plugins
 from .views import GeoSPaaSView
 
 
 logger = logging.getLogger(__name__)
 
-app_name = 'base_viewer'
-geospaas_apps = config['web_ui']['apps']
-
-
-ui_patterns = [path('', view=GeoSPaaSView.as_view(), name='index')]
-api_patterns = []
-for geospaas_app in geospaas_apps:
-    for patterns, module in ((ui_patterns, 'web_ui'), (api_patterns, 'web_api')):
-        try:
-            patterns.append(path(
-                f"{geospaas_app['path']}/",
-                include((
-                    importlib.import_module(f"{geospaas_app['package']}.{module}"),
-                    geospaas_app['path']))))
-        except ModuleNotFoundError:
-            logger.warning("%s.%s module not found", geospaas_app['package'], module)
+app_name = 'geospaas'
 
 urlpatterns = [
-    path('', include(ui_patterns)),
-    path('api/', include((api_patterns, 'api')))
+    path('', view=GeoSPaaSView.as_view(), name='index'),
 ]
+for module_name in web_plugins:
+    module = importlib.import_module(module_name)
+    app_name = module.app_name
+    urlpatterns.append(path(f'{app_name}/', include(module_name, app_name)))

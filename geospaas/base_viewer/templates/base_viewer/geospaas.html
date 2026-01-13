@@ -8,9 +8,9 @@
         <div id="geospaas_apps">
             <div id="geospaas_sidebar">
                 {% block geospaas_sidebar %}
-                    {% for app in geospaas_apps %}
-                        <div class="geospaas_tab_label {% if app.label == selected_tab %} geospaas_selected_tab{% endif %}">
-                            <a href="{% url 'base_viewer:index' %}{{ app.path }}">{{ app.label }}</a>
+                    {% for app_name in geospaas_apps %}
+                        <div class="geospaas_tab_label {% if app_name == selected_tab %} geospaas_selected_tab{% endif %}">
+                            <a href="{% url 'geospaas:index' %}{{ app_name }}">{{ app_name | title }}</a>
                         </div>
                     {% endfor %}
                 {% endblock geospaas_sidebar %}

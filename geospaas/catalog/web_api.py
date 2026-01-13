@@ -1,5 +1,3 @@
-from django.urls import path, include
-from rest_framework import routers
 from rest_framework.viewsets import ModelViewSet
 
 import geospaas.catalog.filters as filters
@@ -26,11 +24,3 @@ class TagViewSet(ModelViewSet):
     queryset = models.Tag.objects.all()
     serializer_class = serializers.TagSerializer
     filterset_class = filters.TagFilter
-
-
-router = routers.DefaultRouter()
-router.register(r'tags', TagViewSet)
-router.register(r'dataset_uris', DatasetURIViewSet)
-router.register(r'datasets', DatasetViewSet)
-
-urlpatterns = router.urls

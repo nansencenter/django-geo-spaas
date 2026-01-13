@@ -1,5 +1,3 @@
-from django.urls import path, include
-from rest_framework import routers
 from rest_framework.viewsets import ModelViewSet
 
 import geospaas.vocabularies.models as models
@@ -19,10 +17,3 @@ class ParameterViewSet(ModelViewSet):
     queryset = models.Parameter.objects.all()
     serializer_class = serializers.ParameterSerializer
     filterset_class = filters.ParameterFilter
-
-
-router = routers.DefaultRouter()
-router.register(r'keywords', KeywordViewSet)
-router.register(r'parameters', ParameterViewSet)
-
-urlpatterns = router.urls
