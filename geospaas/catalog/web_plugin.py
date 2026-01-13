@@ -1,14 +1,14 @@
 from django.urls import include, path
 from rest_framework import routers
 
-import geospaas.catalog.web_api as web_api
-from geospaas.catalog.web_ui import CatalogView
+import geospaas.catalog.viewsets as viewsets
+from geospaas.catalog.views import CatalogView
 
 
 router = routers.DefaultRouter()
-router.register(r'tags', web_api.TagViewSet)
-router.register(r'dataset_uris', web_api.DatasetURIViewSet)
-router.register(r'datasets', web_api.DatasetViewSet)
+router.register(r'tags', viewsets.TagViewSet)
+router.register(r'dataset_uris', viewsets.DatasetURIViewSet)
+router.register(r'datasets', viewsets.DatasetViewSet)
 
 
 app_name = 'catalog'
