@@ -38,29 +38,38 @@ customElements.define("geospaas-dataset", class extends APIObject {
   }
 
   makeHtmlRepr() {
-    this._html_repr = document.createElement("table");
-    let header = document.createElement("th");
-    header.colSpan = 2;
+    // create a table from a template
+    let datasetTemplate = document.importNode(
+      document.getElementById("geospaas-dataset").content,
+      true);
+    let table = datasetTemplate.getElementById("dataset-table");
+    let header = table.querySelector("#dataset-header");
     header.appendChild(document.createTextNode(this.title));
-    this._html_repr.createTHead().insertRow().appendChild(header);
-    let tbody = this._html_repr.createTBody();
+    let tbody = table.querySelector("#dataset-attributes");
     tbody.hidden = true;
+
+    // populate attributes
+    let rowTemplateContent = datasetTemplate.getElementById("attribute-row").content;
     let newRow;
     for(const key in this._text_fields) {
       if(this.api_data[key] && this.api_data[key].length) {
-        newRow = tbody.insertRow();
-        newRow.insertCell().appendChild(document.createTextNode(this._text_fields[key]));
-        newRow.insertCell().appendChild(document.createTextNode(this.api_data[key]));
+        newRow = document.importNode(rowTemplateContent, true);
+        newRow.querySelector("#attribute-name").appendChild(
+          document.createTextNode(this._text_fields[key]));
+        newRow.querySelector("#attribute-value").appendChild(
+          document.createTextNode(this.api_data[key]));
+        tbody.appendChild(newRow);
       }
     }
     for(const key in this._related_fields) {
 
       if(this.api_data[key] && this.api_data[key].length) {
         let value = this.api_data[key];
-        if(Array.isArray(value)){
-          newRow = tbody.insertRow();
-          newRow.insertCell().appendChild(document.createTextNode(this._related_fields[key].title));
-          let contents_cell = newRow.insertCell();
+        if(Array.isArray(value)) {
+          newRow = document.importNode(rowTemplateContent, true);
+          newRow.querySelector("#attribute-name").appendChild(
+            document.createTextNode(this._related_fields[key].title));
+          let contents_cell = newRow.querySelector("#attribute-value");
 
           // populate related objects lazily
           this.addEventListener("click", () => {
@@ -78,12 +87,14 @@ customElements.define("geospaas-dataset", class extends APIObject {
           });
         }
       }
+      tbody.appendChild(newRow);
     }
     this.addEventListener("click", () => {
-      for(let tb of this._html_repr.tBodies) {
+      for(let tb of table.tBodies) {
         if(tb.hidden) {tb.hidden = false} else {tb.hidden = true};
       }
     });
+    this._html_repr = table;
   }
 
   display_footprint() {
