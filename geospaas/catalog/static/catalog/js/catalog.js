@@ -24,7 +24,7 @@ customElements.define("geospaas-dataset", class extends APIObject {
     return this.api_data.entry_id;
   }
 
-  get_style() {
+  getStyle() {
     return `
       table {
         table-layout: fixed;
@@ -37,7 +37,7 @@ customElements.define("geospaas-dataset", class extends APIObject {
       }`;
   }
 
-  make_html_repr() {
+  makeHtmlRepr() {
     this._html_repr = document.createElement("table");
     let header = document.createElement("th");
     header.colSpan = 2;
@@ -142,14 +142,14 @@ customElements.define("geospaas-dataset", class extends APIObject {
 });
 
 customElements.define("geospaas-tag", class extends APIObject {
-  make_html_repr() {
+  makeHtmlRepr() {
     this._html_repr = document.createElement("div");
     this._html_repr.appendChild(document.createTextNode(`${this._api_data.name}: ${this._api_data.value}`));
   }
 });
 
 customElements.define("geospaas-keyword", class extends APIObject {
-  make_html_repr() {
+  makeHtmlRepr() {
     this._html_repr = document.createElement("div");
     let display_name = null;
     if("Short_Name" in this._api_data.data) {
@@ -162,7 +162,7 @@ customElements.define("geospaas-keyword", class extends APIObject {
 });
 
 customElements.define("geospaas-parameter", class extends APIObject {
-  make_html_repr() {
+  makeHtmlRepr() {
     this._html_repr = document.createElement("div");
     let display_name = null;
     if("standard_name" in this._api_data.data) {

@@ -20,11 +20,11 @@ export class APIObject extends HTMLElement {
       this._api_data = dict;
     }
 
-    make_html_repr() {
-      throw new Error("make_html_repr() must be implemented");
+    makeHtmlRepr() {
+      throw new Error("makeHtmlRepr() must be implemented");
     }
 
-    get_style() {
+    getStyle() {
       return "";
     }
 
@@ -34,7 +34,7 @@ export class APIObject extends HTMLElement {
       shadow.appendChild(this._html_repr);
 
       const sheet = new CSSStyleSheet();
-      sheet.replaceSync(this.get_style());
+      sheet.replaceSync(this.getStyle());
       shadow.adoptedStyleSheets = [sheet];
     }
   }
