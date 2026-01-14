@@ -28,13 +28,19 @@ export class APIObject extends HTMLElement {
       return "";
     }
 
-    connectedCallback() {
-      this.make_html_repr();
+    render() {
+      if(!this._html_repr){
+        this.makeHtmlRepr();
+      }
       const shadow = this.attachShadow({ mode: "open" });
       shadow.appendChild(this._html_repr);
 
       const sheet = new CSSStyleSheet();
       sheet.replaceSync(this.getStyle());
       shadow.adoptedStyleSheets = [sheet];
+    }
+
+    connectedCallback() {
+      this.render();
     }
   }
