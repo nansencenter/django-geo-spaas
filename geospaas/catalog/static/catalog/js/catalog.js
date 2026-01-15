@@ -1,8 +1,8 @@
 "use strict";
 
-import {APIObject} from "/static/base_viewer/js/geospaas_api.js"
+import {APIObjectElement} from "/static/base_viewer/js/geospaas_api.js"
 
-customElements.define("geospaas-dataset", class extends APIObject {
+customElements.define("geospaas-dataset", class extends APIObjectElement {
   constructor() {
     super();
     this._footprint = null;
@@ -20,10 +20,6 @@ customElements.define("geospaas-dataset", class extends APIObject {
     };
   }
 
-  get title() {
-    return this.api_data.entry_id;
-  }
-
   getStyle() {
     return `
       table {
@@ -37,34 +33,35 @@ customElements.define("geospaas-dataset", class extends APIObject {
       }`;
   }
 
-  makeHtmlRepr() {
+  async makeHtmlRepr() {
     // create a table from a template
     let datasetTemplate = document.importNode(
       document.getElementById("geospaas-dataset").content,
       true);
     let table = datasetTemplate.getElementById("dataset-table");
     let header = table.querySelector("#dataset-header");
-    header.appendChild(document.createTextNode(this.title));
+    header.appendChild(document.createTextNode(await this.api_object.get('entry_id')));
     let tbody = table.querySelector("#dataset-attributes");
     tbody.hidden = true;
 
     // populate attributes
     let rowTemplateContent = datasetTemplate.getElementById("attribute-row").content;
     let newRow;
+    let value;
     for(const key in this._text_fields) {
-      if(this.api_data[key] && this.api_data[key].length) {
+      value = await this.api_object.get(key);
+      if(value && value.length) {
         newRow = document.importNode(rowTemplateContent, true);
         newRow.querySelector("#attribute-name").appendChild(
           document.createTextNode(this._text_fields[key]));
         newRow.querySelector("#attribute-value").appendChild(
-          document.createTextNode(this.api_data[key]));
+          document.createTextNode(await this._api_object.get(key)));
         tbody.appendChild(newRow);
       }
     }
     for(const key in this._related_fields) {
-
-      if(this.api_data[key] && this.api_data[key].length) {
-        let value = this.api_data[key];
+      let value = await this.api_object.get(key);
+      if(value && value.length) {
         if(Array.isArray(value)) {
           newRow = document.importNode(rowTemplateContent, true);
           newRow.querySelector("#attribute-name").appendChild(
@@ -72,18 +69,11 @@ customElements.define("geospaas-dataset", class extends APIObject {
           let contents_cell = newRow.querySelector("#attribute-value");
 
           // populate related objects lazily
-          this.addEventListener("click", () => {
-            if(!this._related_fields[key].resolved) {
-              for(let url of this.api_data[key]) {
-                fetch(url)
-                .then(response => response.json())
-                .then(page => {
-                  contents_cell.appendChild(APIObject.create(this._related_fields[key].element, page));
-                })
-                .catch(error => console.log(`${error}: Failed to get object from API`))
+          this.addEventListener("click", async () => {
+              for(let api_object of value) {
+                contents_cell.appendChild(
+                  APIObjectElement.create(this._related_fields[key].element, api_object));
               }
-              this._related_fields[key].resolved = true;
-            }
           });
         }
       }
@@ -97,8 +87,8 @@ customElements.define("geospaas-dataset", class extends APIObject {
     this._html_repr = table;
   }
 
-  display_footprint() {
-    let location = this._api_data.location;
+  async display_footprint() {
+    let location = await this._api_object.get('location');
     if(location != null) {
       if (location.startsWith("SRID")) {location = location.split(";")[1];}
       this._footprint = new L.geoJSON(
@@ -139,9 +129,9 @@ customElements.define("geospaas-dataset", class extends APIObject {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.display_footprint();
+  async connectedCallback() {
+    await super.connectedCallback();
+    await this.display_footprint();
     this.setup_footprint_highlight();
   }
 
@@ -152,36 +142,42 @@ customElements.define("geospaas-dataset", class extends APIObject {
   }
 });
 
-customElements.define("geospaas-tag", class extends APIObject {
-  makeHtmlRepr() {
+customElements.define("geospaas-tag", class extends APIObjectElement {
+  async makeHtmlRepr() {
     this._html_repr = document.createElement("div");
-    this._html_repr.appendChild(document.createTextNode(`${this._api_data.name}: ${this._api_data.value}`));
+    this._html_repr.appendChild(
+      document.createTextNode(
+        `${await this._api_object.get('name')}: ${await this._api_object.get('value')}`));
   }
 });
 
-customElements.define("geospaas-keyword", class extends APIObject {
-  makeHtmlRepr() {
+customElements.define("geospaas-keyword", class extends APIObjectElement {
+  async makeHtmlRepr() {
     this._html_repr = document.createElement("div");
     let display_name = null;
-    if("Short_Name" in this._api_data.data) {
-      display_name = this._api_data.data.Short_Name;
+    let keywordData = await this._api_object.get('data');
+    if("Short_Name" in keywordData) {
+      display_name = keywordData.Short_Name;
     } else {
-      display_name = String(this._api_data.data);
+      display_name = String(keywordData);
     }
-    this._html_repr.appendChild(document.createTextNode(`${this._api_data.kind}(${this._api_data.version}): ${display_name}`));
+    this._html_repr.appendChild(
+      document.createTextNode(
+        `${await this._api_object.get('kind')}(${await this._api_object.get('version')}): ${display_name}`));
   }
 });
 
-customElements.define("geospaas-parameter", class extends APIObject {
-  makeHtmlRepr() {
+customElements.define("geospaas-parameter", class extends APIObjectElement {
+  async makeHtmlRepr() {
     this._html_repr = document.createElement("div");
     let display_name = null;
-    if("standard_name" in this._api_data.data) {
-      display_name = this._api_data.data.standard_name;
-    } else if("short_name" in this._api_data.data) {
-      display_name = this._api_data.data.short_name;
+    let keywordData = await this._api_object.get('data');
+    if("standard_name" in keywordData) {
+      display_name = keywordData.standard_name;
+    } else if("short_name" in keywordData) {
+      display_name = keywordData.short_name;
     } else {
-      display_name = String(this._api_data.data);
+      display_name = String(keywordData);
     }
     this._html_repr.appendChild(document.createTextNode(display_name));
   }
@@ -199,7 +195,7 @@ function display_page(page) {
     let dataset;
     for(let dataset_json of page.results) {
       dataset = document.createElement("geospaas-dataset");
-      dataset.api_data = dataset_json;
+      dataset.api_object = dataset_json;
       newRow = datasets_table.querySelector('tbody').insertRow();
       newCell = newRow.insertCell();
       newCell.appendChild(dataset);
@@ -225,7 +221,7 @@ function display_page(page) {
   }
 }
 
-function get_datasets(url, request_parameters) {
+async function get_datasets(url, request_parameters) {
   let full_request_parameters = {
     ...request_parameters,
   };
@@ -242,21 +238,21 @@ function get_datasets(url, request_parameters) {
   if(tags.length !== 0) {
     let tag_ids = [];
     for(let tag of tags) {
-      tag_ids.push(tag.api_data.id);
+      tag_ids.push(await tag.api_object.get('id'));
     }
     full_request_parameters.tags__id__in = tag_ids.join(",");
   }
   if(keywords.length !== 0) {
     let keyword_ids = [];
     for(let keyword of keywords) {
-      keyword_ids.push(keyword.api_data.id);
+      keyword_ids.push(await keyword.api_object.get('id'));
     }
     full_request_parameters.keywords__id__in = keyword_ids.join(",");
   }
   if(parameters.length !== 0) {
     let parameter_ids = [];
     for(let parameter of parameters) {
-      parameter_ids.push(parameter.api_data.id);
+      parameter_ids.push(await parameter.api_object.get('id'));
     }
     full_request_parameters.parameters__id__in = parameter_ids.join(",");
   }
@@ -299,7 +295,7 @@ function make_selector_field(search_box, api_element_name, api_url, api_filter) 
         .then(response => response.json())
         .then(page => {
           for (let api_data of page.results) {
-            let api_element = APIObject.create(api_element_name, api_data);
+            let api_element = APIObjectElement.create(api_element_name, api_data);
             api_element.addEventListener("click", () => {
               add_search_element(api_element, selected_elements);
             });
@@ -321,10 +317,10 @@ function make_selector_field(search_box, api_element_name, api_url, api_filter) 
 
 function add_search_element(element, selected_elements) {
   for(let existing_element of selected_elements.childNodes) {
-    if(existing_element.api_data.id === element.api_data.id) {return null;}
+    if(existing_element.api_object.get('id') === element.api_object.get('id')) {return null;}
   }
   let selected_element = element.cloneNode(true);
-  selected_element.api_data = element.api_data;
+  selected_element.api_object = element.api_object;
   selected_elements.appendChild(selected_element);
 
   selected_element.style.marginRight = "4px";
