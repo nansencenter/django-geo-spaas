@@ -5,6 +5,22 @@
         <link rel="stylesheet" href="{% static 'base_viewer/styles.css' %}" >
     </head>
     <body>
+        <template id="geospaas-object-table-template">
+            <table id="geospaas-object">
+                <thead>
+                    <tr><th id="object-header" colspan="2"></th></tr>
+                </thead>
+                <tbody id="object-attributes">
+                </tbody>
+            </table>
+
+            <template id="attribute-template">
+                <tr id="attribute">
+                    <td id="attribute-name"></td>
+                    <td id="attribute-value"></td>
+                </tr>
+            </template>
+        </template>
         <div id="geospaas_apps">
             <div id="geospaas_sidebar">
                 {% block geospaas_sidebar %}

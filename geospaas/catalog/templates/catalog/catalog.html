@@ -10,23 +10,6 @@
     <script src='{% static "catalog/js/t-wkt.umd.js" %}'></script>
     <script src='{% static "catalog/js/catalog.js" %}' type=module></script>
 
-    <template id="geospaas-dataset">
-        <table id="dataset-table">
-            <thead>
-                <tr><th id="dataset-header" colspan="2"></th></tr>
-            </thead>
-            <tbody id="dataset-attributes">
-            </tbody>
-        </table>
-
-        <template id="attribute-row">
-            <tr>
-                <td id="attribute-name"></td>
-                <td id="attribute-value"></td>
-            </tr>
-        </template>
-    </template>
-
     <div id="dataset_search">
         <form id='dataset_search_form'>
             {% comment %} {% csrf_token %} {% endcomment %}
