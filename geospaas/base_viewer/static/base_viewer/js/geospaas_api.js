@@ -88,9 +88,7 @@ export class APIObject {
    */
   _isUrl(value) {
     return typeof value === 'string' && (
-      value.startsWith('http://') ||
-      value.startsWith('https://') ||
-      value.startsWith('/')
+      value.startsWith(`${window.location.protocol}//${window.location.host}`)
     );
   }
 
