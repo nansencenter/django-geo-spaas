@@ -6,21 +6,35 @@
     </head>
     <body>
         <template id="geospaas-object-table-template">
-            <table id="geospaas-object">
+            <table class="geospaas-object">
                 <thead>
-                    <tr><th id="object-header" colspan="2"></th></tr>
+                    <tr><th class="object-header" colspan="2"></th></tr>
                 </thead>
-                <tbody id="object-attributes">
+                <tbody class="object-attributes">
                 </tbody>
             </table>
 
             <template id="attribute-template">
-                <tr id="attribute">
-                    <td id="attribute-name"></td>
-                    <td id="attribute-value"></td>
+                <tr class="attribute">
+                    <td class="attribute-name"></td>
+                    <td class="attribute-value"></td>
                 </tr>
             </template>
         </template>
+
+        <template id="geospaas-object-div-template">
+            <div class="geospaas-object">
+                <div class="object-header"></div>
+                <div class="object-attributes"></div>
+            </div>
+            <template id="attribute-template">
+                <div class="attribute">
+                    <div class="attribute-name"></div>
+                    <div class="attribute-value"></div>
+                </div>
+            </template>
+        </template>
+
         <div id="geospaas_apps">
             <div id="geospaas_sidebar">
                 {% block geospaas_sidebar %}
