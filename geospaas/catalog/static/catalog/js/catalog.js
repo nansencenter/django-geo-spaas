@@ -1,8 +1,11 @@
 "use strict";
 
-import {APIObjectElement} from "/static/base_viewer/js/geospaas_api.js"
+import {
+  APIObjectElement,
+  APIObjectTableElement
+} from "/static/base_viewer/js/geospaas_api.js"
 
-class DatasetElement extends APIObjectElement {
+class DatasetElement extends APIObjectTableElement {
   constructor() {
     super();
     this._footprint = null;
@@ -20,26 +23,13 @@ class DatasetElement extends APIObjectElement {
         "tags": "Tags",
         "keywords": "Keywords",
         "parameters": "Parameters",
-      }
+      },
     }
     return super.create(api_object, defaultOptions/*Object.assign(options, defaultOptions)*/, elementType);
   }
 
-  getStyle() {
-    return `
-      table {
-        table-layout: fixed;
-        width: 100%;
-      }
-
-      table th {
-        font-weight: normal;
-        text-align: left;
-      }`;
-  }
-
   async display_footprint() {
-    let location = await this._api_object.get('location');
+    let location = await this.api_object.get('location');
     if(location != null) {
       if (location.startsWith("SRID")) {location = location.split(";")[1];}
       this._footprint = new L.geoJSON(
@@ -94,48 +84,6 @@ class DatasetElement extends APIObjectElement {
 }
 customElements.define("geospaas-dataset", DatasetElement);
 
-customElements.define("geospaas-tag", class extends APIObjectElement {
-  async makeHtmlRepr() {
-    this._html_repr = document.createElement("div");
-    this._html_repr.appendChild(
-      document.createTextNode(
-        `${await this._api_object.get('name')}: ${await this._api_object.get('value')}`));
-  }
-});
-
-customElements.define("geospaas-keyword", class extends APIObjectElement {
-  async makeHtmlRepr() {
-    this._html_repr = document.createElement("div");
-    let display_name = null;
-    let keywordData = await this._api_object.get('data');
-    if("Short_Name" in keywordData) {
-      display_name = keywordData.Short_Name;
-    } else {
-      display_name = String(keywordData);
-    }
-    this._html_repr.appendChild(
-      document.createTextNode(
-        `${await this._api_object.get('kind')}(${await this._api_object.get('version')}): ${display_name}`));
-  }
-});
-
-customElements.define("geospaas-parameter", class extends APIObjectElement {
-  async makeHtmlRepr() {
-    this._html_repr = document.createElement("div");
-    let display_name = null;
-    let keywordData = await this._api_object.get('data');
-    if("standard_name" in keywordData) {
-      display_name = keywordData.standard_name;
-    } else if("short_name" in keywordData) {
-      display_name = keywordData.short_name;
-    } else {
-      display_name = String(keywordData);
-    }
-    this._html_repr.appendChild(document.createTextNode(display_name));
-  }
-});
-
-
 function display_page(page) {
   // clear existing contents
   let datasets_table = document.getElementById("datasets_table");
@@ -180,41 +128,39 @@ async function get_datasets(url, request_parameters) {
   let polygon = document.getElementById("id_polygon").value;
   let time_coverage_start = document.getElementById("id_time_coverage_start").value;
   let time_coverage_end = document.getElementById("id_time_coverage_end").value;
-  let tags = document.getElementById("selected_geospaas-tag").childNodes;
-  let keywords = document.getElementById("selected_geospaas-keyword").childNodes;
-  let parameters = document.getElementById("selected_geospaas-parameter").childNodes;
 
   if(polygon) {full_request_parameters.location__intersects = polygon;}
   if(time_coverage_start) {full_request_parameters.time_coverage_end__gte = time_coverage_start;}
   if(time_coverage_end) {full_request_parameters.time_coverage_start__lte = time_coverage_end;}
-  if(tags.length !== 0) {
-    let tag_ids = [];
-    for(let tag of tags) {
-      tag_ids.push(await tag.api_object.get('id'));
+
+  let relatedSearchParameters = [
+    {selected: "selected_geospaas-tag", requestParam: "tags__id__in"},
+    {selected: "selected_geospaas-keyword", requestParam: "keywords__id__in"},
+    {selected: "selected_geospaas-parameter", requestParam: "parameters__id__in"},
+  ]
+
+  for (let relatedSearchParam of relatedSearchParameters) {
+    let selectedElements = Array.from(
+      document.getElementById(relatedSearchParam.selected).childNodes.values().map(
+        i=>i.childNodes.item(0)));
+    if(selectedElements.length !== 0) {
+      let selectedIds = [];
+      for(let selectedElement of selectedElements) {
+        selectedIds.push(await selectedElement.api_object.get('id'));
+      }
+      full_request_parameters[relatedSearchParam.requestParam] = selectedIds.join(",");
     }
-    full_request_parameters.tags__id__in = tag_ids.join(",");
   }
-  if(keywords.length !== 0) {
-    let keyword_ids = [];
-    for(let keyword of keywords) {
-      keyword_ids.push(await keyword.api_object.get('id'));
-    }
-    full_request_parameters.keywords__id__in = keyword_ids.join(",");
-  }
-  if(parameters.length !== 0) {
-    let parameter_ids = [];
-    for(let parameter of parameters) {
-      parameter_ids.push(await parameter.api_object.get('id'));
-    }
-    full_request_parameters.parameters__id__in = parameter_ids.join(",");
-  }
+
   fetch(`${url}?` + new URLSearchParams(full_request_parameters).toString())
     .then(response => response.json())
     .then(page => display_page(page))
     .catch(error => console.log(`${error}: Failed to get datasets`));
 }
 
-function make_selector_field(search_box, api_element_name, api_url, api_filter) {
+function make_selector_field(search_box,
+                             api_element_name, api_element_class, api_element_options,
+                             api_url, api_filter) {
   /* Make a text input field search for GeoSPaaS API objects to be used
      in the datasets search form */
   search_box.parentNode.style.display = "flex";
@@ -248,7 +194,7 @@ function make_selector_field(search_box, api_element_name, api_url, api_filter) 
         .then(response => response.json())
         .then(page => {
           for (let api_data of page.results) {
-            let api_element = APIObjectElement.create(api_data);
+            let api_element = api_element_class.create(api_data, api_element_options);
             api_element.addEventListener("click", () => {
               add_search_element(api_element, selected_elements);
             });
@@ -268,17 +214,18 @@ function make_selector_field(search_box, api_element_name, api_url, api_filter) 
   });
 }
 
-function add_search_element(element, selected_elements) {
-  for(let existing_element of selected_elements.childNodes) {
-    if(existing_element.api_object.get('id') === element.api_object.get('id')) {return null;}
+async function add_search_element(element, selected_elements) {
+  for(let existing_element of selected_elements.childNodes.values().map(i=>i.childNodes.item(0))) {
+    if(await existing_element.api_object.get('id') === await element.api_object.get('id')) {return null;}
   }
-  let selected_element = element.cloneNode(true);
-  selected_element.api_object = element.api_object;
-  selected_elements.appendChild(selected_element);
+  let selected_element = element.clone();
+  let selected_div = document.createElement('div');
+  selected_div.appendChild(selected_element);
+  selected_elements.appendChild(selected_div);
 
-  selected_element.style.marginRight = "4px";
-  selected_element.style.marginLeft = "4px";
-  selected_element.style.background = "#c2f3fc";
+  selected_div.style.marginRight = "4px";
+  selected_div.style.marginLeft = "4px";
+  selected_div.style.background = "#c2f3fc";
 
   // make close button that removes the tag
   let close_button = document.createElement("div");
@@ -287,12 +234,12 @@ function add_search_element(element, selected_elements) {
   close_button.style.color = "#018096";
   close_button.style.cursor = "pointer";
 
-  selected_element._html_repr.style.display = "flex";
+  selected_div.style.display = "flex";
   close_button.appendChild(document.createTextNode("X"));
   close_button.addEventListener("click", () => {
-    selected_element.parentNode.removeChild(selected_element);
+    selected_elements.removeChild(selected_div);
   });
-  selected_element._html_repr.appendChild(close_button);
+  selected_div.appendChild(close_button);
 }
 
 function clear_children(parent) {
@@ -326,14 +273,52 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // tag search field
   make_selector_field(
-    document.getElementById("id_tags"), "geospaas-tag",
+    document.getElementById("id_tags"),
+    "geospaas-tag", APIObjectElement, {
+      'getLabel': async (e) => {
+        return `${await e.api_object.get('name')}: ${await e.api_object.get('value')}`;
+      },
+      'css': '.object-attributes {display: none;}',
+    },
     `${window.location}api/tags/?`, "value__icontains");
+
   // keyword search field
   make_selector_field(
-    document.getElementById("id_keywords"), "geospaas-keyword",
+    document.getElementById("id_keywords"),
+    "geospaas-keyword", APIObjectElement, {
+      'getLabel': async (e) => {
+        let display_name = null;
+        let keywordData = await e.api_object.get('data');
+        let kind = await e.api_object.get('kind');
+        let version = await e.api_object.get('version');
+        if("Short_Name" in keywordData) {
+          display_name = keywordData.Short_Name;
+        } else {
+          display_name = String(keywordData);
+        }
+        return `${kind}(${version}): ${display_name}`;
+      },
+      'css': '.object-attributes {display: none;}',
+    },
     `${host}/vocabularies/api/keywords/?`, "data__icontains");
+
   // parameters search field
   make_selector_field(
-    document.getElementById("id_parameters"), "geospaas-parameter",
+    document.getElementById("id_parameters"),
+    "geospaas-parameter", APIObjectElement, {
+      'getLabel': async (e) => {
+        let display_name = null;
+        let keywordData = await e.api_object.get('data');
+        if("standard_name" in keywordData) {
+          display_name = keywordData.standard_name;
+        } else if("short_name" in keywordData) {
+          display_name = keywordData.short_name;
+        } else {
+          display_name = String(keywordData);
+        }
+        return display_name;
+      },
+      'css': '.object-attributes {display: none;}',
+    },
     `${host}/vocabularies/api/parameters/?`, "data__icontains");
 });

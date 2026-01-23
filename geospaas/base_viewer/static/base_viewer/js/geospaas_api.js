@@ -189,135 +189,170 @@ export class APIObject {
 
 
 export class APIObjectElement extends HTMLElement {
-    constructor() {
-      super();
-      this._api_object = null;
-      this._html_repr = null;
-      this._resolved = false;
-      this.getLabel = async e => await e.api_object.get('id');
-      this.excludeFields = ['url', 'id'];
-      this.fieldLabels = {};
-      this.fieldFormatters = {};
-    }
+  constructor() {
+    super();
+    this._api_object = null;
+    this._html_repr = null;
+    this._resolved = false;
+    this.templateId = 'geospaas-object-div-template';
+    this.getLabel = async e => await e.api_object.get('id');
+    this.excludeFields = ['url', 'id'];
+    this.fieldLabels = {};
+    this.fieldFormatters = {};
+    this.css = '';
+  }
 
-    static create(api_object, options={}, elementType='geospaas-object') {
-      let element = document.createElement(elementType);
-      element.api_object = api_object;
-      if(options.getLabel) element.getLabel = options.getLabel;
-      if(options.excludeFields) element.excludeFields = options.excludeFields;
-      if(options.fieldLabels) element.fieldLabels = options.fieldLabels;
-      if(options.fieldFormatters) element.fieldFormatters = options.fieldFormatters;
-      return element;
-    }
+  static create(api_object, options={}, elementType='geospaas-object') {
+    let element = document.createElement(elementType);
+    element.api_object = api_object;
+    if(options.getLabel) element.getLabel = options.getLabel;
+    if(options.excludeFields) element.excludeFields = options.excludeFields;
+    if(options.fieldLabels) element.fieldLabels = options.fieldLabels;
+    if(options.fieldFormatters) element.fieldFormatters = options.fieldFormatters;
+    if(options.css) element.css = options.css;
+    return element;
+  }
 
-    get api_object() {
-      return this._api_object;
-    }
+  clone() {
+    let element = this.cloneNode(true);
+    element.api_object = this.api_object;
+    element.getLabel = this.getLabel;
+    element.excludeFields = this.excludeFields;
+    element.fieldLabels = this.fieldLabels;
+    element.fieldFormatters = this.fieldFormatters;
+    element.css = this.css;
+    return element;
+  }
 
-    set api_object(data) {
-      if (data instanceof APIObject) {
-        this._api_object = data;
-      } else if (data && typeof data === 'object') {
-        // initialized with raw API data
-        this._api_object = new APIObject(null, data);
-      } else if (data && typeof data === 'string') {
-        // initialized with URL
-        this._api_object = new APIObject(data, null);
-      } else {
-        this._model = null;
-      }
-    }
+  get api_object() {
+    return this._api_object;
+  }
 
-    // Returns a list of HTML elements representing the value
-    _formatValue(key, value) {
-      if (this.fieldFormatters[key]) {
-        return this.fieldFormatters[key](value);
-      }
-
-      let values;
-      if (!Array.isArray(value)) {
-        values = [value];
-      } else {
-        values = value;
-      }
-
-      return values.map((i) => {
-        if (i instanceof APIObject) {
-          return APIObjectElement.create(i);
-        } else {
-          return document.createTextNode(String(i));
-        }
-      })
-    }
-
-    getFieldLabel(key) {
-      return this.fieldLabels[key] ?? key
-    }
-
-    async makeHtmlRepr() {
-      // create a table from a template
-      let apiObjectTemplate = document.importNode(
-        document.getElementById("geospaas-object-table-template").content,
-        true);
-      let apiObjectElement = apiObjectTemplate.getElementById("geospaas-object");
-      let header = apiObjectElement.querySelector("#object-header");
-      header.appendChild(document.createTextNode(await this.getLabel(this)));
-      let attributesElement = apiObjectElement.querySelector("#object-attributes");
-      attributesElement.hidden = true;
-      this._html_repr = apiObjectElement;
-
-      this.addEventListener("click", async () => {
-        if (!this._resolved) {
-          // populate attributes
-          let attributeTemplateContent = apiObjectTemplate.getElementById("attribute-template").content;
-          let newAttribute, attributeName, attributeValue, apiValue;
-          let apiData = await this.api_object.getAll();
-          for(const key in apiData ) {
-            if (this.excludeFields.includes(key)) continue;
-            apiValue = apiData[key];
-            if(apiValue && apiValue.length) {
-              newAttribute = document.importNode(attributeTemplateContent, true).getElementById("attribute");
-              attributeName = newAttribute.querySelector("#attribute-name");
-              attributeValue = newAttribute.querySelector("#attribute-value");
-
-              attributeName.appendChild(document.createTextNode(this.getFieldLabel(key)));
-              for (const htmlElement of this._formatValue(key, apiValue)) {
-                attributeValue.appendChild(document.createElement('p').appendChild(htmlElement))
-              }
-              attributesElement.appendChild(newAttribute);
-            }
-            this._resolved = true;
-          }
-        }
-      });
-
-      this.addEventListener("click", (event) => {
-        event.stopPropagation();
-        for(let tb of apiObjectElement.tBodies) {
-          if(tb.hidden) {tb.hidden = false} else {tb.hidden = true};
-        }
-      });
-    }
-
-    getStyle() {
-      return "";
-    }
-
-    async render() {
-      if(!this._html_repr){
-        await this.makeHtmlRepr();
-      }
-      const shadow = this.attachShadow({ mode: "open" });
-      shadow.appendChild(this._html_repr);
-
-      const sheet = new CSSStyleSheet();
-      sheet.replaceSync(this.getStyle());
-      shadow.adoptedStyleSheets = [sheet];
-    }
-
-    async connectedCallback() {
-      await this.render();
+  set api_object(data) {
+    if (data instanceof APIObject) {
+      this._api_object = data;
+    } else if (data && typeof data === 'object') {
+      // initialized with raw API data
+      this._api_object = new APIObject(null, data);
+    } else if (data && typeof data === 'string') {
+      // initialized with URL
+      this._api_object = new APIObject(data, null);
+    } else {
+      this._model = null;
     }
   }
 
+  // Returns a list of HTML elements representing the value
+  _formatValue(key, value) {
+    if (this.fieldFormatters[key]) {
+      return this.fieldFormatters[key](value);
+    }
+
+    let values;
+    if (!Array.isArray(value)) {
+      values = [value];
+    } else {
+      values = value;
+    }
+
+    return values.map((i) => {
+      if (i instanceof APIObject) {
+        return APIObjectElement.create(i);
+      } else {
+        return document.createTextNode(String(i));
+      }
+    })
+  }
+
+  getFieldLabel(key) {
+    return this.fieldLabels[key] ?? key
+  }
+
+  async makeHtmlRepr() {
+    // create a table from a template
+    let apiObjectTemplate = document.importNode(
+      document.getElementById(this.templateId).content,
+      true);
+
+    let apiObjectElement = apiObjectTemplate.querySelector(".geospaas-object");
+    let header = apiObjectElement.querySelector(".object-header");
+    if (header) header.appendChild(document.createTextNode(await this.getLabel(this)));
+
+    let attributesElement = apiObjectElement.querySelector(".object-attributes");
+    if (!attributesElement) return;
+
+    this._html_repr = apiObjectElement;
+
+    this.addEventListener("click", async () => {
+      if (!this._resolved) {
+        // populate attributes
+        let attributeTemplateContent = apiObjectTemplate.getElementById(
+          "attribute-template").content;
+        let newAttribute, attributeName, attributeValue, apiValue;
+        let apiData = await this.api_object.getAll();
+        for(const key in apiData ) {
+          if (this.excludeFields.includes(key)) continue;
+          apiValue = apiData[key];
+          if(apiValue && apiValue.length) {
+            newAttribute = document.importNode(attributeTemplateContent, true)
+                                    .querySelector(".attribute");
+            attributeName = newAttribute.querySelector(".attribute-name");
+            attributeValue = newAttribute.querySelector(".attribute-value");
+
+            attributeName.appendChild(document.createTextNode(this.getFieldLabel(key)));
+            for (const htmlElement of this._formatValue(key, apiValue)) {
+              attributeValue.appendChild(document.createElement('p').appendChild(htmlElement));
+            }
+            attributesElement.appendChild(newAttribute);
+          }
+          this._resolved = true;
+        }
+      }
+    });
+  }
+
+  async render() {
+    if(!this._html_repr){
+      await this.makeHtmlRepr();
+    }
+    const shadow = this.attachShadow({ mode: "open" });
+    shadow.appendChild(this._html_repr);
+
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(this.css);
+    shadow.adoptedStyleSheets = [sheet];
+  }
+
+  async connectedCallback() {
+    await this.render();
+  }
+}
 customElements.define("geospaas-object", APIObjectElement);
+
+
+export class APIObjectTableElement extends APIObjectElement {
+  constructor() {
+    super();
+    this.templateId = 'geospaas-object-table-template';
+    this.css = `
+      table {
+        table-layout: fixed;
+        width: 100%;
+      }
+      table th {
+        font-weight: normal;
+        text-align: left;
+      }`
+  }
+
+  async makeHtmlRepr() {
+    await super.makeHtmlRepr();
+    const attributesElement = this._html_repr.querySelector(".object-attributes");
+    attributesElement.hidden = true;
+    this.addEventListener("click", (event) => {
+      event.stopPropagation();
+      attributesElement.hidden = !attributesElement.hidden;
+    });
+  }
+}
+customElements.define("geospaas-object-table", APIObjectTableElement);
