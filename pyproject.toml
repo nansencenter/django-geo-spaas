@@ -34,7 +34,7 @@ dependencies = [
     "gdal",
     "nansat",
     "netCDF4",
-    "pythesint",
+    "pythesint==1.7.3.dev0",
 ]
 urls = {Repository = "https://github.com/nansencenter/django-geo-spaas"}
 dynamic = ["version"]

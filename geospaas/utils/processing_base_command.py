@@ -1,8 +1,6 @@
 import os
-import glob
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone
 
-from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.gis.geos import GEOSGeometry, Polygon, GEOSException
 from django.contrib.gis.gdal import GDALException
@@ -12,7 +10,7 @@ from geospaas.catalog.models import Dataset
 def valid_date(s):
     """ Validate input datestring """
     try:
-        return dt.strptime(s, "%Y-%m-%d")
+        return dt.strptime(s, "%Y-%m-%d").astimezone(timezone.utc)
     except:# ValueError:
         raise CommandError("Not a valid date: '{0}'.".format(s))
 
@@ -158,6 +156,6 @@ class ProcessingBaseCommand(BaseCommand):
 
         geometry = self.geometry_from_options(extent=extent, geojson=geojson)
         if geometry is not None:
-            datasets = datasets.filter(geographic_location__geometry__intersects=geometry)
+            datasets = datasets.filter(location__intersects=geometry)
 
         return datasets
