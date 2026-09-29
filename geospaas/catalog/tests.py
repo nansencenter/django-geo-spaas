@@ -50,9 +50,9 @@ class DatasetTests(TestCase):
                 summary = 'This is a quite short summary about the test' \
                             ' dataset.',
                 time_coverage_start=timezone.datetime(2010,1,1,
-                    tzinfo=timezone.utc),
+                    tzinfo=timezone.timezone.utc),
                 time_coverage_end=timezone.datetime(2010,1,2,
-                    tzinfo=timezone.utc),
+                    tzinfo=timezone.timezone.utc),
                 location='SRID=4326;POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))')
         ds.save()
         self.assertEqual(ds.entry_id, id)
@@ -85,9 +85,9 @@ class DatasetTests(TestCase):
                 summary = 'This is a quite short summary about the test' \
                             ' dataset.',
                 time_coverage_start=timezone.datetime(2010,1,1,
-                    tzinfo=timezone.utc),
+                    tzinfo=timezone.timezone.utc),
                 time_coverage_end=timezone.datetime(2010,1,2,
-                    tzinfo=timezone.utc),
+                    tzinfo=timezone.timezone.utc),
                 location='SRID=4326;POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))')
         with self.assertRaises(ValidationError):
             ds.full_clean()
@@ -101,9 +101,9 @@ class DatasetTests(TestCase):
                 summary = 'This is a quite short summary about the test' \
                             ' dataset.',
                 time_coverage_start=timezone.datetime(2010,1,1,
-                    tzinfo=timezone.utc),
+                    tzinfo=timezone.timezone.utc),
                 time_coverage_end=timezone.datetime(2010,1,2,
-                    tzinfo=timezone.utc),
+                    tzinfo=timezone.timezone.utc),
                 location='SRID=4326;POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))')
         ds.full_clean()
         self.assertEqual(ds.entry_id, id)
