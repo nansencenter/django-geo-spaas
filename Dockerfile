@@ -18,7 +18,7 @@ RUN apt update \
     django==5.2.17 \
     django-forms-bootstrap==3.1.0 \
     django-leaflet==0.34.0 \
-    psycopg2==2.9.13 \
+    psycopg==3.3.6 \
     thredds_crawler==1.5.4 \
 &&  apt remove -y g++ && apt autoremove -y \
 &&  apt clean && rm -rf /var/lib/apt/lists/* \
