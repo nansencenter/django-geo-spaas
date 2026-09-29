@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, re_path
 
 from django.contrib import admin
 admin.autodiscover()
@@ -7,6 +7,6 @@ app_name = 'geospaas'
 urlpatterns = [
     # Examples:
     #
-    #url(r'adas/', include('geospaas.adas_viewer.urls')),
-    url(r'^', include('geospaas.base_viewer.urls')),
+    #re_path(r'adas/', include('geospaas.adas_viewer.urls')),
+    re_path(r'^', include('geospaas.base_viewer.urls')),
 ]
