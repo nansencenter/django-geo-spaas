@@ -16,7 +16,7 @@ class BaseSearchForm(forms.Form):
                                   }),
                                   required=False)
     time_coverage_start = forms.DateTimeField(
-        initial=timezone.datetime(2000, 1, 1, tzinfo=timezone.utc))
+        initial=timezone.datetime(2000, 1, 1, tzinfo=timezone.timezone.utc))
     time_coverage_end = forms.DateTimeField(initial=timezone.now())
 
     def filter(self, ds):

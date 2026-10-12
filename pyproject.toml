@@ -30,7 +30,7 @@ classifiers = [
 dependencies = [
     "django-forms-bootstrap",
     "django-leaflet",
-    "django<4",
+    "django<6",
     "gdal",
     "nansat",
     "netCDF4",
