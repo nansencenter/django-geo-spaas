@@ -13,14 +13,6 @@ Subpackages
 Submodules
 ==========
 
-geospaas.catalog.managers
--------------------------
-
-.. automodule:: geospaas.catalog.managers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 geospaas.catalog.models
 -----------------------
 

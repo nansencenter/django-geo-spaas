@@ -5,7 +5,7 @@
     {% endblock ds_detailed_info %}
     {% for url in ds.dataseturi_set.all %}
     <div class="attr_title">Address:</div>
-    {% if show_local_address or url.service != local_file_service %}
+    {% if show_local_address %}
     <div class="attr_content">{{ url.uri|escape|urlize}} </div>
     {% else %}
     <div class="attr_content">hidden local address of dataset</div>

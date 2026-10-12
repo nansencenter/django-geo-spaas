@@ -30,11 +30,11 @@ classifiers = [
 dependencies = [
     "django-forms-bootstrap",
     "django-leaflet",
-    "django<4",
+    "django<6",
     "gdal",
     "nansat",
     "netCDF4",
-    "pythesint",
+    "pythesint==1.7.3.dev0",
 ]
 urls = {Repository = "https://github.com/nansencenter/django-geo-spaas"}
 dynamic = ["version"]

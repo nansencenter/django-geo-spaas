@@ -1,18 +1,13 @@
 """Unit tests for the geospaas.vocabularies app"""
+from unittest.mock import MagicMock, call, patch
 
 import django.db.models
 import django.db.utils
 from django.core.management import call_command
 from django.test import TestCase
-from mock.mock import MagicMock, call, patch
 
 from geospaas.vocabularies.managers import VocabularyManager
-from geospaas.vocabularies.models import (DataCenter, HorizontalDataResolution,
-                                          Instrument, ISOTopicCategory,
-                                          Location, Parameter, Platform,
-                                          Project, ScienceKeyword,
-                                          TemporalDataResolution,
-                                          VerticalDataResolution)
+from geospaas.vocabularies.models import (Keyword, Parameter, validate_parameter, ValidationError)
 
 
 class VocabulariesTestBase(object):
@@ -25,7 +20,7 @@ class VocabulariesTestBase(object):
         mocked_methods = {}
         for i, vocabulary_name in enumerate(self.model.objects.vocabularies):
             mocked_methods[vocabulary_name] = {
-                'get_list': MagicMock(return_value=self.model_lists[i]),
+                'get_list': MagicMock(return_value=[]),
                 'update': MagicMock(return_value=None)
             }
         methods_patcher = patch.object(self.model.objects, 'vocabularies', mocked_methods)
@@ -92,7 +87,8 @@ class VocabularyManagerTests(TestCase):
             },
             'voc2': {
                 'get_list': MagicMock(),
-                'update': MagicMock()
+                'update': MagicMock(),
+                'get_version': lambda: 'vFoo',
             }
         }
 
@@ -111,10 +107,8 @@ class VocabularyManagerTests(TestCase):
                      manager.vocabularies['voc2']['update'],
                      True, version='10.3')
             ])
-            mock_create_instances.assert_called_with([
-                {'standard_name': 'foo'},
-                {'standard_name': 'bar'}
-            ])
+            mock_create_instances.assert_called_with(
+                'voc2', [{'standard_name': 'foo'}, {'standard_name': 'bar'}], 'vFoo')
 
     def test_get_or_create(self):
         """Test that the model fields are correctly mapped to the GCMD
@@ -144,433 +138,89 @@ class VocabularyManagerTests(TestCase):
             objects = TestVocabularyManager()
 
         with patch('geospaas.vocabularies.managers.models.Manager.get_or_create',
-                   return_value=(True, None)) as mock_get_or_create:
+                   return_value=(True, None)) as mock_get_or_create, \
+             patch('builtins.print'):
             manager = TestModel.objects
             manager.create_from_vocabularies()
             mock_get_or_create.assert_has_calls((
-                call(key1='val11', key2='val12'),
-                call(key1='val21', key2='val22_looo'),))
+                call(version=None, kind='test_voc', data={'key1': 'val11', 'key2': 'val12'}),
+                call(version=None, kind='test_voc', data={'key1': 'val21',
+                                                          'key3': 'val22_loooooooong'})))
+
+
+class KeywordTests(VocabulariesTestBase, TestCase):
+    """Tests """
+    model = Keyword
+
+    def test_str(self):
+        """Test string representation of a Keyword object"""
+        self.assertEqual(
+            str(Keyword(version='v1', kind='test', data={'foo': 'bar'})),
+            'Keyword object (None)')
+        self.assertEqual(
+            str(Keyword(version='v1', kind='test', data={'foo': 'bar', 'Short_Name': 'baz'})),
+            'baz')
 
 
 class ParameterTests(VocabulariesTestBase, TestCase):
     """Unit tests for the Parameter model"""
 
     model = Parameter
-    model_lists = [
-        [{
-            'standard_name': 'surface_radial_doppler_sea_water_velocity',
-            'long_name': 'Radial Doppler Current',
-            'short_name': 'Ur',
-            'units': 'm s-1',
-            'minmax': '-1 1',
-            'colormap': 'jet'
-        }],
-        []
-    ]
-
-    def test_get_parameter(self):
-        """Test retrieval of a Parameter object in the database"""
-        parameter = Parameter.objects.get(standard_name=(
-            'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'))
-        self.assertEqual(parameter.units, 'Hz')
-
-    def test_get_or_create(self):
-        """
-        The get_or_create() method must not create a new object in the database if one exists with
-        the same parameters
-        """
-        parameter0 = Parameter.objects.get(standard_name=(
-            'surface_backwards_doppler_frequency_shift_of_radar_wave_due_to_surface_velocity'))
-        attributes = dict(
-            standard_name=parameter0.standard_name,
-            short_name=parameter0.short_name,
-            units=parameter0.units)
-        parameter2, created = Parameter.objects.get_or_create(attributes)
-        self.assertEqual(parameter0, parameter2)
-        self.assertFalse(created)
 
     def test_unique_constraint(self):
         """Check that the same Parameter can't be inserted twice"""
         with self.assertRaises(django.db.utils.IntegrityError):
             self._insert_twice({
-                'standard_name': 'test', 'short_name': 'test', 'units': 'test',
-                'gcmd_science_keyword': ScienceKeyword.objects.latest('id')
+                'version': '1.0',
+                'kind': 'test',
+                'data': {'standard_name': 'test', 'short_name': 'test', 'units': 'test'},
+                'gcmd_science_keyword': Keyword.objects.first(),
             })
 
+    def test_get_by_natural_key(self):
+        """Test getting a Parameter by natural key"""
+        self.assertEqual(
+            Parameter.objects.get_by_natural_key('baz'),
+            Parameter.objects.get(id=1))
 
-class DataCenterTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the DataCenter model"""
-    model = DataCenter
-    model_lists = [[{
-        'Bucket_Level0': 'ACADEMIC',
-        'Bucket_Level1': 'OR-STATE/EOARC',
-        'Bucket_Level2': '',
-        'Bucket_Level3': '',
-        'Short_Name': 'OR-STATE/EOARC',
-        'Long_Name': 'Eastern Oregon Agriculture Research Center, Oregon State University',
-        'Data_Center_URL': 'http://oregonstate.edu/dept/eoarcunion/'
-    }]]
+    def test_validate_parameter(self):
+        """Test validation of the data field"""
+        self.assertIsNone(validate_parameter({'standard_name': 'foo'}))
+        with self.assertRaises(ValidationError):
+            validate_parameter('foo')
 
-    def test_get_datacenter(self):
-        """Test retrieval of a DataCenter object in the database"""
-        data_center = DataCenter.objects.get(short_name='NERSC')
-        # OBS: Note error in the long name - they have been notified and this
-        # test should fail at some point...
-        self.assertEqual(data_center.long_name, 'Nansen Environmental and Remote Sensing Centre')
+    def test_str(self):
+        """Test getting the string representation of a Parameter"""
+        self.assertEqual(
+            str(Parameter(version='v1', kind='test', data={'standard_name': 'foo'})), 'foo')
 
-    def test_get_or_create(self):
-        """
-        The get_or_create() method must not create a new object in the database if one exists with
-        the same parameters
-        """
-        data_center0 = DataCenter.objects.get(short_name='NERSC')
-        attributes = dict(
-            Bucket_Level0=data_center0.bucket_level0,
-            Bucket_Level1=data_center0.bucket_level1,
-            Bucket_Level2=data_center0.bucket_level2,
-            Bucket_Level3=data_center0.bucket_level3,
-            Short_Name=data_center0.short_name,
-            Long_Name=data_center0.long_name,
-            Data_Center_URL=data_center0.data_center_url)
-        data_center2, created = DataCenter.objects.get_or_create(attributes)
-        self.assertEqual(data_center0, data_center2)
-        self.assertFalse(created)
-
-    def test_unique_constraint(self):
-        """Check that the same DataCenter can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({
-                'bucket_level0': 'test',
-                'bucket_level1': 'test',
-                'bucket_level2': 'test',
-                'bucket_level3': 'test',
-                'short_name': 'test',
-                'long_name': 'test',
-                'data_center_url': 'test'
-            })
-
-
-class InstrumentTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the Instrument model"""
-
-    model = Instrument
-    model_lists = [[{
-        'Category': 'Earth Remote Sensing Instruments',
-        'Class': 'Active Remote Sensing',
-        'Type': 'Altimeters',
-        'Subtype': 'Lidar/Laser Altimeters',
-        'Short_Name': 'AIRBORNE LASER SCANNER',
-        'Long_Name': ''
-    }]]
-
-    def test_get_instrument(self):
-        """Test retrieval of a Instrument object in the database"""
-        instrument = Instrument.objects.get(short_name='ASAR')
-        self.assertEqual(instrument.long_name, 'Advanced Synthetic Aperature Radar')
-
-    def test_get_or_create(self):
-        """
-        The get_or_create() method must not create a new object in the database if one exists with
-        the same parameters
-        """
-        instrument0 = Instrument.objects.get(short_name='ASAR')
-        attributes = dict(
-            Category=instrument0.category,
-            Class=instrument0.instrument_class,
-            Type=instrument0.type,
-            Subtype=instrument0.subtype,
-            Short_Name=instrument0.short_name,
-            Long_Name=instrument0.long_name)
-        instrument1, created = Instrument.objects.get_or_create(attributes)
-        self.assertEqual(instrument0, instrument1)
-        self.assertFalse(created)
-
-    def test_unique_constraint(self):
-        """Check that the same Instrument can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({
-                'category': 'test',
-                'instrument_class': 'test',
-                'type': 'test',
-                'subtype': 'test',
-                'short_name': 'test',
-                'long_name': 'test'
-            })
-
-
-class ISOTopicCategoryTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the ISOTopicCategory model"""
-
-    model = ISOTopicCategory
-    model_lists = [[{'iso_topic_category': 'Biota'}]]
-
-    def test_get_iso_category(self):
-        """Test retrieval of a ISOTopicCategory object in the database"""
-        cat = ISOTopicCategory.objects.get(name='Oceans')
-        self.assertEqual(cat.name, 'Oceans')
-
-    def test_get_or_create(self):
-        """
-        The get_or_create() method must not create a new object in the database if one exists with
-        the same parameters
-        """
-        iso_topic_category0 = ISOTopicCategory.objects.get(name='Oceans')
-        attributes = dict(iso_topic_category=iso_topic_category0.name)
-        iso_topic_category2, created = ISOTopicCategory.objects.get_or_create(attributes)
-        self.assertEqual(iso_topic_category0, iso_topic_category2)
-        self.assertFalse(created)
-
-    def test_unique_constraint(self):
-        """Check that the same ISOTopicCategory can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({'name': 'test'})
-
-
-class LocationTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the Location model"""
-
-    model = Location
-    model_lists = [[{
-        'Location_Category': 'CONTINENT',
-        'Location_Type': 'AFRICA',
-        'Location_Subregion1':
-        'CENTRAL AFRICA',
-        'Location_Subregion2':
-        'ANGOLA',
-        'Location_Subregion3': ''
-    }]]
-
-    def test_get_location(self):
-        """Test retrieval of a Location object in the database"""
-        location = Location.objects.get(subregion2='KENYA')
-        self.assertEqual(location.type, 'AFRICA')
-
-    def test_get_or_create(self):
-        """
-        The get_or_create() method must not create a new object in the database if one exists with
-        the same parameters
-        """
-        location0 = Location.objects.get(subregion2='KENYA')
-        attributes = dict(
-            Location_Category=location0.category,
-            Location_Type=location0.type,
-            Location_Subregion1=location0.subregion1,
-            Location_Subregion2=location0.subregion2,
-            Location_Subregion3=location0.subregion3)
-        location2, created = Location.objects.get_or_create(attributes)
-        self.assertEqual(location0, location2)
-        self.assertFalse(created)
-
-    def test_unique_constraint(self):
-        """Check that the same Location can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({
-                'category': 'test',
-                'type': 'test',
-                'subregion1': 'test',
-                'subregion2': 'test',
-                'subregion3': 'test'
-            })
-
-
-class PlatformTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the Platform model"""
-
-    model = Platform
-    model_lists = [[{
-        'Category': 'Aircraft',
-        'Series_Entity': '',
-        'Short_Name': 'A340-600',
-        'Long_Name': 'Airbus A340-600'
-    }]]
-
-    def test_get_platform(self):
-        """Test retrieval of a Platform object in the database"""
-        platform = self.model.objects.get(short_name='ENVISAT')
-        self.assertEqual(platform.category, 'Earth Observation Satellites')
-
-    def test_get_or_create(self):
-        """
-        The get_or_create() method must not create a new object in the database if one exists with
-        the same parameters
-        """
-        platform0 = self.model.objects.get(short_name='ENVISAT')
-        attributes = dict(
-            Category=platform0.category,
-            Series_Entity=platform0.series_entity,
-            Short_Name=platform0.short_name,
-            Long_Name=platform0.long_name)
-        platform2, created = Platform.objects.get_or_create(attributes)
-        self.assertEqual(platform0, platform2)
-        self.assertFalse(created)
-
-    def test_unique_constraint(self):
-        """Check that the same Platform can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({
-                'category': 'test',
-                'series_entity': 'test',
-                'short_name': 'test',
-                'long_name': 'test'
-            })
-
-
-class ProjectTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the Project model"""
-
-    model = Project
-    model_lists = [[{
-        'Bucket': 'A - C',
-        'Short_Name': 'AAE',
-        'Long_Name': 'Australasian Antarctic Expedition of 1911-14'
-    }]]
-
-    def test_get_project(self):
-        """Test retrieval of a Project object in the database"""
-        project = self.model.objects.get(short_name='ACSOE')
-        self.assertEqual(project.long_name,
-                         'Atmospheric Chemistry Studies in the Oceanic Environment')
-
-    def test_unique_constraint(self):
-        """Check that the same Project can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({
-                'bucket': 'test',
-                'short_name': 'test',
-                'long_name': 'test'
-            })
-
-
-class ScienceKeywordTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the ScienceKeyword model"""
-
-    model = ScienceKeyword
-    model_lists = [[{
-        'Category': 'EARTH SCIENCE SERVICES',
-        'Topic': 'DATA ANALYSIS AND VISUALIZATION',
-        'Term': 'CALIBRATION/VALIDATION',
-        'Variable_Level_1': 'CALIBRATION',
-        'Variable_Level_2': '',
-        'Variable_Level_3': '',
-        'Detailed_Variable': ''
-    }]]
-
-    def test_get_science_keyword(self):
-        """Test retrieval of a ScienceKeyword object in the database"""
-        keyword = self.model.objects.get(variable_level_1='SIGMA NAUGHT')
-        self.assertEqual(keyword.topic, 'SPECTRAL/ENGINEERING')
-
-    def test_unique_constraint(self):
-        """Check that the same ScienceKeyword can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({
-                'category': 'test',
-                'topic': 'test',
-                'term': 'test',
-                'variable_level_1': 'test',
-                'variable_level_2': 'test',
-                'variable_level_3': 'test',
-                'detailed_variable': 'test'
-            })
-
-
-class TemporalDataResolutionTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the TemporalDataResolution model"""
-
-    model = TemporalDataResolution
-    model_lists = [[{'Temporal_Resolution_Range': '1 minute - < 1 hour'}]]
-
-    def test_get_temporal_range(self):
-        """Test retrieval of a TemporalDataResolution object in the database"""
-        temporal_resolution = self.model.objects.get(range='1 minute - < 1 hour')
-        self.assertEqual(temporal_resolution.range, '1 minute - < 1 hour')
-
-    def test_unique_constraint(self):
-        """Check that the same TemporalDataResolution can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({'range': 'test'})
-
-
-class HorizontalDataResolutionTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the HorizontalDataResolution model"""
-
-    model = HorizontalDataResolution
-    model_lists = [[{
-        'Horizontal_Resolution_Range': '1 km - < 10 km or approximately .01 degree - < .09 degree'
-    }]]
-
-    def test_get_horizontal_range(self):
-        """Test retrieval of a HorizontalDataResolution object in the database"""
-        horizontal_resolution = self.model.objects.get(range='< 1 meter')
-        self.assertEqual(horizontal_resolution.range, '< 1 meter')
-
-    def test_unique_constraint(self):
-        """Check that the same HorizontalDataResolution can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({'range': 'test'})
-
-
-class VerticalDataResolutionTests(VocabulariesTestBase, TestCase):
-    """Unit tests for the VerticalDataResolution model"""
-
-    model = VerticalDataResolution
-    model_lists = [[{'Vertical_Resolution_Range': '1 meter - < 10 meters'}]]
-
-    def test_get_vertical_range(self):
-        """Test retrieval of a VerticalDataResolution object in the database"""
-        vertical_resolution = self.model.objects.get(range='10 meters - < 30 meters')
-        self.assertEqual(vertical_resolution.range, '10 meters - < 30 meters')
-
-    def test_unique_constraint(self):
-        """Check that the same VerticalDataResolution can't be inserted twice"""
-        with self.assertRaises(django.db.utils.IntegrityError):
-            self._insert_twice({'range': 'test'})
+    def test_natural_key(self):
+        """Test getting the natural key of a Parameter"""
+        self.assertEqual(
+            Parameter(version='v1', kind='test', data={'standard_name': 'foo'}).natural_key(),
+            'foo')
 
 
 class CommandsTests(TestCase):
     """Unit tests for the custom commands of the vocabularies app"""
 
     def setUp(self):
-        return_value = [{'Revision': '2019-02-13 08:48:55'}]
-        models = [
-            Parameter,
-            DataCenter,
-            HorizontalDataResolution,
-            Instrument,
-            ISOTopicCategory,
-            Location,
-            Platform,
-            Project,
-            ScienceKeyword,
-            TemporalDataResolution,
-            VerticalDataResolution,
-        ]
-        self.get_list_mocks = []
-        self.update_mocks = []
-        for model in models:
-            mocked_vocabulary_methods = {}
-            for vocabulary_name in model.objects.vocabularies:
-                get_list_mock = MagicMock(return_value=return_value)
-                update_mock = MagicMock(return_value=None)
-                mocked_vocabulary_methods[vocabulary_name] = {
-                    'get_list': get_list_mock,
-                    'update': update_mock
-                }
-                self.get_list_mocks.append(get_list_mock)
-                self.update_mocks.append(update_mock)
-            patcher = patch.object(model.objects, 'vocabularies', mocked_vocabulary_methods)
-            self.vocabulary_mocks = patcher.start()
+        managers = ('geospaas.vocabularies.managers.KeywordManager',
+                    'geospaas.vocabularies.managers.ParameterManager')
+        self.mocks_create_from_voc = []
+        for manager in managers:
+            patcher = patch(f"{manager}.create_from_vocabularies")
+            self.mocks_create_from_voc.append(patcher.start())
             self.addCleanup(patcher.stop)
 
     def test_command_update_vocabularies(self):
         """Check that the command does not update the vocabularies if they are present"""
         call_command('update_vocabularies')
-        # check that get_list was called only once
-        for mock in self.get_list_mocks:
-            mock.assert_called()
-        # check that update was never called
-        for mock in self.update_mocks:
-            mock.assert_not_called()
+        for mock_create_from_voc in self.mocks_create_from_voc:
+            mock_create_from_voc.assert_called_once()
+            _, kwargs = mock_create_from_voc.call_args_list[0]
+            self.assertFalse(kwargs['force'])
+            self.assertIsNone(kwargs['versions'])
 
     def test_command_update_vocabularies_force(self):
         """
@@ -578,9 +228,18 @@ class CommandsTests(TestCase):
         specified
         """
         call_command('update_vocabularies', '--force')
-        # check that get_list was called only once
-        for mock in self.get_list_mocks:
-            mock.assert_called()
-        # check that update was called
-        for mock in self.update_mocks:
-            mock.assert_called()
+        for mock_create_from_voc in self.mocks_create_from_voc:
+            mock_create_from_voc.assert_called_once()
+            _, kwargs = mock_create_from_voc.call_args_list[0]
+            self.assertTrue(kwargs['force'])
+            self.assertIsNone(kwargs['versions'])
+
+    def test_command_update_vocabularies_versions(self):
+        """Check that the command updates the vocabularies with the
+        provided versions
+        """
+        call_command('update_vocabularies', '--versions', 'foo=1.0.0', 'bar=2.0.0')
+        for mock_create_from_voc in self.mocks_create_from_voc:
+            mock_create_from_voc.assert_called_once()
+            _, kwargs = mock_create_from_voc.call_args_list[0]
+            self.assertDictEqual(kwargs['versions'], {'foo': '1.0.0', 'bar': '2.0.0'})
