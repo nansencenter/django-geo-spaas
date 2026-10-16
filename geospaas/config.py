@@ -1,32 +1,35 @@
 import importlib
-import itertools
 import logging
-import pkgutil
-from pathlib import Path
+import types
+import typing
 
-import geospaas
+from django.apps import apps
+
 
 logger = logging.getLogger(__name__)
 
 
-def get_plugins(exclude=None):
+def get_plugins(exclude:typing.Iterable[str]=None) -> set[str]:
     exclude = [] if exclude is None else exclude
-    potential_plugins = itertools.chain(
-        pkgutil.iter_modules(geospaas.__path__, prefix='geospaas.'),
-        pkgutil.iter_modules())
-    web_plugins = []
-    cli_plugins = []
-    for _, name, ispkg in potential_plugins:
-        if ispkg and name.startswith('geospaas') and name not in exclude:
-            package = importlib.import_module(name)
-            module_files = [p.name for p in Path(package.__path__[0]).iterdir()]
-            if "web_plugin.py" in module_files:
-                web_plugins.append(f"{name}.web_plugin")
-            if "cli_plugin.py" in module_files:
-                cli_plugins.append(f"{name}.cli_plugin")
-    return web_plugins, cli_plugins
+    plugins = set()
+    for app_config in apps.app_configs.values():
+        if app_config.name.startswith('geospaas') and app_config.name not in exclude:
+            plugins.add(app_config.name)
+    return plugins
 
-web_plugins, cli_plugins = get_plugins(exclude=['geospaas.base_viewer'])
+
+def get_plugins_urls() -> set[types.ModuleType]:
+    urls_modules = set()
+    for module_name in plugins:
+        try:
+            urls_module = importlib.import_module(f"{module_name}.urls")
+            urls_modules.add(urls_module)
+        except ModuleNotFoundError:
+            logger.debug("%s.urls not found", module_name)
+    return urls_modules
+
+
+plugins = get_plugins(exclude=['geospaas', 'geospaas.base_viewer'])
 
 
 if __name__ == '__main__':
