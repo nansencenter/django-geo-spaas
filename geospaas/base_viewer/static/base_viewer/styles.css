@@ -18,7 +18,7 @@ html, body {
     display: grid;
     height: 100%;
     width: 100%;
-    grid-template-columns: 5% auto;
+    grid-template-columns: 10% auto;
     grid-template-rows: minmax(0, 1fr);
     grid-gap: 10px;
 }
