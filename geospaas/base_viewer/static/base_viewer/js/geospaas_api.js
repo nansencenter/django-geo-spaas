@@ -268,6 +268,41 @@ export class APIObjectElement extends HTMLElement {
     return this.fieldLabels[key] ?? key
   }
 
+  async resolve() {
+    if (!this._resolved) {
+      let apiObjectTemplate = document.importNode(
+        document.getElementById(this.templateId).content,
+        true);
+      // populate attributes
+      let attributeTemplateContent = apiObjectTemplate.getElementById(
+        "attribute-template").content;
+      let newAttribute, attributeName, attributeValue, apiValue;
+      let apiData = await this.api_object.getAll();
+      for (const key in apiData) {
+        if (this.excludeFields.includes(key)) continue;
+        apiValue = apiData[key];
+        if (apiValue && apiValue.length) {
+          newAttribute = document.importNode(attributeTemplateContent, true)
+            .querySelector(".attribute");
+          attributeName = newAttribute.querySelector(".attribute-name");
+          attributeValue = newAttribute.querySelector(".attribute-value");
+
+          attributeName.appendChild(document.createTextNode(this.getFieldLabel(key)));
+          for (const htmlElement of this._formatValue(key, apiValue)) {
+            attributeValue.appendChild(document.createElement('p').appendChild(htmlElement));
+          }
+          this._html_repr.querySelector(".object-attributes").appendChild(newAttribute);
+        }
+        this._resolved = true;
+      }
+    }
+  }
+
+  async clickHandler(event) {
+    event.stopPropagation();
+    await this.resolve();
+  }
+
   async makeHtmlRepr() {
     // create a table from a template
     let apiObjectTemplate = document.importNode(
@@ -283,32 +318,7 @@ export class APIObjectElement extends HTMLElement {
 
     this._html_repr = apiObjectElement;
 
-    this.addEventListener("click", async () => {
-      if (!this._resolved) {
-        // populate attributes
-        let attributeTemplateContent = apiObjectTemplate.getElementById(
-          "attribute-template").content;
-        let newAttribute, attributeName, attributeValue, apiValue;
-        let apiData = await this.api_object.getAll();
-        for(const key in apiData ) {
-          if (this.excludeFields.includes(key)) continue;
-          apiValue = apiData[key];
-          if(apiValue && apiValue.length) {
-            newAttribute = document.importNode(attributeTemplateContent, true)
-                                    .querySelector(".attribute");
-            attributeName = newAttribute.querySelector(".attribute-name");
-            attributeValue = newAttribute.querySelector(".attribute-value");
-
-            attributeName.appendChild(document.createTextNode(this.getFieldLabel(key)));
-            for (const htmlElement of this._formatValue(key, apiValue)) {
-              attributeValue.appendChild(document.createElement('p').appendChild(htmlElement));
-            }
-            attributesElement.appendChild(newAttribute);
-          }
-          this._resolved = true;
-        }
-      }
-    });
+    this.addEventListener("click", this.clickHandler);
   }
 
   async render() {
@@ -345,14 +355,15 @@ export class APIObjectTableElement extends APIObjectElement {
       }`
   }
 
+  async clickHandler(event) {
+    await super.clickHandler(event);
+    const attributesElement = this._html_repr.querySelector(".object-attributes");
+    attributesElement.hidden = !attributesElement.hidden;
+  }
+
   async makeHtmlRepr() {
     await super.makeHtmlRepr();
-    const attributesElement = this._html_repr.querySelector(".object-attributes");
-    attributesElement.hidden = true;
-    this.addEventListener("click", (event) => {
-      event.stopPropagation();
-      attributesElement.hidden = !attributesElement.hidden;
-    });
+    this._html_repr.querySelector(".object-attributes").hidden = true;
   }
 }
 customElements.define("geospaas-object-table", APIObjectTableElement);
