@@ -41,3 +41,6 @@ dynamic = ["version"]
 
 [tool.setuptools]
 packages = ["geospaas"]
+
+[project.scripts]
+geospaas = "geospaas.cli:main"

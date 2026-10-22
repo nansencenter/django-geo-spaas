@@ -1,7 +1,15 @@
 import importlib
 import logging
+import os
 import types
 import typing
+
+import django
+import django.conf
+# Load Django settings to be able to interact with the database
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geospaas_web.settings')
+if not django.conf.settings.configured:
+    django.setup()  # pragma: no cover
 
 from django.apps import apps
 
@@ -18,6 +26,9 @@ def get_plugins(exclude:typing.Iterable[str]=None) -> set[str]:
     return plugins
 
 
+plugins = get_plugins(exclude=['geospaas', 'geospaas.base_viewer'])
+
+
 def get_plugins_urls() -> set[types.ModuleType]:
     urls_modules = set()
     for module_name in plugins:
@@ -29,7 +40,17 @@ def get_plugins_urls() -> set[types.ModuleType]:
     return urls_modules
 
 
-plugins = get_plugins(exclude=['geospaas', 'geospaas.base_viewer'])
+def get_plugins_cli() -> set[types.ModuleType]:
+    cli_modules = set()
+    for module_name in plugins:
+        try:
+            cli_module = importlib.import_module(f"{module_name}.cli")
+            cli_modules.add(cli_module)
+        except ModuleNotFoundError:
+            logger.debug("%s.cli not found", module_name)
+    return cli_modules
+
+
 
 
 if __name__ == '__main__':
