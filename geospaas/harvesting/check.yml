@@ -1,0 +1,31 @@
+# Example providers configuration file for the verify_urls module
+# ---
+# scihub:
+#   url: 'https://scihub.copernicus.eu/'
+#   username: !ENV 'COPERNICUS_OPEN_HUB_USERNAME'
+#   password: !ENV 'COPERNICUS_OPEN_HUB_PASSWORD'
+# apihub:
+#   url: 'https://apihub.copernicus.eu/'
+#   username: !ENV 'COPERNICUS_OPEN_HUB_USERNAME'
+#   password: !ENV 'COPERNICUS_OPEN_HUB_PASSWORD'
+# podaac:
+#   url: 'https://opendap.jpl.nasa.gov/opendap/'
+# cmems:
+#   url: 'ftp://nrt.cmems-du.eu/'
+#   username: !ENV 'CMEMS_USERNAME'
+#   password: !ENV 'CMEMS_PASSWORD'
+# jaxa:
+#   url: 'ftp://ftp.gportal.jaxa.jp/'
+#   username: !ENV 'JAXA_USERNAME'
+#   password: !ENV 'JAXA_PASSWORD'
+# creodias:
+#   url: 'https://zipper.creodias.eu/'
+#   username: !ENV 'CREODIAS_USERNAME'
+#   password: !ENV 'CREODIAS_PASSWORD'
+#   token_url: 'https://auth.creodias.eu/auth/realms/DIAS/protocol/openid-connect/token'
+#   client_id: 'CLOUDFERRO_PUBLIC'
+#   throttle: 1
+#   auth_renew: 36000
+# noaa_hycom:
+#   url: 'ftp://ftp.opc.ncep.noaa.gov/'
+# ...

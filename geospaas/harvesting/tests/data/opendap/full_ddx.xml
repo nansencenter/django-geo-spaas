@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dataset name="dataset.nc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xml.opendap.org/ns/DAP/3.2# http://xml.opendap.org/dap/dap3.2.xsd"
+    xmlns:grddl="http://www.w3.org/2003/g/data-view#"
+    grddl:transformation="http://xml.opendap.org/transforms/ddxToRdfTriples.xsl"
+    xmlns="http://xml.opendap.org/ns/DAP/3.2#" xmlns:dap="http://xml.opendap.org/ns/DAP/3.2#" dapVersion="3.2"
+    xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:base="https://opendap.jpl.nasa.gov/opendap/folder/dataset.nc">
+    <Attribute name="NC_GLOBAL" type="Container">
+        <Attribute name="Conventions" type="String">
+            <value>CF-1.7, ACDD-1.3</value>
+        </Attribute>
+        <Attribute name="title" type="String">
+            <value>VIIRS L2P Sea Surface Skin Temperature</value>
+        </Attribute>
+        <Attribute name="summary" type="String">
+            <value>Sea surface temperature (SST) retrievals produced at the NASA OBPG for the Visible Infrared Imaging
+                Radiometer Suite (VIIRS) sensor on the Suomi National Polar-Orbiting Partnership (Suomi NPP) platform.
+                These have been reformatted to GHRSST GDS version 2 Level 2P specifications by the JPL PO.DAAC. VIIRS
+                SST algorithms developed by the University of Miami, RSMAS</value>
+        </Attribute>
+        <Attribute name="references" type="String">
+            <value>GHRSST Data Processing Specification v2r5</value>
+        </Attribute>
+        <Attribute name="institution" type="String">
+            <value>NASA Jet Propulsion Laboratory (JPL) Physical Oceanography Distributed Active Archive Center
+                (PO.DAAC)/NASA Goddard Space Flight Center (GSFC), Ocean Biology Processing Group (OBPG)/University of
+                Miami Rosential School of Marine and Atmospheric Science (RSMAS)</value>
+        </Attribute>
+        <Attribute name="history" type="String">
+            <value>VIIRS L2P created at JPL PO.DAAC by combining OBPG SNPP_SST and SNPP_SST3, and outputing to the
+                GHRSST GDS2 netCDF file format</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>L2P Core without DT analysis or other ancillary fields; Day, Start Node:Ascending, End
+                Node:Ascending; WARNING Some applications are unable to properly handle signed byte values. If values
+                are encountered &gt; 127, please subtract 256 from this reported value; Quicklook</value>
+        </Attribute>
+        <Attribute name="license" type="String">
+            <value>GHRSST and PO.DAAC protocol allow data use as free and open.</value>
+        </Attribute>
+        <Attribute name="id" type="String">
+            <value>VIIRS_NPP-JPL-L2P-v2016.2</value>
+        </Attribute>
+        <Attribute name="naming_authority" type="String">
+            <value>org.ghrsst</value>
+        </Attribute>
+        <Attribute name="product_version" type="String">
+            <value>2016.2</value>
+        </Attribute>
+        <Attribute name="uuid" type="String">
+            <value>b6ac7651-7b02-44b0-942b-c5dc3c903eba</value>
+        </Attribute>
+        <Attribute name="gds_version_id" type="String">
+            <value>2.0</value>
+        </Attribute>
+        <Attribute name="netcdf_version_id" type="String">
+            <value>4.1</value>
+        </Attribute>
+        <Attribute name="date_created" type="String">
+            <value>20200101T211816Z</value>
+        </Attribute>
+        <Attribute name="file_quality_level" type="Int32">
+            <value>3</value>
+        </Attribute>
+        <Attribute name="spatial_resolution" type="String">
+            <value>750 m</value>
+        </Attribute>
+        <Attribute name="start_time" type="String">
+            <value>20200101T000001Z</value>
+        </Attribute>
+        <Attribute name="time_coverage_start" type="String">
+            <value>20200101T000001Z</value>
+        </Attribute>
+        <Attribute name="stop_time" type="String">
+            <value>20200101T000559Z</value>
+        </Attribute>
+        <Attribute name="time_coverage_end" type="String">
+            <value>20200101T000559Z</value>
+        </Attribute>
+        <Attribute name="northernmost_latitude" type="Float32">
+            <value>9.47472000</value>
+        </Attribute>
+        <Attribute name="southernmost_latitude" type="Float32">
+            <value>-15.3505001</value>
+        </Attribute>
+        <Attribute name="easternmost_longitude" type="Float32">
+            <value>-142.755005</value>
+        </Attribute>
+        <Attribute name="westernmost_longitude" type="Float32">
+            <value>-175.084000</value>
+        </Attribute>
+        <Attribute name="geospatial_lat_max" type="Float32">
+            <value>9.47472000</value>
+        </Attribute>
+        <Attribute name="geospatial_lat_min" type="Float32">
+            <value>-15.3505001</value>
+        </Attribute>
+        <Attribute name="geospatial_lon_max" type="Float32">
+            <value>-142.755005</value>
+        </Attribute>
+        <Attribute name="geospatial_lon_min" type="Float32">
+            <value>-175.084000</value>
+        </Attribute>
+        <Attribute name="source" type="String">
+            <value>VIIRS sea surface temperature observations from the Ocean Biology Processing Group (OBPG)</value>
+        </Attribute>
+        <Attribute name="platform" type="String">
+            <value>Suomi-NPP</value>
+        </Attribute>
+        <Attribute name="sensor" type="String">
+            <value>VIIRS</value>
+        </Attribute>
+        <Attribute name="metadata_link" type="String">
+            <value>http://podaac.jpl.nasa.gov/ws/metadata/dataset/?format=iso&amp;shortName=VIIRS_NPP-JPL-L2P-v2016.2
+            </value>
+        </Attribute>
+        <Attribute name="keywords" type="String">
+            <value>Oceans &gt; Ocean Temperature &gt; Sea Surface Temperature &gt; Skin Sea Surface Temperature</value>
+        </Attribute>
+        <Attribute name="keywords_vocabulary" type="String">
+            <value>NASA Global Change Master Directory (GCMD) Science Keywords</value>
+        </Attribute>
+        <Attribute name="standard_name_vocabulary" type="String">
+            <value>NetCDF Climate and Forecast (CF) Metadata Conventions</value>
+        </Attribute>
+        <Attribute name="geospatial_lat_units" type="String">
+            <value>degrees_north</value>
+        </Attribute>
+        <Attribute name="geospatial_lat_resolution" type="Float32">
+            <value>0.00749999983</value>
+        </Attribute>
+        <Attribute name="geospatial_lon_units" type="String">
+            <value>degrees_east</value>
+        </Attribute>
+        <Attribute name="geospatial_lon_resolution" type="Float32">
+            <value>0.00749999983</value>
+        </Attribute>
+        <Attribute name="acknowledgment" type="String">
+            <value>The VIIRS L2P sea surface temperature data are sponsored by NASA</value>
+        </Attribute>
+        <Attribute name="creator_name" type="String">
+            <value>JPL PO.DAAC</value>
+        </Attribute>
+        <Attribute name="creator_email" type="String">
+            <value>ghrsst@jpl.nasa.gov</value>
+        </Attribute>
+        <Attribute name="creator_url" type="String">
+            <value>http://podaac.jpl.nasa.gov</value>
+        </Attribute>
+        <Attribute name="project" type="String">
+            <value>Group for High Resolution Sea Surface Temperature</value>
+        </Attribute>
+        <Attribute name="publisher_name" type="String">
+            <value>The GHRSST Project Office</value>
+        </Attribute>
+        <Attribute name="publisher_url" type="String">
+            <value>http://www.ghrsst.org</value>
+        </Attribute>
+        <Attribute name="publisher_email" type="String">
+            <value>ghrsst-po@nceo.ac.uk</value>
+        </Attribute>
+        <Attribute name="processing_level" type="String">
+            <value>L2P</value>
+        </Attribute>
+        <Attribute name="cdm_data_type" type="String">
+            <value>swath</value>
+        </Attribute>
+        <Attribute name="startDirection" type="String">
+            <value>Ascending</value>
+        </Attribute>
+        <Attribute name="endDirection" type="String">
+            <value>Ascending</value>
+        </Attribute>
+        <Attribute name="day_night_flag" type="String">
+            <value>Day</value>
+        </Attribute>
+    </Attribute>
+    <Array name="lat">
+        <Attribute name="long_name" type="String">
+            <value>latitude</value>
+        </Attribute>
+        <Attribute name="standard_name" type="String">
+            <value>latitude</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>degrees_north</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Float32">
+            <value>-999.000000</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Float32">
+            <value>-90.0000000</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Float32">
+            <value>90.0000000</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>geographical coordinates, WGS84 projection</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>coordinate</value>
+        </Attribute>
+        <Float32 />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="lon">
+        <Attribute name="long_name" type="String">
+            <value>longitude</value>
+        </Attribute>
+        <Attribute name="standard_name" type="String">
+            <value>longitude</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>degrees_east</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Float32">
+            <value>-999.000000</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Float32">
+            <value>-180.000000</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Float32">
+            <value>180.000000</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>geographical coordinates, WGS84 projection</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>coordinate</value>
+        </Attribute>
+        <Float32 />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="time">
+        <Attribute name="long_name" type="String">
+            <value>reference time of sst file</value>
+        </Attribute>
+        <Attribute name="standard_name" type="String">
+            <value>time</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>seconds since 1981-01-01 00:00:00</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>time of first sensor observation</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>coordinate</value>
+        </Attribute>
+        <Int32 />
+        <dimension name="time" size="1" />
+    </Array>
+    <Array name="sea_surface_temperature">
+        <Attribute name="long_name" type="String">
+            <value>sea surface temperature</value>
+        </Attribute>
+        <Attribute name="standard_name" type="String">
+            <value>sea_surface_skin_temperature</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>kelvin</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-32767</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>-1000</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>10000</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>sea surface temperature from 11 and 12 um (thermal IR) channels</value>
+        </Attribute>
+        <Attribute name="scale_factor" type="Float32">
+            <value>0.00499999989</value>
+        </Attribute>
+        <Attribute name="add_offset" type="Float32">
+            <value>273.149994</value>
+        </Attribute>
+        <Attribute name="source" type="String">
+            <value>NASA and University of Miami</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>physicalMeasurement</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="sst_dtime">
+        <Attribute name="long_name" type="String">
+            <value>time difference from reference time</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>seconds</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-32768</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>-32767</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>32767</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>time plus sst_dtime gives seconds after 00:00:00 UTC January 1, 1981</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>referenceInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="quality_level">
+        <Attribute name="long_name" type="String">
+            <value>quality level of SST pixel</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-128</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>0</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>5</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>thermal IR SST quality value; signed byte array: WARNING Some applications are unable to properly
+                handle signed byte values. If values are encountered &gt; 127, please subtract 256 from this reported
+                value</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="flag_values" type="Int16">
+            <value>0</value>
+            <value>1</value>
+            <value>2</value>
+            <value>3</value>
+            <value>4</value>
+            <value>5</value>
+        </Attribute>
+        <Attribute name="flag_meanings" type="String">
+            <value>no_data bad_data worst_quality low_quality acceptable_quality best_quality</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>qualityInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="sses_bias">
+        <Attribute name="long_name" type="String">
+            <value>SSES (Sensor Specific Error Statistic) bias error</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>kelvin</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-128</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>-127</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>127</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>thermal IR SST bias error; signed byte array: WARNING Some applications are unable to properly handle
+                signed byte values. If values are encountered &gt; 127, please subtract 256 from this reported value
+            </value>
+        </Attribute>
+        <Attribute name="scale_factor" type="Float32">
+            <value>0.157480314</value>
+        </Attribute>
+        <Attribute name="add_offset" type="Float32">
+            <value>0.00000000</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>auxiliaryInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="sses_standard_deviation">
+        <Attribute name="long_name" type="String">
+            <value>SSES (Sensor Specific Error Statistic) standard deviation error</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>kelvin</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-128</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>-127</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>127</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>thermal IR SST standard deviation error; signed byte array: WARNING Some applications are unable to
+                properly handle signed byte values. If values are encountered &gt; 127, please subtract 256 from this
+                reported value</value>
+        </Attribute>
+        <Attribute name="scale_factor" type="Float32">
+            <value>0.0787401572</value>
+        </Attribute>
+        <Attribute name="add_offset" type="Float32">
+            <value>10.0000000</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>auxiliaryInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    	<Grid  name="lat">
+		<Attribute name="long_name" type="String">
+			<value>latitude coordinate</value>
+		</Attribute>
+		<Attribute name="standard_name" type="String">
+			<value>latitude</value>
+		</Attribute>
+		<Attribute name="units" type="String">
+			<value>degrees_north</value>
+		</Attribute>
+		<Array name="lat">
+			<Float32/>
+			<dimension name="yc" size="830"/>
+			<dimension name="xc" size="790"/>
+		</Array>
+		<Map name="yc">
+			<Float64/>
+			<dimension name="yc" size="830"/>
+		</Map>
+		<Map name="xc">
+			<Float64/>
+			<dimension name="xc" size="790"/>
+		</Map>
+	</Grid>
+	<Grid  name="lon">
+		<Attribute name="long_name" type="String">
+			<value>longitude coordinate</value>
+		</Attribute>
+		<Attribute name="standard_name" type="String">
+			<value>longitude</value>
+		</Attribute>
+		<Attribute name="units" type="String">
+			<value>degrees_east</value>
+		</Attribute>
+		<Array name="lon">
+			<Float32/>
+			<dimension name="yc" size="830"/>
+			<dimension name="xc" size="790"/>
+		</Array>
+		<Map name="yc">
+			<Float64/>
+			<dimension name="yc" size="830"/>
+		</Map>
+		<Map name="xc">
+			<Float64/>
+			<dimension name="xc" size="790"/>
+		</Map>
+	</Grid>
+	<Grid  name="ice_conc">
+		<Attribute name="long_name" type="String">
+			<value>concentration of sea ice</value>
+		</Attribute>
+		<Attribute name="standard_name" type="String">
+			<value>sea_ice_area_fraction</value>
+		</Attribute>
+		<Attribute name="units" type="String">
+			<value>%</value>
+		</Attribute>
+		<Attribute name="_FillValue" type="Int16">
+			<value>-999</value>
+		</Attribute>
+		<Attribute name="valid_min" type="Int16">
+			<value>0</value>
+		</Attribute>
+		<Attribute name="valid_max" type="Int16">
+			<value>10000</value>
+		</Attribute>
+		<Attribute name="grid_mapping" type="String">
+			<value>Polar_Stereographic_Grid</value>
+		</Attribute>
+		<Attribute name="coordinates" type="String">
+			<value>lat lon</value>
+		</Attribute>
+		<Attribute name="scale_factor" type="Float32">
+			<value>0.01</value>
+		</Attribute>
+		<Attribute name="add_offset" type="Float32">
+			<value>0.0</value>
+		</Attribute>
+		<Array name="ice_conc">
+			<Int16/>
+			<dimension name="time" size="1"/>
+			<dimension name="yc" size="830"/>
+			<dimension name="xc" size="790"/>
+		</Array>
+		<Map name="time">
+			<Float64/>
+			<dimension name="time" size="1"/>
+		</Map>
+		<Map name="yc">
+			<Float64/>
+			<dimension name="yc" size="830"/>
+		</Map>
+		<Map name="xc">
+			<Float64/>
+			<dimension name="xc" size="790"/>
+		</Map>
+	</Grid>
+    <Array name="l2p_flags">
+        <Attribute name="long_name" type="String">
+            <value>L2P flags</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>0</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>16</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>These flags can be used to further filter data variables</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="flag_meanings" type="String">
+            <value>microwave land ice lake river</value>
+        </Attribute>
+        <Attribute name="flag_masks" type="Int16">
+            <value>1</value>
+            <value>2</value>
+            <value>4</value>
+            <value>8</value>
+            <value>16</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>qualityInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="wind_speed">
+        <Attribute name="long_name" type="String">
+            <value>10m wind speed</value>
+        </Attribute>
+        <Attribute name="standard_name" type="String">
+            <value>wind_speed</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>m s-1</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-128</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>-127</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>127</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>Wind at 10 meters above the sea surface</value>
+        </Attribute>
+        <Attribute name="scale_factor" type="Float32">
+            <value>0.200000003</value>
+        </Attribute>
+        <Attribute name="add_offset" type="Float32">
+            <value>25.0000000</value>
+        </Attribute>
+        <Attribute name="source" type="String">
+            <value>TBD. Placeholder. Currently empty</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="grid_mapping" type="String">
+            <value>TBD</value>
+        </Attribute>
+        <Attribute name="time_offset" type="Float32">
+            <value>2.00000000</value>
+        </Attribute>
+        <Attribute name="height" type="String">
+            <value>10 m</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>auxiliaryInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <Array name="dt_analysis">
+        <Attribute name="long_name" type="String">
+            <value>deviation from SST reference climatology</value>
+        </Attribute>
+        <Attribute name="units" type="String">
+            <value>kelvin</value>
+        </Attribute>
+        <Attribute name="_FillValue" type="Int16">
+            <value>-128</value>
+        </Attribute>
+        <Attribute name="valid_min" type="Int16">
+            <value>-127</value>
+        </Attribute>
+        <Attribute name="valid_max" type="Int16">
+            <value>127</value>
+        </Attribute>
+        <Attribute name="comment" type="String">
+            <value>TBD</value>
+        </Attribute>
+        <Attribute name="scale_factor" type="Float32">
+            <value>0.100000001</value>
+        </Attribute>
+        <Attribute name="add_offset" type="Float32">
+            <value>0.00000000</value>
+        </Attribute>
+        <Attribute name="source" type="String">
+            <value>TBD. Placeholder. Currently empty</value>
+        </Attribute>
+        <Attribute name="coordinates" type="String">
+            <value>lon lat</value>
+        </Attribute>
+        <Attribute name="coverage_content_type" type="String">
+            <value>auxiliaryInformation</value>
+        </Attribute>
+        <Int16 />
+        <dimension name="time" size="1" />
+        <dimension name="nj" size="3232" />
+        <dimension name="ni" size="3200" />
+    </Array>
+    <blob href="cid:" />
+</Dataset>
