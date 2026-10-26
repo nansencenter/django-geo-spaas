@@ -302,7 +302,7 @@ class WKTArgumentTestCase(unittest.TestCase):
         arg = arguments.WKTArgument('foo', geometry_types=[shapely.geometry.Point])
         self.assertEqual(arg.parse('POINT(1 2)'), shapely.geometry.Point((1, 2)))
         # not WKT
-        with self.assertRaises(shapely.errors.WKTReadingError), self.assertLogs():
+        with self.assertRaises(shapely.errors.ShapelyError), self.assertLogs():
             arg.parse('bar')
         # wrong geometry type
         with self.assertRaises(ValueError):
