@@ -10,6 +10,18 @@ from django.apps import apps
 logger = logging.getLogger(__name__)
 
 
+class Settings():
+    """Class used to manage app settings"""
+    def __init__(self, defaults: dict = None):
+        self.defaults = defaults or {}
+
+    def __getattr__(self, name):
+        """Try getting the setting from the Django settings. If not
+        available, use the default
+        """
+        return getattr(django.conf.settings, name, self.defaults.get(name, None))
+
+
 class PluginsManager():
     """Manage GeoSPaaS plugins"""
 
@@ -36,6 +48,7 @@ class PluginsManager():
 
 
 plugins_manager = PluginsManager()
+settings = Settings()
 
 
 if __name__ == '__main__':
