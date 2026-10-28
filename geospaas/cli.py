@@ -1,4 +1,12 @@
 import argparse
+import os
+
+import django
+import django.conf
+# Load Django settings to be able to interact with the database
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geospaas_web.settings')
+if not django.conf.settings.configured:
+    django.setup()  # pragma: no cover
 
 from geospaas.config import plugins_manager
 
@@ -16,7 +24,6 @@ def make_arg_parser() -> argparse.ArgumentParser:
 
 
 def main():
-    """"""
     parser = make_arg_parser()
     args = parser.parse_args()
     args.func(args)

@@ -5,17 +5,11 @@
 import argparse
 import concurrent.futures
 import logging
-import os
 import signal
 from pathlib import Path
 from typing import Union
 
 import django
-import django.conf
-# Load Django settings to be able to interact with the database
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geospaas.harvesting.settings')
-if not django.conf.settings.configured:
-    django.setup()  # pragma: no cover
 
 import geospaas.harvesting.config as config
 from geospaas.catalog.models import Parameter

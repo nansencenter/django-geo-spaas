@@ -1,16 +1,9 @@
 import importlib
 import logging
-import os
 import types
 import typing
 
-import django
 import django.conf
-# Load Django settings to be able to interact with the database
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geospaas_web.settings')
-if not django.conf.settings.configured:
-    django.setup()  # pragma: no cover
-
 from django.apps import apps
 
 
