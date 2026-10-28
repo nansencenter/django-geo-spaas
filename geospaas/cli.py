@@ -1,6 +1,6 @@
 import argparse
 
-from geospaas.config import get_plugins_cli
+from geospaas.config import plugins_manager
 
 
 def make_arg_parser() -> argparse.ArgumentParser:
@@ -9,7 +9,7 @@ def make_arg_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(prog='geospaas', description='GeoSPaaS CLI')
     subparsers = parser.add_subparsers()
-    for cli_plugin in get_plugins_cli():
+    for cli_plugin in plugins_manager.get_plugins_submodule('cli'):
         sub_parser:argparse.ArgumentParser = cli_plugin.make_arg_parser()
         subparsers.add_parser(sub_parser.prog, parents=[sub_parser], add_help=False)
     return parser

@@ -17,40 +17,32 @@ from django.apps import apps
 logger = logging.getLogger(__name__)
 
 
-def get_plugins(exclude:typing.Iterable[str]=None) -> set[str]:
-    exclude = [] if exclude is None else exclude
-    plugins = set()
-    for app_config in apps.app_configs.values():
-        if app_config.name.startswith('geospaas') and app_config.name not in exclude:
-            plugins.add(app_config.name)
-    return plugins
+class PluginsManager():
+    """Manage GeoSPaaS plugins"""
+
+    def __init__(self):
+        self.plugins = self._get_plugins(exclude=['geospaas', 'geospaas.base_viewer'])
+
+    def _get_plugins(self, exclude:typing.Iterable[str]=None) -> set[str]:
+        exclude = [] if exclude is None else exclude
+        plugins = set()
+        for app_config in apps.app_configs.values():
+            if app_config.name.startswith('geospaas') and app_config.name not in exclude:
+                plugins.add(app_config.name)
+        return plugins
+
+    def get_plugins_submodule(self, name: str) -> set[types.ModuleType]:
+        submodules = set()
+        for module_name in self.plugins:
+            try:
+                submodule = importlib.import_module(f"{module_name}.{name}")
+                submodules.add(submodule)
+            except ModuleNotFoundError:
+                logger.debug("%s.%s not found", module_name, name)
+        return submodules
 
 
-plugins = get_plugins(exclude=['geospaas', 'geospaas.base_viewer'])
-
-
-def get_plugins_urls() -> set[types.ModuleType]:
-    urls_modules = set()
-    for module_name in plugins:
-        try:
-            urls_module = importlib.import_module(f"{module_name}.urls")
-            urls_modules.add(urls_module)
-        except ModuleNotFoundError:
-            logger.debug("%s.urls not found", module_name)
-    return urls_modules
-
-
-def get_plugins_cli() -> set[types.ModuleType]:
-    cli_modules = set()
-    for module_name in plugins:
-        try:
-            cli_module = importlib.import_module(f"{module_name}.cli")
-            cli_modules.add(cli_module)
-        except ModuleNotFoundError:
-            logger.debug("%s.cli not found", module_name)
-    return cli_modules
-
-
+plugins_manager = PluginsManager()
 
 
 if __name__ == '__main__':

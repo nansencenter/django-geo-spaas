@@ -3,7 +3,7 @@ import importlib
 from django.views.generic import TemplateView
 from django.urls import reverse
 
-from geospaas.config import get_plugins_urls
+from geospaas.config import plugins_manager
 
 
 class GeoSPaaSView(TemplateView):
@@ -15,7 +15,7 @@ class GeoSPaaSView(TemplateView):
         super().__init__(**kwargs)
         self.geospaas_apps = set()
 
-        for urls_module in get_plugins_urls():
+        for urls_module in plugins_manager.get_plugins_submodule('urls'):
             self.geospaas_apps.add(urls_module.app_name)
 
     def get_context_data(self, **kwargs):
