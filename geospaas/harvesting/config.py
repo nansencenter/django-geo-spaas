@@ -4,11 +4,20 @@ from pathlib import Path
 
 import geospaas.harvesting.utils as utils
 import geospaas.harvesting.arguments as arguments
+from geospaas.config import Settings
 from .providers import Provider
 from .utils import read_yaml_file
 
 
 logger = logging.getLogger(__name__)
+
+
+settings = Settings({
+    'GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES': True,
+    'GEOSPAAS_HARVESTING_UPDATE_PYTHESINT': True,
+    'GEOSPAAS_HARVESTING_PROVIDERS_PATH': Path(__file__).parent / 'default_providers.yml',
+    'GEOSPAAS_HARVESTING_FAILED_INGESTIONS_PATH': Path('/', 'var', 'run', 'geospaas'),
+})
 
 
 class NoProviderFoundError(Exception):
@@ -68,21 +77,6 @@ class ProvidersArgument(arguments.DictArgument):
         for provider_name, provider_config in providers_dict.items():
             _providers.append(Provider.from_config(provider_name, provider_config))
         return _providers
-
-
-class GeneralConfiguration(Configuration):
-    """Configuration manager for general harvesting settings"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.config_arguments_parser = arguments.ArgumentParser([
-            arguments.BooleanArgument('update_vocabularies', default=True),
-            arguments.BooleanArgument('update_pythesint', default=True),
-            arguments.DictArgument('pythesint_versions', default=None),
-            arguments.PathArgument('providers_path',
-                                   default=Path(__file__).parent / 'default_providers.yml',
-                                   description=('Path to the file containing the default '
-                                                'providers definitions.'))
-        ])
 
 
 class ProvidersConfiguration(Configuration):

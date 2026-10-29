@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 import geospaas.harvesting.normalizers.utils as utils
+from geospaas.harvesting.config import settings
 
 
 logger = logging.getLogger(__name__)
@@ -146,9 +147,7 @@ class StreamMetadataNormalizer():
     """"""
     logger = logging.getLogger(__name__ + '.StreamMetadataNormalizer')
     QUEUE_SIZE = 500
-    FAILED_INGESTIONS_PATH = os.getenv(
-        'GEOSPAAS_FAILED_INGESTIONS_DIR',
-        Path('/', 'var', 'run', 'geospaas'))
+    FAILED_INGESTIONS_PATH = settings.GEOSPAAS_HARVESTING_FAILED_INGESTIONS_PATH
     MAX_FAILED = 500000  # max number of failed objects per recovery file
     RECOVERY_SUFFIX = 'failed_ingestions.pickle'
 

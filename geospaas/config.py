@@ -48,7 +48,9 @@ class PluginsManager():
 
 
 plugins_manager = PluginsManager()
-settings = Settings()
+settings = Settings({
+    'GEOSPAAS_PYTHESINT_VERSIONS': None,
+})
 
 
 if __name__ == '__main__':

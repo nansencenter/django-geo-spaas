@@ -11,6 +11,7 @@ from typing import Union
 
 import django
 
+import geospaas.config
 import geospaas.harvesting.config as config
 from geospaas.catalog.models import Parameter
 from .providers import Provider
@@ -20,7 +21,6 @@ from .recovery import retry_ingest
 logger = logging.getLogger(__name__)
 
 package_dir = Path(__file__).parent
-default_configuration_path = package_dir / 'config.yml'
 # look in the folder from which the command is executed
 default_search_path = Path() / 'search.yml'
 
@@ -35,18 +35,18 @@ def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
-def refresh_vocabularies(general_config):
+def refresh_vocabularies():
     """Update the Vocabulary objects in the database if the
     `update_vocabularies` settings is True.
     If the `update_pythesint` setting is also True,
     the local pythesint data is also updated.
     """
-    if general_config.update_vocabularies:
+    if config.settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES:
         logger.info('Updating vocabularies...')
         django.core.management.call_command(
             'update_vocabularies',
-            force=general_config.update_pythesint,
-            versions=general_config.pythesint_versions)
+            force=config.settings.GEOSPAAS_HARVESTING_UPDATE_PYTHESINT,
+            versions=geospaas.config.settings.GEOSPAAS_PYTHESINT_VERSIONS)
         logger.info('Finished updating vocabularies')
     # safety check in order to prevent harvesting process with an empty
     # list of parameters
@@ -109,10 +109,9 @@ def update_providers(providers_path: Union[Path, str]):
 
 def handle_providers(cli_arguments):
     """List/update/delete providers"""
-    general_config = config.GeneralConfiguration.from_file(cli_arguments.config_path)
     if cli_arguments.providers_path:
         if cli_arguments.providers_path is CreateDefaultProviders:
-            providers_path = general_config.providers_path
+            providers_path = config.settings.GEOSPAAS_HARVESTING_PROVIDERS_PATH
         else:
             providers_path = cli_arguments.providers_path
         update_providers(providers_path)
@@ -127,11 +126,10 @@ def harvest(cli_arguments):
     If errors occur during the ingestion process (like the provider
     website being temporarily unavailable), it is retried at the end.
     """
-    general_config = config.GeneralConfiguration.from_file(cli_arguments.config_path)
     search_config = config.SearchConfiguration.from_file(cli_arguments.search_path)
     searches_results = search_config.create_provider_searches()
 
-    refresh_vocabularies(general_config)
+    refresh_vocabularies()
     save_results(searches_results)
 
     # Retry to ingest datasets for which the ingestion failed
@@ -143,10 +141,6 @@ def make_arg_parser():
     arg_parser = argparse.ArgumentParser(
         prog='harvesting',
         description='CLI for searching and harvesting data for the GeoSPaaS catalog')
-    arg_parser.add_argument('-c', '--config',
-                            dest='config_path',
-                            default=default_configuration_path,
-                            help='Path to the configuration file')
 
     subparsers = arg_parser.add_subparsers()
 
