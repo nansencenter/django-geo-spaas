@@ -1,0 +1,60 @@
+[
+    {
+        "pk": 1,
+        "model": "vocabularies.parameter",
+        "fields": {
+            "version": null,
+            "kind": "test",
+            "data": {"standard_name": "foo"},
+            "gcmd_science_keyword": null
+        }
+    },
+    {
+        "pk": 2,
+        "model": "vocabularies.parameter",
+        "fields": {
+            "version": "1.0",
+            "kind": "cf_standard_name",
+            "data": {"standard_name": "bar"},
+            "gcmd_science_keyword": null
+        }
+    },
+    {
+        "pk": 3,
+        "model": "vocabularies.parameter",
+        "fields": {
+            "version": "1.1",
+            "kind": "cf_standard_name",
+            "data": {"standard_name": "bar"},
+            "gcmd_science_keyword": null
+        }
+    },
+    {
+        "pk": 4,
+        "model": "vocabularies.parameter",
+        "fields": {
+            "version": "1.2",
+            "kind": "wkv_variable",
+            "data": {"standard_name": "bar"},
+            "gcmd_science_keyword": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "vocabularies.keyword",
+        "fields": {
+            "version": "1.0",
+            "kind": "test",
+            "data": {"Short_Name": "foo"}
+        }
+    },
+    {
+        "pk": 2,
+        "model": "vocabularies.keyword",
+        "fields": {
+            "version": "1.0",
+            "kind": "test",
+            "data": {"Short_Name": "foo_bar"}
+        }
+    }
+]

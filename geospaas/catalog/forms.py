@@ -1,0 +1,44 @@
+from django.contrib.gis import forms
+from django.utils import timezone
+from leaflet.forms.widgets import LeafletWidget
+
+
+class BaseSearchForm(forms.Form):
+    """ Basic version of form for basic seaching of django-geospaas metadata """
+    polygon = forms.GeometryField(
+        label=False,
+        widget=LeafletWidget(attrs={
+            'settings_overrides': {
+                'DEFAULT_CENTER': (89.0, 179.0),
+                'DEFAULT_ZOOM': 1,
+                'NO_GLOBALS': False,
+                'PLUGINS': {'forms': {'auto-include': True}},
+            }
+        }),
+        required=False)
+    time_coverage_start = forms.DateTimeField(widget=forms.TextInput(attrs={'type':'datetime-local'}))
+    time_coverage_end = forms.DateTimeField(widget=forms.TextInput(attrs={'type':'datetime-local'}))
+    tags = forms.CharField(required=False)
+    keywords = forms.CharField(required=False)
+    parameters = forms.CharField(required=False)
+
+    # def filter(self, ds):
+    #     """ Filtering method of the form. All filtering processes are coded here """
+    #     # filtering based on time
+    #     t_0 = self.cleaned_data['time_coverage_start']
+    #     t_1 = self.cleaned_data['time_coverage_end']
+    #     # Too early datasets are excluded from the filtering results
+    #     ds = ds.exclude(time_coverage_end__lte=t_0)
+
+    #     # Too late datasets are excluded from the filtering results
+    #     ds = ds.exclude(time_coverage_start__gt=t_1)
+
+    #     # spatial filtering
+    #     if self.cleaned_data['polygon']:
+    #         # filtering by user provided polygon
+    #         ds = ds.filter(
+    #             geographic_location__geometry__intersects=self.cleaned_data['polygon'])
+
+    #     # sorting
+    #     ds = ds.order_by('time_coverage_start')
+    #     return ds

@@ -1,10 +1,18 @@
-from django.urls import path
+import importlib
+import logging
 
-from geospaas.base_viewer.views import IndexView#, get_geometry_geojson
+from django.urls import include, path
+
+from geospaas.config import plugins_manager
+from .views import GeoSPaaSView
 
 
-app_name = 'base_viewer'
+logger = logging.getLogger(__name__)
+
+app_name = 'geospaas'
 urlpatterns = [
-    path('', IndexView.as_view(), name='index'),
-    # path('geometry/<int:pk>', get_geometry_geojson, name='geometry_geojson'),
+    path('', view=GeoSPaaSView.as_view(), name='index'),
 ]
+for urls_module in plugins_manager.get_plugins_submodule('urls'):
+    app_name = urls_module.app_name
+    urlpatterns.append(path(f'{app_name}/', include(urls_module, app_name)))

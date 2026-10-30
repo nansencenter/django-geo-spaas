@@ -28,16 +28,34 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
+    #base geospaas
     "django-forms-bootstrap",
     "django-leaflet",
     "django<6",
     "gdal",
     "nansat",
     "netCDF4",
-    "pythesint==1.7.3.dev0",
+    "pythesint>=1.7.0",
+
+    #harvesting
+    "copernicusmarine",
+    "feedparser",
+    "graypy",
+    "numpy<2",
+    "oauthlib",
+    "pystac-client",
+    "python-dateutil",
+    "PyYAML",
+    "requests_oauthlib",
+    "requests",
+    "setuptools<81",
+    "shapely>=2",
 ]
 urls = {Repository = "https://github.com/nansencenter/django-geo-spaas"}
 dynamic = ["version"]
 
 [tool.setuptools]
 packages = ["geospaas"]
+
+[project.scripts]
+geospaas = "geospaas.cli:main"

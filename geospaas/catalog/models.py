@@ -125,7 +125,7 @@ class Dataset(models.Model):
     parameters = models.ManyToManyField(Parameter)
 
     def __str__(self):
-        return self.entry_id
+        return str(self.entry_id)
 
 
 class DatasetURI(models.Model):

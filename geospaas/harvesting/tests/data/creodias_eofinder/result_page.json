@@ -1,0 +1,520 @@
+{
+    "type": "FeatureCollection",
+    "properties": {
+        "id": "61e8c5a6-d034-5a1e-902e-516497c91d9d",
+        "totalResults": 67172,
+        "exactCount": false,
+        "startIndex": 1,
+        "itemsPerPage": 1,
+        "query": {
+            "originalFilters": {
+                "maxRecords": "1",
+                "processingLevel": "LEVEL2",
+                "instrument": "OL",
+                "productType": "WFR",
+                "timeliness": "Near Real Time",
+                "sortParam": "startDate",
+                "sortOrder": "descending",
+                "collection": "Sentinel3"
+            },
+            "appliedFilters": {
+                "maxRecords": "1",
+                "processingLevel": "LEVEL2",
+                "instrument": "OL",
+                "productType": "WFR",
+                "timeliness": "Near Real Time",
+                "sortParam": "startDate",
+                "sortOrder": "descending",
+                "collection": "Sentinel3"
+            },
+            "analysis": {
+                "query": null,
+                "language": "en",
+                "analyze": {
+                    "What": [],
+                    "When": [],
+                    "Where": [],
+                    "Errors": [],
+                    "Explained": []
+                },
+                "processingTime": 9.5367431640625e-7
+            },
+            "processingTime": 0.033951997756958
+        },
+        "links": [
+            {
+                "rel": "self",
+                "type": "application/json",
+                "title": "self",
+                "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&maxRecords=1&processingLevel=LEVEL2&instrument=OL&productType=WFR&timeliness=Near%20Real%20Time&sortParam=startDate&sortOrder=descending&status=all&dataset=ESA-DATASET"
+            },
+            {
+                "rel": "search",
+                "type": "application/opensearchdescription+xml",
+                "title": "OpenSearch Description Document",
+                "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/describe.xml"
+            },
+            {
+                "rel": "next",
+                "type": "application/json",
+                "title": "next",
+                "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&maxRecords=1&processingLevel=LEVEL2&instrument=OL&productType=WFR&timeliness=Near%20Real%20Time&sortParam=startDate&sortOrder=descending&status=all&dataset=ESA-DATASET&page=2"
+            },
+            {
+                "rel": "last",
+                "type": "application/json",
+                "title": "last",
+                "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&maxRecords=1&processingLevel=LEVEL2&instrument=OL&productType=WFR&timeliness=Near%20Real%20Time&sortParam=startDate&sortOrder=descending&status=all&dataset=ESA-DATASET&page=67172"
+            }
+        ]
+    },
+    "features": [
+        {
+            "type": "Feature",
+            "id": "c6ff8061-df12-53b7-8dd8-fb834b998f5b",
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            [
+                                180,
+                                -82.311977956
+                            ],
+                            [
+                                179.079,
+                                -82.2326
+                            ],
+                            [
+                                167.685,
+                                -80.22
+                            ],
+                            [
+                                170.543,
+                                -79.8515
+                            ],
+                            [
+                                173.195,
+                                -79.4565
+                            ],
+                            [
+                                175.661,
+                                -79.0395
+                            ],
+                            [
+                                177.927,
+                                -78.6035
+                            ],
+                            [
+                                180,
+                                -78.164868049
+                            ],
+                            [
+                                180,
+                                -82.311977956
+                            ]
+                        ]
+                    ],
+                    [
+                        [
+                            [
+                                -180,
+                                -78.164868049
+                            ],
+                            [
+                                -179.951,
+                                -78.1545
+                            ],
+                            [
+                                -177.997,
+                                -77.6903
+                            ],
+                            [
+                                -176.18,
+                                -77.2118
+                            ],
+                            [
+                                -174.5,
+                                -76.7209
+                            ],
+                            [
+                                -172.935,
+                                -76.2234
+                            ],
+                            [
+                                -171.488,
+                                -75.714
+                            ],
+                            [
+                                -170.126,
+                                -75.1964
+                            ],
+                            [
+                                -168.855,
+                                -74.6713
+                            ],
+                            [
+                                -167.674,
+                                -74.138
+                            ],
+                            [
+                                -166.566,
+                                -73.6012
+                            ],
+                            [
+                                -165.521,
+                                -73.0558
+                            ],
+                            [
+                                -164.546,
+                                -72.509
+                            ],
+                            [
+                                -163.631,
+                                -71.9596
+                            ],
+                            [
+                                -162.758,
+                                -71.3985
+                            ],
+                            [
+                                -161.936,
+                                -70.847
+                            ],
+                            [
+                                -154.067,
+                                -71.8241
+                            ],
+                            [
+                                -145.475,
+                                -72.4488
+                            ],
+                            [
+                                -136.468,
+                                -72.6799
+                            ],
+                            [
+                                -127.435,
+                                -72.5011
+                            ],
+                            [
+                                -127.151,
+                                -73.1103
+                            ],
+                            [
+                                -126.829,
+                                -73.7223
+                            ],
+                            [
+                                -126.481,
+                                -74.3374
+                            ],
+                            [
+                                -126.104,
+                                -74.9536
+                            ],
+                            [
+                                -125.693,
+                                -75.5726
+                            ],
+                            [
+                                -125.25,
+                                -76.1857
+                            ],
+                            [
+                                -124.766,
+                                -76.7927
+                            ],
+                            [
+                                -124.244,
+                                -77.3984
+                            ],
+                            [
+                                -123.673,
+                                -78.0008
+                            ],
+                            [
+                                -123.023,
+                                -78.6032
+                            ],
+                            [
+                                -122.32,
+                                -79.2073
+                            ],
+                            [
+                                -121.524,
+                                -79.8063
+                            ],
+                            [
+                                -120.64,
+                                -80.4065
+                            ],
+                            [
+                                -119.637,
+                                -81.0025
+                            ],
+                            [
+                                -118.507,
+                                -81.5977
+                            ],
+                            [
+                                -117.173,
+                                -82.1866
+                            ],
+                            [
+                                -115.644,
+                                -82.7706
+                            ],
+                            [
+                                -113.85,
+                                -83.3488
+                            ],
+                            [
+                                -111.717,
+                                -83.9248
+                            ],
+                            [
+                                -137.677,
+                                -84.441
+                            ],
+                            [
+                                -162.989,
+                                -83.7781
+                            ],
+                            [
+                                -180,
+                                -82.311977956
+                            ],
+                            [
+                                -180,
+                                -78.164868049
+                            ]
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "collection": "Sentinel3",
+                "status": 0,
+                "license": {
+                    "licenseId": "unlicensed",
+                    "hasToBeSigned": "never",
+                    "grantedCountries": null,
+                    "grantedOrganizationCountries": null,
+                    "grantedFlags": null,
+                    "viewService": "public",
+                    "signatureQuota": -1,
+                    "description": {
+                        "shortName": "No license"
+                    }
+                },
+                "productIdentifier": "/eodata/Sentinel-3/OLCI/OL_2_WFR/2020/12/08/S3A_OL_2_WFR____20201208T130256_20201208T130556_20201208T142929_0179_066_052_4500_MAR_O_NR_002.SEN3",
+                "parentIdentifier": null,
+                "title": "S3A_OL_2_WFR____20201208T130256_20201208T130556_20201208T142929_0179_066_052_4500_MAR_O_NR_002.SEN3",
+                "description": null,
+                "organisationName": "ESA",
+                "startDate": "2020-12-08T13:02:55.848Z",
+                "completionDate": "2020-12-08T13:05:55.848Z",
+                "productType": "WFR",
+                "processingLevel": "LEVEL2",
+                "platform": "S3A",
+                "instrument": "OL",
+                "resolution": 0,
+                "sensorMode": "Earth Observation",
+                "orbitNumber": 25050,
+                "quicklook": null,
+                "thumbnail": "https://datahub.creodias.eu/files/Sentinel-3/OLCI/OL_2_WFR/2020/12/08/S3A_OL_2_WFR____20201208T130256_20201208T130556_20201208T142929_0179_066_052_4500_MAR_O_NR_002.SEN3/S3A_OL_2_WFR____20201208T130256_20201208T130556_20201208T142929_0179_066_052_4500_MAR_O_NR_002-ql.jpg",
+                "updated": "2020-12-08T14:56:25.194795Z",
+                "published": "2020-12-08T14:56:25.194795Z",
+                "snowCover": 0,
+                "cloudCover": -1,
+                "keywords": [
+                    {
+                        "id": "ab3b4ea14403e2e",
+                        "name": "Antarctica",
+                        "normalized": "antarctica",
+                        "type": "continent",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Antarctica"
+                    },
+                    {
+                        "id": "5fa4ac9cf1ec2f0",
+                        "name": "Antarctica",
+                        "normalized": "antarctica",
+                        "type": "country",
+                        "parentHash": "ab3b4ea14403e2e",
+                        "value": 40.27,
+                        "gcover": 5.13,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Antarctica"
+                    },
+                    {
+                        "id": "3f4fd379f3675d1",
+                        "name": "_all",
+                        "normalized": "_all",
+                        "type": "region",
+                        "parentHash": "5fa4ac9cf1ec2f0",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=_all"
+                    },
+                    {
+                        "id": "e236d52ef4f5a8f",
+                        "name": "Antarctica",
+                        "normalized": "antarctica",
+                        "type": "state",
+                        "parentHash": "3f4fd379f3675d1",
+                        "value": 39.97,
+                        "gcover": 5.11,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Antarctica"
+                    },
+                    {
+                        "id": "d4fb397ab7144ce",
+                        "name": "_unknown",
+                        "normalized": "",
+                        "type": "state",
+                        "parentHash": "3f4fd379f3675d1",
+                        "value": 0.3,
+                        "gcover": 20.95,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=_unknown"
+                    },
+                    {
+                        "id": "7d04eab2de39320",
+                        "name": "Ross Sea",
+                        "normalized": "ross-sea",
+                        "type": "sea",
+                        "value": 55.42,
+                        "gcover": 82.24,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=%22Ross%20Sea%22"
+                    },
+                    {
+                        "id": "4d50c060949edb1",
+                        "name": "Southern Ocean",
+                        "normalized": "southern-ocean",
+                        "type": "ocean",
+                        "value": 1.5,
+                        "gcover": 1.66,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=%22Southern%20Ocean%22"
+                    },
+                    {
+                        "id": "00f08f1102cb347",
+                        "name": "Sulzberger Bay",
+                        "normalized": "sulzberger-bay",
+                        "type": "bay",
+                        "value": 1.46,
+                        "gcover": 100,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=%22Sulzberger%20Bay%22"
+                    },
+                    {
+                        "id": "569b946c9c031d2",
+                        "name": "Wrigley Gulf",
+                        "normalized": "wrigley-gulf",
+                        "type": "gulf",
+                        "value": 1.31,
+                        "gcover": 83.68,
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=%22Wrigley%20Gulf%22"
+                    },
+                    {
+                        "id": "d817ecd5e7765d3",
+                        "name": "Southern",
+                        "type": "location",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Southern"
+                    },
+                    {
+                        "id": "8e973c5726ef929",
+                        "name": "Coastal",
+                        "type": "location",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Coastal"
+                    },
+                    {
+                        "id": "b4de51064131332",
+                        "name": "Spring",
+                        "type": "season",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Spring"
+                    },
+                    {
+                        "id": "920104a617dc965",
+                        "name": "Sentinel3",
+                        "type": "collection",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=Sentinel3"
+                    },
+                    {
+                        "id": "925570839a801aa",
+                        "name": "WFR",
+                        "type": "productType",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=WFR"
+                    },
+                    {
+                        "id": "19cb291efabfb58",
+                        "name": "LEVEL2",
+                        "type": "processingLevel",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=LEVEL2"
+                    },
+                    {
+                        "id": "5c091ca96672cec",
+                        "name": "S3A",
+                        "type": "platform",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=S3A"
+                    },
+                    {
+                        "id": "e3bad2e29533ff7",
+                        "name": "OL",
+                        "type": "instrument",
+                        "parentHash": "5c091ca96672cec",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=OL"
+                    },
+                    {
+                        "id": "fd2cf9aed8d70df",
+                        "name": "Earth Observation",
+                        "type": "sensorMode",
+                        "parentHash": "e3bad2e29533ff7",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=%22Earth%20Observation%22"
+                    },
+                    {
+                        "id": "6414a4147122d1b",
+                        "name": "2020",
+                        "type": "year",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=2020"
+                    },
+                    {
+                        "id": "c6134d71cb5682d",
+                        "name": "December",
+                        "type": "month",
+                        "parentHash": "6414a4147122d1b",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=December"
+                    },
+                    {
+                        "id": "b2e04ad9f55f11f",
+                        "name": "08",
+                        "type": "day",
+                        "parentHash": "c6134d71cb5682d",
+                        "href": "https://datahub.creodias.eu/resto/api/collections/Sentinel3/search.json?&lang=en&q=08"
+                    }
+                ],
+                "gmlgeometry": "<gml:MultiPolygon srsName=\"EPSG:4326\"><gml:polygonMember><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>180,-82.3119779556101 179.079,-82.2326 167.685,-80.22 170.543,-79.8515 173.195,-79.4565 175.661,-79.0395 177.927,-78.6035 180,-78.1648680490104 180,-82.3119779556101</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></gml:polygonMember><gml:polygonMember><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>-180,-78.1648680490104 -179.951,-78.1545 -177.997,-77.6903 -176.18,-77.2118 -174.5,-76.7209 -172.935,-76.2234 -171.488,-75.714 -170.126,-75.1964 -168.855,-74.6713 -167.674,-74.138 -166.566,-73.6012 -165.521,-73.0558 -164.546,-72.509 -163.631,-71.9596 -162.758,-71.3985 -161.936,-70.847 -154.067,-71.8241 -145.475,-72.4488 -136.468,-72.6799 -127.435,-72.5011 -127.151,-73.1103 -126.829,-73.7223 -126.481,-74.3374 -126.104,-74.9536 -125.693,-75.5726 -125.25,-76.1857 -124.766,-76.7927 -124.244,-77.3984 -123.673,-78.0008 -123.023,-78.6032 -122.32,-79.2073 -121.524,-79.8063 -120.64,-80.4065 -119.637,-81.0025 -118.507,-81.5977 -117.173,-82.1866 -115.644,-82.7706 -113.85,-83.3488 -111.717,-83.9248 -137.677,-84.441 -162.989,-83.7781 -180,-82.3119779556101 -180,-78.1648680490104</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></gml:polygonMember></gml:MultiPolygon>",
+                "centroid": {
+                    "type": "Point",
+                    "coordinates": [
+                        -135.912950884,
+                        -78.676804457
+                    ]
+                },
+                "orbitDirection": "descending",
+                "timeliness": "Near Real Time",
+                "relativeOrbitNumber": 52,
+                "processingBaseline": 0,
+                "services": {
+                    "download": {
+                        "url": "https://zipper.creodias.eu/download/c6ff8061-df12-53b7-8dd8-fb834b998f5b",
+                        "mimeType": "application/unknown",
+                        "size": 119047364
+                    }
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "type": "application/json",
+                        "title": "GeoJSON link for c6ff8061-df12-53b7-8dd8-fb834b998f5b",
+                        "href": "https://datahub.creodias.eu/resto/collections/Sentinel3/c6ff8061-df12-53b7-8dd8-fb834b998f5b.json?&lang=en"
+                    }
+                ]
+            }
+        }
+    ]
+}

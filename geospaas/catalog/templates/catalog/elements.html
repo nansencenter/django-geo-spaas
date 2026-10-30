@@ -1,0 +1,67 @@
+{% extends "catalog/catalog.html" %}
+##############################################################################################################
+{% block content_result %}
+<table border=1 style="width:100%">
+  <tr>
+    {% block headers %}
+    <th>Datasets</th>
+    {% endblock headers %}
+  </tr>
+
+  {% if page_obj %}
+
+  {% for ds in page_obj %}
+  <tr class="dataset_row" ajax_url="{% url 'base_viewer:catalog:geometry_geojson' ds.pk %}">
+    <td>
+      {% block ds_info %}
+      {% endblock ds_info %}
+    </td>
+    {% endfor %}
+    {% else %}
+  <tr>
+    <td colspan=10 class="place_ds">No datasets found</td>
+  </tr>
+  {% endif %}
+</table>
+
+{% endblock content_result %}
+##############################################################################################################
+{% block pagination_button_result %}
+<div class="pagination">
+  <span class="step-links">
+    <button form='search_form' {% if page_obj.has_previous %} name="page" value="{{ page_obj.previous_page_number }}"
+      type="submit" {% else %} disabled="disabled" {% endif %}>
+      Previous
+    </button>
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    <button form='search_form' {% if page_obj.has_next %} name="page" value="{{ page_obj.next_page_number }}"
+      type="submit" {% else %} disabled="disabled" {% endif %}>
+      Next
+    </button>
+  </span>
+</div>
+{% endblock pagination_button_result %}
+##############################################################################################################
+{% block contentmap %}
+
+<form method="post" id='search_form'>
+  {% csrf_token %}
+  <div id="para_FORM">
+    <div id="map">{{form.polygon}}</div>
+    <div class="attr_title_itself">Time coverage start (UTC):</div>
+    <div class="form_content">{{form.time_coverage_start}}</div>
+    <div class="attr_title_itself">Time coverage end (UTC):</div>
+    <div class="form_content">{{form.time_coverage_end}}</div>
+    <div class="attr_title_itself">Source:</div>
+    <div class="form_content">{{form.source}}</div>
+    <div class="attr_title_itself">Name (or part of the name) of parameter:</div>
+    <div class="form_content">{{form.nameparameters}}</div>
+
+  </div>
+  <input type="submit" value="Search all meta-data" />
+</form>
+{% endblock contentmap %}
