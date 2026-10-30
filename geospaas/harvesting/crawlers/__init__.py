@@ -10,7 +10,7 @@ from ..utils import get_all_subclasses
 plugins = plugins_manager.get_plugins_submodule('crawlers')
 
 # import crawlers modules from geospaas.harvesting
-for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
+for (_, name, _) in pkgutil.iter_modules([str(Path(__file__).parent)]):
     importlib.import_module('.' + name, __package__)
 
 # create index that allows to retrieve a crawler class using its name
