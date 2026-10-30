@@ -14,7 +14,7 @@ import django
 import geospaas.config
 import geospaas.harvesting.config as config
 from geospaas.catalog.models import Parameter
-from .providers import Provider
+from .providers import Provider, ProvidersConfiguration, SearchConfiguration
 from .recovery import retry_ingest
 
 
@@ -92,7 +92,7 @@ def delete_providers(names_to_delete: list[str]):
 
 def update_providers(providers_path: Union[Path, str]):
     """Update providers from a file"""
-    providers = config.ProvidersConfiguration.from_file(providers_path).providers
+    providers = ProvidersConfiguration.from_file(providers_path).providers
     print(f"Updating providers from {providers_path}")
     for provider in providers:
         try:
@@ -126,7 +126,7 @@ def harvest(cli_arguments):
     If errors occur during the ingestion process (like the provider
     website being temporarily unavailable), it is retried at the end.
     """
-    search_config = config.SearchConfiguration.from_file(cli_arguments.search_path)
+    search_config = SearchConfiguration.from_file(cli_arguments.search_path)
     searches_results = search_config.create_provider_searches()
 
     refresh_vocabularies()

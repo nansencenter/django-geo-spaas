@@ -2,10 +2,7 @@
 import logging
 from pathlib import Path
 
-import geospaas.harvesting.utils as utils
-import geospaas.harvesting.arguments as arguments
 from geospaas.config import Settings
-from .providers import Provider
 from .utils import read_yaml_file
 
 
@@ -18,10 +15,6 @@ settings = Settings({
     'GEOSPAAS_HARVESTING_PROVIDERS_PATH': Path(__file__).parent / 'default_providers.yml',
     'GEOSPAAS_HARVESTING_FAILED_INGESTIONS_PATH': Path('/', 'var', 'run', 'geospaas'),
 })
-
-
-class NoProviderFoundError(Exception):
-    """No provider class was found"""
 
 
 class Configuration():
@@ -45,63 +38,3 @@ class Configuration():
     def from_file(cls, config_path):
         """Creates a configuration object from a YAML file"""
         return cls.from_dict(read_yaml_file(config_path))
-
-
-class ProvidersArgument(arguments.DictArgument):
-    """This argument is a dict of providers in the format:
-    {
-        'provider_name1':
-            'crawler':
-                'name': 'crawler1'
-                'param1': 'value1'
-        'provider_name2:
-            'crawler':
-                'name': 'crawler2'
-                'param2': 'value2'
-            'normalizer':
-                'name': 'normalizer2'
-            'ingester':
-                'update': True
-    }
-    """
-
-    def __init__(self, name, **kwargs):
-        super().__init__(name, **kwargs)
-
-    def parse(self, value):
-        """Go through the list of provider settings and create the
-        providers
-        """
-        _providers = []
-        providers_dict = super().parse(value)
-        for provider_name, provider_config in providers_dict.items():
-            _providers.append(Provider.from_config(provider_name, provider_config))
-        return _providers
-
-
-class ProvidersConfiguration(Configuration):
-    """Configuration manager for providers"""
-    def __init__(self):
-        self.config_arguments_parser = arguments.ArgumentParser([
-            ProvidersArgument('providers', required=True)
-        ])
-
-
-class SearchConfiguration(Configuration):
-    """Configuration manager used to parse search parameters"""
-    def __init__(self):
-        self.config_arguments_parser = arguments.ArgumentParser([
-            arguments.DictArgument('common', default=dict),
-            arguments.ListArgument('searches', default=list)
-        ])
-
-    def create_provider_searches(self):
-        """Creates a SearchResults object for each of the provider
-        specific searches
-        """
-        searches = []
-        for search in self.searches:  # pylint: disable=no-member
-            provider_name = search.pop('provider_name')
-            search_params = utils.merge_configs(self.common, search)
-            searches.append(Provider.objects.get(name=provider_name).search(**search_params))
-        return searches

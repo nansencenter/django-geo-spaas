@@ -6,10 +6,13 @@ import unittest
 import unittest.mock as mock
 from datetime import datetime, timezone as tz
 
+import django.test
+
 import geospaas.harvesting.crawlers as crawlers
 import geospaas.harvesting.ingesters as ingesters
 import geospaas.harvesting.normalizers.raw
 import geospaas.harvesting.providers as providers
+from . import TEST_FILES_PATH
 
 
 class ProviderTestCase(unittest.TestCase):
@@ -139,3 +142,123 @@ class SearchResultsTestCase(unittest.TestCase):
         with self.assertLogs(providers.logger, level=logging.INFO):
             self.search_results.save()
         self.ingester.ingest.assert_called_once()
+
+
+
+class ProvidersArgumentTestCase(django.test.TestCase):
+    """Tests for the ProvidersArgument class"""
+
+    def test_parse(self):
+        """Test parsing a providers argument"""
+        providers_arg = {
+            'cmems': {
+                'crawler': {
+                    'name': 'cmems',
+                    'username': 'user',
+                    'password': 'pass',
+                },
+                'normalizer': {'name': 'cmems'}
+            },
+            'thredds': {
+                'crawler': {'name': 'thredds'},
+                'normalizer': {'max_threads': 30}
+            }
+        }
+        parsed_providers = providers.ProvidersArgument('providers').parse(providers_arg)
+        self.assertListEqual(
+            parsed_providers,
+            [
+                providers.Provider(name='cmems', config={
+                    'crawler': {
+                        'name': 'cmems',
+                        'username': 'user',
+                        'password': 'pass',
+                    },
+                    'normalizer': {'name': 'cmems'},
+                    'ingester': {},
+                }),
+                providers.Provider(name='thredds', config={
+                    'crawler': {'name': 'thredds'},
+                    'normalizer': {'max_threads': 30},
+                    'ingester': {},
+                }),
+            ])
+
+    def test_parse_config_error(self):
+        """Test error handling when parsing wrong configuration"""
+        with self.assertRaises(ValueError):
+            providers.ProvidersArgument('providers').parse({'foo': {}})
+
+    def test_parse_no_provider_found(self):
+        """Test error handling when no crawler matches the requested
+        type
+        """
+        with self.assertRaises(KeyError):
+            providers.ProvidersArgument('providers').parse({'foo': {'crawler': {'name': 'foo'}}})
+
+
+class ProvidersConfigurationTestCase(django.test.TestCase):
+    """Tests for the ProvidersConfiguration class"""
+
+    def test_parse_providers_config(self):
+        """Test parsing a providers configuration file"""
+        with mock.patch('geospaas.harvesting.utils.http_request'):
+            providers_config = providers.ProvidersConfiguration.from_file(
+                TEST_FILES_PATH / 'providers.yml')
+            self.assertListEqual(
+                providers_config.providers,
+                [
+                    providers.Provider(
+                        name='creodias',
+                        config={
+                            'crawler': {
+                                'name': 'resto',
+                                'url': 'https://datahub.creodias.eu',
+                            },
+                            'normalizer': {'name': 'resto'},
+                            'ingester': {},
+                         })
+                ])
+
+
+class SearchConfigurationTestCase(django.test.TestCase):
+    """Tests for the SearchConfiguration class"""
+
+    def setUp(self):
+        self.mock_http_request = mock.patch('geospaas.harvesting.utils.http_request').start()
+        self.addCleanup(mock.patch.stopall)
+        self.search_config = (
+            providers.SearchConfiguration.from_file(TEST_FILES_PATH / 'search.yml'))
+        # create testing providers
+        for p in providers.ProvidersConfiguration.from_file(TEST_FILES_PATH/'providers.yml').providers:
+            p.save()
+
+    def test_create_search_configuration(self):
+        """Test making a SearchConfiguration object from files"""
+
+        self.assertDictEqual(self.search_config.common, {})
+        self.assertListEqual(self.search_config.searches, [{
+            'provider_name': 'creodias',
+            'crawler': {
+                'collection': 'SENTINEL-3',
+                'search_terms': {
+                    'processingLevel': '2'
+                },
+                'start_time': '2023-01-01',
+                'end_time': '2023-01-02',
+            },
+        }])
+
+    def test_create_provider_searches(self):
+        """Test starting searches from a SearchConfiguration object
+        """
+        with mock.patch('geospaas.harvesting.providers.Provider.search') as mock_search:
+            self.assertListEqual(
+                self.search_config.create_provider_searches(),
+                [mock_search.return_value])
+        mock_search.assert_called_once_with(
+            crawler={
+                'collection': 'SENTINEL-3',
+                'search_terms': {'processingLevel': '2'},
+                'start_time': '2023-01-01',
+                'end_time': '2023-01-02'})

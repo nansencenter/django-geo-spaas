@@ -27,68 +27,75 @@ class CLITestCase(django.test.TestCase):
         """The database vocabulary objects must be updated
         only if the corresponding setting is True
         """
-        config = mock.Mock(update_vocabularies=True,
-                           update_pythesint=False,
-                           pythesint_versions=None)
-        with mock.patch('django.core.management.call_command') as mock_call_command:
+        with mock.patch('django.core.management.call_command') as mock_call_command, \
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings, \
+             mock.patch('geospaas.config.settings') as mock_geospaas_settings:
+            mock_settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES = True
+            mock_settings.GEOSPAAS_HARVESTING_UPDATE_PYTHESINT = False
+            mock_geospaas_settings.GEOSPAAS_PYTHESINT_VERSIONS = None
             with self.assertLogs(logger=cli.logger, level=logging.INFO):
-                cli.refresh_vocabularies(config)
+                cli.refresh_vocabularies()
             mock_call_command.assert_called_with('update_vocabularies', force=False, versions=None)
 
     def test_no_refresh_vocabularies(self):
         """The vocabularies should not be refreshed if the setting is
         False
         """
-        config = mock.Mock(update_vocabularies=False)
         with mock.patch('django.core.management.call_command') as mock_call_command, \
-             mock.patch('geospaas.vocabularies.models.Parameter.objects.count', return_value=2):
-            cli.refresh_vocabularies(config)
+             mock.patch('geospaas.vocabularies.models.Parameter.objects.count', return_value=2), \
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES = False
+            cli.refresh_vocabularies()
             mock_call_command.assert_not_called()
 
     def test_refresh_vocabularies_parameters_error(self):
         """Test that an exception is raised if no refresh is requested
         and there are no Parameters in the database
         """
-        config = mock.Mock(update_vocabularies=False)
-        with mock.patch('geospaas.vocabularies.models.Parameter.objects.count', return_value=0):
+        with mock.patch('geospaas.vocabularies.models.Parameter.objects.count', return_value=0), \
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES = False
             with self.assertRaises(RuntimeError):
-                cli.refresh_vocabularies(config)
+                cli.refresh_vocabularies()
 
     def test_refresh_vocabularies_and_update_pythesint(self):
         """The database vocabulary objects must be updated and
         pythesint's data refreshed only if the corresponding settings
         are both True
         """
-        # Refresh the database but not the pythesint files
-        config = mock.Mock(update_vocabularies=True,
-                           update_pythesint=False,
-                           pythesint_versions=None)
-        with mock.patch('django.core.management.call_command') as mock_call_command:
-            with self.assertLogs(logger=cli.logger, level=logging.INFO):
-                cli.refresh_vocabularies(config)
-            mock_call_command.assert_called_with('update_vocabularies', force=False, versions=None)
+        with mock.patch('geospaas.harvesting.config.settings') as mock_settings, \
+             mock.patch('geospaas.config.settings') as mock_geospaas_settings:
 
-        # Refresh both the database and the pythesint files
-        config = mock.Mock(update_vocabularies=True,
-                           update_pythesint=True,
-                           pythesint_versions=None)
-        with mock.patch('django.core.management.call_command') as mock_call_command:
-            with self.assertLogs(logger=cli.logger, level=logging.INFO):
-                cli.refresh_vocabularies(config)
-            mock_call_command.assert_called_with('update_vocabularies', force=True, versions=None)
+            with mock.patch('django.core.management.call_command') as mock_call_command:
+                # Refresh the database but not the pythesint files
+                mock_settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES = True
+                mock_settings.GEOSPAAS_HARVESTING_UPDATE_PYTHESINT = False
+                mock_geospaas_settings.GEOSPAAS_PYTHESINT_VERSIONS = None
+                with self.assertLogs(logger=cli.logger, level=logging.INFO):
+                    cli.refresh_vocabularies()
+                mock_call_command.assert_called_with('update_vocabularies', force=False, versions=None)
 
-        # Refresh both the database and the pythesint files,
-        # specifying versions
-        config = mock.Mock(update_vocabularies=True,
-                           update_pythesint=True,
-                           pythesint_versions={'gcmd_instrument': '9.1.5'})
-        with mock.patch('django.core.management.call_command') as mock_call_command:
-            with self.assertLogs(logger=cli.logger, level=logging.INFO):
-                cli.refresh_vocabularies(config)
-            mock_call_command.assert_called_with(
-                'update_vocabularies',
-                force=True,
-                versions={'gcmd_instrument': '9.1.5'})
+            with mock.patch('django.core.management.call_command') as mock_call_command:
+                # Refresh both the database and the pythesint files
+                mock_settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES = True
+                mock_settings.GEOSPAAS_HARVESTING_UPDATE_PYTHESINT = True
+                mock_geospaas_settings.GEOSPAAS_PYTHESINT_VERSIONS = None
+                with self.assertLogs(logger=cli.logger, level=logging.INFO):
+                    cli.refresh_vocabularies()
+                mock_call_command.assert_called_with('update_vocabularies', force=True, versions=None)
+
+            with mock.patch('django.core.management.call_command') as mock_call_command:
+                # Refresh both the database and the pythesint files,
+                # specifying versions
+                mock_settings.GEOSPAAS_HARVESTING_UPDATE_VOCABULARIES = True
+                mock_settings.GEOSPAAS_HARVESTING_UPDATE_PYTHESINT = True
+                mock_geospaas_settings.GEOSPAAS_PYTHESINT_VERSIONS = {'gcmd_instrument': '9.1.5'}
+                with self.assertLogs(logger=cli.logger, level=logging.INFO):
+                    cli.refresh_vocabularies()
+                mock_call_command.assert_called_with(
+                    'update_vocabularies',
+                    force=True,
+                    versions={'gcmd_instrument': '9.1.5'})
 
     def test_save_results(self):
         """Test the the save() method of SearchResults objects is
@@ -149,7 +156,7 @@ class CLITestCase(django.test.TestCase):
         mock_config = mock.Mock()
         mock_config.providers = [new_provider]
 
-        with mock.patch('geospaas.harvesting.cli.config.ProvidersConfiguration.from_file',
+        with mock.patch('geospaas.harvesting.cli.ProvidersConfiguration.from_file',
                         return_value=mock_config), \
                 mock.patch('builtins.print') as mock_print:
             cli.update_providers(providers_path)
@@ -171,7 +178,7 @@ class CLITestCase(django.test.TestCase):
 
         provider_before = Provider.objects.get(name='ftp')
 
-        with mock.patch('geospaas.harvesting.cli.config.ProvidersConfiguration.from_file',
+        with mock.patch('geospaas.harvesting.cli.ProvidersConfiguration.from_file',
                         return_value=mock_config), \
                 mock.patch('builtins.print') as mock_print:
             cli.update_providers(providers_path)
@@ -197,7 +204,7 @@ class CLITestCase(django.test.TestCase):
 
         provider_before = Provider.objects.get(name='ftp')
 
-        with mock.patch('geospaas.harvesting.cli.config.ProvidersConfiguration.from_file',
+        with mock.patch('geospaas.harvesting.cli.ProvidersConfiguration.from_file',
                         return_value=mock_config), \
                 mock.patch('builtins.print') as mock_print:
             cli.update_providers(providers_path)
@@ -210,8 +217,7 @@ class CLITestCase(django.test.TestCase):
 
     def test_harvest(self):
         """Check that the necessary functions are called"""
-        with mock.patch('geospaas.harvesting.config.SearchConfiguration'), \
-             mock.patch('geospaas.harvesting.config.GeneralConfiguration'), \
+        with mock.patch('geospaas.harvesting.cli.SearchConfiguration'), \
              mock.patch('geospaas.harvesting.cli.refresh_vocabularies') as mock_refresh_vocs, \
              mock.patch('geospaas.harvesting.cli.save_results') as mock_save_results, \
              mock.patch('geospaas.harvesting.cli.retry_ingest') as mock_retry_ingest:
@@ -225,13 +231,11 @@ class CLITestCase(django.test.TestCase):
         """Test making the CLI arguments parser"""
         arg_parser = cli.make_arg_parser()
         parsed_args = arg_parser.parse_args((
-            '-c', '/foo/config.yml',
             'harvest',
             '-s', '/foo/search.yml'))
         self.assertEqual(
             parsed_args,
             argparse.Namespace(
-                config_path='/foo/config.yml',
                 search_path='/foo/search.yml',
                 func=cli.harvest))
 
@@ -247,12 +251,11 @@ class CLITestCase(django.test.TestCase):
     def test_handle_providers_update(self):
         """Test that providers are updated when --update is passed"""
         cli_arguments = argparse.Namespace(
-            providers_path='/path/to/providers.yml', delete=None, list=False,
-            config_path='config.yml')
-
+            providers_path='/path/to/providers.yml', delete=None, list=False)
 
         with mock.patch('geospaas.harvesting.cli.update_providers') as mock_update_providers, \
-             mock.patch('geospaas.harvesting.config.GeneralConfiguration'):
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_PROVIDERS_PATH ='/default.yml'
             cli.handle_providers(cli_arguments)
 
         mock_update_providers.assert_called_once_with('/path/to/providers.yml')
@@ -260,12 +263,11 @@ class CLITestCase(django.test.TestCase):
     def test_handle_providers_update_default(self):
         """Test that default providers are updated when --update is passed without a path"""
         cli_arguments = argparse.Namespace(
-            providers_path=cli.CreateDefaultProviders, delete=None, list=False,
-            config_path='config.yml')
+            providers_path=cli.CreateDefaultProviders, delete=None, list=False)
 
         with mock.patch('geospaas.harvesting.cli.update_providers') as mock_update_providers, \
-             mock.patch('geospaas.harvesting.config.GeneralConfiguration.from_file',
-                        return_value=mock.Mock(providers_path='/default.yml')) as mock_config:
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_PROVIDERS_PATH ='/default.yml'
             cli.handle_providers(cli_arguments)
 
         mock_update_providers.assert_called_once_with('/default.yml')
@@ -273,35 +275,35 @@ class CLITestCase(django.test.TestCase):
     def test_handle_providers_delete(self):
         """Test that providers are deleted when --delete is passed"""
         cli_arguments = argparse.Namespace(
-            providers_path=None, delete=['provider1', 'provider2'], list=False,
-            config_path='config.yml')
+            providers_path=None, delete=['provider1', 'provider2'], list=False)
 
         with mock.patch('geospaas.harvesting.cli.delete_providers') as mock_delete_providers, \
-             mock.patch('geospaas.harvesting.config.GeneralConfiguration'):
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_PROVIDERS_PATH ='/default.yml'
             cli.handle_providers(cli_arguments)
 
         mock_delete_providers.assert_called_once_with(['provider1', 'provider2'])
 
     def test_handle_providers_list(self):
         """Test that providers are listed when --list is passed"""
-        cli_arguments = argparse.Namespace(providers_path=None, delete=None, list=True,
-                                           config_path='config.yml')
+        cli_arguments = argparse.Namespace(providers_path=None, delete=None, list=True)
 
         with mock.patch('geospaas.harvesting.cli.print_providers') as mock_print_providers, \
-             mock.patch('geospaas.harvesting.config.GeneralConfiguration'):
+             mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_PROVIDERS_PATH ='/default.yml'
             cli.handle_providers(cli_arguments)
 
         mock_print_providers.assert_called_once()
 
     def test_handle_providers_no_action(self):
         """Test that no action is taken when no arguments are passed"""
-        cli_arguments = argparse.Namespace(providers_path=None, delete=None, list=False,
-                                           config_path='config.yml')
+        cli_arguments = argparse.Namespace(providers_path=None, delete=None, list=False)
 
         with mock.patch('geospaas.harvesting.cli.update_providers') as mock_update_providers, \
                 mock.patch('geospaas.harvesting.cli.delete_providers') as mock_delete_providers, \
                 mock.patch('geospaas.harvesting.cli.print_providers') as mock_print_providers, \
-                mock.patch('geospaas.harvesting.config.GeneralConfiguration'):
+                mock.patch('geospaas.harvesting.config.settings') as mock_settings:
+            mock_settings.GEOSPAAS_HARVESTING_PROVIDERS_PATH ='/default.yml'
             cli.handle_providers(cli_arguments)
 
         mock_update_providers.assert_not_called()
