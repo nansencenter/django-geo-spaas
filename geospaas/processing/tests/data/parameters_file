@@ -1,0 +1,6 @@
+-t reader
+-o collection = some_collection
+   downscale = yes
+   gcp_spacing = 128
+-i atmospheric_correction_LUT_path = auxiliary/LUT_Rayleigh_OLCI.txt
+   geoloc_spacing = 128

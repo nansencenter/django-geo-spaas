@@ -13,6 +13,7 @@ app_name = 'geospaas'
 urlpatterns = [
     path('', view=GeoSPaaSView.as_view(), name='index'),
 ]
-for urls_module in plugins_manager.get_plugins_submodule('urls'):
+for urls_module in plugins_manager.get_plugins_submodule(
+        'urls', exclude=['geospaas.urls', 'geospaas.base_viewer.urls']):
     app_name = urls_module.app_name
     urlpatterns.append(path(f'{app_name}/', include(urls_module, app_name)))

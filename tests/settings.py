@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'geospaas.catalog',
     'geospaas.vocabularies',
     'geospaas.harvesting',
+    'geospaas.processing',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -15,7 +15,8 @@ class GeoSPaaSView(TemplateView):
         super().__init__(**kwargs)
         self.geospaas_apps = set()
 
-        for urls_module in plugins_manager.get_plugins_submodule('urls'):
+        for urls_module in plugins_manager.get_plugins_submodule(
+                'urls', exclude=['geospaas.urls', 'geospaas.base_viewer.urls']):
             self.geospaas_apps.add(urls_module.app_name)
 
     def get_context_data(self, **kwargs):

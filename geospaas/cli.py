@@ -17,7 +17,7 @@ def make_arg_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(prog='geospaas', description='GeoSPaaS CLI')
     subparsers = parser.add_subparsers()
-    for cli_plugin in plugins_manager.get_plugins_submodule('cli'):
+    for cli_plugin in plugins_manager.get_plugins_submodule('cli', exclude=[__name__]):
         sub_parser:argparse.ArgumentParser = cli_plugin.make_arg_parser()
         subparsers.add_parser(sub_parser.prog, parents=[sub_parser], add_help=False)
     return parser

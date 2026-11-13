@@ -1,0 +1,70 @@
+---
+# Dictionary associating URLs to settings to pass to the downloaders
+'ftp://nrt.cmems-du.eu':
+  username: !ENV 'CMEMS_USERNAME'
+  password: !ENV 'CMEMS_PASSWORD'
+  max_parallel_downloads: 10
+'ftp://anon-ftp.ceda.ac.uk':
+  username: 'anonymous'
+  password: ''
+  max_parallel_downloads: 12
+'ftp://ftp.ceda.ac.uk':
+  username: !ENV 'CEDA_USERNAME'
+  password: !ENV 'CEDA_PASSWORD'
+  max_parallel_downloads: 10
+'ftp://ftp.gportal.jaxa.jp':
+  username: !ENV 'JAXA_USERNAME'
+  password: !ENV 'JAXA_PASSWORD'
+'https://zipper.creodias.eu':
+  username: !ENV 'CREODIAS_USERNAME'
+  password: !ENV 'CREODIAS_PASSWORD'
+  authentication_type: 'oauth2'
+  token_url: 'https://identity.cloudferro.com/auth/realms/Creodias-new/protocol/openid-connect/token'
+  client_id: 'CLOUDFERRO_PUBLIC'
+  max_parallel_downloads: 4
+  totp_secret: !ENV 'CREODIAS_TOTP_SECRET'
+'https://datahub.creodias.eu':
+  username: !ENV 'CREODIAS_USERNAME'
+  password: !ENV 'CREODIAS_PASSWORD'
+  authentication_type: 'oauth2'
+  token_url: 'https://identity.cloudferro.com/auth/realms/Creodias-new/protocol/openid-connect/token'
+  client_id: 'CLOUDFERRO_PUBLIC'
+  max_parallel_downloads: 4
+  totp_secret: !ENV 'CREODIAS_TOTP_SECRET'
+  token_placement: 'url'
+  token_parameter_name: 'token'
+'https://download.dataspace.copernicus.eu':
+  username: !ENV 'COPERNICUS_DATA_SPACE_USERNAME'
+  password: !ENV 'COPERNICUS_DATA_SPACE_PASSWORD'
+  authentication_type: 'oauth2'
+  token_url: 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'
+  client_id: 'cdse-public'
+  max_parallel_downloads: 4
+'https://zipper.dataspace.copernicus.eu':
+  username: !ENV 'COPERNICUS_DATA_SPACE_USERNAME'
+  password: !ENV 'COPERNICUS_DATA_SPACE_PASSWORD'
+  authentication_type: 'oauth2'
+  token_url: 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'
+  client_id: 'cdse-public'
+  max_parallel_downloads: 4
+'https://podaac-tools.jpl.nasa.gov/drive/files':
+  username: !ENV 'PODAAC_DRIVE_USERNAME'
+  password: !ENV 'PODAAC_DRIVE_PASSWORD'
+'https://oceandata.sci.gsfc.nasa.gov':
+  username: !ENV EARTHDATA_USERNAME
+  password: !ENV EARTHDATA_PASSWORD
+'https://archive.swot.podaac.earthdata.nasa.gov/':
+  username: !ENV EARTHDATA_USERNAME
+  password: !ENV EARTHDATA_PASSWORD
+'https://tds.aviso.altimetry.fr':
+  username: !ENV AVISO_USERNAME
+  password: !ENV AVISO_PASSWORD
+'https://tds-odatis.aviso.altimetry.fr':
+  username: !ENV AVISO_USERNAME
+  password: !ENV AVISO_PASSWORD
+'s3://eodata':
+  endpoint_url: 'https://eodata.dataspace.copernicus.eu'
+  region_name: 'default'
+  access_key: !ENV COPERNICUS_DATA_SPACE_S3_ACCESS_KEY
+  secret_key: !ENV COPERNICUS_DATA_SPACE_S3_SECRET_KEY
+...

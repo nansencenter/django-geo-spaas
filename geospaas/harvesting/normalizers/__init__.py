@@ -12,7 +12,7 @@ from .base import MetadataNormalizer, StreamMetadataNormalizer
 from ..utils import get_all_subclasses
 
 # import normalizers modules from geospaas plugins
-plugins = plugins_manager.get_plugins_submodule('normalizers')
+plugins = plugins_manager.get_plugins_submodule('normalizers', exclude=[__name__])
 
 # import normalizers modules from geospaas.harvesting
 for (_, name, _) in pkgutil.iter_modules([str(Path(__file__).parent)]):

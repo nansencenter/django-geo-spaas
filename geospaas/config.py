@@ -26,24 +26,26 @@ class PluginsManager():
     """Manage GeoSPaaS plugins"""
 
     def __init__(self):
-        self.plugins = self._get_plugins(exclude=['geospaas', 'geospaas.base_viewer'])
+        self.plugins = self._get_plugins()
 
-    def _get_plugins(self, exclude:typing.Iterable[str]=None) -> set[str]:
-        exclude = [] if exclude is None else exclude
+    def _get_plugins(self) -> set[str]:
         plugins = set()
         for app_config in apps.app_configs.values():
-            if app_config.name.startswith('geospaas') and app_config.name not in exclude:
+            if app_config.name.startswith('geospaas'):
                 plugins.add(app_config.name)
         return plugins
 
-    def get_plugins_submodule(self, name: str) -> set[types.ModuleType]:
+    def get_plugins_submodule(self, name: str,
+                              exclude: typing.Iterable[str] = set()) -> set[types.ModuleType]:
         submodules = set()
         for module_name in self.plugins:
-            try:
-                submodule = importlib.import_module(f"{module_name}.{name}")
-                submodules.add(submodule)
-            except ModuleNotFoundError:
-                logger.debug("%s.%s not found", module_name, name)
+            full_module_name = f"{module_name}.{name}"
+            if full_module_name not in exclude:
+                try:
+                    submodule = importlib.import_module(full_module_name)
+                    submodules.add(submodule)
+                except ModuleNotFoundError:
+                    logger.debug("%s.%s not found", module_name, name)
         return submodules
 
 

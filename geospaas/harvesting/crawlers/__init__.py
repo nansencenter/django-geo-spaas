@@ -7,7 +7,7 @@ from .base import Crawler
 from ..utils import get_all_subclasses
 
 # import crawlers modules from geospaas plugins
-plugins = plugins_manager.get_plugins_submodule('crawlers')
+plugins = plugins_manager.get_plugins_submodule('crawlers', exclude=[__name__])
 
 # import crawlers modules from geospaas.harvesting
 for (_, name, _) in pkgutil.iter_modules([str(Path(__file__).parent)]):
