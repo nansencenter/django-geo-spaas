@@ -50,6 +50,16 @@ dependencies = [
     "requests",
     "setuptools<81",
     "shapely>=2",
+
+    #processing
+    "celery==5.4.*",
+    "django-celery-results==2.6.*",
+    "boto3",
+    "nco",
+    "paramiko",
+    "pyotp",
+    "redis",
+    "scp",
 ]
 urls = {Repository = "https://github.com/nansencenter/django-geo-spaas"}
 dynamic = ["version"]
@@ -59,3 +69,7 @@ packages = ["geospaas"]
 
 [project.scripts]
 geospaas = "geospaas.cli:main"
+
+[project.optional-dependencies]
+graylog = ["graypy"]
+idf = ['idf_converter']
