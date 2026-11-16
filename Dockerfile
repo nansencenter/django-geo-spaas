@@ -12,6 +12,7 @@ RUN apt update \
     g++ \
     libpq5 \
     libpq-dev \
+    nco \
 &&  pip install \
     bs4 \
     coverage \
