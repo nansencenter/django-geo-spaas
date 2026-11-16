@@ -234,17 +234,18 @@ class HTTPDownloaderTestCase(unittest.TestCase):
 
     def test_build_oauth2_authentication_with_totp(self):
         """Test that the right TOTP password is generated and used"""
+        secret = 'base32secret32323232323232'
         with mock.patch('requests_oauthlib.OAuth2Session.fetch_token') as mock_fetch_token:
             now = datetime.now()
             downloaders.HTTPDownloader.build_oauth2_authentication(
-                'username', 'password', 'token_url', 'client_id', totp_secret='TOTPSECRET')
+                'username', 'password', 'token_url', 'client_id', totp_secret=secret)
 
         mock_fetch_token.assert_called_with(
             token_url='token_url',
             username='username',
             password='password',
             client_id='client_id',
-            totp=pyotp.TOTP('TOTPSECRET').at(now),
+            totp=pyotp.TOTP(secret).at(now),
         )
 
     def test_build_oauth2_authentication_totp_retry(self):
@@ -253,7 +254,8 @@ class HTTPDownloaderTestCase(unittest.TestCase):
         with mock.patch('requests_oauthlib.OAuth2Session.fetch_token') as mock_fetch_token:
             mock_fetch_token.side_effect = (oauthlib.oauth2.rfc6749.errors.InvalidGrantError, {})
             oauth2 = downloaders.HTTPDownloader.build_oauth2_authentication(
-                'username', 'password', 'token_url', 'client_id', totp_secret='TOTPSECRET')
+                'username', 'password', 'token_url', 'client_id',
+                totp_secret='base32secret32323232323232')
             self.assertIsInstance(oauth2, requests_oauthlib.OAuth2)
 
     def test_build_oauth2_authentication_totp_error(self):
@@ -263,7 +265,8 @@ class HTTPDownloaderTestCase(unittest.TestCase):
             mock_fetch_token.side_effect = oauthlib.oauth2.rfc6749.errors.InvalidGrantError
             with self.assertRaises(oauthlib.oauth2.rfc6749.errors.InvalidGrantError):
                 downloaders.HTTPDownloader.build_oauth2_authentication(
-                    'username', 'password', 'token_url', 'client_id', totp_secret='TOTPSECRET')
+                    'username', 'password', 'token_url', 'client_id',
+                    totp_secret='base32secret32323232323232')
 
     def test_build_oauth2_authentication_url_placement(self):
         """Test that specifying a token placement in the URL produces a
