@@ -124,9 +124,9 @@ class CMEMSCrawler(Crawler):
         self.set_initial_state()
         for cmems_dataset in self._product_info.datasets:
             dataset_id = cmems_dataset.dataset_id
-            dataset_variables = (cmems_dataset.versions[0].parts[0]
-                                 .get_service_by_service_name('original-files').variables)
             if self.dataset_ids is None or dataset_id in self.dataset_ids:
+                dataset_variables = (cmems_dataset.versions[0].parts[0]
+                                     .get_service_by_service_name('original-files').variables)
                 response = copernicusmarine.get(
                     dataset_id=dataset_id,
                     dry_run=True,
