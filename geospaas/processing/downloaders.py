@@ -796,7 +796,7 @@ class DownloadManager():
         files = []
         for dataset in self.datasets:
             appropriate_download_directory = dataset.time_coverage_start.strftime(
-                self.download_folder)
+                str(self.download_folder))
             os.makedirs(appropriate_download_directory, exist_ok=True)
             files.append(self.download_dataset(dataset, appropriate_download_directory))
         return files
