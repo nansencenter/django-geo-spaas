@@ -4,7 +4,6 @@ from geospaas.config import Settings
 
 
 settings = Settings({
-    'GEOSPAAS_PROCESSING_BROKER': 'amqp://guest:guest@localhost:5672',
     'GEOSPAAS_PROCESSING_WORK_DIR': Path('/tmp/geospaas_processing'),
     'GEOSPAAS_PROCESSING_PROVIDER_SETTINGS_PATH': None,
     'GEOSPAAS_PROCESSING_FTP_HOST': None,
