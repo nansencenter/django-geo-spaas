@@ -1,0 +1,58 @@
+{
+    "collections": [
+        {
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "id": "SENTINEL-1",
+            "title": "SENTINEL-1",
+            "description": null,
+            "type": "Collection",
+            "license": null,
+            "extent": {
+                "spatial": null,
+                "temporal": {
+                    "interval": [
+                        [
+                            null,
+                            null
+                        ]
+                    ]
+                }
+            },
+            "links": [
+                {
+                    "rel": "root",
+                    "type": "application/json",
+                    "href": "https://datahub.creodias.eu/stac"
+                },
+                {
+                    "rel": "parent",
+                    "type": "application/json",
+                    "href": "https://datahub.creodias.eu/stac"
+                },
+                {
+                    "rel": "self",
+                    "type": "application/json",
+                    "href": "https://datahub.creodias.eu/stac/collections/SENTINEL-1"
+                },
+                {
+                    "rel": "items",
+                    "type": "application/json",
+                    "href": "https://datahub.creodias.eu/stac/collections/SENTINEL-1/items"
+                }
+            ]
+        }
+    ],
+    "links": [
+        {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://datahub.creodias.eu/stac"
+        },
+        {
+            "rel": "self",
+            "type": "application/json",
+            "href": "https://datahub.creodias.eu/stac/collections"
+        }
+    ]
+}

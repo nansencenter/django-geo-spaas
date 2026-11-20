@@ -12,6 +12,7 @@ RUN apt update \
     g++ \
     libpq5 \
     libpq-dev \
+    nco \
 &&  pip install \
     bs4 \
     coverage \
@@ -19,6 +20,7 @@ RUN apt update \
     django-forms-bootstrap==3.1.0 \
     django-leaflet==0.34.0 \
     psycopg==3.3.6 \
+    pythesint==1.7.3.dev0 \
     thredds_crawler==1.5.4 \
 &&  apt remove -y g++ && apt autoremove -y \
 &&  apt clean && rm -rf /var/lib/apt/lists/* \

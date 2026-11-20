@@ -1,0 +1,92 @@
+{
+    "hits": 491285,
+    "took": 49,
+    "items": [
+        {
+            "meta": {
+                "concept-type": "granule",
+                "concept-id": "G1442459084-OB_DAAC",
+                "revision-id": 1,
+                "native-id": "2018_V2012002205400.L2_SNPP_OC.nc",
+                "provider-id": "OB_DAAC",
+                "format": "application/echo10+xml",
+                "revision-date": "2017-12-08T07:13:10.082Z"
+            },
+            "umm": {
+                "TemporalExtent": {
+                    "RangeDateTime": {
+                        "BeginningDateTime": "2012-01-02T20:54:01.000Z",
+                        "EndingDateTime": "2012-01-02T20:59:58.000Z"
+                    }
+                },
+                "GranuleUR": "2018_V2012002205400.L2_SNPP_OC.nc",
+                "SpatialExtent": {
+                    "HorizontalSpatialDomain": {
+                        "Geometry": {
+                            "BoundingRectangles": [
+                                {
+                                    "WestBoundingCoordinate": 20.155176,
+                                    "EastBoundingCoordinate": 82.557884,
+                                    "NorthBoundingCoordinate": -41.259384,
+                                    "SouthBoundingCoordinate": -68.145538
+                                }
+                            ]
+                        }
+                    }
+                },
+                "ProviderDates": [
+                    {
+                        "Date": "2017-12-08T07:13:09.000Z",
+                        "Type": "Insert"
+                    },
+                    {
+                        "Date": "2017-12-07T09:56:12.000Z",
+                        "Type": "Update"
+                    }
+                ],
+                "CollectionReference": {
+                    "ShortName": "VIIRSN_L2_OC",
+                    "Version": "2018"
+                },
+                "RelatedUrls": [
+                    {
+                        "URL": "https://oceandata.sci.gsfc.nasa.gov/cmr/getfile/V2012002205400.L2_SNPP_OC.nc",
+                        "Type": "GET DATA"
+                    }
+                ],
+                "DataGranule": {
+                    "DayNightFlag": "Day",
+                    "Identifiers": [
+                        {
+                            "Identifier": "V2012002205400.L2_SNPP_OC.nc",
+                            "IdentifierType": "ProducerGranuleId"
+                        }
+                    ],
+                    "ProductionDateTime": "2017-12-01T10:53:46.000Z",
+                    "ArchiveAndDistributionInformation": [
+                        {
+                            "Name": "Not provided",
+                            "Size": 44.64637,
+                            "SizeUnit": "MB"
+                        }
+                    ]
+                },
+                "Platforms": [
+                    {
+                        "ShortName": "NPP",
+                        "Instruments": [
+                            {
+                                "ShortName": "VIIRS"
+                            }
+                        ]
+                    }
+                ],
+                "MetadataSpecification": {
+                    "URL": "https://cdn.earthdata.nasa.gov/umm/granule/v1.6.3",
+                    "Name": "UMM-G",
+                    "Version": "1.6.3"
+                }
+            }
+        }
+    ]
+}

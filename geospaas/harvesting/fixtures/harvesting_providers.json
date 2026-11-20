@@ -1,0 +1,55 @@
+[
+    {
+        "model": "geospaas_harvesting.provider",
+        "pk": 1,
+        "fields": {
+            "name": "ftp",
+            "config": {
+                "crawler": {
+                    "name": "ftp"
+                },
+                "ingester": {},
+                "normalizer": {
+                    "name": "raw"
+                }
+            }
+        }
+    },
+    {
+        "model": "geospaas_harvesting.provider",
+        "pk": 2,
+        "fields": {
+            "name": "thredds",
+            "config": {
+                "crawler": {
+                    "name": "thredds"
+                },
+                "ingester": {},
+                "normalizer": {
+                    "name": "raw",
+                    "max_threads": 30
+                }
+            }
+        }
+    },
+    {
+        "model": "geospaas_harvesting.provider",
+        "pk": 3,
+        "fields": {
+            "name": "ceda",
+            "config": {
+                "crawler": {
+                    "url": "ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1",
+                    "name": "ftp",
+                    "include": "\\.nc$",
+                    "password": "",
+                    "username": "anonymous"
+                },
+                "ingester": {},
+                "normalizer": {
+                    "name": "ceda_esa_cci"
+                }
+            }
+        }
+    }
+]

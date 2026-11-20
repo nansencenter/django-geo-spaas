@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+    <head>
+        <link rel="stylesheet" href="{% static 'base_viewer/styles.css' %}" >
+    </head>
+    <body>
+        <template id="geospaas-object-table-template">
+            <table class="geospaas-object">
+                <thead>
+                    <tr><th class="object-header" colspan="2"></th></tr>
+                </thead>
+                <tbody class="object-attributes">
+                </tbody>
+            </table>
+
+            <template id="attribute-template">
+                <tr class="attribute">
+                    <td class="attribute-name"></td>
+                    <td class="attribute-value"></td>
+                </tr>
+            </template>
+        </template>
+
+        <template id="geospaas-object-div-template">
+            <div class="geospaas-object">
+                <div class="object-header"></div>
+                <div class="object-attributes"></div>
+            </div>
+            <template id="attribute-template">
+                <div class="attribute">
+                    <div class="attribute-name"></div>
+                    <div class="attribute-value"></div>
+                </div>
+            </template>
+        </template>
+
+        <div id="geospaas_apps">
+            <div id="geospaas_sidebar">
+                {% block geospaas_sidebar %}
+                    {% for app_name in geospaas_apps %}
+                        <div class="geospaas_tab_label {% if app_name == selected_tab %} geospaas_selected_tab{% endif %}">
+                            <a href="{% url 'geospaas:index' %}{{ app_name }}">{{ app_name | title }}</a>
+                        </div>
+                    {% endfor %}
+                {% endblock geospaas_sidebar %}
+            </div>
+            <div id="geospaas_tab_contents">
+                {% block geospaas_tab_contents %}
+                <div id="default_tab">Welcome to GeoSPaaS!</div>
+                {% endblock geospaas_tab_contents %}
+            </div>
+        </div>
+    </body>
+</html>

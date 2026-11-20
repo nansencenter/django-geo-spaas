@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns="http://www.w3.org/2005/Atom">
+<title>Sentinels Scientific Data Hub search results for: (platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0</title>
+<subtitle>Displaying 0 to 1 of 3430281 total results. Request done in 0.333 seconds.</subtitle>
+<updated>2020-03-18T09:33:18.020Z</updated>
+<author>
+<name>Sentinels Scientific Data Hub</name>
+</author>
+<id>https://scihub.copernicus.eu/dhus/search?q=(platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0</id>
+<opensearch:totalResults>4</opensearch:totalResults>
+<opensearch:startIndex>0</opensearch:startIndex>
+<opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+<opensearch:Query role="request" searchTerms="(platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0" startPage="1"/>
+<link rel="self" type="application/atom+xml" href="https://scihub.copernicus.eu/dhus/search?q=(platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0&amp;start=0&amp;rows=2"/>
+<link rel="first" type="application/atom+xml" href="https://scihub.copernicus.eu/dhus/search?q=(platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0&amp;start=0&amp;rows=2"/>
+<link rel="next" type="application/atom+xml" href="https://scihub.copernicus.eu/dhus/search?q=(platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0&amp;start=2&amp;rows=2"/>
+<link rel="last" type="application/atom+xml" href="https://scihub.copernicus.eu/dhus/search?q=(platformname:Sentinel-1 OR platformname:Sentinel-3) AND NOT L0&amp;start=3430280&amp;rows=2"/>
+<link rel="search" type="application/opensearchdescription+xml" href="opensearch_description.xml"/>
+<entry>
+<title>S1B_WV_SLC__1SSV_20200318T004850_20200318T010810_020739_027522_6EBB</title>
+<link href="https://scihub.copernicus.eu/dhus/odata/v1/Products('87ddb795-dab4-4985-85f4-c390c9cdd65b')/$value"/>
+<link rel="alternative" href="https://scihub.copernicus.eu/dhus/odata/v1/Products('87ddb795-dab4-4985-85f4-c390c9cdd65b')/"/>
+<link rel="icon" href="https://scihub.copernicus.eu/dhus/odata/v1/Products('87ddb795-dab4-4985-85f4-c390c9cdd65b')/Products('Quicklook')/$value"/>
+<id>87ddb795-dab4-4985-85f4-c390c9cdd65b</id>
+<summary>Date: 2020-03-18T00:48:50.342Z, Instrument: SAR-C SAR, Mode: VV, Satellite: Sentinel-1, Size: 7.31 GB</summary>
+<date name="beginposition">2020-03-18T00:48:50.342Z</date>
+<date name="endposition">2020-03-18T01:08:10.399Z</date>
+<date name="ingestiondate">2020-03-18T09:29:22.252Z</date>
+<int name="missiondatatakeid">161058</int>
+<int name="orbitnumber">20739</int>
+<int name="lastorbitnumber">20739</int>
+<int name="relativeorbitnumber">63</int>
+<int name="lastrelativeorbitnumber">63</int>
+<str name="sensoroperationalmode">WV</str>
+<str name="swathidentifier">WV1 WV2</str>
+<str name="orbitdirection">DESCENDING</str>
+<str name="producttype">SLC</str>
+<str name="timeliness">Fast-24h</str>
+<str name="platformname">Sentinel-1</str>
+<str name="platformidentifier">2016-025A</str>
+<str name="instrumentname">Synthetic Aperture Radar (C-band)</str>
+<str name="instrumentshortname">SAR-C SAR</str>
+<str name="filename">S1B_WV_SLC__1SSV_20200318T004850_20200318T010810_020739_027522_6EBB.SAFE</str>
+<str name="format">SAFE</str>
+<str name="productclass">S</str>
+<str name="polarisationmode">VV</str>
+<str name="acquisitiontype">NOMINAL</str>
+<str name="status">ARCHIVED</str>
+<str name="size">7.31 GB</str>
+<str name="gmlfootprint">&lt;gml:Polygon srsName="http://www.opengis.net/gml/srs/epsg.xml#4326" xmlns:gml="http://www.opengis.net/gml"&gt;
+   &lt;gml:outerBoundaryIs&gt;
+      &lt;gml:LinearRing&gt;
+         &lt;gml:coordinates&gt;-59.655846,50.506535 -59.574837,50.171963 -59.414612,50.321606 -57.944252,51.636234 -57.782383,51.772915 -56.29874,52.976753 -56.135548,53.102142 -54.640354,54.209839 -54.475906,54.325485 -52.972092,55.35714 -52.806568,55.464226 -51.292076,56.414886 -51.125603,56.514488 -49.60347,57.400486 -49.436188,57.493473 -47.906853,58.322716 -47.738777,58.409889 -46.202595,59.188839 -46.034016,59.270744 -44.494606,60.011509 -44.325302,60.088837 -42.778816,60.782413 -42.608917,60.855633 -41.057777,61.513359 -40.889725,61.581921 -39.333054,62.20792 -39.162354,62.274048 -37.604961,62.876663 -37.433681,62.939835 -35.871563,63.509483 -35.699924,63.569935 -34.134556,64.115868 -33.962624,64.173851 -32.394501,64.698128 -32.222122,64.753914 -30.651392,65.258621 -30.478807,65.312347 -28.906672,65.804535 -28.733791,65.856415 -27.158451,66.32663 -26.985407,66.376801 -25.407263,66.832298 -25.23382,66.880974 -23.654709,67.322556 -23.48103,67.369835 -21.900928,67.80352 -21.727028,67.84951 -20.14402,68.267075 -19.97006,68.311859 -18.385759,68.71891 -18.211575,68.762634 -16.625601,69.160187 -16.451275,69.202919 -14.864265,69.591522 -14.689775,69.633362 -13.10184,70.017418 -12.92716,70.058449 -11.337467,70.431534 -11.162646,70.471817 -9.57219,70.838104 -9.397313,70.877686 -7.806487,71.237709 -7.631491,71.27668 -6.039892,71.633575 -5.864823,71.671974 -4.271755,72.021187 -4.096697,72.059059 -2.503271,72.403763 -2.328197,72.44117 -0.734289,72.78157 -0.559135,72.818573 1.035012,73.155327 1.210201,73.191971 2.804203,73.526581 2.979491,73.56292 4.574587,73.893372 4.749784,73.929428 6.344653,74.257294 6.519823,74.293114 8.114454,74.618866 8.289627,74.654495 8.840658,76.489891 8.803199,76.671707 8.622385,76.634201 6.849349,76.265846 5.076736,75.895149 3.303631,75.525291 1.530373,75.154198 -0.242388,74.781616 -2.015268,74.406921 -3.786722,74.025391 -5.378168,73.68306 -5.558653,73.64463 -7.330056,73.260429 -9.100692,72.87207 -10.869275,72.4729 -12.458202,72.114349 -12.63866,72.074127 -14.406933,71.669487 -16.17412,71.258347 -17.940166,70.839867 -19.702757,70.404869 -21.286587,70.012909 -21.466284,69.969009 -23.2281,69.523247 -24.988483,69.066666 -26.745052,68.587776 -28.322285,68.154427 -28.501289,68.105804 -30.25613,67.609154 -32.008827,67.096466 -33.759327,66.566132 -35.504566,66.003784 -37.072155,65.489723 -37.249748,65.431839 -38.992104,64.83596 -40.73122,64.213524 -42.466763,63.561474 -44.195511,62.861866 -45.923004,62.139221 -47.646255,61.374607 -49.363873,60.563339 -51.072666,59.683235 -52.778091,58.758038 -54.303837,57.866413 -54.476154,57.763699 -55.994602,56.801502 -56.165966,56.690304 -57.676231,55.646576 -57.846481,55.525593 -59.343464,54.371029 -59.512562,54.238476 -59.438511,53.885235 -59.495251,50.654865 -59.655846,50.506535 -59.655846,50.506535 -59.655846,50.506535&lt;/gml:coordinates&gt;
+      &lt;/gml:LinearRing&gt;
+   &lt;/gml:outerBoundaryIs&gt;
+&lt;/gml:Polygon&gt;</str>
+<str name="footprint">MULTIPOLYGON (((50.506535 -59.655846, 50.654865 -59.495251, 53.885235 -59.438511, 54.238476 -59.512562, 54.371029 -59.343464, 55.525593 -57.846481, 55.646576 -57.676231, 56.690304 -56.165966, 56.801502 -55.994602, 57.763699 -54.476154, 57.866413 -54.303837, 58.758038 -52.778091, 59.683235 -51.072666, 60.563339 -49.363873, 61.374607 -47.646255, 62.139221 -45.923004, 62.861866 -44.195511, 63.561474 -42.466763, 64.213524 -40.73122, 64.83596 -38.992104, 65.431839 -37.249748, 65.489723 -37.072155, 66.003784 -35.504566, 66.566132 -33.759327, 67.096466 -32.008827, 67.609154 -30.25613, 68.105804 -28.501289, 68.154427 -28.322285, 68.587776 -26.745052, 69.066666 -24.988483, 69.523247 -23.2281, 69.969009 -21.466284, 70.012909 -21.286587, 70.404869 -19.702757, 70.839867 -17.940166, 71.258347 -16.17412, 71.669487 -14.406933, 72.074127 -12.63866, 72.114349 -12.458202, 72.4729 -10.869275, 72.87207 -9.100692, 73.260429 -7.330056, 73.64463 -5.558653, 73.68306 -5.378168, 74.025391 -3.786722, 74.406921 -2.015268, 74.781616 -0.242388, 75.154198 1.530373, 75.525291 3.303631, 75.895149 5.076736, 76.265846 6.849349, 76.634201 8.622385, 76.671707 8.803199, 76.489891 8.840658, 74.654495 8.289627, 74.618866 8.114454, 74.293114 6.519823, 74.257294 6.344653, 73.929428 4.749784, 73.893372 4.574587, 73.56292 2.979491, 73.526581 2.804203, 73.191971 1.210201, 73.155327 1.035012, 72.818573 -0.559135, 72.78157 -0.734289, 72.44117 -2.328197, 72.403763 -2.503271, 72.059059 -4.096697, 72.021187 -4.271755, 71.671974 -5.864823, 71.633575 -6.039892, 71.27668 -7.631491, 71.237709 -7.806487, 70.877686 -9.397313, 70.838104 -9.57219, 70.471817 -11.162646, 70.431534 -11.337467, 70.058449 -12.92716, 70.017418 -13.10184, 69.633362 -14.689775, 69.591522 -14.864265, 69.202919 -16.451275, 69.160187 -16.625601, 68.762634 -18.211575, 68.71891 -18.385759, 68.311859 -19.97006, 68.267075 -20.14402, 67.84951 -21.727028, 67.80352 -21.900928, 67.369835 -23.48103, 67.322556 -23.654709, 66.880974 -25.23382, 66.832298 -25.407263, 66.376801 -26.985407, 66.32663 -27.158451, 65.856415 -28.733791, 65.804535 -28.906672, 65.312347 -30.478807, 65.258621 -30.651392, 64.753914 -32.222122, 64.698128 -32.394501, 64.173851 -33.962624, 64.115868 -34.134556, 63.569935 -35.699924, 63.509483 -35.871563, 62.939835 -37.433681, 62.876663 -37.604961, 62.274048 -39.162354, 62.20792 -39.333054, 61.581921 -40.889725, 61.513359 -41.057777, 60.855633 -42.608917, 60.782413 -42.778816, 60.088837 -44.325302, 60.011509 -44.494606, 59.270744 -46.034016, 59.188839 -46.202595, 58.409889 -47.738777, 58.322716 -47.906853, 57.493473 -49.436188, 57.400486 -49.60347, 56.514488 -51.125603, 56.414886 -51.292076, 55.464226 -52.806568, 55.35714 -52.972092, 54.325485 -54.475906, 54.209839 -54.640354, 53.102142 -56.135548, 52.976753 -56.29874, 51.772915 -57.782383, 51.636234 -57.944252, 50.321606 -59.414612, 50.171963 -59.574837, 50.506535 -59.655846)))</str>
+<str name="identifier">S1B_WV_SLC__1SSV_20200318T004850_20200318T010810_020739_027522_6EBB</str>
+<str name="uuid">87ddb795-dab4-4985-85f4-c390c9cdd65b</str>
+</entry>
+<entry>
+<title>S1A_IW_GRDH_1SDV_20200318T062305_20200318T062330_031726_03A899_F558</title>
+<link href="https://scihub.copernicus.eu/dhus/odata/v1/Products('d023819a-60d3-4b5e-bb81-645294d73b5b')/$value"/>
+<link rel="alternative" href="https://scihub.copernicus.eu/dhus/odata/v1/Products('d023819a-60d3-4b5e-bb81-645294d73b5b')/"/>
+<link rel="icon" href="https://scihub.copernicus.eu/dhus/odata/v1/Products('d023819a-60d3-4b5e-bb81-645294d73b5b')/Products('Quicklook')/$value"/>
+<id>d023819a-60d3-4b5e-bb81-645294d73b5b</id>
+<summary>Date: 2020-03-18T06:23:05.976Z, Instrument: SAR-C SAR, Mode: VV VH, Satellite: Sentinel-1, Size: 1.65 GB</summary>
+<date name="beginposition">2020-03-18T06:23:05.976Z</date>
+<date name="endposition">2020-03-18T06:23:30.975Z</date>
+<date name="ingestiondate">2020-03-18T09:29:16.539Z</date>
+<int name="missiondatatakeid">239769</int>
+<int name="slicenumber">14</int>
+<int name="orbitnumber">31726</int>
+<int name="lastorbitnumber">31726</int>
+<int name="relativeorbitnumber">154</int>
+<int name="lastrelativeorbitnumber">154</int>
+<str name="sensoroperationalmode">IW</str>
+<str name="swathidentifier">IW</str>
+<str name="orbitdirection">DESCENDING</str>
+<str name="producttype">GRD</str>
+<str name="timeliness">Fast-24h</str>
+<str name="platformname">Sentinel-1</str>
+<str name="platformidentifier">2014-016A</str>
+<str name="instrumentname">Synthetic Aperture Radar (C-band)</str>
+<str name="instrumentshortname">SAR-C SAR</str>
+<str name="filename">S1A_IW_GRDH_1SDV_20200318T062305_20200318T062330_031726_03A899_F558.SAFE</str>
+<str name="format">SAFE</str>
+<str name="productclass">S</str>
+<str name="polarisationmode">VV VH</str>
+<str name="acquisitiontype">NOMINAL</str>
+<str name="status">ARCHIVED</str>
+<str name="size">1.65 GB</str>
+<str name="gmlfootprint">&lt;gml:Polygon srsName="http://www.opengis.net/gml/srs/epsg.xml#4326" xmlns:gml="http://www.opengis.net/gml"&gt;
+   &lt;gml:outerBoundaryIs&gt;
+      &lt;gml:LinearRing&gt;
+         &lt;gml:coordinates&gt;50.983601,-0.694377 51.396446,-4.436811 52.891499,-4.065843 52.476219,-0.197663 50.983601,-0.694377&lt;/gml:coordinates&gt;
+      &lt;/gml:LinearRing&gt;
+   &lt;/gml:outerBoundaryIs&gt;
+&lt;/gml:Polygon&gt;</str>
+<str name="footprint">MULTIPOLYGON (((-0.694377 50.983601, -0.197663 52.476219, -4.065843 52.891499, -4.436811 51.396446, -0.694377 50.983601)))</str>
+<str name="identifier">S1A_IW_GRDH_1SDV_20200318T062305_20200318T062330_031726_03A899_F558</str>
+<str name="uuid">d023819a-60d3-4b5e-bb81-645294d73b5b</str>
+</entry>
+</feed>

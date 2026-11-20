@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xml:lang="en" xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:time="http://a9.com/-/opensearch/extensions/time/1.0/" xmlns:geo="http://a9.com/-/opensearch/extensions/geo/1.0/" xmlns:eo="http://a9.com/-/opensearch/extensions/eo/1.0/" xmlns:parameters="http://a9.com/-/spec/opensearch/extensions/parameters/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:resto="http://mapshup.info/-/resto/2.0/" xmlns:sentinel="http://creodias.eu/namespace/sentinel">
+ <ShortName>Sentinel-1</ShortName>
+ <Description>Sentinel-1 Collection</Description>
+ <Url type="text/html" rel="results" template="http://localhost/rocket/#/search?q={searchTerms?}">
+  <parameters:Parameter name="q" value="{searchTerms}" title="Free text search"/>
+ </Url>
+ <Url type="application/json" rel="results" template="https://finder.creodias.eu/resto/api/collections/Sentinel1/search.json?q={searchTerms?}&amp;maxRecords={count?}&amp;index={startIndex?}&amp;page={startPage?}&amp;lang={language?}&amp;identifier={geo:uid?}&amp;geometry={geo:geometry?}&amp;box={geo:box?}&amp;name={geo:name?}&amp;lon={geo:lon?}&amp;lat={geo:lat?}&amp;radius={geo:radius?}&amp;startDate={time:start?}&amp;completionDate={time:end?}&amp;productIdentifier={eo:productIdentifier?}&amp;parentIdentifier={eo:parentIdentifier?}&amp;productType={eo:productType?}&amp;processingLevel={eo:processingLevel?}&amp;platform={eo:platform?}&amp;instrument={eo:instrument?}&amp;resolution={eo:resolution?}&amp;organisationName={eo:organisationName?}&amp;orbitNumber={eo:orbitNumber?}&amp;sensorMode={eo:sensorMode?}&amp;updated={dc:date?}&amp;publishedAfter={resto:publishedAfter?}&amp;publishedBefore={resto:publishedBefore?}&amp;sortParam={resto:sortParam?}&amp;sortOrder={resto:sortOrder?}&amp;status={resto:status?}&amp;exactCount={resto:exactCount?}&amp;orbitDirection={eo:orbitDirection?}&amp;timeliness={sentinel:timeliness?}&amp;relativeOrbitNumber={sentinel:relativeOrbitNumber?}&amp;processingBaseline={sentinel:processingBaseline?}&amp;missionTakeId={resto:missionTakeId?}&amp;polarisation={resto:polarisation?}&amp;swath={resto:swath?}">
+  <parameters:Parameter name="lon" value="{geo:lon}" title="lon description" maxInclusive="180" minInclusive="-180"/>
+  <parameters:Parameter name="platform" value="{eo:platform}">
+   <parameters:Option value="S1A"/>
+  </parameters:Parameter>
+  <parameters:Parameter name="swath" value="{resto:swath}"/>
+ </Url>
+ <Contact>info@creodias.eu</Contact>
+ <Tags>CEOS-OS-BP-V1.0 CREODIAS esa sentinel sentinel1 s1 radar</Tags>
+ <LongName>Sentinel-1 Collection</LongName>
+ <Query role="example" searchTerms="TBD"/>
+ <Developer>CloudFerro Sp. z o.o.</Developer>
+ <Attribution>CREODIAS, Copyright 2019, All Rights Reserved; ESA. Copyright 2019, All Rights Reserved</Attribution>
+ <SyndicationRight>open</SyndicationRight>
+ <AdultContent>false</AdultContent>
+ <Language>en</Language>
+ <InputEncoding>UTF-8</InputEncoding>
+ <OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription>

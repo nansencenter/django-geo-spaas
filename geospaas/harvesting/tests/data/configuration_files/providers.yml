@@ -1,0 +1,8 @@
+---
+providers:
+  creodias:
+    crawler:
+      name: 'resto'
+      url: 'https://datahub.creodias.eu'
+    normalizer:
+      name: 'resto'

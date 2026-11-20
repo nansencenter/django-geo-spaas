@@ -1,0 +1,11 @@
+{% extends "base_viewer/geospaas.html" %}
+{% block geospaas_tab_contents %}
+<div id="harvesting" class="geospaas_app">
+    {% load static %}
+    <script src='{% static "geospaas_harvesting/js/harvesting.js" %}' type=module></script>
+    <div id="providers">
+        <label for="provider">Provider:</label>
+        <select name="provider" id="providers_selector"></select>
+    </div>
+</div>
+{% endblock %}

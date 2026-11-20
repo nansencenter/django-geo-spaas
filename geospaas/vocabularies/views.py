@@ -1,3 +1,8 @@
-from django.shortcuts import render
+"""Views for vocabularies"""
+from geospaas.base_viewer.views import GeoSPaaSView
 
-# Create your views here.
+
+class VocabulariesView(GeoSPaaSView):
+    """"""
+    template_name = 'vocabularies/vocabularies.html'
+    tab_label = 'Vocabularies'

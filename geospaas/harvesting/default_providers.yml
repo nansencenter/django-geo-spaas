@@ -1,0 +1,237 @@
+---
+providers:
+  # generic providers
+  ftp:
+    crawler:
+      name: ftp
+  thredds:
+    crawler:
+      name: 'thredds'
+    normalizer:
+      name: raw
+      max_threads: 30
+  opendap:
+    crawler:
+      name: 'opendap'
+    normalizer:
+      name: raw
+      max_threads: 30
+  http:
+    crawler:
+      name: 'html_directory'
+  nansat:
+    crawler:
+      name: 'nansat'
+    normalizer:
+      name: 'nansat'
+  netcdf_lon_lat:
+    crawler:
+      name: 'netcdf'
+      longitude_attribute: 'lon'
+      latitude_attribute: 'lat'
+  netcdf_l:
+    crawler:
+      name: 'netcdf'
+      longitude_attribute: 'longitude'
+      latitude_attribute: 'latitude'
+  netcdf_L:
+    crawler:
+      name: 'netcdf'
+      longitude_attribute: 'LONGITUDE'
+      latitude_attribute: 'LATITUDE'
+  stac:
+    crawler:
+      name: 'stac'
+    normalizer:
+      name: 'stac'
+  odata:
+    crawler:
+      name: 'odata'
+    normalizer:
+      name: 'odata'
+
+  # specific providers
+  ceda:
+    crawler:
+      name: 'ftp'
+      url: 'ftp://anon-ftp.ceda.ac.uk/neodc/esacci/sst/data/CDR_v2/Climatology/L4/v2.1'
+      include: '\.nc$'
+      username: 'anonymous'
+      password: ''
+    normalizer:
+      name: 'ceda_esa_cci'
+  gportal:
+    crawler:
+      name: 'ftp'
+      url: 'ftp://ftp.gportal.jaxa.jp/standard/GCOM-W/GCOM-W.AMSR2/L3.SST_25/3'
+      include: '\.h5$'
+      username: !ENV JAXA_USERNAME
+      password: !ENV JAXA_PASSWORD
+    normalizer:
+      name: 'gportal_gcom'
+  metno:
+    crawler:
+      name: 'thredds'
+      url: 'https://thredds.met.no/thredds'
+      include: '\.nc$'
+    normalizer:
+      name: raw
+      max_threads: 30
+  metno_osisaf:
+    crawler:
+      name: 'thredds'
+      url: 'https://thredds.met.no/thredds'
+      include: '\.nc$'
+    normalizer:
+      name: 'osisaf'
+      max_threads: 30
+  aviso:
+    crawler:
+      name: 'thredds'
+      url: 'https://tds-odatis.aviso.altimetry.fr/thredds'
+      include: '\.nc$'
+      username: !ENV AVISO_USERNAME
+      password: !ENV AVISO_PASSWORD
+    normalizer:
+      name: 'aviso'
+      max_threads: 30
+  noaa_rtofs:
+    crawler:
+      name: 'ftp'
+      url: 'ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/rtofs/prod'
+      include: '\.nc(\.gz)?$'
+    normalizer:
+      name: 'noaa_rtofs'
+  cpom:
+    crawler:
+      name: 'netcdf'
+      longitude_attribute: 'lon'
+      latitude_attribute: 'lat'
+    normalizer:
+      name: 'cpom'
+  cmems:
+    crawler:
+      name: 'cmems'
+      username: !ENV CMEMS_USERNAME
+      password: !ENV CMEMS_PASSWORD
+    normalizer:
+      name: 'cmems'
+  creodias:
+    crawler:
+      name: 'resto'
+      url: 'https://datahub.creodias.eu'
+    normalizer:
+      name: 'resto'
+  copernicus_data_space:
+    crawler:
+      name: 'resto'
+      url: 'https://catalogue.dataspace.copernicus.eu'
+    normalizer:
+      name: 'resto'
+  earthdata_cmr:
+    crawler:
+      name: 'earthdata_cmr'
+      url: 'https://cmr.earthdata.nasa.gov/search/granules.umm_json'
+    normalizer:
+      name: 'earthdata_cmr'
+  uni_bremen:
+    crawler:
+      name: 'html_directory'
+      url: 'https://data.seaice.uni-bremen.de/amsr2/asi_daygrid_swath/n6250/netcdf'
+      include: '.*\.nc'
+    normalizer:
+      name: 'amsr2_asi'
+  argo_profile:
+    normalizer:
+      name: 'tabledap'
+    crawler:
+      name: 'tabledap'
+      url: 'https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json'
+      entry_id_prefix: 'argo_profile_'
+      id_attrs: ['platform_number', 'cycle_number']
+      longitude_attr: 'longitude'
+      latitude_attr: 'latitude'
+      time_attr: 'time'
+      position_qc_attr: 'position_qc'
+      time_qc_attr: 'time_qc'
+      valid_qc_codes: ['1', '2', '8']
+      variables:
+      - 'platform_number'
+      - 'cycle_number'
+      - 'pres'
+      - 'pres_qc'
+      - 'pres_adjusted'
+      - 'pres_adjusted_qc'
+      - 'pres_adjusted_error'
+      - 'temp'
+      - 'temp_qc'
+      - 'temp_adjusted'
+      - 'temp_adjusted_qc'
+      - 'temp_adjusted_error'
+      - 'psal'
+      - 'psal_qc'
+      - 'psal_adjusted'
+      - 'psal_adjusted_qc'
+      - 'psal_adjusted_error'
+  argo_trajectory:
+    normalizer:
+      name: 'tabledap'
+    crawler:
+      name: 'tabledap'
+      url: 'https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json'
+      entry_id_prefix: 'argo_trajectory_'
+      id_attrs: ['platform_number']
+      longitude_attr: 'longitude'
+      latitude_attr: 'latitude'
+      time_attr: 'time'
+      position_qc_attr: 'position_qc'
+      time_qc_attr: 'time_qc'
+      valid_qc_codes: ['1', '2', '8']
+      variables:
+      - 'platform_number'
+  bioargo_profile:
+    normalizer:
+      name: 'tabledap'
+    crawler:
+      name: 'tabledap'
+      url: 'https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.json'
+      entry_id_prefix: 'bioargo_profile_'
+      id_attrs: ['platform_number', 'cycle_number']
+      longitude_attr: 'longitude'
+      latitude_attr: 'latitude'
+      time_attr: 'time'
+      position_qc_attr: 'position_qc'
+      time_qc_attr: 'time_qc'
+      valid_qc_codes: ['1', '2', '8']
+      variables:
+      - 'platform_number'
+      - 'cycle_number'
+      - 'pres'
+      - 'pres_qc'
+      - 'pres_adjusted'
+      - 'pres_adjusted_qc'
+      - 'pres_adjusted_error'
+      - 'doxy'
+      - 'doxy_qc'
+      - 'doxy_adjusted'
+      - 'doxy_adjusted_qc'
+      - 'chla'
+      - 'chla_qc'
+      - 'chla_adjusted'
+      - 'chla_adjusted_qc'
+  bioargo_trajectory:
+    normalizer:
+      name: 'tabledap'
+    crawler:
+      name: 'tabledap'
+      url: 'https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.json'
+      entry_id_prefix: 'bioargo_trajectory_'
+      id_attrs: ['platform_number']
+      longitude_attr: 'longitude'
+      latitude_attr: 'latitude'
+      time_attr: 'time'
+      position_qc_attr: 'position_qc'
+      time_qc_attr: 'time_qc'
+      valid_qc_codes: ['1', '2', '8']
+      variables:
+      - 'platform_number'

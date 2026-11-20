@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dataset name="dataset.nc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xml.opendap.org/ns/DAP/3.2# http://xml.opendap.org/dap/dap3.2.xsd"
+    xmlns:grddl="http://www.w3.org/2003/g/data-view#"
+    grddl:transformation="http://xml.opendap.org/transforms/ddxToRdfTriples.xsl"
+    xmlns="http://xml.opendap.org/ns/DAP/3.2#" xmlns:dap="http://xml.opendap.org/ns/DAP/3.2#" dapVersion="3.2"
+    xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:base="https://opendap.jpl.nasa.gov/opendap/folder/dataset.nc">
+    <Attribute name="NC_GLOBAL" type="Container">
+        <Attribute name="Conventions" type="String">
+            <value>CF-1.7, ACDD-1.3</value>
+        </Attribute>
+        <Attribute name="title" type="String">
+            <value>VIIRS L2P Sea Surface Skin Temperature</value>
+        </Attribute>
+    </Attribute>
+    <Array name="lat">
+        <Attribute name="long_name" type="String">
+            <value>latitude</value>
+        </Attribute>
+        <Attribute name="standard_name" type="String">
+            <value>latitude</value>
+        </Attribute>
+    </Array>
+    <blob href="cid:" />
+</Dataset>
